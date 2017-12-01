@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4a151bc1-1c27-4376-b916-87fcd3084d7d" name="Default" comment="" />
+    <list default="true" id="4a151bc1-1c27-4376-b916-87fcd3084d7d" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/iDDUhelper.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/time2str.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDU.py" afterPath="$PROJECT_DIR$/iDDU.py" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,26 +18,12 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="iDDU.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="iDDU.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/iDDU.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1479">
-              <caret line="91" column="16" lean-forward="false" selection-start-line="91" selection-start-column="16" selection-end-line="91" selection-end-column="16" />
-              <folding>
-                <element signature="e#0#13#0" expanded="true" />
-                <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-                <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-              </folding>
+            <state relative-caret-position="34">
+              <caret line="2" column="12" lean-forward="false" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -39,18 +31,18 @@
       <file leaf-file-name="irsdk.py" pinned="false" current-in-tab="false">
         <entry file="file://C:/Python35/Lib/site-packages/irsdk.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1105">
-              <caret line="72" column="23" lean-forward="false" selection-start-line="72" selection-start-column="23" selection-end-line="72" selection-end-column="23" />
+            <state relative-caret-position="7174">
+              <caret line="429" column="0" lean-forward="false" selection-start-line="429" selection-start-column="0" selection-end-line="429" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="time2str.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/time2str.py">
+      <file leaf-file-name="iDDUhelper.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="32" column="101" lean-forward="true" selection-start-line="32" selection-start-column="101" selection-end-line="32" selection-end-column="101" />
+            <state relative-caret-position="697">
+              <caret line="41" column="26" lean-forward="false" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -61,8 +53,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Setup Script" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -73,13 +65,22 @@
       <find>round</find>
       <find>pit_</find>
       <find>FuelConsumption</find>
+      <find>LapBestLapTime</find>
+      <find>done</find>
+      <find>fullscreen</find>
+      <find>time2str</find>
     </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/iDDU.py" />
         <option value="$PROJECT_DIR$/time2str.py" />
+        <option value="$PROJECT_DIR$/iDDhelper.py" />
+        <option value="$PROJECT_DIR$/iDDUhelper.py" />
+        <option value="$PROJECT_DIR$/iDDU.py" />
       </list>
     </option>
   </component>
@@ -89,6 +90,7 @@
     <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -104,6 +106,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -119,7 +122,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="RecentsManager">
@@ -246,17 +248,18 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10572917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25264272" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24947146" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25264272" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39957717" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -277,23 +280,57 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/iDDU.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python35/Lib/site-packages/irsdk.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7293">
+          <caret line="429" column="0" lean-forward="false" selection-start-line="429" selection-start-column="0" selection-end-line="429" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="41" column="26" lean-forward="true" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDU.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1547">
+          <caret line="91" column="16" lean-forward="false" selection-start-line="91" selection-start-column="16" selection-end-line="91" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python35/Lib/site-packages/irsdk.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1224">
+          <caret line="72" column="23" lean-forward="false" selection-start-line="72" selection-start-column="23" selection-end-line="72" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/time2str.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="32" column="101" lean-forward="true" selection-start-line="32" selection-start-column="101" selection-end-line="32" selection-end-column="101" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDU.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1479">
           <caret line="91" column="16" lean-forward="false" selection-start-line="91" selection-start-column="16" selection-end-line="91" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -317,21 +354,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -355,21 +378,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -393,21 +402,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -423,58 +418,45 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-          </folding>
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2017.1/pycharm64.exe.vmoptions">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/time2str.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="61" column="15" lean-forward="false" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="41" column="26" lean-forward="false" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="26" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/Python35/Lib/site-packages/irsdk.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1105">
-          <caret line="72" column="23" lean-forward="false" selection-start-line="72" selection-start-column="23" selection-end-line="72" selection-end-column="23" />
+        <state relative-caret-position="7174">
+          <caret line="429" column="0" lean-forward="false" selection-start-line="429" selection-start-column="0" selection-end-line="429" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/iDDU.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1479">
-          <caret line="91" column="16" lean-forward="false" selection-start-line="91" selection-start-column="16" selection-end-line="91" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <marker date="1512150652048" expanded="true" signature="2463:7459" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2504:3369" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="2523:2582" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3379:3554" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3576:3709" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="3719:3770" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4015:4151" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="4192:4378" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5357:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5566:5820" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5593:5680" ph="..." />
-            <marker date="1512150652048" expanded="true" signature="5698:5820" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/time2str.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="32" column="101" lean-forward="true" selection-start-line="32" selection-start-column="101" selection-end-line="32" selection-end-column="101" />
+        <state relative-caret-position="34">
+          <caret line="2" column="12" lean-forward="false" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
           <folding />
         </state>
       </provider>
