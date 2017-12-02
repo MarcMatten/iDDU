@@ -156,7 +156,7 @@ while not done:
 
             if Flags[7] == '4':# or Flags[0] == '1':
                 colour = green
-            if Flags[0] == '8' or Flags[3] == '2' or Flags[3] == '8' or Flags[0] == '4':
+            if Flags[0] == '8' or Flags[0] == '4':
                 colour = red
             if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8' or Flags[0] == '2':
                 colour = yellow
@@ -165,7 +165,7 @@ while not done:
             if Flags[7] == '2':
                 colour = white
                 # set font color to black
-            if Flags[7] == 1: # checkered
+            if Flags[7] == '1': # checkered
                 FlagExceptionVal = 1
                 FlagException = True
                 # set font color to grey
@@ -178,16 +178,22 @@ while not done:
                 FlagException = True
                 color = yellow
                 FlagExceptionVal = 3
-            if Flags[3] == 1: # disqualified
+            if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5': # disqualified or Flags[3] == '4' 
                 FlagException = True
                 FlagExceptionVal = 4
-                # set font color to gray
+                # set font color to grey
+                # set Control Label Background Color to white
                 FlagException = True
-            if Flags[6] == 4: # debry
+            if Flags[6] == '4': # debry
                 FlagExceptionVal = 5
+            if Flags[3] == '8' or Flags[3] == 'c': # warning
+                FlagException = True
+                FlagExceptionVal = 6
+                # set Control Label Background Color to white
+                # set font color to gray
 
             data['oldSessionFlags'] = data['SessionFlags']
-        elif data['SessionTime'] > (FlagCallTime + 3):
+        elif data['SessionTime'] > (FlagCallTime + 5):
             colour = black
             FlagException = False
     else:
@@ -245,6 +251,8 @@ while not done:
             screen.blit(dsq, [0,0])
         elif FlagExceptionVal == 5:
             screen.blit(debry, [0,0])
+        elif FlagExceptionVal == 6:
+            screen.blit(warning, [0,0])
 
 
     # define frames
