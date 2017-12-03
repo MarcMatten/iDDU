@@ -123,6 +123,7 @@ while not done:
             data['SessionInfo'] = ir['SessionInfo']
             SessionInfo = True
             SessionNum = len(data['SessionInfo']['Sessions'])-1
+            data['DriverCarFuelMaxLtr'] = ir['DriverInfo']['DriverCarFuelMaxLtr']
 
         if ir['IsOnTrack']:
             # do if car is on track ------------------------------------------------------------------------------------
@@ -175,11 +176,11 @@ while not done:
                 FuelLapStr = iDDUhelper.roundedStr1(LapRem)
                 if newLap and not onPitRoad:
                     fuelNeed = avg * data['LapsToGo']
-                    fuelAdd = fuelNeed - data['FuelLevel'] + avg
+                    fuelAdd = min(max(fuelNeed - data['FuelLevel'] + avg, 0),data['DriverCarFuelMaxLtr'])
                     fuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
                     ir.pit_command(2, round(fuelAdd+0.5+1e-10))
                 #else:
-                 #   fuelAddStr = '-'
+                    #   fuelAddStr = '-'
             else:
                 FuelConsumptionStr = '-'
                 FuelLapStr = '-'
@@ -244,7 +245,7 @@ while not done:
                 # set font color to gray
 
             data['oldSessionFlags'] = data['SessionFlags']
-        elif data['SessionTime'] > (FlagCallTime + 5):
+        elif data['SessionTime'] > (FlagCallTime + 3):
             colour = black
             FlagException = False
     else:

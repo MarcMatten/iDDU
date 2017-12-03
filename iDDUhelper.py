@@ -46,7 +46,7 @@ def convertTimeHHMMSS(sec):
         else:
             sign = ''
 
-        m, s = divmod(sec, 60)
+        m, s = divmod(round(sec), 60)
         h, m = divmod(m, 60)
 
         if m < 10:
