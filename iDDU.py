@@ -20,17 +20,23 @@ data.update({'Lap': 0})
 data.update({'StintLap': 0})
 data.update({'oldLap': 0.1})
 data.update({'FuelConsumption':  []})
-data.update({'LastFuelLevel':  []})
+data.update({'FuelLastCons':  0})
+data.update({'LastFuelLevel':  0})
 data.update({'OutLap':  True})
 data.update({'SessionFlags':  0})
 data.update({'oldSessionFlags':  0})
+data.update({'LapsToGo':  21})
 data.update({'SessionInfo':  {'Sessions': [{'SessionType': 'Offline Testing', 'SessionTime': 'unlimited',
                                              'SessionLaps': 'unlimited'}] }})
 
 FuelConsumptionStr = ''
+FuelLapStr = ''
+fuelAddStr = '-'
 FlagCallTime = 0
 FlagException = False
 FlagExceptionVal = 0
+Alarm = []
+RaceLaps = 21
 
 ##### pygame initialisation ############################################################################################
 white = (255, 255, 255)
@@ -40,6 +46,7 @@ green = (0, 255, 0)
 blue = (0, 0, 255)
 yellow = (255, 255, 0)
 orange = (255, 133, 13)
+grey = (141, 141, 141)
 colour = black
 
 resolution = (800, 480)
@@ -52,6 +59,8 @@ clock = pygame.time.Clock()
 done = False
 SessionInfo = False
 SessionNum = 0
+init = True
+onPitRoad = True
 
 # load background imaged
 checkered = pygame.image.load("checkered.gif")
@@ -74,22 +83,29 @@ SessionLabel = fontSmall.render(' Session Info ', True, white, black)
 ControlLabel = fontSmall.render(' Control ', True, white, black)
 
 # Labels to display
+# Timing
 BestLapLabel = fontSmall.render('Best', True, white)
 LastLapLabel = fontSmall.render('Last', True, white)
 DeltaLapLabel = fontSmall.render('DBest', True, white)
+# SessionInfo
 ClockLabel = fontTiny.render('Clock', True, white)
 RemTimeLabel = fontSmall.render('Rem. Time', True, white)
 ElTimeLabel = fontSmall.render('Time', True, white)
 RemLapLabel = fontSmall.render('Rem. Laps', True, white)
 LapLabel = fontSmall.render('Lap', True, white)
+# Fuel
 dcTractionControlLabel = fontSmall.render('TC1', True, white)
 dcTractionControl2Label = fontSmall.render('TC2', True, white)
 dcBrakeBiasLabel = fontSmall.render('BBias', True, white)
-FuelLevelLabel = fontSmall.render('Fuel', True, white)
-FuelConsLabel = fontSmall.render('Cons.', True, white)
 dcFuelMixtureLabel = fontSmall.render('Mix', True, white)
 dcThrottleShapeLabel = fontSmall.render('Map', True, white)
 dcABSLabel = fontSmall.render('ABS', True, white)
+# Control
+FuelLevelLabel = fontSmall.render('Fuel', True, white)
+FuelConsLabel = fontSmall.render('Avg.', True, white)
+FuelLastConsLabel = fontSmall.render('Last', True, white)
+FuelLapsLabel = fontSmall.render('Laps', True, white)
+FuelAddLabel = fontSmall.render('Add', True, white)
 
 SCLabel = fontHuge.render('SC', True, white)
 
@@ -108,43 +124,78 @@ while not done:
             SessionInfo = True
             SessionNum = len(data['SessionInfo']['Sessions'])-1
 
-            print(data['SessionInfo']['Sessions'][SessionNum]['SessionType'])
-
         if ir['IsOnTrack']:
             # do if car is on track ------------------------------------------------------------------------------------
+
             data.update(iDDUhelper.getData(ir, listLap))
+            Alarm = []
+
+            if init: # do when getting into the car
+                init = False
+                data['OutLap'] = True
+                data['LastFuelLevel'] = data['FuelLevel']
+                data['FuelConsumption'] = []
+                ir.pit_command(7)
+
 
             if data['OnPitRoad']:
-                data['FuelConsumption'] = []
+                onPitRoad = True
+            elif (not data['OnPitRoad']) and onPitRoad == True: # pit exit
+                onPitRoad = False
+                data['OutLap'] = True
 
             # check if new lap
             if data['Lap'] > data['oldLap']:
+                newLap = True
                 data['StintLap'] = data['StintLap'] + 1
                 data['oldLap'] = data['Lap']
+                data['LapsToGo'] = RaceLaps - data['Lap']
 
-                if not data['OutLap']:
-                    data['FuelConsumption'].extend([data['LastFuelLevel'] - data['FuelLevel']])
+                data['FuelLastCons'] = data['LastFuelLevel'] - data['FuelLevel']
+
+                if (not data['OutLap']) and (not onPitRoad):
+                    data['FuelConsumption'].extend([data['FuelLastCons']])
                 else:
                     data['OutLap'] = False
 
                 data['LastFuelLevel'] = data['FuelLevel']
 
+            else:
+                newLap = False
+
             # fuel consumption -----------------------------------------------------------------------------------------
             if len(data['FuelConsumption']) >= 1:
-                FuelConsumptionStr = iDDUhelper.roundedStr2(sum(data['FuelConsumption']) / len(data['FuelConsumption']))
+                avg = sum(data['FuelConsumption']) / len(data['FuelConsumption'])
+                FuelConsumptionStr = iDDUhelper.roundedStr2(avg)
+                LapRem = data['FuelLevel'] / avg
+                if LapRem < 3:
+                    Alarm.extend([3])
+                if LapRem < 1:
+                    Alarm.extend([4])
+                FuelLapStr = iDDUhelper.roundedStr1(LapRem)
+                if newLap and not onPitRoad:
+                    fuelNeed = avg * data['LapsToGo']
+                    fuelAdd = fuelNeed - data['FuelLevel'] + avg
+                    fuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
+                    ir.pit_command(2, round(fuelAdd+0.5+1e-10))
+                #else:
+                 #   fuelAddStr = '-'
             else:
                 FuelConsumptionStr = '-'
+                FuelLapStr = '-'
+                fuelAddStr = '-'
 
-            # warnings
+            # alarm
             if data['dcTractionControlToggle']:
-                pygame.draw.rect(screen, red, [413, 288, 250, 65])
+                Alarm.extend([1])
 
             if type(data['FuelLevel']) is float:
                 if data['FuelLevel'] <= 5:
-                    pygame.draw.rect(screen, red, [413, 32, 215, 65])
+                    Alarm.extend([2])
         else:
             # do if car is not on track but don't do if car is on track ------------------------------------------------
             data.update(iDDUhelper.getData(ir, listStart))
+            init = True
 
         # do if sim is running after updating data ---------------------------------------------------------------------
         RemLapValue = str(data['SessionLapsRemain'])
@@ -154,11 +205,11 @@ while not done:
             FlagCallTime = data['SessionTime']
             Flags = str(("0x%x" % ir['SessionFlags'])[2:11])
 
-            if Flags[7] == '4':# or Flags[0] == '1':
+            if Flags[0] == '8':#Flags[7] == '4' or Flags[0] == '1':
                 colour = green
-            if Flags[0] == '8' or Flags[0] == '4':
+            if Flags[0] == '8':# or Flags[0] == '4'
                 colour = red
-            if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8' or Flags[0] == '2':
+            if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8': #  or Flags[0] == '2'
                 colour = yellow
             if Flags[6] == '2':
                 colour = blue
@@ -206,22 +257,30 @@ while not done:
         colour = black
 
     # prepare strings to display
+    # Timing
     BestLap = fontLarge.render(iDDUhelper.convertTimeMMSSsss(data['LapBestLapTime']), True, white)
     LastLap = fontLarge.render(iDDUhelper.convertTimeMMSSsss(data['LapLastLapTime']), True, white)
     DeltaBest = fontLarge.render(iDDUhelper.convertDelta(data['LapDeltaToSessionBestLap']), True, white)
+    # Session Info
     RemTime = fontLarge.render(RemTimeValue, True, white)
     RemLap = fontLarge.render(RemLapValue, True, white)
     Lap = fontLarge.render(str(data['Lap']), True, white)
     Time = fontLarge.render(iDDUhelper.convertTimeHHMMSS(data['SessionTime']), True, white)
     Clock = fontSmall.render(ClockValue, True, white)
+    # Control
     dcTractionControl = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl']), True, white)
     dcTractionControl2 = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl2']), True, white)
     dcBrakeBias = fontLarge.render(iDDUhelper.roundedStr2(data['dcBrakeBias']), True, white)
     dcFuelMixture = fontLarge.render(iDDUhelper.roundedStr0(data['dcFuelMixture']), True, white)
     dcThrottleShape = fontLarge.render(iDDUhelper.roundedStr0(data['dcThrottleShape']), True, white)
     dcABS = fontLarge.render(iDDUhelper.roundedStr0(data['dcABS']), True, white)
+    # Fuel
     FuelLevel = fontLarge.render(iDDUhelper.roundedStr2(data['FuelLevel']), True, white)
     FuelCons = fontLarge.render(FuelConsumptionStr, True, white)
+    FuelLastCons = fontLarge.render(iDDUhelper.roundedStr2(data['FuelLastCons']), True, white)
+    FuelLap = fontLarge.render(FuelLapStr, True, white)
+    FuelAdd = fontLarge.render(fuelAddStr, True, white)
+
 
 ##### events ###########################################################################################################
     for event in pygame.event.get():
@@ -229,7 +288,7 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             done = True
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             if fullscreen:
                 pygame.display.set_mode(resolution)
                 fullscreen = False
@@ -254,18 +313,39 @@ while not done:
         elif FlagExceptionVal == 6:
             screen.blit(warning, [0,0])
 
+    # alarms
+    if len(Alarm) > 0:
+        if [1 for i in Alarm if i in [1]]: # Traction Control
+            pygame.draw.rect(screen, red, [413, 388, 250, 65])
+        if [1 for i in Alarm if i in [2]]: # Fuel Level
+            pygame.draw.rect(screen, red, [413, 32, 215, 65])
+        if [1 for i in Alarm if i in [3]]: # Fuel Laps 1
+            pygame.draw.rect(screen, orange, [413, 172, 155, 65])
+        if [1 for i in Alarm if i in [4]]: # Fuel Laps 2
+            pygame.draw.rect(screen, red, [413, 172, 155, 65])
 
     # define frames
     pygame.draw.rect(screen, white, [10, 10, 385, 240], 1)
+    #pygame.draw.lines(screen, white, False, [[10, 10], [10, 250], [395, 250]], 1)
     screen.blit(TimingLabel, (40,0))
-    pygame.draw.rect(screen, white, [405, 10, 385, 180], 1)
+    pygame.draw.rect(screen, white, [405, 10, 385, 280], 1)
     screen.blit(FuelLabel, (435,0))
     pygame.draw.rect(screen, white, [10, 260 , 385, 210], 1)
     screen.blit(SessionLabel, (40, 250))
-    pygame.draw.rect(screen, white, [405, 200, 385, 270], 1)
-    screen.blit(ControlLabel, (435, 190))
+    pygame.draw.rect(screen, white, [405, 300, 385, 170], 1)
+    screen.blit(ControlLabel, (435, 290))
 
     # frame input
+    # Timing
+    screen.blit(BestLapLabel, (30, 60))
+    screen.blit(BestLap, (115, 30))
+    screen.blit(LastLapLabel, (30, 130))
+    screen.blit(LastLap, (115, 100))
+    screen.blit(DeltaLapLabel, (30, 200))
+    screen.blit(DeltaBest, (115, 170))
+    # Session Info
+    screen.blit(ClockLabel, (30, 450))
+    screen.blit(Clock, (80, 442))
     if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited':
         screen.blit(ElTimeLabel, (30, 310))
         screen.blit(Time, (150, 280))
@@ -273,31 +353,35 @@ while not done:
         screen.blit(RemTimeLabel, (30, 310))
         screen.blit(RemTime, (150, 280))
 
-    if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited':
+    #if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited' or data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] > 10000:
+    if data['SessionTimeRemain']:
         screen.blit(LapLabel, (30, 380))
         screen.blit(Lap, (150, 350))
     else:
         screen.blit(RemLapLabel, (30, 380))
         screen.blit(RemLap, (150, 350))
-
-    screen.blit(BestLapLabel, (30, 60))
-    screen.blit(BestLap, (115, 30))
-    screen.blit(LastLapLabel, (30, 130))
-    screen.blit(LastLap, (115, 100))
-    screen.blit(DeltaLapLabel, (30, 200))
-    screen.blit(DeltaBest, (115, 170))
-    screen.blit(ClockLabel, (30, 450))
-    screen.blit(Clock, (80, 442))
-    screen.blit(dcBrakeBiasLabel, (425, 250))
-    screen.blit(dcBrakeBias, (505, 215))
-    screen.blit(dcTractionControlLabel, (425, 320))
-    screen.blit(dcTractionControl, (460, 285))
-    screen.blit(dcTractionControl2Label, (555, 320))
-    screen.blit(dcTractionControl2, (590, 285))
+    # Control
+    screen.blit(dcBrakeBiasLabel, (425, 350))
+    screen.blit(dcBrakeBias, (505, 315))
+    screen.blit(dcABSLabel, (665, 350))
+    screen.blit(dcABS, (710, 315))
+    screen.blit(dcTractionControlLabel, (425, 420))
+    screen.blit(dcTractionControl, (470, 385))
+    screen.blit(dcTractionControl2Label, (555, 420))
+    screen.blit(dcTractionControl2, (600, 385))
+    screen.blit(dcFuelMixtureLabel, (665, 420))
+    screen.blit(dcFuelMixture, (710, 385))
+    # Fuel
     screen.blit(FuelLevelLabel, (425, 60))
     screen.blit(FuelLevel, (505, 30))
     screen.blit(FuelConsLabel, (425, 130))
-    screen.blit(FuelCons, (505, 100))
+    screen.blit(FuelCons, (475, 100))
+    screen.blit(FuelLastConsLabel, (605, 130))
+    screen.blit(FuelLastCons, (660, 100))
+    screen.blit(FuelLapsLabel, (425, 200))
+    screen.blit(FuelLap, (475, 170))
+    screen.blit(FuelAddLabel, (605, 200))
+    screen.blit(FuelAdd, (660, 170))
 
 
 ##### render again at 30 Hz ############################################################################################

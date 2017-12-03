@@ -64,7 +64,7 @@ def convertTimeHHMMSS(sec):
 
 def roundedStr0(x):
     if type(x) is float:
-        return round(x)
+        return str(round(x))
     else:
         return ('-')
 
