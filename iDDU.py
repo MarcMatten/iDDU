@@ -4,7 +4,7 @@ import irsdk
 import iDDUhelper
 
 ##### data and list initialisation #####################################################################################
-listLap = ['LapBestLapTime','LapLastLapTime','LapDeltaToSessionBestLap','dcFuelMixture','dcThrottleShape',
+listLap = ['LapBestLapTime', 'LapLastLapTime', 'LapDeltaToSessionBestLap', 'dcFuelMixture', 'dcThrottleShape',
            'dcTractionControl','dcTractionControl2','dcTractionControlToggle','dcABS','dcBrakeBias','FuelLevel','Lap',
            'IsInGarage','LapDistPct', 'OnPitRoad', 'PlayerCarClassPosition','PlayerCarPosition', 'RaceLaps',
            'SessionLapsRemain', 'SessionTimeRemain', 'SessionTime', 'SessionFlags','OnPitRoad']
@@ -28,9 +28,11 @@ data.update({'oldSessionFlags':  0})
 data.update({'LapsToGo':  21})
 data.update({'SessionInfo':  {'Sessions': [{'SessionType': 'Offline Testing', 'SessionTime': 'unlimited',
                                              'SessionLaps': 'unlimited'}] }})
+data['SessionLapRemain'] = 32767
 
-FuelConsumptionStr = ''
-FuelLapStr = ''
+FuelConsumptionStr = '-'
+RemLapValueStr = '-'
+FuelLapStr = '-'
 fuelAddStr = '-'
 FlagCallTime = 0
 FlagException = False
@@ -93,7 +95,7 @@ DeltaLapLabel = fontSmall.render('DBest', True, textColour)
 ClockLabel = fontTiny.render('Clock', True, textColour)
 RemTimeLabel = fontSmall.render('Rem. Time', True, textColour)
 ElTimeLabel = fontSmall.render('Time', True, textColour)
-RemLapLabel = fontSmall.render('Rem. Laps', True, textColour)
+RemLapLabel = fontSmall.render('To go', True, textColour)
 LapLabel = fontSmall.render('Lap', True, textColour)
 # Fuel
 dcTractionControlLabel = fontSmall.render('TC1', True, textColour)
@@ -188,7 +190,7 @@ while not done:
                             ir.pit_command(2, round(fuelAdd+0.5+1e-10))
                         if fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - avg:
                             textColourFuelAdd = green
-                        elif fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - 2.5 * avg:
+                        elif fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - 2 * avg:
                             textColourFuelAdd = orange
                         else:
                             textColourFuelAdd = textColour
@@ -214,18 +216,19 @@ while not done:
             init = True
 
         # do if sim is running after updating data ---------------------------------------------------------------------
-        RemLapValue = str(data['SessionLapsRemain'])
+        RemLapValue = data['SessionLapsRemain']
+        RemLapValueStr = str(RemLapValue)
         RemTimeValue = iDDUhelper.convertTimeHHMMSS(data['SessionTimeRemain'])
 
         if (not data['SessionFlags'] == data['oldSessionFlags']):
             FlagCallTime = data['SessionTime']
             Flags = str(("0x%x" % ir['SessionFlags'])[2:11])
 
-            if Flags[0] == '8':#Flags[7] == '4' or Flags[0] == '1':
+            if Flags[0] == '8':  #Flags[7] == '4' or Flags[0] == '1':
                 backgroundColour = green
-            if Flags[0] == '8':# or Flags[0] == '4'
+            if Flags[0] == '8':  # or Flags[0] == '4'
                 backgroundColour = red
-            if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8': #  or Flags[0] == '2'
+            if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  #or Flags[0] == '2'
                 backgroundColour = yellow
             if Flags[6] == '2':
                 backgroundColour = blue
@@ -265,9 +268,9 @@ while not done:
             FlagException = False
     else:
         # do if sim is not running -------------------------------------------------------------------------------------
-        RemLapValue = ''
-        RemTimeValue = ''
-        FuelConsumptionStr = ''
+        RemLapValueStr = '-'
+        RemTimeValue = '-'
+        FuelConsumptionStr = '-'
         if SessionInfo:
             SessionInfo = False
             backgroundColour = black
@@ -279,7 +282,7 @@ while not done:
     DeltaBest = fontLarge.render(iDDUhelper.convertDelta(data['LapDeltaToSessionBestLap']), True, textColour)
     # Session Info
     RemTime = fontLarge.render(RemTimeValue, True, textColour)
-    RemLap = fontLarge.render(RemLapValue, True, textColour)
+    RemLap = fontLarge.render(RemLapValueStr, True, textColour)
     Lap = fontLarge.render(str(data['Lap']), True, textColour)
     Time = fontLarge.render(iDDUhelper.convertTimeHHMMSS(data['SessionTime']), True, textColour)
     Clock = fontSmall.render(ClockValue, True, textColour)
@@ -362,7 +365,7 @@ while not done:
     # Session Info
     screen.blit(ClockLabel, (30, 450))
     screen.blit(Clock, (80, 442))
-    if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited':
+    if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited' or data['SessionTimeRemain'] > 86400:
         screen.blit(ElTimeLabel, (30, 310))
         screen.blit(Time, (150, 280))
     else:
@@ -370,12 +373,14 @@ while not done:
         screen.blit(RemTime, (150, 280))
 
     #if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited' or data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] > 10000:
-    if data['SessionTimeRemain']:
-        screen.blit(LapLabel, (30, 380))
-        screen.blit(Lap, (150, 350))
-    else:
-        screen.blit(RemLapLabel, (30, 380))
-        screen.blit(RemLap, (150, 350))
+    #if data['SessionTimeRemain']:
+    #else:
+    if data['SessionLapRemain'] < 1000:
+        screen.blit(RemLapLabel, (220, 380))
+        screen.blit(RemLap, (280, 350))
+
+    screen.blit(LapLabel, (30, 380))
+    screen.blit(Lap, (80, 350))
     # Control
     screen.blit(dcBrakeBiasLabel, (425, 350))
     screen.blit(dcBrakeBias, (505, 315))
