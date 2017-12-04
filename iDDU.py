@@ -25,7 +25,7 @@ data.update({'LastFuelLevel':  0})
 data.update({'OutLap':  True})
 data.update({'SessionFlags':  0})
 data.update({'oldSessionFlags':  0})
-data.update({'LapsToGo':  155})
+data.update({'LapsToGo':  21})
 data.update({'SessionInfo':  {'Sessions': [{'SessionType': 'Offline Testing', 'SessionTime': 'unlimited',
                                              'SessionLaps': 'unlimited'}] }})
 
@@ -36,8 +36,7 @@ FlagCallTime = 0
 FlagException = False
 FlagExceptionVal = 0
 Alarm = []
-RaceLaps = 155
-oldFuelAdd = 0
+RaceLaps = 21
 
 ##### pygame initialisation ############################################################################################
 white = (255, 255, 255)
