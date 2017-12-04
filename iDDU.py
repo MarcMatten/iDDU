@@ -39,6 +39,7 @@ FlagException = False
 FlagExceptionVal = 0
 Alarm = []
 RaceLaps = 21
+oldFuelAdd = 1
 
 ##### pygame initialisation ############################################################################################
 white = (255, 255, 255)
@@ -194,7 +195,6 @@ while not done:
                             textColourFuelAdd = orange
                         else:
                             textColourFuelAdd = textColour
-                    print(fuelAdd)
                     oldFuelAdd = fuelAdd
                 #else:
                     #   fuelAddStr = '-'
