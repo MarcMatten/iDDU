@@ -25,7 +25,7 @@ data.update({'LastFuelLevel':  0})
 data.update({'OutLap':  True})
 data.update({'SessionFlags':  0})
 data.update({'oldSessionFlags':  0})
-data.update({'LapsToGo':  21})
+data.update({'LapsToGo':  155})
 data.update({'SessionInfo':  {'Sessions': [{'SessionType': 'Offline Testing', 'SessionTime': 'unlimited',
                                              'SessionLaps': 'unlimited'}] }})
 
@@ -36,7 +36,8 @@ FlagCallTime = 0
 FlagException = False
 FlagExceptionVal = 0
 Alarm = []
-RaceLaps = 21
+RaceLaps = 155
+oldFuelAdd = 0
 
 ##### pygame initialisation ############################################################################################
 white = (255, 255, 255)
@@ -47,7 +48,9 @@ blue = (0, 0, 255)
 yellow = (255, 255, 0)
 orange = (255, 133, 13)
 grey = (141, 141, 141)
-colour = black
+backgroundColour = black
+textColour = grey
+textColourFuelAdd = textColour
 
 resolution = (800, 480)
 fullscreen = False
@@ -77,37 +80,37 @@ fontLarge = pygame.font.SysFont("Khmer UI", 60)
 fontHuge = pygame.font.SysFont("Khmer UI", 480)
 
 # frame labels
-TimingLabel = fontSmall.render(' Timing ', True, white, black)
-FuelLabel = fontSmall.render(' Fuel ', True, white, black)
-SessionLabel = fontSmall.render(' Session Info ', True, white, black)
-ControlLabel = fontSmall.render(' Control ', True, white, black)
+TimingLabel = fontSmall.render(' Timing ', True, textColour, backgroundColour)
+FuelLabel = fontSmall.render(' Fuel ', True, textColour, backgroundColour)
+SessionLabel = fontSmall.render(' Session Info ', True, textColour, backgroundColour)
+ControlLabel = fontSmall.render(' Control ', True, textColour, backgroundColour)
 
 # Labels to display
 # Timing
-BestLapLabel = fontSmall.render('Best', True, white)
-LastLapLabel = fontSmall.render('Last', True, white)
-DeltaLapLabel = fontSmall.render('DBest', True, white)
+BestLapLabel = fontSmall.render('Best', True, textColour)
+LastLapLabel = fontSmall.render('Last', True, textColour)
+DeltaLapLabel = fontSmall.render('DBest', True, textColour)
 # SessionInfo
-ClockLabel = fontTiny.render('Clock', True, white)
-RemTimeLabel = fontSmall.render('Rem. Time', True, white)
-ElTimeLabel = fontSmall.render('Time', True, white)
-RemLapLabel = fontSmall.render('Rem. Laps', True, white)
-LapLabel = fontSmall.render('Lap', True, white)
+ClockLabel = fontTiny.render('Clock', True, textColour)
+RemTimeLabel = fontSmall.render('Rem. Time', True, textColour)
+ElTimeLabel = fontSmall.render('Time', True, textColour)
+RemLapLabel = fontSmall.render('Rem. Laps', True, textColour)
+LapLabel = fontSmall.render('Lap', True, textColour)
 # Fuel
-dcTractionControlLabel = fontSmall.render('TC1', True, white)
-dcTractionControl2Label = fontSmall.render('TC2', True, white)
-dcBrakeBiasLabel = fontSmall.render('BBias', True, white)
-dcFuelMixtureLabel = fontSmall.render('Mix', True, white)
-dcThrottleShapeLabel = fontSmall.render('Map', True, white)
-dcABSLabel = fontSmall.render('ABS', True, white)
+dcTractionControlLabel = fontSmall.render('TC1', True, textColour)
+dcTractionControl2Label = fontSmall.render('TC2', True, textColour)
+dcBrakeBiasLabel = fontSmall.render('BBias', True, textColour)
+dcFuelMixtureLabel = fontSmall.render('Mix', True, textColour)
+dcThrottleShapeLabel = fontSmall.render('Map', True, textColour)
+dcABSLabel = fontSmall.render('ABS', True, textColour)
 # Control
-FuelLevelLabel = fontSmall.render('Fuel', True, white)
-FuelConsLabel = fontSmall.render('Avg.', True, white)
-FuelLastConsLabel = fontSmall.render('Last', True, white)
-FuelLapsLabel = fontSmall.render('Laps', True, white)
-FuelAddLabel = fontSmall.render('Add', True, white)
+FuelLevelLabel = fontSmall.render('Fuel', True, textColour)
+FuelConsLabel = fontSmall.render('Avg.', True, textColour)
+FuelLastConsLabel = fontSmall.render('Last', True, textColour)
+FuelLapsLabel = fontSmall.render('Laps', True, textColour)
+FuelAddLabel = fontSmall.render('Add', True, textColour)
 
-SCLabel = fontHuge.render('SC', True, white)
+SCLabel = fontHuge.render('SC', True, textColour)
 
 
 ##### iRacing loop #####################################################################################################
@@ -122,8 +125,8 @@ while not done:
         if not SessionInfo:
             data['SessionInfo'] = ir['SessionInfo']
             SessionInfo = True
-            SessionNum = len(data['SessionInfo']['Sessions'])-1
-            data['DriverCarFuelMaxLtr'] = ir['DriverInfo']['DriverCarFuelMaxLtr']
+            SessionNum = len(data['SessionInfo']['Sessions']) - 1
+            data['DriverCarFuelMaxLtr'] = ir['DriverInfo']['DriverCarFuelMaxLtr'] * ir['DriverInfo']['DriverCarMaxFuelPct']
 
         if ir['IsOnTrack']:
             # do if car is on track ------------------------------------------------------------------------------------
@@ -137,7 +140,6 @@ while not done:
                 data['LastFuelLevel'] = data['FuelLevel']
                 data['FuelConsumption'] = []
                 ir.pit_command(7)
-
 
             if data['OnPitRoad']:
                 onPitRoad = True
@@ -178,7 +180,21 @@ while not done:
                     fuelNeed = avg * data['LapsToGo']
                     fuelAdd = min(max(fuelNeed - data['FuelLevel'] + avg, 0),data['DriverCarFuelMaxLtr'])
                     fuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
-                    ir.pit_command(2, round(fuelAdd+0.5+1e-10))
+                    if fuelAdd == 0:
+                        ir.pit_command(2, 1)
+                        ir.pit_command(11)
+                        textColourFuelAdd = textColour
+                    else:
+                        if not round(fuelAdd) == round(oldFuelAdd):
+                            ir.pit_command(2, round(fuelAdd+0.5+1e-10))
+                        if fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - avg:
+                            textColourFuelAdd = green
+                        elif fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - 2.5 * avg:
+                            textColourFuelAdd = orange
+                        else:
+                            textColourFuelAdd = textColour
+                    print(fuelAdd)
+                    oldFuelAdd = fuelAdd
                 #else:
                     #   fuelAddStr = '-'
             else:
@@ -207,15 +223,15 @@ while not done:
             Flags = str(("0x%x" % ir['SessionFlags'])[2:11])
 
             if Flags[0] == '8':#Flags[7] == '4' or Flags[0] == '1':
-                colour = green
+                backgroundColour = green
             if Flags[0] == '8':# or Flags[0] == '4'
-                colour = red
+                backgroundColour = red
             if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8': #  or Flags[0] == '2'
-                colour = yellow
+                backgroundColour = yellow
             if Flags[6] == '2':
-                colour = blue
+                backgroundColour = blue
             if Flags[7] == '2':
-                colour = white
+                backgroundColour = white
                 # set font color to black
             if Flags[7] == '1': # checkered
                 FlagExceptionVal = 1
@@ -246,7 +262,7 @@ while not done:
 
             data['oldSessionFlags'] = data['SessionFlags']
         elif data['SessionTime'] > (FlagCallTime + 3):
-            colour = black
+            backgroundColour = black
             FlagException = False
     else:
         # do if sim is not running -------------------------------------------------------------------------------------
@@ -255,32 +271,32 @@ while not done:
         FuelConsumptionStr = ''
         if SessionInfo:
             SessionInfo = False
-        colour = black
+            backgroundColour = black
 
     # prepare strings to display
     # Timing
-    BestLap = fontLarge.render(iDDUhelper.convertTimeMMSSsss(data['LapBestLapTime']), True, white)
-    LastLap = fontLarge.render(iDDUhelper.convertTimeMMSSsss(data['LapLastLapTime']), True, white)
-    DeltaBest = fontLarge.render(iDDUhelper.convertDelta(data['LapDeltaToSessionBestLap']), True, white)
+    BestLap = fontLarge.render(iDDUhelper.convertTimeMMSSsss(data['LapBestLapTime']), True, textColour)
+    LastLap = fontLarge.render(iDDUhelper.convertTimeMMSSsss(data['LapLastLapTime']), True, textColour)
+    DeltaBest = fontLarge.render(iDDUhelper.convertDelta(data['LapDeltaToSessionBestLap']), True, textColour)
     # Session Info
-    RemTime = fontLarge.render(RemTimeValue, True, white)
-    RemLap = fontLarge.render(RemLapValue, True, white)
-    Lap = fontLarge.render(str(data['Lap']), True, white)
-    Time = fontLarge.render(iDDUhelper.convertTimeHHMMSS(data['SessionTime']), True, white)
-    Clock = fontSmall.render(ClockValue, True, white)
+    RemTime = fontLarge.render(RemTimeValue, True, textColour)
+    RemLap = fontLarge.render(RemLapValue, True, textColour)
+    Lap = fontLarge.render(str(data['Lap']), True, textColour)
+    Time = fontLarge.render(iDDUhelper.convertTimeHHMMSS(data['SessionTime']), True, textColour)
+    Clock = fontSmall.render(ClockValue, True, textColour)
     # Control
-    dcTractionControl = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl']), True, white)
-    dcTractionControl2 = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl2']), True, white)
-    dcBrakeBias = fontLarge.render(iDDUhelper.roundedStr2(data['dcBrakeBias']), True, white)
-    dcFuelMixture = fontLarge.render(iDDUhelper.roundedStr0(data['dcFuelMixture']), True, white)
-    dcThrottleShape = fontLarge.render(iDDUhelper.roundedStr0(data['dcThrottleShape']), True, white)
-    dcABS = fontLarge.render(iDDUhelper.roundedStr0(data['dcABS']), True, white)
+    dcTractionControl = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl']), True, textColour)
+    dcTractionControl2 = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl2']), True, textColour)
+    dcBrakeBias = fontLarge.render(iDDUhelper.roundedStr2(data['dcBrakeBias']), True, textColour)
+    dcFuelMixture = fontLarge.render(iDDUhelper.roundedStr0(data['dcFuelMixture']), True, textColour)
+    dcThrottleShape = fontLarge.render(iDDUhelper.roundedStr0(data['dcThrottleShape']), True, textColour)
+    dcABS = fontLarge.render(iDDUhelper.roundedStr0(data['dcABS']), True, textColour)
     # Fuel
-    FuelLevel = fontLarge.render(iDDUhelper.roundedStr2(data['FuelLevel']), True, white)
-    FuelCons = fontLarge.render(FuelConsumptionStr, True, white)
-    FuelLastCons = fontLarge.render(iDDUhelper.roundedStr2(data['FuelLastCons']), True, white)
-    FuelLap = fontLarge.render(FuelLapStr, True, white)
-    FuelAdd = fontLarge.render(fuelAddStr, True, white)
+    FuelLevel = fontLarge.render(iDDUhelper.roundedStr2(data['FuelLevel']), True, textColour)
+    FuelCons = fontLarge.render(FuelConsumptionStr, True, textColour)
+    FuelLastCons = fontLarge.render(iDDUhelper.roundedStr2(data['FuelLastCons']), True, textColour)
+    FuelLap = fontLarge.render(FuelLapStr, True, textColour)
+    FuelAdd = fontLarge.render(fuelAddStr, True, textColourFuelAdd)
 
 
 ##### events ###########################################################################################################
@@ -299,7 +315,7 @@ while not done:
 
 ##### render screen ####################################################################################################
 
-    screen.fill(colour)
+    screen.fill(backgroundColour)
     if FlagException:
         if FlagExceptionVal == 1:
             screen.blit(checkered, [0,0])
@@ -326,14 +342,14 @@ while not done:
             pygame.draw.rect(screen, red, [413, 172, 155, 65])
 
     # define frames
-    pygame.draw.rect(screen, white, [10, 10, 385, 240], 1)
-    #pygame.draw.lines(screen, white, False, [[10, 10], [10, 250], [395, 250]], 1)
+    pygame.draw.rect(screen, textColour, [10, 10, 385, 240], 1)
+    #pygame.draw.lines(screen, textColour, False, [[10, 10], [10, 250], [395, 250]], 1)
     screen.blit(TimingLabel, (40,0))
-    pygame.draw.rect(screen, white, [405, 10, 385, 280], 1)
+    pygame.draw.rect(screen, textColour, [405, 10, 385, 280], 1)
     screen.blit(FuelLabel, (435,0))
-    pygame.draw.rect(screen, white, [10, 260 , 385, 210], 1)
+    pygame.draw.rect(screen, textColour, [10, 260 , 385, 210], 1)
     screen.blit(SessionLabel, (40, 250))
-    pygame.draw.rect(screen, white, [405, 300, 385, 170], 1)
+    pygame.draw.rect(screen, textColour, [405, 300, 385, 170], 1)
     screen.blit(ControlLabel, (435, 290))
 
     # frame input
