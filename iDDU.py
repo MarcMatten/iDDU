@@ -216,8 +216,12 @@ while not done:
             init = True
 
         # do if sim is running after updating data ---------------------------------------------------------------------
-        RemLapValue = data['SessionLapsRemain']
-        RemLapValueStr = str(RemLapValue)
+        if not data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] == 'unlimited':
+            RemLapValue = data['SessionLapsRemain']
+            RemLapValueStr = str(RemLapValue)
+        else:
+            RemLapValue = 0
+            RemLapValueStr = '-'
         RemTimeValue = iDDUhelper.convertTimeHHMMSS(data['SessionTimeRemain'])
 
         if (not data['SessionFlags'] == data['oldSessionFlags']):
@@ -226,7 +230,7 @@ while not done:
 
             if Flags[0] == '8':  #Flags[7] == '4' or Flags[0] == '1':
                 backgroundColour = green
-            if Flags[0] == '8':  # or Flags[0] == '4'
+            if Flags[7] == '1':  # or Flags[0] == '4'
                 backgroundColour = red
             if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  #or Flags[0] == '2'
                 backgroundColour = yellow
@@ -365,17 +369,18 @@ while not done:
     # Session Info
     screen.blit(ClockLabel, (30, 450))
     screen.blit(Clock, (80, 442))
-    if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited' or data['SessionTimeRemain'] > 86400:
-        screen.blit(ElTimeLabel, (30, 310))
-        screen.blit(Time, (150, 280))
-    else:
+
+    if not data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited':
         screen.blit(RemTimeLabel, (30, 310))
         screen.blit(RemTime, (150, 280))
+    else:
+        screen.blit(ElTimeLabel, (30, 310))
+        screen.blit(Time, (150, 280))
 
     #if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited' or data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] > 10000:
     #if data['SessionTimeRemain']:
     #else:
-    if data['SessionLapRemain'] < 1000:
+    if not data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] == 'unlimited':
         screen.blit(RemLapLabel, (220, 380))
         screen.blit(RemLap, (280, 350))
 
