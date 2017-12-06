@@ -191,7 +191,7 @@ while not done:
                             ir.pit_command(2, round(fuelAdd+0.5+1e-10))
                         if fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - avg:
                             textColourFuelAdd = green
-                        elif fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] - 2 * avg:
+                        elif fuelAdd < data['DriverCarFuelMaxLtr'] - data['FuelLevel'] + avg:
                             textColourFuelAdd = orange
                         else:
                             textColourFuelAdd = textColour
@@ -217,7 +217,7 @@ while not done:
 
         # do if sim is running after updating data ---------------------------------------------------------------------
         if not data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] == 'unlimited':
-            RemLapValue = data['SessionLapsRemain']
+            RemLapValue = data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] - data['Lap']
             RemLapValueStr = str(RemLapValue)
         else:
             RemLapValue = 0
