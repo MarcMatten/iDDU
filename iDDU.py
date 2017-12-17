@@ -19,6 +19,7 @@ for i in range(0, len(listLap)):
 data.update({'Lap': 0})
 data.update({'StintLap': 0})
 data.update({'SessionTime': 0})
+data.update({'SessionNum': 0})
 data.update({'oldLap': 0.1})
 data.update({'FuelConsumption':  []})
 data.update({'FuelLastCons':  0})
@@ -26,7 +27,7 @@ data.update({'LastFuelLevel':  0})
 data.update({'OutLap':  True})
 data.update({'SessionFlags':  0})
 data.update({'oldSessionFlags':  0})
-data.update({'LapsToGo':  21})
+data.update({'LapsToGo':  31})
 data.update({'SessionInfo':  {'Sessions': [{'SessionType': 'Offline Testing', 'SessionTime': 'unlimited',
                                              'SessionLaps': 5}] }})
 data['SessionLapRemain'] = 32767
@@ -39,7 +40,7 @@ FlagCallTime = 0
 FlagException = False
 FlagExceptionVal = 0
 Alarm = []
-RaceLaps = 21
+RaceLaps = 31
 oldFuelAdd = 1
 GreenTime = 0
 SessionNum = 0
