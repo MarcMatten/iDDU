@@ -7,10 +7,10 @@ import iDDUhelper
 listLap = ['LapBestLapTime', 'LapLastLapTime', 'LapDeltaToSessionBestLap', 'dcFuelMixture', 'dcThrottleShape',
            'dcTractionControl','dcTractionControl2','dcTractionControlToggle','dcABS','dcBrakeBias','FuelLevel','Lap',
            'IsInGarage','LapDistPct', 'OnPitRoad', 'PlayerCarClassPosition','PlayerCarPosition', 'RaceLaps',
-           'SessionLapsRemain', 'SessionTimeRemain', 'SessionTime', 'SessionFlags','OnPitRoad']
+           'SessionLapsRemain', 'SessionTimeRemain', 'SessionTime', 'SessionFlags','OnPitRoad','SessionNum']
 
 listStart = ['SessionLapsRemain', 'IsOnTrack', 'SessionTimeRemain', 'IsInGarage', 'OnPitRoad', 'PlayerCarClassPosition',
-             'PlayerCarPosition', 'RaceLaps', 'SessionTime', 'Lap', 'SessionFlags']
+             'PlayerCarPosition', 'RaceLaps', 'SessionTime', 'Lap', 'SessionFlags','SessionNum']
 
 data = {}
 for i in range(0, len(listLap)):
@@ -18,6 +18,7 @@ for i in range(0, len(listLap)):
 
 data.update({'Lap': 0})
 data.update({'StintLap': 0})
+data.update({'SessionTime': 0})
 data.update({'oldLap': 0.1})
 data.update({'FuelConsumption':  []})
 data.update({'FuelLastCons':  0})
@@ -27,11 +28,11 @@ data.update({'SessionFlags':  0})
 data.update({'oldSessionFlags':  0})
 data.update({'LapsToGo':  21})
 data.update({'SessionInfo':  {'Sessions': [{'SessionType': 'Offline Testing', 'SessionTime': 'unlimited',
-                                             'SessionLaps': 'unlimited'}] }})
+                                             'SessionLaps': 5}] }})
 data['SessionLapRemain'] = 32767
 
 FuelConsumptionStr = '-'
-RemLapValueStr = '-'
+RemLapValueStr = '10'
 FuelLapStr = '-'
 fuelAddStr = '-'
 FlagCallTime = 0
@@ -40,6 +41,8 @@ FlagExceptionVal = 0
 Alarm = []
 RaceLaps = 21
 oldFuelAdd = 1
+GreenTime = 0
+SessionNum = 0
 
 ##### pygame initialisation ############################################################################################
 white = (255, 255, 255)
@@ -127,7 +130,7 @@ while not done:
         if not SessionInfo:
             data['SessionInfo'] = ir['SessionInfo']
             SessionInfo = True
-            SessionNum = len(data['SessionInfo']['Sessions']) - 1
+            SessionNum = data['SessionNum']
             data['DriverCarFuelMaxLtr'] = ir['DriverInfo']['DriverCarFuelMaxLtr'] * ir['DriverInfo']['DriverCarMaxFuelPct']
 
         if ir['IsOnTrack']:
@@ -141,6 +144,7 @@ while not done:
                 data['OutLap'] = True
                 data['LastFuelLevel'] = data['FuelLevel']
                 data['FuelConsumption'] = []
+                SessionNum = data['SessionNum']
                 ir.pit_command(7)
 
             if data['OnPitRoad']:
@@ -154,7 +158,7 @@ while not done:
                 newLap = True
                 data['StintLap'] = data['StintLap'] + 1
                 data['oldLap'] = data['Lap']
-                data['LapsToGo'] = RaceLaps - data['Lap']
+                data['LapsToGo'] = RaceLaps - data['Lap'] # at the end of the current lap
 
                 data['FuelLastCons'] = data['LastFuelLevel'] - data['FuelLevel']
 
@@ -217,11 +221,11 @@ while not done:
 
         # do if sim is running after updating data ---------------------------------------------------------------------
         if not data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] == 'unlimited':
-            RemLapValue = data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] - data['Lap']
+            RemLapValue = max(min(data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] - data['Lap'] + 1, data['SessionInfo']['Sessions'][SessionNum]['SessionLaps']), 0)
             RemLapValueStr = str(RemLapValue)
         else:
             RemLapValue = 0
-            RemLapValueStr = '-'
+            RemLapValueStr = '0'
         RemTimeValue = iDDUhelper.convertTimeHHMMSS(data['SessionTimeRemain'])
 
         if (not data['SessionFlags'] == data['oldSessionFlags']):
@@ -230,6 +234,7 @@ while not done:
 
             if Flags[0] == '8':  #Flags[7] == '4' or Flags[0] == '1':
                 backgroundColour = green
+                GreenTime = data['SessionTimeRemain']
             if Flags[7] == '1':  # or Flags[0] == '4'
                 backgroundColour = red
             if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  #or Flags[0] == '2'
@@ -288,7 +293,7 @@ while not done:
     RemTime = fontLarge.render(RemTimeValue, True, textColour)
     RemLap = fontLarge.render(RemLapValueStr, True, textColour)
     Lap = fontLarge.render(str(data['Lap']), True, textColour)
-    Time = fontLarge.render(iDDUhelper.convertTimeHHMMSS(data['SessionTime']), True, textColour)
+    Time = fontLarge.render(iDDUhelper.convertTimeHHMMSS(data['SessionTime'] - GreenTime), True, textColour)
     Clock = fontSmall.render(ClockValue, True, textColour)
     # Control
     dcTractionControl = fontLarge.render(iDDUhelper.roundedStr0(data['dcTractionControl']), True, textColour)
