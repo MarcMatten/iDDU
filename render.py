@@ -165,7 +165,7 @@ class RenderScreen(RenderMain):
         if self.ScreenNumber == 1:
 
             if calcData['init']:
-                self.frames[2].reinitFrame(calcData['SessionInfo']['Sessions'][iRData['SessionNum']]['SessionType'])
+                self.frames[2].reinitFrame(iRData['SessionInfo']['Sessions'][iRData['SessionNum']]['SessionType'])
 
             # prepare strings to display
             # Timing
@@ -250,7 +250,7 @@ class RenderScreen(RenderMain):
             Lap = str(iRData['Lap'])
             ToGo = str(calcData['LapsToGo'])
             Clock = str(iRData['clockValue'])
-            Joker = '1/7'#str(iRData[self.LabelsSession[i][0]])
+            Joker = calcData['JokerStr']#str(iRData[self.LabelsSession[i][0]])
             # Joker2Go = str(iRData[self.LabelsSession[i][0]])
             Elapsed = iDDUhelper.convertTimeHHMMSS(iRData['SessionTime'])
             Remaining = iDDUhelper.convertTimeHHMMSS(iRData['SessionTimeRemain'])
@@ -327,20 +327,55 @@ class RenderScreen(RenderMain):
             # x = 400 + 198 * math.sin(2 * math.pi * iRData['LapDistPct'])
             # y = 240 - 198 * math.cos(2 * math.pi * iRData['LapDistPct'])
 
-            x = numpy.interp(iRData['LapDistPct']*100, calcData['dist'], calcData['x'])
-            y = numpy.interp(iRData['LapDistPct']*100, calcData['dist'], calcData['y'])
+            # x = numpy.interp(iRData['LapDistPct']*100, calcData['dist'], calcData['x'])
+            # y = numpy.interp(iRData['LapDistPct']*100, calcData['dist'], calcData['y'])
+
+            self.pygame.draw.lines(self.screen, self.textColour, True, [calcData['map'][-1], calcData['map'][0]], 30)
 
             self.pygame.draw.lines(self.screen, self.textColour, True, calcData['map'], 5)
 
-            Label = self.fontTiny.render('23', True, self.white)
-            self.pygame.draw.circle(self.screen, self.red, [int(x), int(y)], 10, 0)
-            self.screen.blit(Label, (int(x) - 6, int(y) - 7))
+            # Label = self.fontTiny.render('23', True, self.white)
+            # self.pygame.draw.circle(self.screen, self.red, [int(x), int(y)], 10, 0)
+            # self.screen.blit(Label, (int(x) - 6, int(y) - 7))
             #
             # for i in range(0, len(self.Labels2)):
             #     self.Labels2[i].drawLabel(iDDUhelper.roundedStr1(iRData['LapDistPct'] * 100))
+            
+            for n in range(0, len(iRData['DriverInfo']['Drivers'])):
+                # ID = calcData['DriverInfo']['Drivers'][n]['CarIdx']
+                # print(ID)
+                # print(iRData['LapDistPct'])
+                # print(iRData['LapDistPct'][ID])
+                # print(iRData['LapDistPct'][ID]*100)
+                self.CarOnMap( iRData['DriverInfo']['Drivers'][n]['CarIdx'], calcData, iRData)
 
         self.pygame.display.flip()
         self.clocker.tick(30)
+
+        return self.done
+
+    def CarOnMap(self, Idx, calcData, iRData):
+        x = numpy.interp(float(iRData['CarIdxLapDistPct'][Idx])*100, calcData['dist'], calcData['x'])
+        y = numpy.interp(float(iRData['CarIdxLapDistPct'][Idx])*100, calcData['dist'], calcData['y'])
+
+        if iRData['DriverInfo']['DriverCarIdx'] == Idx:
+            dotColour = self.red
+            labelColour = self.white
+            if calcData['RX']:
+                if calcData['JokerLaps'][Idx] == calcData['JokerLapsRequired'] + 1:
+                    self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
+        else:
+            dotColour = self.grey
+            labelColour = self.black
+            if calcData['RX']:
+                if calcData['JokerLaps'][Idx] == calcData['JokerLapsRequired'] + 1:
+                    dotColour = self.green
+                    labelColour = self.black
+
+
+        Label = self.fontTiny.render(iRData['DriverInfo']['Drivers'][Idx]['CarNumber'], True, labelColour)
+        self.pygame.draw.circle(self.screen, dotColour, [int(x), int(y)], 10, 0)
+        self.screen.blit(Label, (int(x) - 6, int(y) - 7))
 
 
 class Frame(RenderMain):
@@ -385,3 +420,5 @@ class LabeledValue(RenderMain):
 
         self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
         self.screen.blit(self.ValLabel, (self.x + self.width / 2 - self.ValSize[0], self.y - 36))
+
+
