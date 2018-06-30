@@ -309,7 +309,7 @@ class IDDUCalc(iRefresh.IRClass):
 
 
 
-                        # fuel consumption -----------------------------------------------------------------------------------------
+                # fuel consumption -----------------------------------------------------------------------------------------
                 if len(self.data['FuelConsumption']) >= 1:
                     avg = sum(self.data['FuelConsumption']) / len(self.data['FuelConsumption'])
                     self.data['FuelConsumptionStr'] = iDDUhelper.roundedStr2(avg)

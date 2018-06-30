@@ -1,0 +1,460 @@
+import time
+import irsdk
+import iDDUhelper
+import pygame
+import threading
+import iRefresh
+import csv
+import math
+import numpy as np
+import os
+import glob
+
+class IDDUCalc2:
+    def __init__(self, db):
+        self.db = db
+        self.white = (255, 255, 255)
+        self.red = (255, 0, 0)
+        self.green = (0, 255, 0)
+        self.blue = (0, 0, 255)
+        self.yellow = (255, 255, 0)
+        self.orange = (255, 133, 13)
+        self.grey = (141, 141, 141)
+        self.black = (0, 0, 0)
+
+        self.Yaw=[]
+        self.YawNorth=[]
+        self.VelocityX=[]
+        self.VelocityY=[]
+        self.dist=[]
+        self.dx=[]
+        self.dy=[]
+
+        self.ir = irsdk.IRSDK()
+
+        self.getTrackFiles()
+        self.loadTrack('dummie_track')
+
+    def calc(self):
+        if self.db.isRunning == False:
+            # initialise
+            if not self.db.waiting:
+                print('Waiting for iRacing')
+                # self.getTrackFiles()
+                # self.initSession(iRData)
+                self.db.waiting = True
+
+        if self.db.startUp:
+            if self.db.isRunning == False:
+                print('Connecting to iRacing')
+
+            if self.db.oldSessionNum < self.db.SessionNum:
+                print('New Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+                self.initSession()
+
+            # do if sim is running before updating data --------------------------------------------------------------------
+            # if not self.SessionInfo or self.db.oldSessionNum'] < self.db.SessionNum:
+            # if self.db.oldSessionNum'] < self.db.SessionNum:
+            #     self.db.oldSessionNum'] = self.db.SessionNum
+            #     self.db.SessionInfo'] = self.db.SessionInfo']
+            #     self.SessionInfo = True
+            #     self.db.DriverInfo'] = self.db.DriverInfo']
+            #     self.db.WeekendInfo'] = self.db.WeekendInfo']
+            #     self.db.DriverCarFuelMaxLtr'] = self.db.DriverInfo']['DriverCarFuelMaxLtr'] * \
+            #                                        self.db.DriverInfo']['DriverCarMaxFuelPct']
+            #     self.db.DriverCarIdx = self.db.DriverInfo']['DriverCarIdx']
+            #     if self.db.WeekendInfo']['TrackName']+'.csv' in  self.trackList:
+            #         self.loadTrack(self.db.WeekendInfo']['TrackName'])
+            #         self.createTrack = False
+            #     else:
+            #         self.loadTrack('dummie_track')
+            #         self.createTrack = True
+            #
+            #     if self.db.WeekendInfo']['Category'] == 'DirtRoad':
+            #         self.db.RX'] = True
+            #         self.db.JokerLapsRequired = self.db.WeekendInfo']['WeekendOptions']['NumJokerLaps']
+            #         # for n in range(0, len(self.db.SessionInfo']['Sessions'][self.db.SessionNum]['ResultsPositions'])):
+            #         #     self.db.JokerLaps[self.db.SessionInfo']['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = self.db.SessionInfo']['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
+            #         # self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(self.db.JokerLapsRequired)
+            #     else:
+            #         self.db.RX'] = False
+            #
+            #
+            #
+            #     if self.db.SessionInfo']['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
+            #         self.db.LabelSessionDisplay'][4] = 0 # ToGo
+            #         if self.db.SessionInfo']['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
+            #             self.db.LabelSessionDisplay'][3] = 1 # Elapsed
+            #             self.db.LabelSessionDisplay'][2] = 0 # Remain
+            #         else:
+            #             self.db.LabelSessionDisplay'][2] = 1 # Remain
+            #             self.db.LabelSessionDisplay'][3] = 0 # Elapsed
+            #     else:
+            #         self.db.LabelSessionDisplay'][4] = 1 # ToGo
+            #         if self.db.SessionInfo']['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
+            #             self.db.LabelSessionDisplay'][4] = 0 # ToGo
+            #             self.db.LabelSessionDisplay'][3] = 1  # Elapsed
+            #         else:
+            #             self.db.LabelSessionDisplay'][4] = 1 # ToGo
+            #             self.db.LabelSessionDisplay'][3] = 0  # Elapsed
+            #
+            #     if self.db.WeekendInfo']['Category'] == 'DirtRoad':
+            #         self.db.LabelSessionDisplay'][5] = 1 # Joker
+            #     else:
+            #         self.db.LabelSessionDisplay'][5] = 0 # Joker
+
+                    # 'SessionTime': 'unlimited'
+                    # 'SessionType': 'Offline Testing'
+                    # 'SessionLaps': 'unlimited'
+
+                # if self.db.SessionInfo']['Sessions'][self.db.SessionNum['SessionType'] == 'Offline Testing' or self.db.SessionInfo']['Sessions'][self.db.SessionNum['SessionType'] == 'Practice':
+                #     self.db.LabelSessionDisplay'][5] = 1
+                # else:
+                #     self.db.LabelSessionDisplay'][5] = 0
+
+            if self.db.IsOnTrack:
+                # do if car is on track ------------------------------------------------------------------------------------
+                if self.db.WasOnTrack == False:
+                    self.db.WasOnTrack = True
+
+                self.db.Alarm = []
+
+                if self.db.RX:
+                    if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] is not None:
+                        length = len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])
+                    else:
+                        length = 0
+                    for n in range(0, length):
+                        self.db.JokerLaps[self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
+
+                    if not self.db.JokerLapsRequired == 0:
+                        self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(self.db.JokerLapsRequired)
+                    else:
+                        self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx])
+                else:
+                    self.db.JokerStr = '-'
+
+                if self.db.init:  # do when getting into the car
+                    print('Getting into car')
+                    # print(self.db.SessionNum)
+                    # print(self.db.oldSessionNum'])
+                    # self.initSession(iRData)
+                    self.db.init = False
+                    self.db.OutLap = True
+                    self.db.LastFuelLevel = self.db.FuelLevel
+                    self.db.FuelConsumption = []
+                    # if self.db.WeekendInfo']['Category'] == 'Rally Cross':
+                    #     self.db.JokerLapsRequired = self.db.WeekendInfo']['WeekendOptions']['NumJokerLaps']
+
+                    self.ir.pit_command(7)
+
+                if self.db.OnPitRoad:
+                    self.db.onPitRoad = True
+                elif (not self.db.OnPitRoad) and self.db.onPitRoad == True:  # pit exit
+                    self.db.onPitRoad = False
+                    self.db.OutLap = True
+
+                # check if new lap
+                if self.db.Lap > self.db.oldLap:
+                    newLap = True
+                    # print('New Lap')
+                    # print(self.db.oldLap'])
+                    # print(self.db.Lap'])
+                    # print(iRData)
+                    self.db.StintLap = self.db.StintLap + 1
+                    self.db.oldLap = self.db.Lap
+                    self.db.LapsToGo = self.db.RaceLaps - self.db.Lap  # at the end of the current lap
+
+                    self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
+
+                    if (not self.db.OutLap) and (not self.db.onPitRoad):
+                        self.db.FuelConsumption.extend([self.db.FuelLastCons])
+                    else:
+                        self.db.OutLap = False
+
+                    self.db.LastFuelLevel = self.db.FuelLevel
+
+                else:
+                    newLap = False
+
+                #print(self.db.StintLap)
+
+                if self.createTrack and not self.db.OutLap:
+                # if self.createTrack and not self.db.OutLap']:
+
+                    if not self.Logging:
+                        self.logLap = self.db.Lap
+                        self.Logging = True
+
+                    self.Yaw.append(self.db.Yaw)
+                    self.YawNorth.append(self.db.YawNorth)
+                    self.VelocityX.append(self.db.VelocityX)
+                    self.VelocityY.append(self.db.VelocityY)
+                    self.dist.append(self.db.LapDistPct*100)
+
+                    self.dx.append(math.cos(self.db.Yaw)*self.db.VelocityX*0.033 - math.sin(self.db.Yaw)*self.db.VelocityY*0.033)
+                    self.dy.append(math.cos(self.db.Yaw)*self.db.VelocityY*0.033 + math.sin(self.db.Yaw)*self.db.VelocityX*0.033)
+
+
+                # if newLap:
+                    # print(self.createTrack)
+                    # print(self.Logging)
+                    # print(self.logLap < self.db.Lap'])
+                    # print(self.logLap)
+                    # print(self.db.Lap'])
+
+
+                if self.createTrack and self.Logging and self.logLap < self.db.Lap and newLap:
+                # if self.createTrack and self.db.Lap'] > self.logLap and newLap:
+                    tempx = np.cumsum(self.dx, dtype=float)
+                    tempy = np.cumsum(self.dy, dtype=float)
+
+                    dx = tempx[-1] - tempx[0]
+                    dy = tempy[-1] - tempy[0]
+
+                    self.x = np.cumsum(self.dx - dx/len(tempx), dtype=float)
+                    self.y = np.cumsum(self.dy - dy/len(tempy), dtype=float)
+
+                    width = max(self.x)-min(self.x)
+                    height = max(self.y)-min(self.y)
+
+                    scalingFactor = min(400/height,  720/width)
+
+                    self.x = scalingFactor * self.x + (400 - min(scalingFactor * self.x) - 360)
+                    self.y = scalingFactor * -self.y + (240 - min(scalingFactor * -self.y) - 200)
+
+
+                    with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
+                        thewriter = csv.writer(f)
+                        for l in range(0, len(self.dist)):
+                            if l > 2:
+                                if not self.dist[l-1] >= self.dist[l]:
+                                    thewriter.writerow([self.dist[l], self.x[l], self.y[l]])
+
+                    self.db.map = []
+                    self.db.x = []
+                    self.db.y = []
+                    # for i in range(0, len(self.x)):
+                    for i in range(0, l):
+                        self.db.map.append([float(self.x[i]), float(self.y[i])])
+                    self.db.dist = self.dist[0:l]
+                    self.db.x = self.x[0:l]
+                    self.db.y = self.y[0:l]
+
+                    self.createTrack = False
+                    self.Logging = False
+
+                    print('Track has been successfully created')
+                    print('Saved trcak as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
+
+
+
+                # fuel consumption -----------------------------------------------------------------------------------------
+                if len(self.db.FuelConsumption) >= 1:
+                    avg = sum(self.db.FuelConsumption) / len(self.db.FuelConsumption)
+                    self.db.FuelConsumptionStr = iDDUhelper.roundedStr2(avg)
+                    LapRem = self.db.FuelLevel / avg
+                    if LapRem < 3:
+                        self.db.Alarm.extend([3])
+                    if LapRem < 1:
+                        self.db.Alarm.extend([4])
+                        self.db.FuelLapStr = iDDUhelper.roundedStr1(LapRem)
+                    if newLap and not self.db.onPitRoad:
+                        fuelNeed = avg * self.db.LapsToGo
+                        fuelAdd = min(max(fuelNeed - self.db.FuelLevel + avg, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'])
+                        self.db.fuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
+                        if fuelAdd == 0:
+                            self.ir.pit_command(2, 1)
+                            self.ir.pit_command(11)
+                            self.db.textColourFuelAdd = 'textColour'
+                        else:
+                            if not round(fuelAdd) == round(self.db.oldFuelAdd):
+                                self.ir.pit_command(2, round(fuelAdd + 0.5 + 1e-10))
+                            if fuelAdd <self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel - avg:
+                                self.db.textColourFuelAdd = 'green'
+                            elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + avg:
+                                self.db.textColourFuelAdd = 'orange'
+                            else:
+                                self.db.textColourFuelAdd = 'grey'
+                        self.db.oldFuelAdd = fuelAdd
+                else:
+                    self.db.FuelConsumptionStr = '0'
+                    self.db.FuelLapStr = '0'
+                    self.db.fuelAddStr = '0'
+
+                # alarm
+                if self.db.dcTractionControlToggle:
+                    self.db.Alarm.extend([1])
+
+                if type(self.db.FuelLevel) is float:
+                    if self.db.FuelLevel <= 5:
+                        self.db.Alarm.extend([2])
+            else:
+                if self.db.WasOnTrack:
+                    print('Getting out of car')
+                    self.db.WasOnTrack = False
+                    self.db.init = True
+                # do if car is not on track but don't do if car is on track ------------------------------------------------
+                # data.update(iDDUhelper.getData(ir, listStart))
+                self.init = True
+
+            # do if sim is running after updating data ---------------------------------------------------------------------
+            if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
+                self.db.RemLapValue = max(min(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] - self.db.Lap + 1,
+                                                   self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']), 0)
+                self.db.RemLapValueStr = str(self.db.RemLapValue)
+            else:
+                self.db.RemLapValue = 0
+                self.db.RemLapValueStr = '0'
+            RemTimeValue = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
+
+            # if (not data['SessionFlags'] == data['oldSessionFlags']):
+            #     FlagCallTime = data['SessionTime']
+            #     Flags = str(("0x%x" % ir['SessionFlags'])[2:11])
+            #
+            #     if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
+            #         backgroundColour = green
+            #         GreenTime = data['SessionTimeRemain']
+            #     if Flags[7] == '1':  # or Flags[0] == '4'
+            #         backgroundColour = red
+            #     if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
+            #         backgroundColour = yellow
+            #     if Flags[6] == '2':
+            #         backgroundColour = blue
+            #     if Flags[7] == '2':
+            #         backgroundColour = white
+            #         # set font color to black
+            #     if Flags[7] == '1':  # checkered
+            #         FlagExceptionVal = 1
+            #         FlagException = True
+            #         # set font color to grey
+            #     if Flags[2] == '1':  # repair
+            #         FlagException = True
+            #         FlagExceptionVal = 2
+            #         color = black
+            #         # set Control Label Background Color to orange
+            #     if Flags[4] == '4' or Flags[4] == '8':  # SC
+            #         FlagException = True
+            #         color = yellow
+            #         FlagExceptionVal = 3
+            #     if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
+            #         FlagException = True
+            #         FlagExceptionVal = 4
+            #         # set font color to grey
+            #         # set Control Label Background Color to white
+            #         FlagException = True
+            #     if Flags[6] == '4':  # debry
+            #         FlagExceptionVal = 5
+            #     if Flags[3] == '8' or Flags[3] == 'c':  # warning
+            #         FlagException = True
+            #         FlagExceptionVal = 6
+            #         # set Control Label Background Color to white
+            #         # set font color to gray
+            #
+            #     data['oldSessionFlags'] = data['SessionFlags']
+            # elif data['SessionTime'] > (FlagCallTime + 3):
+            #     backgroundColour = black
+            #     FlagException = False
+            self.db.isRunning = True
+        else:
+            # do if sim is not running -------------------------------------------------------------------------------------
+            if self.db.isRunning == True:
+                self.db.isRunning = False
+                self.db.waiting = False
+                self.db.oldSessionNum = -1
+                self.db.SessionNum = 0
+            # self.db.RemLapValueStr'] = '-'
+            # self.db.RemLapValue'] = '-'
+            # self.db.FuelConsumptionStr'] = '-'
+            # if self.SessionInfo:
+            #     self.SessionInfo = False
+            #     self.backgroundColour = self.black
+        
+    def loadTrack(self, name):
+        print('Loading track: ' + r"track/" + name + '.csv')
+
+        self.db.__setattr__('map', [])
+        self.db.__setattr__('x', [])
+        self.db.__setattr__('y', [])
+        self.db.__setattr__('dist', [])
+
+        with open(r"track/" + name + '.csv') as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for line in csv_reader:
+                self.db.dist.append(float(line[0]))
+                self.db.x.append(float(line[1]))
+                self.db.y.append(float(line[2]))
+
+                self.db.map.append([float(line[1]), float(line[2])])
+        print('Track has been loaded successfully.')
+
+    def initSession(self):
+        print('Init')
+        self.getTrackFiles()
+        if self.db.startUp:
+            self.db.oldSessionNum = self.db.SessionNum
+
+            # self.db.SessionInfo = self.db.SessionInfo
+            self.SessionInfo = True
+            # self.db.DriverInfo = self.db.DriverInfo
+            self.db.WeekendInfo = self.db.WeekendInfo
+            self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * \
+                                          self.db.DriverInfo['DriverCarMaxFuelPct']
+            self.db.DriverCarIdx = self.db.DriverInfo['DriverCarIdx']
+
+            if self.db.WeekendInfo['TrackName'] + '.csv' in self.trackList:
+                self.loadTrack(self.db.WeekendInfo['TrackName'])
+                self.createTrack = False
+            else:
+                self.loadTrack('dummie_track')
+                self.createTrack = True
+                print('Creating Track')
+
+            if self.db.WeekendInfo['Category'] == 'DirtRoad':
+                self.db.__setattr__('RX', True)
+                self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
+                print('RALLY CROSS!')
+                # for n in range(0, len(self.db.SessionInfo']['Sessions'][self.db.SessionNum]['ResultsPositions'])):
+                #     self.db.JokerLaps[self.db.SessionInfo']['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = self.db.SessionInfo']['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
+                # self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(self.db.JokerLapsRequired)
+            else:
+                self.db.__setattr__('RX', False)
+                print('NO RALLY CROSS!')
+
+            if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
+                self.db.LabelSessionDisplay[4] = 0  # ToGo
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
+                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                    self.db.LabelSessionDisplay[2] = 0  # Remain
+                else:
+                    self.db.LabelSessionDisplay[2] = 1  # Remain
+                    self.db.LabelSessionDisplay[3] = 0  # Elapsed
+            else:
+                self.db.LabelSessionDisplay[4] = 1  # ToGo
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
+                    self.db.LabelSessionDisplay[4] = 0  # ToGo
+                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                else:
+                    self.db.LabelSessionDisplay[4] = 1  # ToGo
+                    self.db.LabelSessionDisplay[3] = 0  # Elapsed
+
+            if self.db.WeekendInfo['Category'] == 'DirtRoad':
+                self.db.LabelSessionDisplay[5] = 1  # Joker
+            else:
+                self.db.LabelSessionDisplay[5] = 0  # Joker
+
+    def getTrackFiles(self):
+        print('Collecting Track files...')
+        self.dir = cwd = os.getcwd()
+        self.trackdir = self.dir + r"\track"
+
+        self.trackList = []
+
+        # get list of trackfiles
+        os.chdir(self.trackdir)
+        for file in glob.glob("*.csv"):
+            self.trackList.append(file)
+            print('- ' + str(file))
+        os.chdir(self.dir)
+
+        # self.loadTrack('dummie_track')

@@ -1,0 +1,3 @@
+[submodule "functionalities"]
+	path = functionalities
+	url = https://github.com/MarcMatten/functionalities.git
