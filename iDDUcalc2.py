@@ -13,6 +13,7 @@ import glob
 class IDDUCalc2:
     def __init__(self, db):
         self.db = db
+
         self.white = (255, 255, 255)
         self.red = (255, 0, 0)
         self.green = (0, 255, 0)
@@ -21,6 +22,8 @@ class IDDUCalc2:
         self.orange = (255, 133, 13)
         self.grey = (141, 141, 141)
         self.black = (0, 0, 0)
+
+        self.FlagCallTime = 0
 
         self.Yaw=[]
         self.YawNorth=[]
@@ -245,7 +248,7 @@ class IDDUCalc2:
                     self.Logging = False
 
                     print('Track has been successfully created')
-                    print('Saved trcak as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
+                    print('Saved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
 
 
 
@@ -308,53 +311,55 @@ class IDDUCalc2:
                 self.db.RemLapValueStr = '0'
             RemTimeValue = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
 
-            # if (not data['SessionFlags'] == data['oldSessionFlags']):
-            #     FlagCallTime = data['SessionTime']
-            #     Flags = str(("0x%x" % ir['SessionFlags'])[2:11])
-            #
-            #     if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
-            #         backgroundColour = green
-            #         GreenTime = data['SessionTimeRemain']
-            #     if Flags[7] == '1':  # or Flags[0] == '4'
-            #         backgroundColour = red
-            #     if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
-            #         backgroundColour = yellow
-            #     if Flags[6] == '2':
-            #         backgroundColour = blue
-            #     if Flags[7] == '2':
-            #         backgroundColour = white
-            #         # set font color to black
-            #     if Flags[7] == '1':  # checkered
-            #         FlagExceptionVal = 1
-            #         FlagException = True
-            #         # set font color to grey
-            #     if Flags[2] == '1':  # repair
-            #         FlagException = True
-            #         FlagExceptionVal = 2
-            #         color = black
-            #         # set Control Label Background Color to orange
-            #     if Flags[4] == '4' or Flags[4] == '8':  # SC
-            #         FlagException = True
-            #         color = yellow
-            #         FlagExceptionVal = 3
-            #     if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
-            #         FlagException = True
-            #         FlagExceptionVal = 4
-            #         # set font color to grey
-            #         # set Control Label Background Color to white
-            #         FlagException = True
-            #     if Flags[6] == '4':  # debry
-            #         FlagExceptionVal = 5
-            #     if Flags[3] == '8' or Flags[3] == 'c':  # warning
-            #         FlagException = True
-            #         FlagExceptionVal = 6
-            #         # set Control Label Background Color to white
-            #         # set font color to gray
-            #
-            #     data['oldSessionFlags'] = data['SessionFlags']
-            # elif data['SessionTime'] > (FlagCallTime + 3):
-            #     backgroundColour = black
-            #     FlagException = False
+            if not (self.db.SessionFlags == self.db.oldSessionFlags):
+                self.FlagCallTime = self.db.SessionTime
+                Flags = str(("0x%x" % self.db.SessionFlags)[2:11])
+                self.db.FlagExceptionVal = 0
+                if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
+                    self.db.backgroundColour = self.green
+                    GreenTime = self.db.SessionTimeRemain
+                if Flags[7] == '1':  # or Flags[0] == '4'
+                    self.db.backgroundColour = self.red
+                if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
+                    self.db.backgroundColour = self.yellow
+                if Flags[6] == '2':
+                    self.db.backgroundColour = self.blue
+                if Flags[7] == '2':
+                    self.db.backgroundColour = self.white
+                    # set font color to black
+                if Flags[7] == '1':  # checkered
+                    self.db.FlagExceptionVal = 1
+                    self.db.FlagException = True
+                    # set font color to grey
+                if Flags[2] == '1':  # repair
+                    self.db.FlagException = True
+                    self.db.FlagExceptionVal = 2
+                    self.db.backgroundColour = self.black
+                    # set Control Label Background Color to orange
+                if Flags[4] == '4' or Flags[4] == '8':  # SC
+                    self.db.FlagException = True
+                    self.db.backgroundColour = self.yellow
+                    self.db.FlagExceptionVal = 3
+                if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
+                    self.db.FlagException = True
+                    self.db.FlagExceptionVal = 4
+                    # set font color to grey
+                    # set Control Label Background Color to white
+                    self.db.FlagException = True
+                if Flags[6] == '4':  # debry
+                    self.db.FlagExceptionVal = 5
+                if Flags[3] == '8' or Flags[3] == 'c':  # warning
+                    self.db.FlagException = True
+                    self.db.FlagExceptionVal = 6
+                    # set Control Label Background Color to white
+                    # set font color to gray
+
+                self.db.oldSessionFlags = self.db.SessionFlags
+                
+            elif self.db.SessionTime > (self.FlagCallTime + 3):
+                self.db.backgroundColour = self.black
+                self.db.FlagException = False
+                self.db.FlagExceptionVal = 0
             self.db.isRunning = True
         else:
             # do if sim is not running -------------------------------------------------------------------------------------

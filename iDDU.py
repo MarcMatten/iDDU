@@ -26,13 +26,14 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
           'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': []}
 # calculated data
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
-            'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0, 'SessionTime': 0,
+            'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
             'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
             'SessionFlags': 0, 'oldSessionlags': 0, 'LapsToGo': 0, 'SessionLapRemain': 0, 'FuelConsumptionStr': '5.34',
             'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0, 'FlagException': False,
             'FlagExceptionVal': 0, 'Alarm': [], 'RaceLaps': 0, 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
-            'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False}
+            'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
+            'backgroundColour': (0, 0, 0)}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()

@@ -82,7 +82,7 @@ class RenderMain:
         self.fontLarge = self.pygame.font.Font("files\KhmerUI.ttf", 60)
         self.fontHuge = self.pygame.font.Font("files\KhmerUI.ttf", 480)
 
-        self.SCLabel = self.fontHuge.render('SC', True, self.textColour)
+        self.SCLabel = self.fontHuge.render('SC', True, self.black)
 
         # display
         self.resolution = (800, 480)
@@ -274,7 +274,21 @@ class RenderScreen(RenderMain):
             FuelLap = self.fontLarge.render(self.db.FuelLapStr, True, self.textColour)
             FuelAdd = self.fontLarge.render(self.db.FuelAddStr, True, self.textColourFuelAdd)
 
-            self.screen.fill(self.backgroundColour)
+            # self.screen.fill(self.backgroundColour)
+            self.screen.fill(self.db.backgroundColour)
+            if self.db.FlagException:
+                if self.db.FlagExceptionVal == 1:
+                    self.screen.blit(self.checkered, [0, 0])
+                elif self.db.FlagExceptionVal == 2:
+                    pygame.draw.circle(self.screen, self.orange, [400, 240], 185)
+                elif self.db.FlagExceptionVal == 3:
+                    self.screen.blit(self.SCLabel, (130, -35))
+                elif self.db.FlagExceptionVal == 4:
+                    self.screen.blit(self.dsq, [0, 0])
+                elif self.db.FlagExceptionVal == 5:
+                    self.screen.blit(self.debry, [0, 0])
+                elif self.db.FlagExceptionVal == 6:
+                    self.screen.blit(self.warning, [0, 0])
 
             # define frames
             # self.Frame1.drawFrame()
