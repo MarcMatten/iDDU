@@ -355,7 +355,7 @@ class IDDUCalc2:
                     # set font color to gray
 
                 self.db.oldSessionFlags = self.db.SessionFlags
-                
+
             elif self.db.SessionTime > (self.FlagCallTime + 3):
                 self.db.backgroundColour = self.black
                 self.db.FlagException = False
