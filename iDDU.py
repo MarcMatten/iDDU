@@ -16,7 +16,7 @@ helpData = {'done': False, 'timeStr': 0, 'waiting': True, 'LabelSessionDisplay':
 iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 0, 'dcFuelMixture': 0,
           'dcThrottleShape': 0, 'dcTractionControl': 0, 'dcTractionControl2': 0, 'dcTractionControlToggle': 0,
           'dcABS': 0, 'dcBrakeBias': 0, 'FuelLevel': 0, 'Lap': 123, 'IsInGarage': 0, 'LapDistPct': 0, 'OnPitRoad': 0,
-          'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'RaceLaps': 0, 'SessionLapsRemain': 0,
+          'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0,
           'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False, 'Gear': 0,
           'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
                                      'Drivers': []}, 'CarIdxLapDistPct': [], 'CarIdxOnPitRoad': [],
@@ -24,17 +24,17 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
                               [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
                                 'ResultsPositions':
                                     [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
-          'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0}
+          'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0} #'RaceLaps': 0,
 # calculated data
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
             'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
             'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
             'SessionFlags': 0, 'oldSessionlags': 0, 'LapsToGo': 0, 'SessionLapRemain': 0, 'FuelConsumptionStr': '5.34',
             'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0, 'FlagException': False,
-            'FlagExceptionVal': 0, 'Alarm': [], 'RaceLaps': 0, 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0,
+            'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 205,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
             'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
-            'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (0, 0, 0), 'textColour': (141, 141, 141)}
+            'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141), 'FuelLaps': 1, 'FuelAdd': 1}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
@@ -65,23 +65,18 @@ class UpShiftTone(threading.Thread):
         threading.Thread.__init__(self)
         self.rate = rate
         self.db = RTDB
-        self.ShiftRPM = 1234
-        self.init = False
+        self.ShiftRPM = 20000
+        self.initialised = False
         self.fname = "files\Beep.wav"  # path to beep soundfile
         self.IsOnTrack = False
 
     def run(self):
         while 1:
-            if self.db.startUp:
-                if not self.init:
-                    self.initialise()
-                    self.init = True
-            else:
-                self.init = False
-
             # execute this loop while iRacing is running
             while self.db.startUp:
-                # two beeps sounds as notification when entering track
+                if not self.initialised:
+                    self.initialise()
+                # two beeps sounds as notification when entering iRacing
                 if self.db.IsOnTrack and not self.IsOnTrack:
                     self.IsOnTrack = True
                     winsound.PlaySound(self.fname, winsound.SND_FILENAME)
@@ -99,6 +94,8 @@ class UpShiftTone(threading.Thread):
                 if not self.db.IsOnTrack and self.IsOnTrack:
                     self.IsOnTrack = False
 
+            self.initialised = False
+
             
     def initialise(self):
         time.sleep(0.1)
@@ -115,6 +112,8 @@ class UpShiftTone(threading.Thread):
         winsound.PlaySound(self.fname, winsound.SND_FILENAME)
         time.sleep(0.3)
         winsound.PlaySound(self.fname, winsound.SND_FILENAME)
+
+        self.initialised = True
         
 
 # initialise and start thread

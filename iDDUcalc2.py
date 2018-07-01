@@ -261,11 +261,12 @@ class IDDUCalc2:
                         self.db.Alarm.extend([3])
                     if LapRem < 1:
                         self.db.Alarm.extend([4])
-                        self.db.FuelLapStr = iDDUhelper.roundedStr1(LapRem)
+                    self.db.FuelLapStr = iDDUhelper.roundedStr1(LapRem)
                     if newLap and not self.db.onPitRoad:
                         fuelNeed = avg * self.db.LapsToGo
                         fuelAdd = min(max(fuelNeed - self.db.FuelLevel + avg, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'])
-                        self.db.fuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
+                        self.db.FuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
+                        print('- ', self.db.LapsToGo)
                         if fuelAdd == 0:
                             self.ir.pit_command(2, 1)
                             self.ir.pit_command(11)
@@ -273,7 +274,7 @@ class IDDUCalc2:
                         else:
                             if not round(fuelAdd) == round(self.db.oldFuelAdd):
                                 self.ir.pit_command(2, round(fuelAdd + 0.5 + 1e-10))
-                            if fuelAdd <self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel - avg:
+                            if fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel - avg:
                                 self.db.textColourFuelAdd = self.green
                             elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + avg:
                                 self.db.textColourFuelAdd = self.orange
@@ -283,7 +284,7 @@ class IDDUCalc2:
                 else:
                     self.db.FuelConsumptionStr = '0'
                     self.db.FuelLapStr = '0'
-                    self.db.fuelAddStr = '0'
+                    self.db.FuelAddStr = '0'
 
                 # alarm
                 if self.db.dcTractionControlToggle:

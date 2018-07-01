@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7fe4d8cf-5e8e-4774-a6cb-63b5dca1f8d0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDU.py" afterPath="$PROJECT_DIR$/iDDU.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDURender2.py" afterPath="$PROJECT_DIR$/iDDURender2.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDUcalc2.py" afterPath="$PROJECT_DIR$/iDDUcalc2.py" />
@@ -43,6 +42,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="iDDUcalc.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/iDDUcalc.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="45" column="27" lean-forward="false" selection-start-line="45" selection-start-column="19" selection-end-line="45" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="iRefresh.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/iRefresh.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -55,23 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="iDDUrender.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/iDDUrender.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#13#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="iDDU.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="iDDU.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/iDDU.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="309">
-              <caret line="33" column="45" lean-forward="false" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
+              <caret line="33" column="115" lean-forward="false" selection-start-line="33" selection-start-column="115" selection-end-line="33" selection-end-column="115" />
               <folding>
                 <element signature="e#31#47#0" expanded="true" />
               </folding>
@@ -79,11 +76,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="iDDUcalc2.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="iDDUrender.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/iDDUrender.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="iDDUcalc2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/iDDUcalc2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="332" column="48" lean-forward="false" selection-start-line="332" selection-start-column="48" selection-end-line="332" selection-end-column="48" />
+            <state relative-caret-position="332">
+              <caret line="229" column="59" lean-forward="false" selection-start-line="226" selection-start-column="93" selection-end-line="226" selection-end-column="96" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -91,21 +98,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="iDDUcalc.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/iDDUcalc.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1564">
-              <caret line="317" column="40" lean-forward="false" selection-start-line="317" selection-start-column="35" selection-end-line="317" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="iDDURender2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/iDDURender2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="741">
-              <caret line="305" column="69" lean-forward="false" selection-start-line="305" selection-start-column="69" selection-end-line="305" selection-end-column="69" />
+            <state relative-caret-position="238">
+              <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="32" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -124,28 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>iRData['</find>
-      <find>oldSessionNum</find>
-      <find>SessionFlags</find>
-      <find>oldSessionFlags</find>
-      <find>SessionTimeRemain</find>
-      <find>FlagCallTime</find>
-      <find>flag</find>
-      <find>orange</find>
-      <find>FlagExceptionVal</find>
-      <find>backgroundColour</find>
-      <find>checkered</find>
-      <find>back</find>
-      <find>GreenTime</find>
-      <find>oldSess</find>
-      <find>sessionT</find>
-      <find>rpm</find>
-      <find>ir['DriverInfo']</find>
-      <find>startUp</find>
-      <find>pygame</find>
-      <find>al</find>
-      <find>red</find>
-      <find>extend</find>
       <find>alarm</find>
       <find>fueladd</find>
       <find>textColourFuelAdd</find>
@@ -154,6 +129,28 @@
       <find>RenderScreen</find>
       <find>ala</find>
       <find>Labels2</find>
+      <find>ue</find>
+      <find>racel</find>
+      <find>RaceLaps</find>
+      <find>FuelLaps</find>
+      <find>fuellas</find>
+      <find>togo</find>
+      <find>LapsToGo</find>
+      <find>FuelAdd</find>
+      <find>5.4</find>
+      <find>FuelLastCons</find>
+      <find>FuelLapStr</find>
+      <find>FuelConsumptionStr</find>
+      <find>FuelLap</find>
+      <find>ShiftRPM</find>
+      <find>startUp</find>
+      <find>ir.pit</find>
+      <find>1</find>
+      <find>add</find>
+      <find>self.db.fuelAddStr</find>
+      <find>FuelAddStr</find>
+      <find>print</find>
+      <find>200</find>
     </findStrings>
     <replaceStrings>
       <replace>'</replace>
@@ -168,6 +165,8 @@
       <replace>self.db.</replace>
       <replace>startUp</replace>
       <replace>self.db.DriverInfo</replace>
+      <replace>FuelAddStr</replace>
+      <replace>self.db.FuelAddStr</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -186,8 +185,8 @@
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/functionalities/RTDB/RTDB.py" />
         <option value="$PROJECT_DIR$/iDDUcalc.py" />
-        <option value="$PROJECT_DIR$/iDDUcalc2.py" />
         <option value="$PROJECT_DIR$/iDDURender2.py" />
+        <option value="$PROJECT_DIR$/iDDUcalc2.py" />
         <option value="$PROJECT_DIR$/iDDU.py" />
       </list>
     </option>
@@ -214,8 +213,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -435,8 +434,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14925373" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15085287" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25135428" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -521,9 +521,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="32" column="33" lean-forward="false" selection-start-line="32" selection-start-column="27" selection-end-line="32" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -565,9 +563,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="32" column="33" lean-forward="false" selection-start-line="32" selection-start-column="27" selection-end-line="32" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -609,9 +605,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="19" column="88" lean-forward="false" selection-start-line="19" selection-start-column="88" selection-end-line="19" selection-end-column="88" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -653,9 +647,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
           <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -680,9 +672,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="14" column="85" lean-forward="false" selection-start-line="14" selection-start-column="69" selection-end-line="14" selection-end-column="85" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -707,9 +697,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="14" column="85" lean-forward="false" selection-start-line="14" selection-start-column="69" selection-end-line="14" selection-end-column="85" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -824,38 +812,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/iDDUrender.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/iDDUcalc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1564">
-          <caret line="317" column="40" lean-forward="false" selection-start-line="317" selection-start-column="35" selection-end-line="317" selection-end-column="40" />
+        <state relative-caret-position="281">
+          <caret line="45" column="27" lean-forward="false" selection-start-line="45" selection-start-column="19" selection-end-line="45" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/iDDUcalc2.py">
+    <entry file="file://$PROJECT_DIR$/iDDUrender.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="332" column="48" lean-forward="false" selection-start-line="332" selection-start-column="48" selection-end-line="332" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="17">
+          <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/iDDURender2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="741">
-          <caret line="305" column="69" lean-forward="false" selection-start-line="305" selection-start-column="69" selection-end-line="305" selection-end-column="69" />
+        <state relative-caret-position="238">
+          <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="32" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
@@ -865,9 +841,19 @@
     <entry file="file://$PROJECT_DIR$/iDDU.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
-          <caret line="33" column="45" lean-forward="false" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
+          <caret line="33" column="115" lean-forward="false" selection-start-line="33" selection-start-column="115" selection-end-line="33" selection-end-column="115" />
           <folding>
             <element signature="e#31#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDUcalc2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="332">
+          <caret line="229" column="59" lean-forward="false" selection-start-line="226" selection-start-column="93" selection-end-line="226" selection-end-column="96" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>

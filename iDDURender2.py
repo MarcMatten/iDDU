@@ -270,13 +270,13 @@ class RenderScreen(RenderMain):
 
 
             # Fuel
-            FuelLevel = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLevel), True,
-                                              self.db.textColour)
-            FuelCons = self.fontLarge.render(self.db.FuelConsumptionStr, True, self.db.textColour)
-            FuelLastCons = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLastCons),
-                                                 True, self.db.textColour)
-            FuelLap = self.fontLarge.render(self.db.FuelLapStr, True, self.db.textColour)
-            FuelAdd = self.fontLarge.render(self.db.FuelAddStr, True, self.db.textColourFuelAdd)
+            # FuelLevel = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLevel), True,
+            #                                   self.db.textColour)
+            # FuelCons = self.fontLarge.render(self.db.FuelConsumptionStr, True, self.db.textColour)
+            # FuelLastCons = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLastCons),
+            #                                      True, self.db.textColour)
+            # FuelLaps = self.fontLarge.render(self.db.FuelLapStr, True, self.db.textColour)
+            # FuelAdd = self.fontLarge.render(self.db.FuelAddStr, True, self.db.textColourFuelAdd)
 
             # self.screen.fill(self.backgroundColour)
             self.screen.fill(self.db.backgroundColour)
@@ -330,11 +330,13 @@ class RenderScreen(RenderMain):
             FuelLastCons = iDDUhelper.roundedStr2(self.db.FuelLastCons)
             FuelLaps = self.db.FuelLapStr
             FuelAdd = self.db.FuelAddStr
+            # print('-- ', FuelAdd)
 
             # frame input
             for i in range(0, len(self.Labels1)):
                 self.Labels1[i][1].setTextColour(self.db.textColour)
             self.Labels1[12][1].setTextColour(self.db.textColourFuelAdd)
+
             for i in range(0, len(self.Labels1)):
                 self.Labels1[i][1].drawLabel(eval(self.Labels1[i][0]))
 
