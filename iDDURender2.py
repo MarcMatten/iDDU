@@ -69,12 +69,12 @@ class RenderMain:
         self.grey = (141, 141, 141)
         self.black = (0, 0, 0)
 
-        self.pygame = pygame
-        self.pygame.init()
-
         self.backgroundColour = self.black
         self.textColour = self.grey
         self.textColourFuelAdd = self.textColour
+
+        self.pygame = pygame
+        self.pygame.init()
 
         self.fontTiny = self.pygame.font.Font("files\KhmerUI.ttf", 12)  # Khmer UI Calibri
         self.fontSmall = self.pygame.font.Font("files\KhmerUI.ttf", 20)
@@ -199,6 +199,10 @@ class RenderScreen(RenderMain):
 
     def render(self):
 
+        self.backgroundColour = self.db.backgroundColour
+        self.textColour = self.db.textColour
+        self.textColourFuelAdd = self.db.textColourFuelAdd
+
         ##### events ###########################################################################################################
         for event in self.pygame.event.get():
             if event.type == self.pygame.QUIT:
@@ -237,13 +241,13 @@ class RenderScreen(RenderMain):
             #     iDDUhelper.convertDelta(self.db.LapDeltaToSessionBestLap']), True,
             #     self.textColour)
             # Session Info
-            RemTime = self.fontLarge.render(str(self.db.RemTimeValue), True, self.textColour)
-            RemLap = self.fontLarge.render(self.db.RemLapValueStr, True, self.textColour)
-            Lap = self.fontLarge.render(str(self.db.Lap), True, self.textColour)
+            RemTime = self.fontLarge.render(str(self.db.RemTimeValue), True, self.db.textColour)
+            RemLap = self.fontLarge.render(self.db.RemLapValueStr, True, self.db.textColour)
+            Lap = self.fontLarge.render(str(self.db.Lap), True, self.db.textColour)
             Time = self.fontLarge.render(
                 iDDUhelper.convertTimeHHMMSS(
                     self.db.SessionTime - self.db.GreenTime), True,
-                self.textColour)
+                self.db.textColour)
             # Clock = self.fontSmall.render(self.db.clockValue'], True, self.textColour)
 
             # Control
@@ -267,12 +271,12 @@ class RenderScreen(RenderMain):
 
             # Fuel
             FuelLevel = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLevel), True,
-                                              self.textColour)
-            FuelCons = self.fontLarge.render(self.db.FuelConsumptionStr, True, self.textColour)
+                                              self.db.textColour)
+            FuelCons = self.fontLarge.render(self.db.FuelConsumptionStr, True, self.db.textColour)
             FuelLastCons = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLastCons),
-                                                 True, self.textColour)
-            FuelLap = self.fontLarge.render(self.db.FuelLapStr, True, self.textColour)
-            FuelAdd = self.fontLarge.render(self.db.FuelAddStr, True, self.textColourFuelAdd)
+                                                 True, self.db.textColour)
+            FuelLap = self.fontLarge.render(self.db.FuelLapStr, True, self.db.textColour)
+            FuelAdd = self.fontLarge.render(self.db.FuelAddStr, True, self.db.textColourFuelAdd)
 
             # self.screen.fill(self.backgroundColour)
             self.screen.fill(self.db.backgroundColour)
@@ -290,12 +294,24 @@ class RenderScreen(RenderMain):
                 elif self.db.FlagExceptionVal == 6:
                     self.screen.blit(self.warning, [0, 0])
 
+            # alarms
+            if len(self.db.Alarm) > 0:
+                if [1 for i in self.db.Alarm if i in [1]]:  # Traction Control
+                    pygame.draw.rect(self.screen, self.red, [413, 388, 250, 65])
+                if [1 for i in self.db.Alarm if i in [2]]:  # Fuel Level
+                    pygame.draw.rect(self.screen, self.red, [413, 23, 370, 65])
+                if [1 for i in self.db.Alarm if i in [3]]:  # Fuel Laps 1
+                    pygame.draw.rect(self.screen, self.orange, [413, 167, 195, 65])
+                if [1 for i in self.db.Alarm if i in [4]]:  # Fuel Laps 2
+                    pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
+
             # define frames
             # self.Frame1.drawFrame()
             # self.Frame2.drawFrame()
             # self.Frame3.drawFrame()
             # self.Frame4.drawFrame()
             for i in range(0, len(self.frames)):
+                self.frames[i].setTextColour(self.db.textColour)
                 self.frames[i].drawFrame()
 
             BestLap = iDDUhelper.convertTimeMMSSsss(self.db.LapBestLapTime)
@@ -317,6 +333,9 @@ class RenderScreen(RenderMain):
 
             # frame input
             for i in range(0, len(self.Labels1)):
+                self.Labels1[i][1].setTextColour(self.db.textColour)
+            self.Labels1[12][1].setTextColour(self.db.textColourFuelAdd)
+            for i in range(0, len(self.Labels1)):
                 self.Labels1[i][1].drawLabel(eval(self.Labels1[i][0]))
 
             Lap = str(self.db.Lap)
@@ -327,8 +346,11 @@ class RenderScreen(RenderMain):
             Elapsed = iDDUhelper.convertTimeHHMMSS(self.db.SessionTime)
             Remaining = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
 
+
+
             for i in range(0, len(self.LabelsSession)):
                 if self.db.LabelSessionDisplay[i]:
+                    self.LabelsSession[i][1].setTextColour(self.db.textColour)
                     self.LabelsSession[i][1].drawLabel(eval(self.LabelsSession[i][0]))
 
                     # Timing
@@ -401,9 +423,9 @@ class RenderScreen(RenderMain):
             # x = numpy.interp(self.db.LapDistPct']*100, self.db.dist'], self.db.x'])
             # y = numpy.interp(self.db.LapDistPct']*100, self.db.dist'], self.db.y'])
 
-            self.pygame.draw.lines(self.screen, self.textColour, True, [self.db.map[-1], self.db.map[0]], 30)
+            self.pygame.draw.lines(self.screen, self.db.textColour, True, [self.db.map[-1], self.db.map[0]], 30)
 
-            self.pygame.draw.lines(self.screen, self.textColour, True, self.db.map, 5)
+            self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.map, 5)
 
             # Label = self.fontTiny.render('23', True, self.white)
             # self.pygame.draw.circle(self.screen, self.red, [int(x), int(y)], 10, 0)
@@ -455,8 +477,9 @@ class Frame(RenderMain):
         self.x2 = x1 + dx - 1
         self.y1 = y1
         self.y2 = y1 + dy - 1
-        self.Label = self.fontSmall.render(title, True, self.textColour)
-        self.textSize = self.fontSmall.size(title)
+        self.title = title
+        self.Label = self.fontSmall.render(self.title, True, self.textColour)
+        self.textSize = self.fontSmall.size(self.title)
 
     def drawFrame(self):
         self.pygame.draw.lines(self.screen, self.textColour, False,
@@ -465,8 +488,13 @@ class Frame(RenderMain):
         self.screen.blit(self.Label, (self.x1 + 30, self.y1 - 10))
 
     def reinitFrame(self, title):
-        self.Label = self.fontSmall.render(title, True, self.textColour)
-        self.textSize = self.fontSmall.size(title)
+        self.title = title
+        self.Label = self.fontSmall.render(self.title, True, self.textColour)
+        self.textSize = self.fontSmall.size(self.title)
+
+    def setTextColour(self, colour):
+        self.textColour = colour
+        self.Label = self.fontSmall.render(self.title, True, self.textColour)
 
 
 class LabeledValue(RenderMain):
@@ -474,18 +502,26 @@ class LabeledValue(RenderMain):
         RenderMain.__init__(self)
         self.x = x
         self.y = y
+        self.title = title
         self.width = width
         self.value = initValue
         self.valFont = valFont
-        self.LabLabel = labFont.render(title, True, self.textColour)
-        self.ValLabel = valFont.render(self.value, True, self.textColour)
-        self.LabSize = labFont.size(title)
+        self.labFont = labFont
+        self.LabLabel = self.labFont.render(self.title, True, self.textColour)
+        self.ValLabel = self.valFont.render(self.value, True, self.textColour)
+        self.LabSize = labFont.size(self.title)
         self.ValSize = self.valFont.size(self.value)
 
     def drawLabel(self, value):
         self.value = value
         self.ValLabel = self.valFont.render(self.value, True, self.textColour)
+        self.LabLabel = self.labFont.render(self.title, True, self.textColour)
         self.ValSize = self.valFont.size(self.value)
 
         self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
         self.screen.blit(self.ValLabel, (self.x + self.width / 2 - self.ValSize[0], self.y - 36))
+
+    def setTextColour(self, colour):
+        self.textColour = colour
+        self.LabLabel = self.labFont.render(self.title, True, colour)
+        self.ValLabel = self.valFont.render(self.value, True, colour)

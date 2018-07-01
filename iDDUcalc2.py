@@ -269,16 +269,16 @@ class IDDUCalc2:
                         if fuelAdd == 0:
                             self.ir.pit_command(2, 1)
                             self.ir.pit_command(11)
-                            self.db.textColourFuelAdd = 'textColour'
+                            self.db.textColourFuelAdd = self.db.textColour
                         else:
                             if not round(fuelAdd) == round(self.db.oldFuelAdd):
                                 self.ir.pit_command(2, round(fuelAdd + 0.5 + 1e-10))
                             if fuelAdd <self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel - avg:
-                                self.db.textColourFuelAdd = 'green'
+                                self.db.textColourFuelAdd = self.green
                             elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + avg:
-                                self.db.textColourFuelAdd = 'orange'
+                                self.db.textColourFuelAdd = self.orange
                             else:
-                                self.db.textColourFuelAdd = 'grey'
+                                self.db.textColourFuelAdd = self.db.textColour
                         self.db.oldFuelAdd = fuelAdd
                 else:
                     self.db.FuelConsumptionStr = '0'
@@ -317,47 +317,45 @@ class IDDUCalc2:
                 self.db.FlagExceptionVal = 0
                 if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
                     self.db.backgroundColour = self.green
-                    GreenTime = self.db.SessionTimeRemain
+                    self.db.GreenTime = self.db.SessionTimeRemain
                 if Flags[7] == '1':  # or Flags[0] == '4'
                     self.db.backgroundColour = self.red
                 if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
                     self.db.backgroundColour = self.yellow
+                    self.db.textColour = self.black
                 if Flags[6] == '2':
                     self.db.backgroundColour = self.blue
                 if Flags[7] == '2':
                     self.db.backgroundColour = self.white
-                    # set font color to black
+                    self.db.textColour = self.black
                 if Flags[7] == '1':  # checkered
                     self.db.FlagExceptionVal = 1
                     self.db.FlagException = True
-                    # set font color to grey
                 if Flags[2] == '1':  # repair
                     self.db.FlagException = True
                     self.db.FlagExceptionVal = 2
+                    self.db.FlagExceptionVal = 2
                     self.db.backgroundColour = self.black
-                    # set Control Label Background Color to orange
                 if Flags[4] == '4' or Flags[4] == '8':  # SC
                     self.db.FlagException = True
                     self.db.backgroundColour = self.yellow
+                    self.db.textColour = self.black
                     self.db.FlagExceptionVal = 3
                 if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
                     self.db.FlagException = True
                     self.db.FlagExceptionVal = 4
-                    # set font color to grey
-                    # set Control Label Background Color to white
                     self.db.FlagException = True
                 if Flags[6] == '4':  # debry
                     self.db.FlagExceptionVal = 5
                 if Flags[3] == '8' or Flags[3] == 'c':  # warning
                     self.db.FlagException = True
                     self.db.FlagExceptionVal = 6
-                    # set Control Label Background Color to white
-                    # set font color to gray
 
                 self.db.oldSessionFlags = self.db.SessionFlags
 
             elif self.db.SessionTime > (self.FlagCallTime + 3):
                 self.db.backgroundColour = self.black
+                self.db.textColour = self.grey
                 self.db.FlagException = False
                 self.db.FlagExceptionVal = 0
             self.db.isRunning = True

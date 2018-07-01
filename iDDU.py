@@ -34,7 +34,7 @@ calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, '
             'FlagExceptionVal': 0, 'Alarm': [], 'RaceLaps': 0, 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
             'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
-            'backgroundColour': (0, 0, 0)}
+            'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (0, 0, 0), 'textColour': (141, 141, 141)}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
