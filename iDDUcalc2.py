@@ -274,10 +274,12 @@ class IDDUCalc2:
                         else:
                             if not round(fuelAdd) == round(self.db.oldFuelAdd):
                                 self.ir.pit_command(2, round(fuelAdd + 0.5 + 1e-10))
-                            if fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel - avg:
+                            if fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + avg:
                                 self.db.textColourFuelAdd = self.green
-                            elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + avg:
-                                self.db.textColourFuelAdd = self.orange
+                            elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + 2*avg:
+                                self.db.textColourFuelAdd = self.yellow
+                            elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] - self.db.FuelLevel + 3*avg:
+                                self.db.textColourFuelAdd = self.red
                             else:
                                 self.db.textColourFuelAdd = self.db.textColour
                         self.db.oldFuelAdd = fuelAdd
