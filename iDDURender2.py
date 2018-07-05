@@ -3,6 +3,7 @@ import pygame
 import math
 import csv
 import numpy
+import warnings
 
 
 # class RenderMain:
@@ -207,8 +208,8 @@ class RenderScreen(RenderMain):
         for event in self.pygame.event.get():
             if event.type == self.pygame.QUIT:
                 self.done = True
-            if event.type == self.pygame.KEYDOWN and event.key == self.pygame.K_ESCAPE:
-                self.done = True
+##            if event.type == self.pygame.KEYDOWN and event.key == self.pygame.K_ESCAPE:
+##                self.done = True
             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 3:
                 if self.fullscreen:
                     self.pygame.display.set_mode(self.resolution)
@@ -217,8 +218,6 @@ class RenderScreen(RenderMain):
                     self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
                     self.fullscreen = True
             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1:
-                # self.setBackgroundColour(self.red)
-                # self.setTextColour(self.green)
                 if self.ScreenNumber == 1:
                     self.ScreenNumber = 2
                 else:
@@ -425,9 +424,13 @@ class RenderScreen(RenderMain):
             # x = numpy.interp(self.db.LapDistPct']*100, self.db.dist'], self.db.x'])
             # y = numpy.interp(self.db.LapDistPct']*100, self.db.dist'], self.db.y'])
 
+            self.highlightSection(5, self.green)
+            self.highlightSection(1, self.red)
+
             self.pygame.draw.lines(self.screen, self.db.textColour, True, [self.db.map[-1], self.db.map[0]], 30)
 
             self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.map, 5)
+
 
             # Label = self.fontTiny.render('23', True, self.white)
             # self.pygame.draw.circle(self.screen, self.red, [int(x), int(y)], 10, 0)
@@ -454,22 +457,68 @@ class RenderScreen(RenderMain):
         y = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.y)
 
         if self.db.DriverInfo['DriverCarIdx'] == Idx:
-            dotColour = self.red
-            labelColour = self.white
-            if self.db.RX:
-                if self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1:
-                    self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
-        else:
-            dotColour = self.grey
-            labelColour = self.black
-            if self.db.RX:
-                if self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1:
-                    dotColour = self.green
-                    labelColour = self.black
+            if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
+                self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
+            self.drawCar(Idx, x, y, self.red, self.white)
 
+        else:
+            if not self.db.CarIdxOnPitRoad[Idx]:
+                if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
+                    self.drawCar(Idx, x, y, self.green, self.black)
+                else:
+                    self.drawCar(Idx, x, y, self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor']), self.black)
+            else:
+                return                    
+
+    def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
         self.pygame.draw.circle(self.screen, dotColour, [int(x), int(y)], 10, 0)
         self.screen.blit(Label, (int(x) - 6, int(y) - 7))
+
+    def bit2RBG(self, bitColor):
+        hexColor = format(bitColor, '06x')
+        return (int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0))
+
+    def highlightSection(self, width, colour):
+        timeStamp = numpy.interp(float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100, self.db.dist, self.db.time)
+        timeStamp1 = timeStamp - self.db.PitStopDelta - width/2
+        while timeStamp1 < 0:
+            timeStamp1 = timeStamp1 + self.db.time[-1]
+
+        timeStamp2 = timeStamp - self.db.PitStopDelta + width/2
+        while timeStamp2 > self.db.time[-1]:
+            timeStamp2 = timeStamp2 - self.db.time[-1]
+
+
+        timeStampStart = timeStamp1
+        timeStampEnd = timeStamp2
+
+        try:
+            if timeStamp2 > timeStamp1:
+                map = [self.db.map[t] for t in range(0, len(self.db.map)) if
+                       ((self.db.time[t] < timeStampEnd) and (self.db.time[t] > timeStampStart))]
+                self.pygame.draw.lines(self.screen, colour, False, map, 20)
+            else:
+
+                map1 = [self.db.map[t] for t in range(0, len(self.db.map)) if
+                       (self.db.time[t] <= max(timeStampEnd, self.db.time[1]))]
+                map2 = [self.db.map[t] for t in range(0, len(self.db.map)) if
+                       (self.db.time[t] >= min(timeStampStart, self.db.time[-1]))]
+
+                self.pygame.draw.lines(self.screen, colour, False, map1, 20)
+                self.pygame.draw.lines(self.screen, colour, False, map2, 20)
+        except:
+            warnings.warn('Error in highlightSection!')
+
+        # temp_lower = numpy.interp(self.db.CarIdxLapDistPct, self.db.time, self.db.dist)
+        # temp_upper =
+
+        # map = [self.db.map[t] for t in range(0, len(self.db.map)) if (
+        # (self.db.dist[t] < self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']] * 100 + 10) and (
+        # self.db.dist[t] > self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']] * 100 - 10))]
+        # map = [self.db.map[t] for t in range(0, len(self.db.map)) if ((self.db.dist[t] < temp_upper) and (self.db.dist[t] > temp_lower))]
+
+        # self.pygame.draw.lines(self.screen, self.blue, False, map, 20)
 
 
 class Frame(RenderMain):

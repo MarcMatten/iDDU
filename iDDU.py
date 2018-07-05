@@ -19,12 +19,12 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
           'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0,
           'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False, 'Gear': 0,
           'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
-                                     'Drivers': []}, 'CarIdxLapDistPct': [], 'CarIdxOnPitRoad': [],
+                                     'Drivers': []}, 'CarIdxLapDistPct': [0], 'CarIdxOnPitRoad': [],
           'SessionInfo': {'Sessions':
                               [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
                                 'ResultsPositions':
                                     [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
-          'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0} #'RaceLaps': 0,
+          'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0 } #'RaceLaps': 0,
 # calculated data
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
             'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
@@ -34,7 +34,8 @@ calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, '
             'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 205,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
             'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
-            'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141), 'FuelLaps': 1, 'FuelAdd': 1}
+            'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141),
+            'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 10, 'time': []}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()

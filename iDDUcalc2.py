@@ -30,8 +30,10 @@ class IDDUCalc2:
         self.VelocityX=[]
         self.VelocityY=[]
         self.dist=[]
+        self.time=[]
         self.dx=[]
         self.dy=[]
+        self.Logging = False
 
         self.ir = irsdk.IRSDK()
 
@@ -142,6 +144,7 @@ class IDDUCalc2:
                     # print(self.db.SessionNum)
                     # print(self.db.oldSessionNum'])
                     # self.initSession(iRData)
+                    print(self.db.DriverInfo)
                     self.db.init = False
                     self.db.OutLap = True
                     self.db.LastFuelLevel = self.db.FuelLevel
@@ -188,12 +191,14 @@ class IDDUCalc2:
                     if not self.Logging:
                         self.logLap = self.db.Lap
                         self.Logging = True
+                        self.timeLogingStart = self.db.SessionTime
 
                     self.Yaw.append(self.db.Yaw)
                     self.YawNorth.append(self.db.YawNorth)
                     self.VelocityX.append(self.db.VelocityX)
                     self.VelocityY.append(self.db.VelocityY)
                     self.dist.append(self.db.LapDistPct*100)
+                    self.time.append(self.db.SessionTime-self.timeLogingStart)
 
                     self.dx.append(math.cos(self.db.Yaw)*self.db.VelocityX*0.033 - math.sin(self.db.Yaw)*self.db.VelocityY*0.033)
                     self.dy.append(math.cos(self.db.Yaw)*self.db.VelocityY*0.033 + math.sin(self.db.Yaw)*self.db.VelocityX*0.033)
@@ -223,16 +228,18 @@ class IDDUCalc2:
 
                     scalingFactor = min(400/height,  720/width)
 
-                    self.x = scalingFactor * self.x + (400 - min(scalingFactor * self.x) - 360)
-                    self.y = scalingFactor * -self.y + (240 - min(scalingFactor * -self.y) - 200)
+                    # self.x = scalingFactor * self.x + (400 - min(scalingFactor * self.x) - 360)
+                    # self.y = scalingFactor * -self.y + (240 - min(scalingFactor * -self.y) - 200)
 
+                    self.x = 400 + (scalingFactor * self.x - (min(scalingFactor * self.x) + max(scalingFactor * self.x))/2)
+                    self.y = -(240 + (scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y))/2)) + 480
 
                     with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
                         thewriter = csv.writer(f)
                         for l in range(0, len(self.dist)):
                             if l > 2:
                                 if not self.dist[l-1] >= self.dist[l]:
-                                    thewriter.writerow([self.dist[l], self.x[l], self.y[l]])
+                                    thewriter.writerow([self.dist[l], self.x[l], self.y[l], self.time[l]])
 
                     self.db.map = []
                     self.db.x = []
@@ -241,6 +248,7 @@ class IDDUCalc2:
                     for i in range(0, l):
                         self.db.map.append([float(self.x[i]), float(self.y[i])])
                     self.db.dist = self.dist[0:l]
+                    self.db.time = self.time[0:l]
                     self.db.x = self.x[0:l]
                     self.db.y = self.y[0:l]
 
@@ -266,7 +274,6 @@ class IDDUCalc2:
                         fuelNeed = avg * self.db.LapsToGo
                         fuelAdd = min(max(fuelNeed - self.db.FuelLevel + avg, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'])
                         self.db.FuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
-                        print('- ', self.db.LapsToGo)
                         if fuelAdd == 0:
                             self.ir.pit_command(2, 1)
                             self.ir.pit_command(11)
@@ -383,6 +390,7 @@ class IDDUCalc2:
         self.db.__setattr__('x', [])
         self.db.__setattr__('y', [])
         self.db.__setattr__('dist', [])
+        self.db.__setattr__('time', [])
 
         with open(r"track/" + name + '.csv') as csv_file:
             csv_reader = csv.reader(csv_file)
@@ -390,6 +398,7 @@ class IDDUCalc2:
                 self.db.dist.append(float(line[0]))
                 self.db.x.append(float(line[1]))
                 self.db.y.append(float(line[2]))
+                self.db.time.append(float(line[3]))
 
                 self.db.map.append([float(line[1]), float(line[2])])
         print('Track has been loaded successfully.')
