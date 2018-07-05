@@ -5,8 +5,8 @@ import time
 import irsdk
 import winsound
 
-import iDDURender2
-import iDDUcalc2
+import iDDURender
+import iDDUcalc
 from functionalities.RTDB import RTDB
 
 # data for initialisation of RTDB
@@ -125,8 +125,8 @@ time.sleep(0.1)
 thread2.start()
 
 # create objects for rendering and calculation
-iRRender = iDDURender2.RenderScreen(myRTDB)
-iDDUcalc = iDDUcalc2.IDDUCalc2(myRTDB)
+iRRender = iDDURender.RenderScreen(myRTDB)
+iDDUcalc = iDDUcalc.IDDUCalc2(myRTDB)
 
 # loop to run programme
 while not myRTDB.done:

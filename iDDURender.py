@@ -1,63 +1,7 @@
 import iDDUhelper
 import pygame
-import math
-import csv
 import numpy
 import warnings
-
-
-# class RenderMain:
-#     def __init__(self):
-#         self.pygame = pygame
-#         self.pygame.init()
-# 
-#         # display
-#         self.font = pygame.font.Font("files/KhmerUI.ttf", 20)
-#         self.resolution = (200, 100)
-#         self.fullscreen = False
-#         self.pygame.display.set_caption('iDDU')
-#         self.screen = self.pygame.display.set_mode(self.resolution)
-#         self.clocker = self.pygame.time.Clock()
-#         self.done = False
-#         self.ScreenNumber = 1
-# 
-# class RenderScreen(RenderMain):
-#     def __init__(self, db):
-#         RenderMain.__init__(self)
-# 
-#         self.db = db
-#         self.done = False
-#         self.ScreenNumber = 1
-# 
-#     def render(self):
-# 
-#         ##### events ###########################################################################################################
-#         for event in self.pygame.event.get():
-#             if event.type == self.pygame.QUIT:
-#                 self.done = True
-#             if event.type == self.pygame.KEYDOWN and event.key == self.pygame.K_ESCAPE:
-#                 self.done = True
-#             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 3:
-#                 if self.fullscreen:
-#                     self.pygame.display.set_mode(self.resolution)
-#                     self.fullscreen = False
-#                 else:
-#                     self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)
-#                     self.fullscreen = True
-#             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1:
-#                 if self.ScreenNumber == 1:
-#                     self.ScreenNumber = 2
-#                 else:
-#                     self.ScreenNumber = 1
-# 
-#         self.screen = self.pygame.display.set_mode(self.resolution)
-#         self.screen.blit(self.font.render(str(self.db.timeStr), True, (255, 255, 255)), (25, 10))
-#         self.screen.blit(self.font.render(str(self.db.startUp), True, (255, 255, 255)), (25, 60))
-# 
-#         self.pygame.display.flip()
-#         self.clocker.tick(30)
-# 
-#         return self.done
 
 class RenderMain:
     def __init__(self):
@@ -102,20 +46,6 @@ class RenderMain:
 
         self.track = {'dist': [], 'x': [], 'y': []}
         self.map = []
-
-        # # track map
-        # with open("track\dummie_track.csv") as csv_file:
-        #     csv_reader = csv.reader(csv_file)
-        #     #self.track{'dist':0, 'x':0, 'y': 0}
-        #     for line in csv_reader:
-        #         # print(float(line[0]))
-        #         self.track['dist'].append(float(line[0]))
-        #         self.track['x'].append(float(line[1])+400)
-        #         self.track['y'].append(float(line[2])+240)
-        #
-        #         self.map.append([float(line[1])+400, float(line[2])+240])
-
-        # print(self.track['dist'])
 
     def setTextColour(self, colour):
         self.textColour = colour
@@ -173,31 +103,6 @@ class RenderScreen(RenderMain):
         self.done = False
         self.ScreenNumber = 1
 
-        # lables
-        # Timing
-        # self.BestLapLabel = self.fontSmall.render('Best', True, self.textColour)
-        # self.LastLapLabel = self.fontSmall.render('Last', True, self.textColour)
-        # self.DeltaLapLabel = self.fontSmall.render('DBest', True, self.textColour)
-        # SessionInfo
-        # self.ClockLabel = self.fontTiny.render('Clock', True, self.textColour)
-        # self.RemTimeLabel = self.fontSmall.render('Rem. Time', True, self.textColour)
-        # self.ElTimeLabel = self.fontSmall.render('Time', True, self.textColour)
-        # self.RemLapLabel = self.fontSmall.render('To go', True, self.textColour)
-        # self.LapLabel = self.fontSmall.render('Lap', True, self.textColour)
-        # Fuel
-        # self.dcTractionControlLabel = self.fontSmall.render('TC1', True, self.textColour)
-        # self.dcTractionControl2Label = self.fontSmall.render('TC2', True, self.textColour)
-        # self.dcBrakeBiasLabel = self.fontSmall.render('BBias', True, self.textColour)
-        # self.dcFuelMixtureLabel = self.fontSmall.render('Mix', True, self.textColour)
-        # self.dcThrottleShapeLabel = self.fontSmall.render('Map', True, self.textColour)
-        # self.dcABSLabel = self.fontSmall.render('ABS', True, self.textColour)
-        # Control
-        # self.FuelLevelLabel = self.fontSmall.render('Fuel', True, self.textColour)
-        # self.FuelConsLabel = self.fontSmall.render('Avg.', True, self.textColour)
-        # self.FuelLastConsLabel = self.fontSmall.render('Last', True, self.textColour)
-        # self.FuelLapsLabel = self.fontSmall.render('Laps', True, self.textColour)
-        # self.FuelAddLabel = self.fontSmall.render('Add', True, self.textColour)
-
     def render(self):
 
         self.backgroundColour = self.db.backgroundColour
@@ -230,15 +135,6 @@ class RenderScreen(RenderMain):
 
             # prepare strings to display
             # Timing
-            # BestLap = self.fontLarge.render(
-            #     iDDUhelper.convertTimeMMSSsss(self.db.LapBestLapTime']), True,
-            #     self.textColour)
-            # LastLap = self.fontLarge.render(
-            #     iDDUhelper.convertTimeMMSSsss(self.db.LapLastLapTime']), True,
-            #     self.textColour)
-            # DeltaBest = self.fontLarge.render(
-            #     iDDUhelper.convertDelta(self.db.LapDeltaToSessionBestLap']), True,
-            #     self.textColour)
             # Session Info
             RemTime = self.fontLarge.render(str(self.db.RemTimeValue), True, self.db.textColour)
             RemLap = self.fontLarge.render(self.db.RemLapValueStr, True, self.db.textColour)
@@ -247,37 +143,7 @@ class RenderScreen(RenderMain):
                 iDDUhelper.convertTimeHHMMSS(
                     self.db.SessionTime - self.db.GreenTime), True,
                 self.db.textColour)
-            # Clock = self.fontSmall.render(self.db.clockValue'], True, self.textColour)
 
-            # Control
-            # dcTractionControl = self.fontLarge.render(
-            #     iDDUhelper.roundedStr0(self.db.dcTractionControl']), True,
-            #     self.textColour)
-            # dcTractionControl2 = self.fontLarge.render(
-            #     iDDUhelper.roundedStr0(self.db.dcTractionControl2']), True,
-            #     self.textColour)
-            # dcBrakeBias = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.dcBrakeBias']),
-            #                                     True, self.textColour)
-            # dcFuelMixture = self.fontLarge.render(iDDUhelper.roundedStr0(self.db.dcFuelMixture']),
-            #                                       True,
-            #                                       self.textColour)
-            # dcThrottleShape = self.fontLarge.render(
-            #     iDDUhelper.roundedStr0(self.db.dcThrottleShape']), True,
-            #     self.textColour)
-            # dcABS = self.fontLarge.render(iDDUhelper.roundedStr0(self.db.dcABS']), True,
-            #                               self.textColour)
-
-
-            # Fuel
-            # FuelLevel = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLevel), True,
-            #                                   self.db.textColour)
-            # FuelCons = self.fontLarge.render(self.db.FuelConsumptionStr, True, self.db.textColour)
-            # FuelLastCons = self.fontLarge.render(iDDUhelper.roundedStr2(self.db.FuelLastCons),
-            #                                      True, self.db.textColour)
-            # FuelLaps = self.fontLarge.render(self.db.FuelLapStr, True, self.db.textColour)
-            # FuelAdd = self.fontLarge.render(self.db.FuelAddStr, True, self.db.textColourFuelAdd)
-
-            # self.screen.fill(self.backgroundColour)
             self.screen.fill(self.db.backgroundColour)
             if self.db.FlagException:
                 if self.db.FlagExceptionVal == 1:
@@ -305,10 +171,6 @@ class RenderScreen(RenderMain):
                     pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
 
             # define frames
-            # self.Frame1.drawFrame()
-            # self.Frame2.drawFrame()
-            # self.Frame3.drawFrame()
-            # self.Frame4.drawFrame()
             for i in range(0, len(self.frames)):
                 self.frames[i].setTextColour(self.db.textColour)
                 self.frames[i].drawFrame()
@@ -329,7 +191,6 @@ class RenderScreen(RenderMain):
             FuelLastCons = iDDUhelper.roundedStr2(self.db.FuelLastCons)
             FuelLaps = self.db.FuelLapStr
             FuelAdd = self.db.FuelAddStr
-            # print('-- ', FuelAdd)
 
             # frame input
             for i in range(0, len(self.Labels1)):
@@ -354,75 +215,8 @@ class RenderScreen(RenderMain):
                     self.LabelsSession[i][1].setTextColour(self.db.textColour)
                     self.LabelsSession[i][1].drawLabel(eval(self.LabelsSession[i][0]))
 
-                    # Timing
-                    # self.screen.blit(self.BestLapLabel, (30, 60))
-                    # self.screen.blit(BestLap, (115, 30))
-                    # self.screen.blit(self.LastLapLabel, (30, 130))
-                    # self.screen.blit(LastLap, (115, 100))
-                    # self.screen.blit(self.DeltaLapLabel, (30, 200))
-                    # self.screen.blit(DeltaBest, (115, 170))
-                    # Session Info
-                    # self.screen.blit(self.ClockLabel, (30, 450))
-                    # self.screen.blit(Clock, (80, 442))
-
-                    # if not data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited':
-                    #         self.screen.blit(RemTimeLabel, (30, 310))
-                    #         self.screen.blit(RemTime, (150, 280))
-                    # else:
-                    #         self.screen.blit(ElTimeLabel, (30, 310))
-                    #         self.screen.blit(Time, (150, 280))
-
-                    # if data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] == 'unlimited' or data['SessionInfo']['Sessions'][SessionNum]['SessionTime'] > 10000:
-                    # if data['SessionTimeRemain']:
-                    # else:
-                    # if not data['SessionInfo']['Sessions'][SessionNum]['SessionLaps'] == 'unlimited':
-                    #         self.screen.blit(RemLapLabel, (220, 380))
-                    #         self.screen.blit(RemLap, (280, 350))
-
-                    # self.screen.blit(self.LapLabel, (30, 380))
-                    # self.screen.blit(self.Lap, (80, 350))
-                    # Control
-                    # self.screen.blit(self.dcBrakeBiasLabel, (425, 350))
-                    # self.screen.blit(dcBrakeBias, (505, 315))
-                    # self.screen.blit(self.dcABSLabel, (665, 350))
-                    # self.screen.blit(dcABS, (710, 315))
-                    # self.screen.blit(self.dcTractionControlLabel, (425, 420))
-                    # self.screen.blit(dcTractionControl, (470, 385))
-                    # self.screen.blit(self.dcTractionControl2Label, (555, 420))
-                    # self.screen.blit(dcTractionControl2, (600, 385))
-                    # self.screen.blit(self.dcFuelMixtureLabel, (665, 420))
-                    # self.screen.blit(dcFuelMixture, (710, 385))
-
-                    # Fuel
-                    # self.screen.blit(self.FuelLevelLabel, (425, 60))
-                    # self.screen.blit(FuelLevel, (505, 30))
-                    # self.screen.blit(self.FuelConsLabel, (425, 130))
-                    # self.screen.blit(FuelCons, (475, 100))
-                    # self.screen.blit(self.FuelLastConsLabel, (605, 130))
-                    # self.screen.blit(FuelLastCons, (660, 100))
-                    # self.screen.blit(self.FuelLapsLabel, (425, 200))
-                    # self.screen.blit(FuelLap, (475, 170))
-                    # self.screen.blit(self.FuelAddLabel, (605, 200))
-                    # self.screen.blit(FuelAdd, (660, 170))
-
-                    # self.timestr = time.strftime("%H:%M:%S", time.localtime())
-                    # self.screen.blit(self.ClockLabel, (30, 450))
-
-
-                    # clock = self.fontSmall.render(self.db.clockValue'], True, self.self.textColour)
-                    # self.screen.blit(clock, (80, 442))
-
         elif self.ScreenNumber == 2:
             self.screen.fill(self.backgroundColour)
-            # self.pygame.draw.line(self.screen, self.textColour, [400, 25], [400, 55], 5)
-            # self.pygame.draw.circle(self.screen, self.textColour, [400,
-            #                                                        240], 200, 5)
-            #
-            # x = 400 + 198 * math.sin(2 * math.pi * self.db.LapDistPct'])
-            # y = 240 - 198 * math.cos(2 * math.pi * self.db.LapDistPct'])
-
-            # x = numpy.interp(self.db.LapDistPct']*100, self.db.dist'], self.db.x'])
-            # y = numpy.interp(self.db.LapDistPct']*100, self.db.dist'], self.db.y'])
 
             self.highlightSection(5, self.green)
             self.highlightSection(1, self.red)
@@ -431,20 +225,7 @@ class RenderScreen(RenderMain):
 
             self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.map, 5)
 
-
-            # Label = self.fontTiny.render('23', True, self.white)
-            # self.pygame.draw.circle(self.screen, self.red, [int(x), int(y)], 10, 0)
-            # self.screen.blit(Label, (int(x) - 6, int(y) - 7))
-            #
-            # for i in range(0, len(self.Labels2)):
-            #     self.Labels2[i].drawLabel(iDDUhelper.roundedStr1(self.db.LapDistPct'] * 100))
-
             for n in range(0, len(self.db.DriverInfo['Drivers'])):
-                # ID = self.db.DriverInfo']['Drivers'][n]['CarIdx']
-                # print(ID)
-                # print(self.db.LapDistPct'])
-                # print(self.db.LapDistPct'][ID])
-                # print(self.db.LapDistPct'][ID]*100)
                 self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
 
         self.pygame.display.flip()
@@ -453,22 +234,25 @@ class RenderScreen(RenderMain):
         return self.done
 
     def CarOnMap(self, Idx):
-        x = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.x)
-        y = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.y)
+        try:
+            x = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.x)
+            y = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.y)
 
-        if self.db.DriverInfo['DriverCarIdx'] == Idx:
-            if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
-                self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
-            self.drawCar(Idx, x, y, self.red, self.white)
-
-        else:
-            if not self.db.CarIdxOnPitRoad[Idx]:
+            if self.db.DriverInfo['DriverCarIdx'] == Idx:
                 if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
-                    self.drawCar(Idx, x, y, self.green, self.black)
-                else:
-                    self.drawCar(Idx, x, y, self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor']), self.black)
+                    self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
+                self.drawCar(Idx, x, y, self.red, self.white)
+
             else:
-                return                    
+                if not self.db.CarIdxOnPitRoad[Idx]:
+                    if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
+                        self.drawCar(Idx, x, y, self.green, self.black)
+                    else:
+                        self.drawCar(Idx, x, y, self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor']), self.black)
+                else:
+                    return
+        except:
+            warnings.warn('Error in CarOnMap!')
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
@@ -489,7 +273,6 @@ class RenderScreen(RenderMain):
         while timeStamp2 > self.db.time[-1]:
             timeStamp2 = timeStamp2 - self.db.time[-1]
 
-
         timeStampStart = timeStamp1
         timeStampEnd = timeStamp2
 
@@ -509,17 +292,6 @@ class RenderScreen(RenderMain):
                 self.pygame.draw.lines(self.screen, colour, False, map2, 20)
         except:
             warnings.warn('Error in highlightSection!')
-
-        # temp_lower = numpy.interp(self.db.CarIdxLapDistPct, self.db.time, self.db.dist)
-        # temp_upper =
-
-        # map = [self.db.map[t] for t in range(0, len(self.db.map)) if (
-        # (self.db.dist[t] < self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']] * 100 + 10) and (
-        # self.db.dist[t] > self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']] * 100 - 10))]
-        # map = [self.db.map[t] for t in range(0, len(self.db.map)) if ((self.db.dist[t] < temp_upper) and (self.db.dist[t] > temp_lower))]
-
-        # self.pygame.draw.lines(self.screen, self.blue, False, map, 20)
-
 
 class Frame(RenderMain):
     def __init__(self, title, x1, y1, dx, dy):
