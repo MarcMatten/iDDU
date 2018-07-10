@@ -5,6 +5,8 @@ import time
 import irsdk
 import winsound
 
+
+
 import iDDURender
 import iDDUcalc
 from functionalities.RTDB import RTDB
@@ -15,7 +17,7 @@ helpData = {'done': False, 'timeStr': 0, 'waiting': True, 'LabelSessionDisplay':
 # data from iRacing
 iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 0, 'dcFuelMixture': 0,
           'dcThrottleShape': 0, 'dcTractionControl': 0, 'dcTractionControl2': 0, 'dcTractionControlToggle': 0,
-          'dcABS': 0, 'dcBrakeBias': 0, 'FuelLevel': 0, 'Lap': 123, 'IsInGarage': 0, 'LapDistPct': 0, 'OnPitRoad': 0,
+          'dcABS': 0, 'dcBrakeBias': 0, 'FuelLevel': 0, 'Lap': 0, 'IsInGarage': 0, 'LapDistPct': 0, 'OnPitRoad': 0,
           'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0,
           'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False, 'Gear': 0,
           'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
@@ -29,13 +31,13 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
             'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
             'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
-            'SessionFlags': 0, 'oldSessionlags': 0, 'LapsToGo': 0, 'SessionLapRemain': 0, 'FuelConsumptionStr': '5.34',
+            'SessionFlags': 0, 'oldSessionlags': 0, 'LapsToGo': 28, 'SessionLapRemain': 0, 'FuelConsumptionStr': '0.00',
             'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0, 'FlagException': False,
-            'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 205,
+            'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 28,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
             'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
             'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141),
-            'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 10, 'time': []}
+            'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 61, 'time': []}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()

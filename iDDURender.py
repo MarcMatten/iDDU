@@ -268,8 +268,13 @@ class RenderScreen(RenderMain):
         timeStamp1 = timeStamp - self.db.PitStopDelta - width/2
         while timeStamp1 < 0:
             timeStamp1 = timeStamp1 + self.db.time[-1]
+        while timeStamp1 > self.db.time[-1]:
+            timeStamp1 = timeStamp1 - self.db.time[-1]
 
         timeStamp2 = timeStamp - self.db.PitStopDelta + width/2
+	
+        while timeStamp2 < 0:
+            timeStamp2 = timeStamp2 + self.db.time[-1]
         while timeStamp2 > self.db.time[-1]:
             timeStamp2 = timeStamp2 - self.db.time[-1]
 
