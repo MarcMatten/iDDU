@@ -232,16 +232,11 @@ class IDDUCalc2:
                 if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
                     self.db.backgroundColour = self.green
                     self.db.GreenTime = self.db.SessionTimeRemain
-                if Flags[7] == '1':  # or Flags[0] == '4'
-                    self.db.backgroundColour = self.red
-                if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
-                    self.db.backgroundColour = self.yellow
-                    self.db.textColour = self.black
-                if Flags[6] == '2':
-                    self.db.backgroundColour = self.blue
                 if Flags[7] == '2':
                     self.db.backgroundColour = self.white
                     self.db.textColour = self.black
+                if Flags[6] == '2':
+                    self.db.backgroundColour = self.blue
                 if Flags[7] == '1':  # checkered
                     self.db.FlagExceptionVal = 1
                     self.db.FlagException = True
@@ -250,11 +245,6 @@ class IDDUCalc2:
                     self.db.FlagExceptionVal = 2
                     self.db.FlagExceptionVal = 2
                     self.db.backgroundColour = self.black
-                if Flags[4] == '4' or Flags[4] == '8':  # SC
-                    self.db.FlagException = True
-                    self.db.backgroundColour = self.yellow
-                    self.db.textColour = self.black
-                    self.db.FlagExceptionVal = 3
                 if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
                     self.db.FlagException = True
                     self.db.FlagExceptionVal = 4
@@ -264,6 +254,16 @@ class IDDUCalc2:
                 if Flags[3] == '8' or Flags[3] == 'c':  # warning
                     self.db.FlagException = True
                     self.db.FlagExceptionVal = 6
+                if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
+                    self.db.backgroundColour = self.yellow
+                    self.db.textColour = self.black
+                if Flags[4] == '4' or Flags[4] == '8':  # SC
+                    self.db.FlagException = True
+                    self.db.backgroundColour = self.yellow
+                    self.db.textColour = self.black
+                    self.db.FlagExceptionVal = 3
+                if Flags[7] == '1':  # or Flags[0] == '4'
+                    self.db.backgroundColour = self.red
 
                 self.db.oldSessionFlags = self.db.SessionFlags
 

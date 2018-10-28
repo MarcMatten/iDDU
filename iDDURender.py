@@ -5,6 +5,7 @@ import warnings
 
 class RenderMain:
     def __init__(self):
+
         self.white = (255, 255, 255)
         self.red = (255, 0, 0)
         self.green = (0, 255, 0)
@@ -53,10 +54,35 @@ class RenderMain:
     def setBackgroundColour(self, colour):
         self.backgroundColour = colour
 
+    def initJoystick(self, name):
+        self.pygame.joystick.init()
+        joysticks = [self.pygame.joystick.Joystick(x) for x in range(self.pygame.joystick.get_count())]
+        print(pygame.joystick.get_count(), 'joysticks detected:')
+
+        desiredJoystick = 9999
+
+        for i in range(self.pygame.joystick.get_count()):
+            print('     Joystick ', i, ': ',self.pygame.joystick.Joystick(i).get_name())
+            if self.pygame.joystick.Joystick(i).get_name() == name:
+                desiredJoystick = i
+
+        if not desiredJoystick == 9999:
+            print('Connecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
+            self.joystick = pygame.joystick.Joystick(desiredJoystick)
+            self.joystick.get_name()
+            self.joystick.init()
+            print('Successfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
+        else:
+            print('FANATEC ClubSport Wheel Base not found!')
+
 
 class RenderScreen(RenderMain):
     def __init__(self, db):
         RenderMain.__init__(self)
+
+        # initialize joystick
+        self.initJoystick('FANATEC ClubSport Wheel Base')
+        # self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
 
         self.db = db
 
@@ -122,7 +148,8 @@ class RenderScreen(RenderMain):
                 else:
                     self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
                     self.fullscreen = True
-            if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 25:
+            # if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 1:
                 if self.ScreenNumber == 1:
                     self.ScreenNumber = 2
                 else:

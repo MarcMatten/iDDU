@@ -89,7 +89,7 @@ class UpShiftTone(threading.Thread):
                 # execute this loop while player is on track
                 while self.db.IsOnTrack:
                     #	check if upshift RPM is reached
-                    if self.db.Gear > 0 and self.db.RPM >= self.ShiftRPM:  # disable sound for neutral and reverse gear
+                    if self.db.Gear > 0 and self.db.Gear < 6 and self.db.RPM >= self.ShiftRPM:  # disable sound for neutral and reverse gear
                         winsound.PlaySound(self.fname, winsound.SND_FILENAME)
                         time.sleep(0.75)  # pause for 750 ms to avoid multiple beeps when missing shiftpoint
 
