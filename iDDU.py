@@ -4,8 +4,9 @@ import time
 
 import irsdk
 import winsound
+import sys
 
-
+from gui.iDDUgui import iDDUgui
 
 import iDDURender
 import iDDUcalc
@@ -31,13 +32,16 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
             'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
             'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
-            'SessionFlags': 0, 'oldSessionlags': 0, 'LapsToGo': 28, 'SessionLapRemain': 0, 'FuelConsumptionStr': '0.00',
+            'SessionFlags': 0, 'oldSessionlags': 0, 'LapsToGo': 27, 'SessionLapRemain': 0, 'FuelConsumptionStr': '0.00',
             'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0, 'FlagException': False,
             'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 28,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
             'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
             'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141),
-            'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 61, 'time': []}
+            'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 61, 'time': [], 'UpshiftStrategy': 0,
+            'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
+            'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
+            'ShiftToneEnabled': True}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
@@ -62,7 +66,9 @@ class iRThread(threading.Thread):
                     self.db.__setattr__(self.keys[i], self.ir[self.keys[i]])
             self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
             time.sleep(self.rate)
-            
+
+
+# UpShiftTome Thread
 class UpShiftTone(threading.Thread):
     def __init__(self, RTDB, rate):
         threading.Thread.__init__(self)
@@ -87,11 +93,16 @@ class UpShiftTone(threading.Thread):
                     winsound.PlaySound(self.fname, winsound.SND_FILENAME)
 
                 # execute this loop while player is on track
-                while self.db.IsOnTrack:
-                    #	check if upshift RPM is reached
-                    if self.db.Gear > 0 and self.db.Gear < 6 and self.db.RPM >= self.ShiftRPM:  # disable sound for neutral and reverse gear
-                        winsound.PlaySound(self.fname, winsound.SND_FILENAME)
-                        time.sleep(0.75)  # pause for 750 ms to avoid multiple beeps when missing shiftpoint
+                while self.db.IsOnTrack and self.db.ShiftToneEnabled:
+                    if self.db.Gear > 0 and self.db.UpshiftStrategy < 4:
+                        self.beep(self.db.iRShiftRPM[self.db.UpshiftStrategy])
+                    elif self.db.Gear > 0 and self.db.UpshiftStrategy == 4:
+                        self.beep2()
+
+                    # #	check if upshift RPM is reached
+                    # if self.db.Gear > 0 and self.db.Gear < 6 and self.db.RPM >= self.ShiftRPM:  # disable sound for neutral and reverse gear
+                    #     winsound.PlaySound(self.fname, winsound.SND_FILENAME)
+                    #     time.sleep(0.75)  # pause for 750 ms to avoid multiple beeps when missing shiftpoint
 
                 # update flag when leaving track
                 if not self.db.IsOnTrack and self.IsOnTrack:
@@ -99,15 +110,32 @@ class UpShiftTone(threading.Thread):
 
             self.initialised = False
 
+    def beep(self, shiftRPM):
+        if self.db.RPM >= shiftRPM and self.db.UserShiftFlag[self.db.Gear-1]:
+            winsound.PlaySound(self.fname, winsound.SND_FILENAME)
+            time.sleep(0.75)  # pause for 750 ms to avoid multiple beeps when missing shiftpoint
+
+    def beep2(self):
+        if self.db.RPM >= self.db.UserShiftRPM[self.db.Gear-1] and self.db.UserShiftFlag[self.db.Gear-1]:
+            winsound.PlaySound(self.fname, winsound.SND_FILENAME)
+            time.sleep(0.75)  # pause for 750 ms to avoid multiple beeps when missing shiftpoint
             
     def initialise(self):
         time.sleep(0.1)
         # get optimal shift RPM from iRacing and display message
+        self.FirstRPM = self.db.DriverInfo['DriverCarSLFirstRPM']
         self.ShiftRPM = self.db.DriverInfo['DriverCarSLShiftRPM']
+        self.LastRPM = self.db.DriverInfo['DriverCarSLLastRPM']
+        self.BlinkRPM = self.db.DriverInfo['DriverCarSLBlinkRPM']
         self.DriverCarName = self.db.DriverInfo['Drivers'][self.db.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
 
         # self.db.DriverInfo['Drivers'][self.db.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
-        print('Optimal Shift RPM for', self.DriverCarName, ':', self.ShiftRPM)
+        print('First Shift RPM for', self.DriverCarName, ':', self.FirstRPM)
+        print('Shift RPM for', self.DriverCarName, ':', self.ShiftRPM)
+        print('Last Shift RPM for', self.DriverCarName, ':', self.LastRPM)
+        print('Blink Shift RPM for', self.DriverCarName, ':', self.BlinkRPM)
+
+        self.db.iRShiftRPM = [self.FirstRPM, self.ShiftRPM, self.LastRPM, self.BlinkRPM]
 
         # play three beep sounds as notification
         winsound.PlaySound(self.fname, winsound.SND_FILENAME)
@@ -117,18 +145,37 @@ class UpShiftTone(threading.Thread):
         winsound.PlaySound(self.fname, winsound.SND_FILENAME)
 
         self.initialised = True
+
+# GUI Thread
+class iGUI(threading.Thread):
+    def __init__(self, RTDB, rate):
+        threading.Thread.__init__(self)
+        self.rate = rate
+        self.db = RTDB
+        self.ir = irsdk.IRSDK()
+
+    def run(self):
+        while 1:
+            GUI = iDDUgui(myRTDB)
+            GUI.start(myRTDB)
+            time.sleep(self.rate)
         
 
 # initialise and start thread
 thread1 = iRThread(myRTDB, list(iRData.keys()), 0.01)
 thread2 = UpShiftTone(myRTDB, 0.01)
+thread3 = iGUI(myRTDB, 0.01)
 thread1.start()
-time.sleep(0.1)
+time.sleep(1)
+thread3.start()
+time.sleep(1)
 thread2.start()
+time.sleep(1)
 
 # create objects for rendering and calculation
 iRRender = iDDURender.RenderScreen(myRTDB)
 iDDUcalc = iDDUcalc.IDDUCalc2(myRTDB)
+
 
 # loop to run programme
 while not myRTDB.done:
@@ -140,4 +187,5 @@ del iRRender
 del iDDUcalc
 del thread1
 del thread2
+del thread3
 exit()
