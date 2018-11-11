@@ -5,8 +5,9 @@ import math
 import numpy as np
 import os
 import glob
+import time
 
-class IDDUCalc2:
+class IDDUCalc:
     def __init__(self, db):
         self.db = db
 
@@ -18,6 +19,7 @@ class IDDUCalc2:
         self.orange = (255, 133, 13)
         self.grey = (141, 141, 141)
         self.black = (0, 0, 0)
+        self.cyan = (0, 255, 255)
 
         self.FlagCallTime = 0
 
@@ -37,18 +39,19 @@ class IDDUCalc2:
         self.loadTrack('dummie_track')
 
     def calc(self):
+        # t = time.time()
         if self.db.isRunning == False:
             # initialise
             if not self.db.waiting:
-                print('Waiting for iRacing')
+                print(self.db.timeStr+': Waiting for iRacing')
                 self.db.waiting = True
 
         if self.db.startUp:
             if self.db.isRunning == False:
-                print('Connecting to iRacing')
+                print(self.db.timeStr+': Connecting to iRacing')
 
             if self.db.oldSessionNum < self.db.SessionNum:
-                print('New Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+                print(self.db.timeStr+':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
                 self.initSession()
 
             if self.db.IsOnTrack:
@@ -74,7 +77,7 @@ class IDDUCalc2:
                     self.db.JokerStr = '-'
 
                 if self.db.init:  # do when getting into the car
-                    print('Getting into car')
+                    print(self.db.timeStr+':\tGetting into car')
                     self.db.init = False
                     self.db.OutLap = True
                     self.db.LastFuelLevel = self.db.FuelLevel
@@ -93,7 +96,7 @@ class IDDUCalc2:
                     newLap = True
                     self.db.StintLap = self.db.StintLap + 1
                     self.db.oldLap = self.db.Lap
-                    self.db.LapsToGo = self.db.RaceLaps - self.db.Lap  # at the end of the current lap
+                    self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
 
                     self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
 
@@ -162,8 +165,8 @@ class IDDUCalc2:
                     self.createTrack = False
                     self.Logging = False
 
-                    print('Track has been successfully created')
-                    print('Saved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
+                    print(self.db.timeStr+':\tTrack has been successfully created')
+                    print(self.db.timeStr+':\tSaved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
 
                 # fuel consumption -----------------------------------------------------------------------------------------
                 if len(self.db.FuelConsumption) >= 1:
@@ -176,7 +179,7 @@ class IDDUCalc2:
                         self.db.Alarm.extend([4])
                     self.db.FuelLapStr = iDDUhelper.roundedStr1(LapRem)
                     if newLap and not self.db.onPitRoad:
-                        fuelNeed = avg * self.db.LapsToGo
+                        fuelNeed = avg * (self.db.LapsToGo - 1)
                         fuelAdd = min(max(fuelNeed - self.db.FuelLevel + avg, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
                         self.db.FuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
                         if fuelAdd == 0:
@@ -185,7 +188,7 @@ class IDDUCalc2:
                             self.db.textColourFuelAdd = self.db.textColour
                         else:
                             if not round(fuelAdd) == round(self.db.oldFuelAdd):
-                                self.ir.pit_command(2, round(fuelAdd + 0.5 + 1e-10))
+                                self.ir.pit_command(2, round(fuelAdd + 1 + 1e-10))
                             if fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + avg:
                                 self.db.textColourFuelAdd = self.green
                             elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 2*avg:
@@ -209,7 +212,7 @@ class IDDUCalc2:
                         self.db.Alarm.extend([2])
             else:
                 if self.db.WasOnTrack:
-                    print('Getting out of car')
+                    print(self.db.timeStr+':\tGetting out of car')
                     self.db.WasOnTrack = False
                     self.db.init = True
                 # do if car is not on track but don't do if car is on track ------------------------------------------------
@@ -225,84 +228,85 @@ class IDDUCalc2:
                 self.db.RemLapValueStr = '0'
             RemTimeValue = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
 
-            if not (self.db.SessionFlags == self.db.oldSessionFlags):
-                self.FlagCallTime = self.db.SessionTime
-                Flags = str(("0x%x" % self.db.SessionFlags)[2:11])
-                self.db.FlagExceptionVal = 0
-                if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
-                    self.db.backgroundColour = self.green
-                    self.db.GreenTime = self.db.SessionTimeRemain
-                if Flags[7] == '2':
-                    self.db.backgroundColour = self.white
-                    self.db.textColour = self.black
-                if Flags[6] == '2':
-                    self.db.backgroundColour = self.blue
-                if Flags[7] == '1':  # checkered
-                    self.db.FlagExceptionVal = 1
-                    self.db.FlagException = True
-                if Flags[2] == '1':  # repair
-                    self.db.FlagException = True
-                    self.db.FlagExceptionVal = 2
-                    self.db.FlagExceptionVal = 2
-                    self.db.backgroundColour = self.black
-                if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
-                    self.db.FlagException = True
-                    self.db.FlagExceptionVal = 4
-                    self.db.FlagException = True
-                if Flags[6] == '4':  # debry
-                    self.db.FlagExceptionVal = 5
-                if Flags[3] == '8' or Flags[3] == 'c':  # warning
-                    self.db.FlagException = True
-                    self.db.FlagExceptionVal = 6
-                if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
-                    self.db.backgroundColour = self.yellow
-                    self.db.textColour = self.black
-                if Flags[4] == '4' or Flags[4] == '8':  # SC
-                    self.db.FlagException = True
-                    self.db.backgroundColour = self.yellow
-                    self.db.textColour = self.black
-                    self.db.FlagExceptionVal = 3
-                if Flags[7] == '1':  # or Flags[0] == '4'
-                    self.db.backgroundColour = self.red
+            # EngineWarnings = str(("0x%x" % self.db.EngineWarnings)[2:11])
 
-                self.db.oldSessionFlags = self.db.SessionFlags
+            if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
+                pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
+                Dv = self.db.Speed*3.6 - float(pitSpeedLimit.split(' ')[0])
 
-            elif self.db.SessionTime > (self.FlagCallTime + 3):
+                r = np.interp(Dv, [-10, -5, -1, 1, 5, 10, 15],
+                                 [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0]])
+                g = np.interp(Dv, [-10, -5, -1, 1, 5, 10, 15],
+                                 [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1]])
+                b = np.interp(Dv, [-10, -5, -1, 1, 5, 10, 15],
+                                 [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
+                self.db.backgroundColour = (r, g, b)
+                # self.db.backgroundColour = self.red
+                self.db.textColour = self.grey
+            else:
                 self.db.backgroundColour = self.black
                 self.db.textColour = self.grey
-                self.db.FlagException = False
-                self.db.FlagExceptionVal = 0
+                if not (self.db.SessionFlags == self.db.oldSessionFlags):
+                    self.FlagCallTime = self.db.SessionTime
+                    Flags = str(("0x%x" % self.db.SessionFlags)[2:11])
+                    self.db.FlagExceptionVal = 0
+                    if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
+                        self.db.backgroundColour = self.green
+                        self.db.GreenTime = self.db.SessionTimeRemain
+                    if Flags[7] == '2':
+                        self.db.backgroundColour = self.white
+                        self.db.textColour = self.black
+                    if Flags[6] == '2':
+                        self.db.backgroundColour = self.blue
+                    if Flags[7] == '1':  # checkered
+                        self.db.FlagExceptionVal = 1
+                        self.db.FlagException = True
+                    if Flags[2] == '1':  # repair
+                        self.db.FlagException = True
+                        self.db.FlagExceptionVal = 2
+                        self.db.FlagExceptionVal = 2
+                        self.db.backgroundColour = self.black
+                    if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
+                        self.db.FlagException = True
+                        self.db.FlagExceptionVal = 4
+                        self.db.FlagException = True
+                    if Flags[6] == '4':  # debry
+                        self.db.FlagExceptionVal = 5
+                    if Flags[3] == '8' or Flags[3] == 'c':  # warning
+                        self.db.FlagException = True
+                        self.db.FlagExceptionVal = 6
+                    if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
+                        self.db.backgroundColour = self.yellow
+                        self.db.textColour = self.black
+                    if Flags[4] == '4' or Flags[4] == '8':  # SC
+                        self.db.FlagException = True
+                        self.db.backgroundColour = self.yellow
+                        self.db.textColour = self.black
+                        self.db.FlagExceptionVal = 3
+                    if Flags[7] == '1':  # or Flags[0] == '4'
+                        self.db.backgroundColour = self.red
+
+                    self.db.oldSessionFlags = self.db.SessionFlags
+
+                elif self.db.SessionTime > (self.FlagCallTime + 3):
+                    self.db.backgroundColour = self.black
+                    self.db.textColour = self.grey
+                    self.db.FlagException = False
+                    self.db.FlagExceptionVal = 0
             self.db.isRunning = True
         else:
             # do if sim is not running -------------------------------------------------------------------------------------
             if self.db.isRunning == True:
                 self.db.isRunning = False
-                self.db.waiting = False
+                self.db.waiting = True
                 self.db.oldSessionNum = -1
                 self.db.SessionNum = 0
-        
-    def loadTrack(self, name):
-        print('Loading track: ' + r"track/" + name + '.csv')
+                print(self.db.timeStr+': Lost connection to iRacing')
 
-        self.db.__setattr__('map', [])
-        self.db.__setattr__('x', [])
-        self.db.__setattr__('y', [])
-        self.db.__setattr__('dist', [])
-        self.db.__setattr__('time', [])
-
-        with open(r"track/" + name + '.csv') as csv_file:
-            csv_reader = csv.reader(csv_file)
-            for line in csv_reader:
-                self.db.dist.append(float(line[0]))
-                self.db.x.append(float(line[1]))
-                self.db.y.append(float(line[2]))
-                self.db.time.append(float(line[3]))
-
-                self.db.map.append([float(line[1]), float(line[2])])
-        print('Track has been loaded successfully.')
+        # print((time.time()-t)*1000)
 
     def initSession(self):
-        print('Init')
+        print(self.db.timeStr+': Initialising')
         self.getTrackFiles()
         if self.db.startUp:
             self.db.oldSessionNum = self.db.SessionNum
@@ -318,15 +322,15 @@ class IDDUCalc2:
             else:
                 self.loadTrack('dummie_track')
                 self.createTrack = True
-                print('Creating Track')
+                print(self.db.timeStr+':\tCreating Track')
 
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.__setattr__('RX', True)
                 self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
-                print('RALLY CROSS!')
+                print(self.db.timeStr+': RALLY CROSS!')
             else:
                 self.db.__setattr__('RX', False)
-                print('NO RALLY CROSS!')
+                print(self.db.timeStr+': NO RALLY CROSS!')
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
                 self.db.LabelSessionDisplay[4] = 0  # ToGo
@@ -349,9 +353,29 @@ class IDDUCalc2:
                 self.db.LabelSessionDisplay[5] = 1  # Joker
             else:
                 self.db.LabelSessionDisplay[5] = 0  # Joker
+        
+    def loadTrack(self, name):
+        print(self.db.timeStr+':\tLoading track: ' + r"track/" + name + '.csv')
+
+        self.db.__setattr__('map', [])
+        self.db.__setattr__('x', [])
+        self.db.__setattr__('y', [])
+        self.db.__setattr__('dist', [])
+        self.db.__setattr__('time', [])
+
+        with open(r"track/" + name + '.csv') as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for line in csv_reader:
+                self.db.dist.append(float(line[0]))
+                self.db.x.append(float(line[1]))
+                self.db.y.append(float(line[2]))
+                self.db.time.append(float(line[3]))
+
+                self.db.map.append([float(line[1]), float(line[2])])
+        print(self.db.timeStr+':\tTrack has been loaded successfully.')
 
     def getTrackFiles(self):
-        print('Collecting Track files...')
+        print(self.db.timeStr+': Collecting Track files...')
         self.dir = cwd = os.getcwd()
         self.trackdir = self.dir + r"\track"
 
@@ -361,5 +385,5 @@ class IDDUCalc2:
         os.chdir(self.trackdir)
         for file in glob.glob("*.csv"):
             self.trackList.append(file)
-            print('- ' + str(file))
+            print(self.db.timeStr+':\t- ' + str(file))
         os.chdir(self.dir)

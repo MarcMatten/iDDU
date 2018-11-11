@@ -1,13 +1,19 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'iDDUgui.ui'
-#
-# Created by: PyQt5 UI code generator 5.9.1
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys, pygame, time
+import sys
+import time
+import threading
+
+class iDDUgui(threading.Thread):
+    def __init__(self, RTDB, rate):
+        threading.Thread.__init__(self)
+        self.rate = rate
+        self.db = RTDB
+
+    def run(self):
+        while 1:
+            myGui = Gui(self.db)
+            myGui.start(self.db)
+            time.sleep(self.rate)
 
 class Stream(QtCore.QObject):
     newText = QtCore.pyqtSignal(str)
@@ -15,7 +21,18 @@ class Stream(QtCore.QObject):
     def write(self, text):
         self.newText.emit(str(text))
 
-class iDDUgui(object):
+class Gui(object):
+    def __init__(self, db):
+        import sys
+        app = QtWidgets.QApplication(sys.argv)
+        Form = QtWidgets.QWidget()
+        Form.setFixedSize(320, 480)
+        self.setupUi(Form, db)
+        sys.stdout = Stream(newText=self.onUpdateText)
+        sys.stderr = Stream(newText=self.onUpdateText)
+        Form.show()
+        sys.exit(app.exec_())
+
     def setupUi(self, Form, db):
         self.db = db
         self.Form = Form
@@ -51,6 +68,15 @@ class iDDUgui(object):
         self.spinBoxRaceLaps.setMaximum(10000)
         self.spinBoxRaceLaps.setSingleStep(1)
         self.spinBoxRaceLaps.setObjectName("spinBoxRaceLaps")
+        self.groupBox_2 = QtWidgets.QGroupBox(self.tabGeneral)
+        self.groupBox_2.setGeometry(QtCore.QRect(10, 389, 291, 51))
+        self.groupBox_2.setObjectName("groupBox_2")
+        self.pushButton_StartDDU = QtWidgets.QPushButton(self.groupBox_2)
+        self.pushButton_StartDDU.setGeometry(QtCore.QRect(40, 20, 75, 23))
+        self.pushButton_StartDDU.setObjectName("pushButton_StartDDU")
+        self.pushButton_StopDDU = QtWidgets.QPushButton(self.groupBox_2)
+        self.pushButton_StopDDU.setGeometry(QtCore.QRect(160, 20, 75, 23))
+        self.pushButton_StopDDU.setObjectName("pushButton_StopDDU")
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
@@ -179,6 +205,7 @@ class iDDUgui(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.setCurrentIndex(1)
         self.label_9 = QtWidgets.QLabel(self.groupBox)
         self.label_9.setGeometry(QtCore.QRect(20, 60, 101, 22))
         self.label_9.setObjectName("label_9")
@@ -199,8 +226,6 @@ class iDDUgui(object):
         self.textEdit.setGeometry(QtCore.QRect(10, 10, 291, 411))
         self.textEdit.setObjectName("textEdit")
         self.tabWidget.addTab(self.tabDebug, "")
-
-        # sys.stdout = Stream(newText=self.onUpdateText)
 
         self.spinBoxRaceLaps.setValue(self.db.RaceLaps)
         self.doubleSpinBox_PitStopDelta.setValue(self.db.PitStopDelta)
@@ -225,6 +250,8 @@ class iDDUgui(object):
         self.spinBox_Gear7.valueChanged.connect(self.UpshiftStrategy)
         self.checkBox_Gear7.stateChanged.connect(self.UpshiftStrategy)
         self.pushButtonInvoke.clicked.connect(self.InvokeUserCommand)
+        self.pushButton_StartDDU.clicked.connect(self.StartDDU)
+        self.pushButton_StopDDU.clicked.connect(self.StopDDU)
 
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
@@ -236,6 +263,9 @@ class iDDUgui(object):
         Form.setWindowTitle(_translate("Form", "iDDU"))
         self.label_8.setText(_translate("Form", "Race Laps"))
         self.label_10.setText(_translate("Form", "Pit Stop Delta"))
+        self.groupBox_2.setTitle(_translate("Form", "DDU"))
+        self.pushButton_StartDDU.setText(_translate("Form", "Start DDU"))
+        self.pushButton_StopDDU.setText(_translate("Form", "Stop DDU"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("Form", "General"))
         self.groupBox.setTitle(_translate("Form", "Upshift RPM"))
         self.groupBox_Gear1.setTitle(_translate("Form", "Gear 1"))
@@ -264,7 +294,6 @@ class iDDUgui(object):
         self.comboBox.setItemText(2, _translate("Form", "iRacing Last RPM"))
         self.comboBox.setItemText(3, _translate("Form", "iRacing Blink RPM"))
         self.comboBox.setItemText(4, _translate("Form", "User defined"))
-        self.comboBox.setCurrentIndex(1)
         self.label_9.setText(_translate("Form", "Upshift RPM Source"))
         self.checkBox_UpshiftTone.setText(_translate("Form", "activate Upshift Tone"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabUpshiftTone), _translate("Form", "Upshift Tone"))
@@ -284,9 +313,6 @@ class iDDUgui(object):
         self.db.UpshiftStrategy = self.comboBox.currentIndex()
         self.db.UserShiftRPM = [self.spinBox_Gear1.value(), self.spinBox_Gear2.value(), self.spinBox_Gear3.value(), self.spinBox_Gear4.value(), self.spinBox_Gear5.value(), self.spinBox_Gear6.value(), self.spinBox_Gear7.value()]
         self.db.UserShiftFlag = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(), self.checkBox_Gear6.isChecked(), self.checkBox_Gear7.isChecked()]
-        #print(self.db.UpshiftStrategy)
-        #print(self.db.UserShiftRPM)
-        #print(self.db.UserShiftFlag)
         self.retranslateUi(self.Form)
 
     def EnableShiftTone(self):
@@ -296,22 +322,15 @@ class iDDUgui(object):
     def InvokeUserCommand(self):
         try:
             cmd = self.lineEditInvoke.text()
-            print(">> " + cmd)
-            print(eval(cmd))
+            print(self.db.timeStr+": >> " + cmd)
+            if "=" in cmd:
+                exec(cmd)
+                outstr = cmd.split('=')
+                print(self.db.timeStr+': '+str(eval(outstr[0])))
+            else:
+                print(self.db.timeStr+': '+str(eval(cmd)))
         except:
-            print('User command not working!')
-
-    def __init__(self, db):
-        import sys
-        app = QtWidgets.QApplication(sys.argv)
-        Form = QtWidgets.QWidget()
-        Form.setFixedSize(320, 480)
-        # ui = iDDUgui()
-        self.setupUi(Form, db)
-        sys.stdout = Stream(newText=self.onUpdateText)
-        sys.stderr = Stream(newText=self.onUpdateText)
-        Form.show()
-        sys.exit(app.exec_())
+            print(self.db.timeStr+': User command not working!')
 
     def onUpdateText(self, text):
         cursor = self.textEdit.textCursor()
@@ -320,11 +339,17 @@ class iDDUgui(object):
         self.textEdit.setTextCursor(cursor)
         self.textEdit.ensureCursorVisible()
 
+    def StartDDU(self):
+        self.db.StartDDU = True
+
+    def StopDDU(self):
+        self.db.StopDDU = True
+
     def __del__(self):
         sys.stdout = sys.__stdout__
 
-    def exitFcn(self, event):
-        print("event")
+    def CloseEvent(self, event):
+        print("CloseEvent")
         time.sleep(10)
         reply = QtGui.QMessageBox.question(self, 'Message',
             "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)

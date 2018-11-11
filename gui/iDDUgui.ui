@@ -29,7 +29,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabGeneral">
     <attribute name="title">
@@ -104,6 +104,45 @@
      <property name="singleStep">
       <number>1</number>
      </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>389</y>
+       <width>291</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>DDU</string>
+     </property>
+     <widget class="QPushButton" name="pushButton_StartDDU">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start DDU</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_StopDDU">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>20</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop DDU</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tabUpshiftTone">

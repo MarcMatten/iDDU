@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7fe4d8cf-5e8e-4774-a6cb-63b5dca1f8d0" name="Default" comment="added Flag display">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functionalities" afterPath="$PROJECT_DIR$/functionalities" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gui/iDDUgui.py" afterPath="$PROJECT_DIR$/gui/iDDUgui.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gui/iDDUgui.ui" afterPath="$PROJECT_DIR$/gui/iDDUgui.ui" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDU.py" afterPath="$PROJECT_DIR$/iDDU.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDURender.py" afterPath="$PROJECT_DIR$/iDDURender.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/iDDUcalc.py" afterPath="$PROJECT_DIR$/iDDUcalc.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/track/dummie_track.csv" afterPath="$PROJECT_DIR$/track/dummie_track.csv" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,29 +24,46 @@
       <file leaf-file-name="iDDU.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/iDDU.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2499">
-              <caret line="160" column="33" lean-forward="false" selection-start-line="160" selection-start-column="33" selection-end-line="160" selection-end-column="33" />
+            <state relative-caret-position="-557">
+              <caret line="24" column="48" lean-forward="false" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
               <folding>
-                <element signature="e#31#47#0" expanded="true" />
-                <marker date="1540803681914" expanded="true" signature="3681:7387" ph="..." />
-                <marker date="1540803681914" expanded="true" signature="7070:7387" ph="..." />
-                <marker date="1540803681914" expanded="true" signature="7431:7722" ph="..." />
-                <marker date="1540803681914" expanded="true" signature="7467:7587" ph="..." />
-                <marker date="1540803681914" expanded="true" signature="7607:7722" ph="..." />
-                <marker date="1540803681914" expanded="true" signature="7624:7722" ph="..." />
-                <marker date="1540803681914" expanded="true" signature="8149:8205" ph="..." />
+                <element signature="e#31#42#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="iDDUgui.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RTDB.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/functionalities/RTDB/RTDB.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="36" lean-forward="false" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UpshiftTone.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/functionalities/UpshiftTone/UpshiftTone.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="34" column="36" lean-forward="false" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
+              <folding>
+                <element signature="e#31#47#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="iDDUgui.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gui/iDDUgui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1538">
-              <caret line="260" column="46" lean-forward="false" selection-start-line="260" selection-start-column="46" selection-end-line="260" selection-end-column="46" />
+            <state relative-caret-position="-331">
+              <caret line="309" column="37" lean-forward="true" selection-start-line="309" selection-start-column="37" selection-end-line="309" selection-end-column="37" />
               <folding>
-                <element signature="e#195#237#0" expanded="true" />
+                <element signature="e#0#42#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -50,8 +72,8 @@
       <file leaf-file-name="iDDURender.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/iDDURender.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4709">
-              <caret line="280" column="8" lean-forward="false" selection-start-line="280" selection-start-column="8" selection-end-line="280" selection-end-column="15" />
+            <state relative-caret-position="255">
+              <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="16" selection-end-column="33" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -63,33 +85,20 @@
         <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="408">
-              <caret line="24" column="22" lean-forward="false" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
+              <caret line="24" column="22" lean-forward="true" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="iDDUcalc.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="iDDUcalc.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/iDDUcalc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="27" column="20" lean-forward="false" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
+            <state relative-caret-position="488">
+              <caret line="247" column="46" lean-forward="true" selection-start-line="247" selection-start-column="46" selection-end-line="247" selection-end-column="46" />
               <folding>
-                <element signature="e#805#13503#0" expanded="false" />
-                <element signature="e#13552#14264#0" expanded="false" />
-                <element signature="e#14301#16659#0" expanded="false" />
-                <element signature="e#16698#17052#0" expanded="false" />
+                <element signature="e#0#12#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="iDDUgui3.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gui/iDDUgui3.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3978">
-              <caret line="234" column="101" lean-forward="false" selection-start-line="197" selection-start-column="34" selection-end-line="234" selection-end-column="101" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -105,23 +114,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>startUp</find>
-      <find>ir.pit</find>
-      <find>1</find>
-      <find>add</find>
-      <find>self.db.fuelAddStr</find>
-      <find>FuelAddStr</find>
-      <find>print</find>
-      <find>200</find>
-      <find>dist</find>
-      <find>self.VelocityY</find>
-      <find>LapCurrentLapTime</find>
-      <find>self.dist</find>
-      <find>Logging</find>
-      <find>self.map.append(</find>
-      <find>self.x</find>
-      <find>.db.</find>
-      <find>print('-</find>
       <find>time</find>
       <find>;</find>
       <find>CarIdxLapDistPct</find>
@@ -135,6 +127,23 @@
       <find>ShiftRPM</find>
       <find>connec</find>
       <find>title</find>
+      <find>self.ir</find>
+      <find>exitFcn</find>
+      <find>DUURunning</find>
+      <find>DUU</find>
+      <find>self.don</find>
+      <find>dcTractionControl</find>
+      <find>FlagCallTime</find>
+      <find>isRunning</find>
+      <find>waiting</find>
+      <find>joysticks</find>
+      <find>oldSessionNum</find>
+      <find>flags</find>
+      <find>SessionFlags</find>
+      <find>backgroundColour</find>
+      <find>CarIdxOnPitRoad</find>
+      <find>EngineWarnings</find>
+      <find>WeekendInfo</find>
     </findStrings>
     <replaceStrings>
       <replace>'</replace>
@@ -152,6 +161,8 @@
       <replace>FuelAddStr</replace>
       <replace>self.db.FuelAddStr</replace>
       <replace>,</replace>
+      <replace>DUUrunning</replace>
+      <replace>DDU</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -167,15 +178,16 @@
         <option value="$PROJECT_DIR$/functionalities/RTDB/__init__.py" />
         <option value="$PROJECT_DIR$/iDDUrender.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/functionalities/RTDB/RTDB.py" />
         <option value="$PROJECT_DIR$/track/dummie_track2.csv" />
         <option value="$PROJECT_DIR$/track/dummie_track.csv" />
         <option value="$PROJECT_DIR$/iDDURender2.py" />
         <option value="$PROJECT_DIR$/iDDUcalc2.py" />
-        <option value="$PROJECT_DIR$/iDDUcalc.py" />
+        <option value="$PROJECT_DIR$/functionalities/RTDB/RTDB.py" />
+        <option value="$PROJECT_DIR$/gui/iDDUgui.py" />
+        <option value="$PROJECT_DIR$/functionalities/UpshiftTone/UpshiftTone.py" />
         <option value="$PROJECT_DIR$/iDDURender.py" />
         <option value="$PROJECT_DIR$/iDDU.py" />
-        <option value="$PROJECT_DIR$/gui/iDDUgui.py" />
+        <option value="$PROJECT_DIR$/iDDUcalc.py" />
       </list>
     </option>
   </component>
@@ -201,6 +213,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -233,7 +247,25 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="gui" />
+              <option name="myItemId" value="functionalities" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="iDDU" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="iDDU" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="functionalities" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RTDB" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -253,8 +285,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -440,16 +470,16 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1119403" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11513859" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2383532" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2679875" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2654388" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2383532" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997833" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997833" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -494,14 +524,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/iDDURender.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="32" column="33" lean-forward="false" selection-start-line="32" selection-start-column="27" selection-end-line="32" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/render.py" />
     <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -683,21 +705,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" column="22" lean-forward="false" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/functionalities/RTDB/RTDB.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="35" lean-forward="false" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gui/iDDUgui2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -705,60 +712,84 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/iDDUcalc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="27" column="20" lean-forward="false" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
-          <folding>
-            <element signature="e#805#13503#0" expanded="false" />
-            <element signature="e#13552#14264#0" expanded="false" />
-            <element signature="e#14301#16659#0" expanded="false" />
-            <element signature="e#16698#17052#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/iDDURender.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4709">
-          <caret line="280" column="8" lean-forward="false" selection-start-line="280" selection-start-column="8" selection-end-line="280" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gui/iDDUgui3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3978">
           <caret line="234" column="101" lean-forward="false" selection-start-line="197" selection-start-column="34" selection-end-line="234" selection-end-column="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui/iDDUgui4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3570">
+          <caret line="210" column="67" lean-forward="false" selection-start-line="210" selection-start-column="67" selection-end-line="213" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functionalities/UpshiftTone/UpshiftTone.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="34" column="36" lean-forward="false" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
+          <folding>
+            <element signature="e#31#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDUhelper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="22" lean-forward="true" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/iDDU.py">
+    <entry file="file://$PROJECT_DIR$/functionalities/RTDB/RTDB.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2499">
-          <caret line="160" column="33" lean-forward="false" selection-start-line="160" selection-start-column="33" selection-end-line="160" selection-end-column="33" />
+        <state relative-caret-position="187">
+          <caret line="11" column="36" lean-forward="false" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
           <folding>
-            <element signature="e#31#47#0" expanded="true" />
-            <marker date="1540803681914" expanded="true" signature="3681:7387" ph="..." />
-            <marker date="1540803681914" expanded="true" signature="7070:7387" ph="..." />
-            <marker date="1540803681914" expanded="true" signature="7431:7722" ph="..." />
-            <marker date="1540803681914" expanded="true" signature="7467:7587" ph="..." />
-            <marker date="1540803681914" expanded="true" signature="7607:7722" ph="..." />
-            <marker date="1540803681914" expanded="true" signature="7624:7722" ph="..." />
-            <marker date="1540803681914" expanded="true" signature="8149:8205" ph="..." />
+            <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gui/iDDUgui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1538">
-          <caret line="260" column="46" lean-forward="false" selection-start-line="260" selection-start-column="46" selection-end-line="260" selection-end-column="46" />
+        <state relative-caret-position="-331">
+          <caret line="309" column="37" lean-forward="true" selection-start-line="309" selection-start-column="37" selection-end-line="309" selection-end-column="37" />
           <folding>
-            <element signature="e#195#237#0" expanded="true" />
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDU.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-557">
+          <caret line="24" column="48" lean-forward="false" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
+          <folding>
+            <element signature="e#31#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDURender.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="16" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/iDDUcalc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="488">
+          <caret line="247" column="46" lean-forward="true" selection-start-line="247" selection-start-column="46" selection-end-line="247" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>

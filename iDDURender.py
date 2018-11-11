@@ -14,6 +14,7 @@ class RenderMain:
         self.orange = (255, 133, 13)
         self.grey = (141, 141, 141)
         self.black = (0, 0, 0)
+        self.cyan = (0, 255, 255)
 
         self.backgroundColour = self.black
         self.textColour = self.grey
@@ -32,10 +33,13 @@ class RenderMain:
 
         # display
         self.resolution = (800, 480)
-        self.fullscreen = False
-        # os.environ['SDL_VIDEO_WINDOW_POS'] = '0, 0'
+        # self.fullscreen = False
+        import os
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+        self.screen = self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
+        self.fullscreen = True
         self.pygame.display.set_caption('iDDU')
-        self.screen = self.pygame.display.set_mode(self.resolution)
+        # self.screen = self.pygame.display.set_mode(self.resolution)
         self.clocker = self.pygame.time.Clock()
 
         # background
@@ -56,35 +60,35 @@ class RenderMain:
 
     def initJoystick(self, name):
         self.pygame.joystick.init()
-        joysticks = [self.pygame.joystick.Joystick(x) for x in range(self.pygame.joystick.get_count())]
-        print(pygame.joystick.get_count(), 'joysticks detected:')
+        # joysticks = [self.pygame.joystick.Joystick(x) for x in range(self.pygame.joystick.get_count())]
+        print(self.db.timeStr+': \t' + str(pygame.joystick.get_count()) + ' joysticks detected:')
 
         desiredJoystick = 9999
 
         for i in range(self.pygame.joystick.get_count()):
-            print('     Joystick ', i, ': ',self.pygame.joystick.Joystick(i).get_name())
+            print(self.db.timeStr+':\tJoystick ', i, ': ',self.pygame.joystick.Joystick(i).get_name())
             if self.pygame.joystick.Joystick(i).get_name() == name:
                 desiredJoystick = i
 
         if not desiredJoystick == 9999:
-            print('Connecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
+            print(self.db.timeStr+':\tConnecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
             self.joystick = pygame.joystick.Joystick(desiredJoystick)
             self.joystick.get_name()
             self.joystick.init()
-            print('Successfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
+            print(self.db.timeStr+':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
         else:
-            print('FANATEC ClubSport Wheel Base not found!')
+            print(self.db.timeStr+':\tFANATEC ClubSport Wheel Base not found!')
 
 
 class RenderScreen(RenderMain):
     def __init__(self, db):
         RenderMain.__init__(self)
+        self.db = db
 
         # initialize joystick
         self.initJoystick('FANATEC ClubSport Wheel Base')
         # self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
 
-        self.db = db
 
         # frames
         self.frames = {}
@@ -129,8 +133,12 @@ class RenderScreen(RenderMain):
         self.done = False
         self.ScreenNumber = 1
 
-    def render(self):
+    def stop(self):
+        # self.done = True
+        # self.pygame.quit()
+        self.pygame.display.quit()
 
+    def render(self):
         self.backgroundColour = self.db.backgroundColour
         self.textColour = self.db.textColour
         self.textColourFuelAdd = self.db.textColourFuelAdd
@@ -279,7 +287,7 @@ class RenderScreen(RenderMain):
                 else:
                     return
         except:
-            warnings.warn('Error in CarOnMap!')
+            warnings.warn(self.db.timeStr+': Error in CarOnMap!')
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
@@ -323,7 +331,7 @@ class RenderScreen(RenderMain):
                 self.pygame.draw.lines(self.screen, colour, False, map1, 20)
                 self.pygame.draw.lines(self.screen, colour, False, map2, 20)
         except:
-            warnings.warn('Error in highlightSection!')
+            warnings.warn(self.db.timeStr+': Error in highlightSection!')
 
 class Frame(RenderMain):
     def __init__(self, title, x1, y1, dx, dy):
