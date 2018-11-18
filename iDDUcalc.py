@@ -7,6 +7,7 @@ import os
 import glob
 import time
 
+
 class IDDUCalc:
     def __init__(self, db):
         self.db = db
@@ -23,14 +24,14 @@ class IDDUCalc:
 
         self.FlagCallTime = 0
 
-        self.Yaw=[]
-        self.YawNorth=[]
-        self.VelocityX=[]
-        self.VelocityY=[]
-        self.dist=[]
-        self.time=[]
-        self.dx=[]
-        self.dy=[]
+        self.Yaw = []
+        self.YawNorth = []
+        self.VelocityX = []
+        self.VelocityY = []
+        self.dist = []
+        self.time = []
+        self.dx = []
+        self.dy = []
         self.Logging = False
 
         self.ir = irsdk.IRSDK()
@@ -228,8 +229,6 @@ class IDDUCalc:
                 self.db.RemLapValueStr = '0'
             RemTimeValue = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
 
-            # EngineWarnings = str(("0x%x" % self.db.EngineWarnings)[2:11])
-
             if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
                 pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                 Dv = self.db.Speed*3.6 - float(pitSpeedLimit.split(' ')[0])
@@ -241,11 +240,10 @@ class IDDUCalc:
                 b = np.interp(Dv, [-10, -5, -1, 1, 5, 10, 15],
                                  [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
                 self.db.backgroundColour = (r, g, b)
-                # self.db.backgroundColour = self.red
                 self.db.textColour = self.grey
             else:
-                self.db.backgroundColour = self.black
-                self.db.textColour = self.grey
+                # self.db.backgroundColour = self.black
+                # self.db.textColour = self.grey
                 if not (self.db.SessionFlags == self.db.oldSessionFlags):
                     self.FlagCallTime = self.db.SessionTime
                     Flags = str(("0x%x" % self.db.SessionFlags)[2:11])
@@ -301,12 +299,62 @@ class IDDUCalc:
                 self.db.waiting = True
                 self.db.oldSessionNum = -1
                 self.db.SessionNum = 0
+                self.reinit()
                 print(self.db.timeStr+': Lost connection to iRacing')
 
         # print((time.time()-t)*1000)
 
+    def reinit(self):
+        print(self.db.timeStr+': Starting RTDB reinitialisation.')
+        helpData = {'done': False, 'timeStr': 0, 'waiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
+        # data from iRacing
+        iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 0, 'dcFuelMixture': 0,
+                  'dcThrottleShape': 0, 'dcTractionControl': 0, 'dcTractionControl2': 0, 'dcTractionControlToggle': 0,
+                  'dcABS': 0, 'dcBrakeBias': 0, 'FuelLevel': 0, 'Lap': 0, 'IsInGarage': 0, 'LapDistPct': 0,
+                  'OnPitRoad': 0,
+                  'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0, 'Throttle': 0,
+                  'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False,
+                  'Gear': 0,
+                  'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
+                                             'Drivers': [], 'DriverPitTrkPct': 0}, 'CarIdxLapDistPct': [0],
+                  'CarIdxOnPitRoad': [],
+                  'SessionInfo': {'Sessions':
+                                      [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
+                                        'ResultsPositions':
+                                            [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
+                  'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0,
+                  'EngineWarnings': 0,
+                  'CarIdxTrackSurface': 0}  # 'RaceLaps': 0,
+        # calculated data
+        calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
+                    'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
+                    'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
+                    'oldSessionlags': 0, 'LapsToGo': 27, 'SessionLapRemain': 0, 'FuelConsumptionStr': '0.00',
+                    'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0,
+                    'FlagException': False,
+                    'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0,
+                    'RaceLaps': 100000,
+                    'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True,
+                    'dx': [],
+                    'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
+                    'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141),
+                    'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 61, 'time': [], 'UpshiftStrategy': 0,
+                    'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
+                    'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
+                    'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False,
+                    'UserRaceLaps': 0,
+                    'SessionLength': 86400}
+        self.db.StopDDU = True
+        self.db.initialise(helpData)
+        self.db.initialise(iRData)
+        self.db.initialise(calcData)
+        # print(self.db.timeStr+': RTDB reinitialisied')
+        self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
+        self.db.StartDDU = True
+        print(self.db.timeStr + ':RTDB reinitialisied')
+
     def initSession(self):
-        print(self.db.timeStr+': Initialising')
+        print(self.db.timeStr+': Initialising Session')
         self.getTrackFiles()
         if self.db.startUp:
             self.db.oldSessionNum = self.db.SessionNum
@@ -324,30 +372,73 @@ class IDDUCalc:
                 self.createTrack = True
                 print(self.db.timeStr+':\tCreating Track')
 
+            print(self.db.timeStr + ':\tTrackName: ' + self.db.WeekendInfo['TrackDisplayName'])
+            print(self.db.timeStr + ':\tEventType: ' + self.db.WeekendInfo['EventType'])
+            print(self.db.timeStr + ':\tCategory: ' + self.db.WeekendInfo['Category'])
+            print(self.db.timeStr + ':\tSessionType: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.__setattr__('RX', True)
                 self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
-                print(self.db.timeStr+': RALLY CROSS!')
+                print(self.db.timeStr+':\tDirt Racing')
             else:
                 self.db.__setattr__('RX', False)
-                print(self.db.timeStr+': NO RALLY CROSS!')
+                print(self.db.timeStr+':\tRoad Racing')
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
                 self.db.LabelSessionDisplay[4] = 0  # ToGo
+                self.db.RaceLaps = self.db.UserRaceLaps
+                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.LabelSessionDisplay[2] = 0  # Remain
+                    self.db.SessionLength = 86400
+                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
+                    print(self.db.timeStr + ':\tRace mode 0')
                 else:
                     self.db.LabelSessionDisplay[2] = 1  # Remain
                     self.db.LabelSessionDisplay[3] = 0  # Elapsed
+                    tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
+                    self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+                    print(self.db.timeStr + ':\tRace mode 1')
+                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+            elif int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']) >= 2000: # alternative
+                self.db.LabelSessionDisplay[4] = 0  # ToGo
+                self.db.RaceLaps = self.db.UserRaceLaps
+                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
+                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                    self.db.LabelSessionDisplay[2] = 0  # Remain
+                    self.db.SessionLength = 86400
+                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
+                    print(self.db.timeStr + ':\tRace mode 0')
+                else:
+                    self.db.LabelSessionDisplay[2] = 1  # Remain
+                    self.db.LabelSessionDisplay[3] = 0  # Elapsed
+                    tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
+                    self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+                    print(self.db.timeStr + ':\tRace mode 1')
+                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
             else:
+                self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LabelSessionDisplay[4] = 1  # ToGo
+                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.LabelSessionDisplay[4] = 0  # ToGo
                     self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                    self.db.SessionLength = 86400
+                    print(self.db.timeStr + ':\tRace mode 2')
+                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                 else:
                     self.db.LabelSessionDisplay[4] = 1  # ToGo
                     self.db.LabelSessionDisplay[3] = 0  # Elapsed
+                    tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
+                    self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+                    print(self.db.timeStr + ':\tRace mode 3')
+                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+
+            print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.RaceLaps))
+            print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))
 
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.LabelSessionDisplay[5] = 1  # Joker
@@ -375,7 +466,7 @@ class IDDUCalc:
         print(self.db.timeStr+':\tTrack has been loaded successfully.')
 
     def getTrackFiles(self):
-        print(self.db.timeStr+': Collecting Track files...')
+        print(self.db.timeStr+':\tCollecting Track files...')
         self.dir = cwd = os.getcwd()
         self.trackdir = self.dir + r"\track"
 
@@ -385,5 +476,5 @@ class IDDUCalc:
         os.chdir(self.trackdir)
         for file in glob.glob("*.csv"):
             self.trackList.append(file)
-            print(self.db.timeStr+':\t- ' + str(file))
+            # print(self.db.timeStr+':\t- ' + str(file))
         os.chdir(self.dir)

@@ -301,8 +301,8 @@ class Gui(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("Form", "Debug"))
 
     def assignRaceLaps(self):
-        self.db.LapsToGo = self.spinBoxRaceLaps.value()
-        self.db.RaceLaps = self.spinBoxRaceLaps.value()
+        # self.db.LapsToGo = self.spinBoxRaceLaps.value()
+        self.db.UserRaceLaps = self.spinBoxRaceLaps.value()
         self.retranslateUi(self.Form)
 
     def assignPitStopDelta(self):

@@ -30,14 +30,15 @@ calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, '
             'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
             'oldSessionlags': 0, 'LapsToGo': 27, 'SessionLapRemain': 0, 'FuelConsumptionStr': '0.00',
             'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0, 'FlagException': False,
-            'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 28,
+            'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0, 'RaceLaps': 100000,
             'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True, 'dx': [],
             'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
             'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141),
             'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 61, 'time': [], 'UpshiftStrategy': 0,
             'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
             'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
-            'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False}
+            'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False, 'UserRaceLaps': 0,
+            'SessionLength': 86400}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
