@@ -422,7 +422,7 @@ class IDDUCalc:
             else:
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LabelSessionDisplay[4] = 1  # ToGo
-                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                # print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.LabelSessionDisplay[4] = 0  # ToGo
                     self.db.LabelSessionDisplay[3] = 1  # Elapsed
@@ -430,10 +430,14 @@ class IDDUCalc:
                     print(self.db.timeStr + ':\tRace mode 2')
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                 else:
-                    self.db.LabelSessionDisplay[4] = 1  # ToGo
-                    self.db.LabelSessionDisplay[3] = 0  # Elapsed
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+                    if self.db.SessionLength > (800*self.db.RaceLaps):
+                        self.db.LabelSessionDisplay[4] = 0  # ToGo
+                        self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                    else:
+                        self.db.LabelSessionDisplay[4] = 1  # ToGo
+                        self.db.LabelSessionDisplay[3] = 0  # Elapsed
                     print(self.db.timeStr + ':\tRace mode 3')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
 
