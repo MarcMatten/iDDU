@@ -229,6 +229,12 @@ class IDDUCalc:
                 self.db.RemLapValueStr = '0'
             RemTimeValue = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
 
+            for i in range(0, len(self.db.CarIdxOnPitRoad)):
+                if self.db.CarIdxOnPitRoad[i] and not self.db.CarIdxOnPitRoadOld[i]:
+                    self.db.CarIdxPitStops[i] = self.db.CarIdxPitStops[i] + 1
+            self.db.CarIdxOnPitRoadOld = self.db.CarIdxOnPitRoad
+
+
             if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
                 pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                 Dv = self.db.Speed*3.6 - float(pitSpeedLimit.split(' ')[0])
@@ -251,6 +257,7 @@ class IDDUCalc:
                     if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
                         self.db.backgroundColour = self.green
                         self.db.GreenTime = self.db.SessionTimeRemain
+                        self.db.CarIdxPitStops = [0] * 64
                     if Flags[7] == '2':
                         self.db.backgroundColour = self.white
                         self.db.textColour = self.black
@@ -317,7 +324,7 @@ class IDDUCalc:
                   'Gear': 0,
                   'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
                                              'Drivers': [], 'DriverPitTrkPct': 0}, 'CarIdxLapDistPct': [0],
-                  'CarIdxOnPitRoad': [],
+                  'CarIdxOnPitRoad': [True]*64,
                   'SessionInfo': {'Sessions':
                                       [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
                                         'ResultsPositions':
@@ -343,7 +350,7 @@ class IDDUCalc:
                     'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
                     'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False,
                     'UserRaceLaps': 0,
-                    'SessionLength': 86400}
+                    'SessionLength': 86400, 'CarIdxPitStops': [0] * 64, 'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1}
         self.db.StopDDU = True
         self.db.initialise(helpData)
         self.db.initialise(iRData)
