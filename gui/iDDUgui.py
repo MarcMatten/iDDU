@@ -52,10 +52,10 @@ class Gui(object):
         self.label_8.setGeometry(QtCore.QRect(40, 20, 81, 16))
         self.label_8.setObjectName("label_8")
         self.label_10 = QtWidgets.QLabel(self.tabGeneral)
-        self.label_10.setGeometry(QtCore.QRect(40, 50, 81, 16))
+        self.label_10.setGeometry(QtCore.QRect(40, 60, 81, 16))
         self.label_10.setObjectName("label_10")
         self.doubleSpinBox_PitStopDelta = QtWidgets.QDoubleSpinBox(self.tabGeneral)
-        self.doubleSpinBox_PitStopDelta.setGeometry(QtCore.QRect(160, 50, 101, 22))
+        self.doubleSpinBox_PitStopDelta.setGeometry(QtCore.QRect(160, 60, 101, 22))
         self.doubleSpinBox_PitStopDelta.setPrefix("")
         self.doubleSpinBox_PitStopDelta.setSuffix("")
         self.doubleSpinBox_PitStopDelta.setDecimals(1)
@@ -77,6 +77,18 @@ class Gui(object):
         self.pushButton_StopDDU = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_StopDDU.setGeometry(QtCore.QRect(160, 20, 75, 23))
         self.pushButton_StopDDU.setObjectName("pushButton_StopDDU")
+        self.label_11 = QtWidgets.QLabel(self.tabGeneral)
+        self.label_11.setGeometry(QtCore.QRect(40, 100, 101, 16))
+        self.label_11.setObjectName("label_11")
+        self.doubleSpinBox_PitStopsRequired = QtWidgets.QDoubleSpinBox(self.tabGeneral)
+        self.doubleSpinBox_PitStopsRequired.setGeometry(QtCore.QRect(160, 100, 101, 22))
+        self.doubleSpinBox_PitStopsRequired.setPrefix("")
+        self.doubleSpinBox_PitStopsRequired.setSuffix("")
+        self.doubleSpinBox_PitStopsRequired.setDecimals(0)
+        self.doubleSpinBox_PitStopsRequired.setMaximum(1000.0)
+        self.doubleSpinBox_PitStopsRequired.setSingleStep(1.0)
+        self.doubleSpinBox_PitStopsRequired.setProperty("value", 1.0)
+        self.doubleSpinBox_PitStopsRequired.setObjectName("doubleSpinBox_PitStopsRequired")
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
@@ -229,9 +241,11 @@ class Gui(object):
 
         self.spinBoxRaceLaps.setValue(self.db.RaceLaps)
         self.doubleSpinBox_PitStopDelta.setValue(self.db.PitStopDelta)
+        self.doubleSpinBox_PitStopsRequired.setValue(self.db.PitStopsRequired)
 
         self.spinBoxRaceLaps.valueChanged.connect(self.assignRaceLaps)
         self.doubleSpinBox_PitStopDelta.valueChanged.connect(self.assignPitStopDelta)
+        self.doubleSpinBox_PitStopsRequired.valueChanged.connect(self.assignPitStopsRequired)
 
         self.checkBox_UpshiftTone.stateChanged.connect(self.EnableShiftTone)
         self.comboBox.currentIndexChanged.connect(self.UpshiftStrategy)
@@ -266,6 +280,7 @@ class Gui(object):
         self.groupBox_2.setTitle(_translate("Form", "DDU"))
         self.pushButton_StartDDU.setText(_translate("Form", "Start DDU"))
         self.pushButton_StopDDU.setText(_translate("Form", "Stop DDU"))
+        self.label_11.setText(_translate("Form", "Required Pit Stops"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("Form", "General"))
         self.groupBox.setTitle(_translate("Form", "Upshift RPM"))
         self.groupBox_Gear1.setTitle(_translate("Form", "Gear 1"))
@@ -307,6 +322,10 @@ class Gui(object):
 
     def assignPitStopDelta(self):
         self.db.PitStopDelta = self.doubleSpinBox_PitStopDelta.value()
+        self.retranslateUi(self.Form)
+
+    def assignPitStopsRequired(self):
+        self.db.PitStopsRequired = self.doubleSpinBox_PitStopsRequired.value()
         self.retranslateUi(self.Form)
 
     def UpshiftStrategy(self):

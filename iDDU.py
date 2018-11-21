@@ -17,7 +17,8 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
           'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0, 'Throttle': 0,
           'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False, 'Gear': 0,
           'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
-                                     'Drivers': [], 'DriverPitTrkPct' : 0}, 'CarIdxLapDistPct': [0], 'CarIdxOnPitRoad': [],
+                                     'Drivers': [], 'DriverPitTrkPct' : 0}, 'CarIdxLapDistPct': [0],
+          'CarIdxOnPitRoad': [True]*64,
           'SessionInfo': {'Sessions':
                               [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
                                 'ResultsPositions':
@@ -38,7 +39,7 @@ calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, '
             'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
             'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
             'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False, 'UserRaceLaps': 0,
-            'SessionLength': 86400}
+            'SessionLength': 86400, 'CarIdxPitStops': [0] * 64, 'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
