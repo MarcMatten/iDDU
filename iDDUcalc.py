@@ -205,6 +205,22 @@ class IDDUCalc:
                     self.db.FuelLapStr = '0'
                     self.db.FuelAddStr = '0'
 
+                # DRS and P2P
+                if self.db.DRSCounter == self.db.DRSActivations:
+                    self.db.textColourDRS = self.red
+                else:
+                    if not self.db.DRS_status == self.db.old_DRS_status:
+                        if self.db.DRS_status == 1:
+                            self.db.textColourDRS = self.green
+                        elif self.db.DRS_status == 0:
+                            self.db.textColourDRS = self.red
+                        elif self.db.DRS_status == 2:
+                            self.db.textColourDRS = self.black
+                            self.db.DRSCounter = self.db.DRSCounter + 1
+                        else:
+                            self.db.textColourDRS = self.db.textColour
+                        self.db.old_DRS_status = self.db.DRS_status
+
                 # alarm
                 if self.db.dcTractionControlToggle:
                     self.db.Alarm.extend([1])
@@ -330,7 +346,7 @@ class IDDUCalc:
                                         'ResultsPositions':
                                             [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
                   'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0,
-                  'EngineWarnings': 0, 'CarIdxTrackSurface': 0, 'DRS_Status': 1, 'PushToPass': False}  # 'RaceLaps': 0,
+                  'EngineWarnings': 0, 'CarIdxTrackSurface': 0, 'DRS_Status': 0, 'PushToPass': False}  # 'RaceLaps': 0,
         # calculated data
         calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
                     'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
@@ -349,8 +365,9 @@ class IDDUCalc:
                     'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
                     'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False,
                     'UserRaceLaps': 0,'SessionLength': 86400, 'CarIdxPitStops': [0] * 64,
-                    'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1, 'old_DRS_Status': 1, 'DRSActivations': 8,
-                    'P2PActivations': 12,'JokerLapDelta': 2, 'JokerLaps': 1, 'MapHighlight': True}
+                    'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1, 'old_DRS_Status': 0, 'DRSActivations': 8,
+                    'P2PActivations': 12,'JokerLapDelta': 2, 'JokerLaps': 1, 'MapHighlight': True,
+                    'textColourDRS': (141, 141, 141), 'textColourP2P': (141, 141, 141), 'DRSCounter': 0}
 
         self.db.StopDDU = True
         self.db.initialise(helpData)

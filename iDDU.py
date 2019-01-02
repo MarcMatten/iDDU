@@ -24,7 +24,7 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
                                 'ResultsPositions':
                                     [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
           'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0, 'EngineWarnings': 0,
-          'CarIdxTrackSurface': 0, 'CarLeftRight': 0, 'DRS_Status': 1, 'PushToPass': False}
+          'CarIdxTrackSurface': 0, 'CarLeftRight': 0, 'DRS_Status': 0, 'PushToPass': False}
 
 # calculated data
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
@@ -41,8 +41,8 @@ calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, '
             'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
             'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False, 'UserRaceLaps': 0,
             'SessionLength': 86400, 'CarIdxPitStops': [0] * 64, 'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1,
-            'old_DRS_Status': 1, 'DRSActivations': 8, 'P2PActivations': 12,'JokerLapDelta': 2, 'JokerLaps': 1,
-            'MapHighlight': True}
+            'old_DRS_Status': 0, 'DRSActivations': 8, 'P2PActivations': 12,'JokerLapDelta': 2, 'JokerLaps': 1,
+            'MapHighlight': True, 'textColourDRS': (141, 141, 141), 'textColourP2P': (141, 141, 141), 'DRSCounter': 0}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()

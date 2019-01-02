@@ -21,6 +21,8 @@ class RenderMain:
         self.backgroundColour = self.black
         self.textColour = self.white
         self.textColourFuelAdd = self.textColour
+        self.textColourDRS = self.textColour
+        self.textColourP2P = self.textColour
 
         self.ArrowLeft = [[20, 240], [100, 20], [100, 460]]        
         self.ArrowRight = [[780, 240], [700, 20], [700, 460]]
@@ -125,8 +127,8 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('RemainingStr', LabeledValue('Remaining', 200, 290, 350, '123', self.fontSmall, self.fontLarge, self.db, 0))
         self.frames[3].addLabel('ElapsedStr', LabeledValue('Elapsed', 200, 290, 350, '123', self.fontSmall, self.fontLarge, self.db, 0))
         self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 300, 360, 160, '123.4', self.fontSmall, self.fontLarge, self.db, 0))
-        self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '5/3', self.fontSmall, self.fontLarge, self.db, 0))
-        #self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '4/8', self.fontSmall, self.fontLarge, self.db, 2))
+        #self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '5/3', self.fontSmall, self.fontLarge, self.db, 0))
+        self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '4/8', self.fontSmall, self.fontLarge, self.db, 2))
 
         # misc
         self.done = False
@@ -161,9 +163,6 @@ class RenderScreen(RenderMain):
                     self.ScreenNumber = 2
                 else:
                     self.ScreenNumber = 1
-
-
-                    
 
         if self.ScreenNumber == 1:
 
@@ -202,6 +201,15 @@ class RenderScreen(RenderMain):
                 if [1 for i in self.db.Alarm if i in [4]]:  # Fuel Laps 2
                     pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
 
+            # DRS and P2P
+            if self.db.DRSCounter == (self.db.DRSActivations - 1):
+                pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
+            if self.db.DRS_Status == 2:
+                pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
+                # drs open
+                # joker penultimate
+                # joker last
+
             # LabelStrings
             self.db.BestLapStr = iDDUhelper.convertTimeMMSSsss(self.db.LapBestLapTime)
             self.db.LastLapStr = iDDUhelper.convertTimeMMSSsss(self.db.LapLastLapTime)
@@ -227,6 +235,7 @@ class RenderScreen(RenderMain):
             # self.db.Joker2GoStr = str(iRData[self.LabelsSession[i][0]])
             self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTime)
             self.db.RemainingStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
+            self.db.DRSStr = str(self.db.DRSCounter) + '/' + str(self.db.DRSActivations)
 
             for i in range(0, len(self.frames)):
                 self.frames[i].setTextColour(self.db.textColour)
@@ -235,8 +244,9 @@ class RenderScreen(RenderMain):
         elif self.ScreenNumber == 2:
             self.screen.fill(self.backgroundColour)
 
-            self.highlightSection(5, self.green)
-            self.highlightSection(1, self.red)
+            if self.db.MapHighlight:
+                self.highlightSection(5, self.green)
+                self.highlightSection(1, self.red)
 
             self.pygame.draw.lines(self.screen, self.db.textColour, True, [self.db.map[-1], self.db.map[0]], 30)
 
@@ -330,7 +340,6 @@ class Frame(RenderMain):
         self.Title = self.fontSmall.render(self.title, True, self.textColour)
         self.textSize = self.fontSmall.size(self.title)
         self.Labels = {}
-        #self.db = db
 
     def drawFrame(self):
         self.pygame.draw.lines(self.screen, self.textColour, False,
@@ -379,6 +388,9 @@ class LabeledValue(RenderMain):
         if self.colourTag == 1:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
+        elif self.colourTag == 2:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDRS)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
