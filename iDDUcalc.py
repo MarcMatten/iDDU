@@ -63,6 +63,7 @@ class IDDUCalc:
                 self.db.Alarm = []
 
                 if self.db.RX:
+                    self.db.JokerLaps = []
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] is not None:
                         length = len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])
                     else:

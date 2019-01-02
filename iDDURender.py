@@ -20,6 +20,9 @@ class RenderMain:
         self.textColour = self.grey
         self.textColourFuelAdd = self.textColour
 
+        self.ArrowLeft = [[20, 240], [100, 20], [100, 460]]        
+        self.ArrowRight = [[780, 240], [700, 20], [700, 460]]
+
         self.pygame = pygame
         self.pygame.init()
 
@@ -89,7 +92,6 @@ class RenderScreen(RenderMain):
         # initialize joystick
         self.initJoystick('FANATEC ClubSport Wheel Base')
         # self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
-
 
         # frames
         self.frames = {}
@@ -164,6 +166,9 @@ class RenderScreen(RenderMain):
                 else:
                     self.ScreenNumber = 1
 
+
+                    
+
         if self.ScreenNumber == 1:
 
             if self.db.init:
@@ -194,6 +199,12 @@ class RenderScreen(RenderMain):
                     self.screen.blit(self.debry, [0, 0])
                 elif self.db.FlagExceptionVal == 6:
                     self.screen.blit(self.warning, [0, 0])
+                        
+            # Radar Incicators
+            if self.db.CarLeftRight == 2 or self.db.CarLeftRight > 3:
+                pygame.draw.polygon(self.screen, self.orange, self.ArrowLeft, 0)    
+            if self.db.CarLeftRight > 2:
+                pygame.draw.polygon(self.screen, self.orange, self.ArrowRight, 0)
 
             # alarms
             if len(self.db.Alarm) > 0:
@@ -223,6 +234,7 @@ class RenderScreen(RenderMain):
             dcABS = iDDUhelper.roundedStr0(self.db.dcABS)
 
             FuelLevel = iDDUhelper.roundedStr2(self.db.FuelLevel)
+            #FuelLevel = str(self.db.CarLeftRight)
             FuelCons = self.db.FuelConsumptionStr
             FuelLastCons = iDDUhelper.roundedStr2(self.db.FuelLastCons)
             FuelLaps = self.db.FuelLapStr
