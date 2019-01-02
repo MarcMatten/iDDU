@@ -37,7 +37,7 @@ class IDDUCalc:
         self.ir = irsdk.IRSDK()
 
         self.getTrackFiles()
-        self.loadTrack('dummie_track')
+        self.loadTrack('cota gp')
 
     def calc(self):
         # t = time.time()
@@ -248,8 +248,6 @@ class IDDUCalc:
                 self.db.backgroundColour = (r, g, b)
                 self.db.textColour = self.grey
             else:
-                # self.db.backgroundColour = self.black
-                # self.db.textColour = self.grey
                 if not (self.db.SessionFlags == self.db.oldSessionFlags):
                     self.FlagCallTime = self.db.SessionTime
                     Flags = str(("0x%x" % self.db.SessionFlags)[2:11])
@@ -264,23 +262,24 @@ class IDDUCalc:
                     if Flags[6] == '2':
                         self.db.backgroundColour = self.blue
                     if Flags[7] == '1':  # checkered
+                        self.db.textColour = self.grey
                         self.db.FlagExceptionVal = 1
                         self.db.FlagException = True
                     if Flags[2] == '1':  # repair
                         self.db.FlagException = True
                         self.db.FlagExceptionVal = 2
-                        self.db.FlagExceptionVal = 2
                         self.db.backgroundColour = self.black
                     if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
+                        self.db.textColour = self.grey
                         self.db.FlagException = True
                         self.db.FlagExceptionVal = 4
-                        self.db.FlagException = True
                     if Flags[6] == '4':  # debry
                         self.db.FlagExceptionVal = 5
                     if Flags[3] == '8' or Flags[3] == 'c':  # warning
                         self.db.FlagException = True
+                        self.db.textColour = self.grey
                         self.db.FlagExceptionVal = 6
-                    if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':  # or Flags[0] == '2'
+                    if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':
                         self.db.backgroundColour = self.yellow
                         self.db.textColour = self.black
                     if Flags[4] == '4' or Flags[4] == '8':  # SC
@@ -330,8 +329,7 @@ class IDDUCalc:
                                         'ResultsPositions':
                                             [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
                   'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0,
-                  'EngineWarnings': 0,
-                  'CarIdxTrackSurface': 0}  # 'RaceLaps': 0,
+                  'EngineWarnings': 0, 'CarIdxTrackSurface': 0, 'DRS_Status': 1, 'PushToPass': False}  # 'RaceLaps': 0,
         # calculated data
         calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
                     'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
@@ -349,8 +347,10 @@ class IDDUCalc:
                     'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
                     'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
                     'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False,
-                    'UserRaceLaps': 0,
-                    'SessionLength': 86400, 'CarIdxPitStops': [0] * 64, 'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1}
+                    'UserRaceLaps': 0,'SessionLength': 86400, 'CarIdxPitStops': [0] * 64,
+                    'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1, 'old_DRS_Status': 1, 'DRSActivations': 8,
+                    'P2PActivations': 12,'JokerLapDelta': 2, 'JokerLaps': 1, 'MapHighlight': True}
+
         self.db.StopDDU = True
         self.db.initialise(helpData)
         self.db.initialise(iRData)
@@ -375,7 +375,7 @@ class IDDUCalc:
                 self.loadTrack(self.db.WeekendInfo['TrackName'])
                 self.createTrack = False
             else:
-                self.loadTrack('dummie_track')
+                self.loadTrack('cota gp')
                 self.createTrack = True
                 print(self.db.timeStr+':\tCreating Track')
 
@@ -392,16 +392,19 @@ class IDDUCalc:
                 self.db.__setattr__('RX', False)
                 print(self.db.timeStr+':\tRoad Racing')
 
+            # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
                 self.db.LabelSessionDisplay[4] = 0  # ToGo
                 self.db.RaceLaps = self.db.UserRaceLaps
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.LabelSessionDisplay[2] = 0  # Remain
+                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.SessionLength = 86400
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                     print(self.db.timeStr + ':\tRace mode 0')
+                # limited time
                 else:
                     self.db.LabelSessionDisplay[2] = 1  # Remain
                     self.db.LabelSessionDisplay[3] = 0  # Elapsed
@@ -409,13 +412,14 @@ class IDDUCalc:
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+            # limited laps
             elif int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']) >= 2000: # alternative
                 self.db.LabelSessionDisplay[4] = 0  # ToGo
                 self.db.RaceLaps = self.db.UserRaceLaps
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.LabelSessionDisplay[2] = 0  # Remain
+                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.SessionLength = 86400
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                     print(self.db.timeStr + ':\tRace mode 0')
@@ -426,19 +430,22 @@ class IDDUCalc:
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+            # limited laps
             else:
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LabelSessionDisplay[4] = 1  # ToGo
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.LabelSessionDisplay[4] = 0  # ToGo
                     self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                    self.db.LabelSessionDisplay[4] = 0  # ToGo
                     self.db.SessionLength = 86400
                     print(self.db.timeStr + ':\tRace mode 2')
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
+                # limited time
                 else:
-                    self.db.LabelSessionDisplay[4] = 1  # ToGo
                     self.db.LabelSessionDisplay[3] = 0  # Elapsed
+                    self.db.LabelSessionDisplay[4] = 1  # ToGo
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 3')
