@@ -43,8 +43,8 @@ class RenderMain:
         # self.fullscreen = False
         import os
         # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
-        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
         self.screen = self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
         self.fullscreen = True
         self.pygame.display.set_caption('iDDU')
@@ -128,7 +128,8 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('ElapsedStr', LabeledValue('Elapsed', 200, 290, 350, '123', self.fontSmall, self.fontLarge, self.db, 0))
         self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 300, 360, 160, '123.4', self.fontSmall, self.fontLarge, self.db, 0))
         #self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '5/3', self.fontSmall, self.fontLarge, self.db, 0))
-        self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '4/8', self.fontSmall, self.fontLarge, self.db, 2))
+        self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 2))
+        self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3))
 
         # misc
         self.done = False
@@ -202,7 +203,8 @@ class RenderScreen(RenderMain):
                     pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
 
             # DRS and P2P
-            if self.db.DRSCounter == (self.db.DRSActivations - 1):
+            DRSRemaining = (self.db.DRSActivations - 1)
+            if self.db.DRSCounter == DRSRemaining:
                 pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
             if self.db.DRS_Status == 2:
                 pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
@@ -235,7 +237,14 @@ class RenderScreen(RenderMain):
             # self.db.Joker2GoStr = str(iRData[self.LabelsSession[i][0]])
             self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTime)
             self.db.RemainingStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
-            self.db.DRSStr = str(self.db.DRSCounter) + '/' + str(self.db.DRSActivations)
+            if self.db.DRSActivations == 0:
+                self.db.DRSStr = str(DRSRemaining)
+            else:
+                self.db.DRSStr = str(self.db.DRSCounter)
+            if self.db.P2PActivations == 0:
+                self.db.P2PStr = str(P2PRemaining)
+            else:
+                self.db.P2PStr = str(self.db.P2PCounter)
 
             for i in range(0, len(self.frames)):
                 self.frames[i].setTextColour(self.db.textColour)
@@ -391,6 +400,9 @@ class LabeledValue(RenderMain):
         elif self.colourTag == 2:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDRS)
+        elif self.colourTag == 3:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)

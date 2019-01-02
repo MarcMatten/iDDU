@@ -209,17 +209,30 @@ class IDDUCalc:
                 if self.db.DRSCounter == self.db.DRSActivations:
                     self.db.textColourDRS = self.red
                 else:
-                    if not self.db.DRS_status == self.db.old_DRS_status:
-                        if self.db.DRS_status == 1:
+                    if not self.db.DRS_Status == self.db.old_DRS_Status:
+                        if self.db.DRS_Status == 1:
                             self.db.textColourDRS = self.green
-                        elif self.db.DRS_status == 0:
+                        elif self.db.DRS_Status == 0:
                             self.db.textColourDRS = self.red
-                        elif self.db.DRS_status == 2:
+                        elif self.db.DRS_Status == 2:
                             self.db.textColourDRS = self.black
                             self.db.DRSCounter = self.db.DRSCounter + 1
                         else:
                             self.db.textColourDRS = self.db.textColour
-                        self.db.old_DRS_status = self.db.DRS_status
+                        self.db.old_DRS_Status = self.db.DRS_Status
+
+                if self.db.P2PCounter == self.db.P2PActivations:
+                    self.db.textColourP2P = self.red
+                elif (self.db.P2PCounter + 1) == self.db.P2PActivations:
+                    self.db.textColourP2P = self.orange
+                else:
+                    if not self.db.PushToPass == self.db.old_PushToPass:
+                        if not self.db.PushToPass:
+                            self.db.textColourP2P = self.green
+                        elif self.db.PushToPass:
+                            self.db.textColourP2P = self.black
+                            self.db.P2PCounter = self.db.P2PCounter + 1
+                        self.db.old_PushToPass = self.db.PushToPass
 
                 # alarm
                 if self.db.dcTractionControlToggle:
@@ -345,29 +358,91 @@ class IDDUCalc:
                                       [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
                                         'ResultsPositions':
                                             [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
-                  'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0,
-                  'EngineWarnings': 0, 'CarIdxTrackSurface': 0, 'DRS_Status': 0, 'PushToPass': False}  # 'RaceLaps': 0,
+                  'VelocityY': 0,
+                  'YawNorth': 0,
+                  'WeekendInfo': [],
+                  'RPM': 0,
+                  'LapCurrentLapTime': 0,
+                  'EngineWarnings': 0,
+                  'CarIdxTrackSurface': 0,
+                  'CarLeftRight': 0,
+                  'DRS_Status': 0,
+                  'PushToPass': False}
         # calculated data
-        calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
-                    'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
-                    'oldSessionNum': -1, 'oldLap': 0.1, 'FuelConsumption': [], 'FuelLastCons': 0, 'OutLap': True,
-                    'oldSessionlags': 0, 'LapsToGo': 27, 'SessionLapRemain': 0, 'FuelConsumptionStr': '0.00',
-                    'RemLapValueStr': '10', 'FuelLapStr': '0', 'FuelAddStr': '0.0', 'FlagCallTime': 0,
+        calcData = {'LastFuelLevel': 0,
+                    'GearStr': '-',
+                    'SessionInfoAvailable': False,
+                    'SessionNum': 0,
+                    'init': True,
+                    'onPitRoad': True,
+                    'isRunning': False,
+                    'WasOnTrack': False,
+                    'StintLap': 0,
+                    'oldSessionNum': -1,
+                    'oldLap': 0.1,
+                    'FuelConsumption': [],
+                    'FuelLastCons': 0,
+                    'OutLap': True,
+                    'oldSessionlags': 0,
+                    'LapsToGo': 27,
+                    'SessionLapRemain': 0,
+                    'FuelConsumptionStr': '0.00',
+                    'RemLapValueStr': '10',
+                    'FuelLapStr': '0',
+                    'FuelAddStr': '0.0',
+                    'FlagCallTime': 0,
                     'FlagException': False,
-                    'FlagExceptionVal': 0, 'Alarm': [], 'oldFuelAdd': 1, 'GreenTime': 0, 'RemTimeValue': 0,
+                    'FlagExceptionVal': 0,
+                    'Alarm': [],
+                    'oldFuelAdd': 1,
+                    'GreenTime': 0,
+                    'RemTimeValue': 0,
                     'RaceLaps': 100000,
-                    'JokerStr': '-/-', 'dist': [], 'x': [], 'y': [], 'map': [], 'RX': False, 'createTrack': True,
+                    'JokerStr': '-/-',
+                    'dist': [],
+                    'x': [],
+                    'y': [],
+                    'map': [],
+                    'RX': False,
+                    'createTrack': True,
                     'dx': [],
-                    'dy': [], 'logLap': 0, 'Logging': False, 'tempdist': -1, 'StartUp': False, 'oldSessionFlags': 0,
-                    'backgroundColour': (0, 0, 0), 'textColourFuelAdd': (141, 141, 141), 'textColour': (141, 141, 141),
-                    'FuelLaps': 1, 'FuelAdd': 1, 'PitStopDelta': 61, 'time': [], 'UpshiftStrategy': 0,
+                    'dy': [],
+                    'logLap': 0,
+                    'Logging': False,
+                    'tempdist': -1,
+                    'StartUp': False,
+                    'oldSessionFlags': 0,
+                    'backgroundColour': (0, 0, 0),
+                    'textColourFuelAdd': (141, 141, 141),
+                    'textColour': (141, 141, 141),
+                    'FuelLaps': 1,
+                    'FuelAdd': 1,
+                    'PitStopDelta': 61,
+                    'time': [],
+                    'UpshiftStrategy': 0,
                     'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
-                    'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1], 'iRShiftRPM': [100000, 100000, 100000, 100000],
-                    'ShiftToneEnabled': True, 'StartDDU': False, 'StopDDU': False, 'DDUrunning': False,
-                    'UserRaceLaps': 0,'SessionLength': 86400, 'CarIdxPitStops': [0] * 64,
-                    'CarIdxOnPitRoadOld': [True]*64, 'PitStopsRequired': 1, 'old_DRS_Status': 0, 'DRSActivations': 8,
-                    'P2PActivations': 12,'JokerLapDelta': 2, 'JokerLaps': 1, 'MapHighlight': True,
-                    'textColourDRS': (141, 141, 141), 'textColourP2P': (141, 141, 141), 'DRSCounter': 0}
+                    'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1],
+                    'iRShiftRPM': [100000, 100000, 100000, 100000],
+                    'ShiftToneEnabled': True,
+                    'StartDDU': False,
+                    'StopDDU': False,
+                    'DDUrunning': False,
+                    'UserRaceLaps': 0,
+                    'SessionLength': 86400,
+                    'CarIdxPitStops': [0] * 64,
+                    'CarIdxOnPitRoadOld': [True]*64,
+                    'PitStopsRequired': 1,
+                    'old_DRS_Status': 0,
+                    'DRSActivations': 8,
+                    'P2PActivations': 12,
+                    'JokerLapDelta': 2,
+                    'JokerLaps': 1,
+                    'MapHighlight': True,
+                    'old_PushToPass': False,
+                    'textColourDRS': (141, 141, 141),
+                    'textColourP2P': (141, 141, 141),
+                    'DRSCounter': 0,
+                    'P2PCounter': 0}
 
         self.db.StopDDU = True
         self.db.initialise(helpData)
