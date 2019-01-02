@@ -24,7 +24,8 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
                                 'ResultsPositions':
                                     [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
           'VelocityY': 0, 'YawNorth': 0, '': 0, 'WeekendInfo': [], 'RPM': 0, 'LapCurrentLapTime': 0, 'EngineWarnings': 0,
-          'CarIdxTrackSurface': 0, 'DRS_Status': 1, 'PushToPass': False} #'RaceLaps': 0,
+          'CarIdxTrackSurface': 0, 'CarLeftRight': 0, 'DRS_Status': 1, 'PushToPass': False}
+
 # calculated data
 calcData = {'LastFuelLevel': 0, 'GearStr': '-', 'SessionInfoAvailable': False, 'SessionNum': 0, 'init': True,
             'onPitRoad': True, 'isRunning': False, 'WasOnTrack': False, 'StintLap': 0,
