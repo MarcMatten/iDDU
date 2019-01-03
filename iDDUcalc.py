@@ -442,7 +442,34 @@ class IDDUCalc:
                     'textColourDRS': (141, 141, 141),
                     'textColourP2P': (141, 141, 141),
                     'DRSCounter': 0,
-                    'P2PCounter': 0}
+                    'P2PCounter': 0,
+                    'RenderLabel': [
+                        True,   # Best
+                        True,   # Last
+                        True,   # Delta
+                        True,   # FuelLevel
+                        True,   # FuelCons
+                        True,   # FuelLastCons
+                        True,   # FuelLaps
+                        True,   # FuelAdd
+                        True,   # ABS
+                        True,   # BBias
+                        True,   # Mix
+                        True,   # TC1
+                        True,   # TC2
+                        True,   # Lap
+                        True,   # Clock
+                        True,   # Remain
+                        False,  # Elapsed
+                        False,  # Joker
+                        False,  # DRS
+                        False,  # P2P
+                    ],
+                    'P2P': False,
+                    'DRS': False,
+                    'LapLimit': False,
+                    'TimeLimit': False
+                    }
 
         self.db.StopDDU = True
         self.db.initialise(helpData)
@@ -454,7 +481,7 @@ class IDDUCalc:
         print(self.db.timeStr + ':RTDB reinitialisied')
 
     def initSession(self):
-        print(self.db.timeStr+': Initialising Session')
+        print(self.db.timeStr+': Initialising Session ==========================')
         self.getTrackFiles()
         if self.db.startUp:
             self.db.oldSessionNum = self.db.SessionNum
@@ -480,81 +507,92 @@ class IDDUCalc:
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.__setattr__('RX', True)
                 self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
+                self.db.RenderLabel[17] = True
                 print(self.db.timeStr+':\tDirt Racing')
             else:
                 self.db.__setattr__('RX', False)
+                self.db.RenderLabel[17] = False
                 print(self.db.timeStr+':\tRoad Racing')
 
             # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
-                self.db.LabelSessionDisplay[4] = 0  # ToGo
                 self.db.RaceLaps = self.db.UserRaceLaps
+                self.db.LapLimit = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.LabelSessionDisplay[2] = 0  # Remain
-                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.SessionLength = 86400
+                    self.db.RenderLabel[15] = False
+                    self.db.RenderLabel[16] = True
+                    self.db.TimeLimit = False
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                     print(self.db.timeStr + ':\tRace mode 0')
                 # limited time
                 else:
-                    self.db.LabelSessionDisplay[2] = 1  # Remain
-                    self.db.LabelSessionDisplay[3] = 0  # Elapsed
+                    self.db.RenderLabel[15] = True
+                    self.db.RenderLabel[16] = False
+                    self.db.TimeLimit = True
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
             # limited laps
             elif int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']) >= 2000: # alternative
-                self.db.LabelSessionDisplay[4] = 0  # ToGo
                 self.db.RaceLaps = self.db.UserRaceLaps
+                self.db.LapLimit = True
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.LabelSessionDisplay[2] = 0  # Remain
-                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
                     self.db.SessionLength = 86400
+                    self.db.RenderLabel[15] = False
+                    self.db.RenderLabel[16] = True
+                    self.db.TimeLimit = False
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
-                    print(self.db.timeStr + ':\tRace mode 0')
+                    print(self.db.timeStr + ':\tRace mode 2')
                 else:
-                    self.db.LabelSessionDisplay[2] = 1  # Remain
-                    self.db.LabelSessionDisplay[3] = 0  # Elapsed
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
+                    self.db.RenderLabel[15] = True
+                    self.db.RenderLabel[16] = False
+                    self.db.TimeLimit = True
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
-                    print(self.db.timeStr + ':\tRace mode 1')
+                    print(self.db.timeStr + ':\tRace mode 3')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
             # limited laps
             else:
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
-                self.db.LabelSessionDisplay[4] = 1  # ToGo
-                # print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                self.db.LapLimit = True
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.LabelSessionDisplay[3] = 1  # Elapsed
-                    self.db.LabelSessionDisplay[4] = 0  # ToGo
                     self.db.SessionLength = 86400
-                    print(self.db.timeStr + ':\tRace mode 2')
+                    self.db.TimeLimit = False
+                    print(self.db.timeStr + ':\tRace mode 4')
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                 # limited time
                 else:
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     if self.db.SessionLength > (800*self.db.RaceLaps):
-                        self.db.LabelSessionDisplay[4] = 0  # ToGo
-                        self.db.LabelSessionDisplay[3] = 1  # Elapsed
+                        self.db.TimeLimit = False
                     else:
-                        self.db.LabelSessionDisplay[4] = 1  # ToGo
-                        self.db.LabelSessionDisplay[3] = 0  # Elapsed
-                    print(self.db.timeStr + ':\tRace mode 3')
+                        self.db.TimeLimit = False
+                    print(self.db.timeStr + ':\tRace mode 5')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
 
             print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.RaceLaps))
             print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))
 
-            if self.db.WeekendInfo['Category'] == 'DirtRoad':
-                self.db.LabelSessionDisplay[5] = 1  # Joker
+            if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.DRSList:
+                self.db.DRS = True
+                self.db.RenderLabel[18] = True
             else:
-                self.db.LabelSessionDisplay[5] = 0  # Joker
+                self.db.DRS = False
+                self.db.RenderLabel[18] = False
+
+            if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.P2PList:
+                self.db.P2P = True
+                self.db.RenderLabel[19] = True
+            else:
+                self.db.P2P = False
+                self.db.RenderLabel[19] = False
         
     def loadTrack(self, name):
         print(self.db.timeStr+':\tLoading track: ' + r"track/" + name + '.csv')

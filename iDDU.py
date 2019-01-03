@@ -9,20 +9,68 @@ from functionalities.UpshiftTone import UpshiftTone
 
 # data for initialisation of RTDB
 # helper variables
-helpData = {'done': False, 'timeStr': 0, 'waiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
+helpData = {'done': False,
+            'timeStr': 0,
+            'waiting': False,
+            'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]
+            }
 # data from iRacing
-iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 0, 'dcFuelMixture': 0,
-          'dcThrottleShape': 0, 'dcTractionControl': 0, 'dcTractionControl2': 0, 'dcTractionControlToggle': 0,
-          'dcABS': 0, 'dcBrakeBias': 0, 'FuelLevel': 0, 'Lap': 0, 'IsInGarage': 0, 'LapDistPct': 0, 'OnPitRoad': 0,
-          'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0, 'Throttle': 0,
-          'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False, 'Gear': 0,
-          'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
-                                     'Drivers': [], 'DriverPitTrkPct' : 0}, 'CarIdxLapDistPct': [0],
+iRData = {'LapBestLapTime': 0,
+          'LapLastLapTime': 0,
+          'LapDeltaToSessionBestLap': 0,
+          'dcFuelMixture': 0,
+          'dcThrottleShape': 0,
+          'dcTractionControl': 0,
+          'dcTractionControl2': 0,
+          'dcTractionControlToggle': 0,
+          'dcABS': 0,
+          'dcBrakeBias': 0,
+          'FuelLevel': 0,
+          'Lap': 0,
+          'IsInGarage': 0,
+          'LapDistPct': 0,
+          'OnPitRoad': 0,
+          'PlayerCarClassPosition': 0,
+          'PlayerCarPosition': 0,
+          'SessionLapsRemain': 0,
+          'Throttle': 0,
+          'SessionTimeRemain': 0,
+          'SessionTime': 0,
+          'SessionFlags': 0,
+          'SessionNum': 0,
+          'IsOnTrack': False,
+          'Gear': 0,
+          'Speed': 0,
+          'DriverInfo':
+              {
+                  'DriverCarIdx': 0,
+                  'DriverCarFuelMaxLtr': 0,
+                  'DriverCarMaxFuelPct': 1,
+                  'Drivers': [],
+                  'DriverPitTrkPct': 0
+              },
+          'CarIdxLapDistPct': [0],
           'CarIdxOnPitRoad': [True]*64,
-          'SessionInfo': {'Sessions':
-                              [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
-                                'ResultsPositions':
-                                    [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
+          'SessionInfo':
+              {
+              'Sessions':
+                  [
+                      {
+                          'SessionType': 'Session',
+                          'SessionTime': 'unlimited',
+                          'SessionLaps': 0,
+                          'ResultsPositions':
+                              [
+                                  {
+                                      'CarIdx': 0,
+                                      'JokerLapsComplete': 0
+                                  }
+                              ]
+                      }
+                  ]
+              },
+          'Yaw': 0,
+          'VelocityX': 0,
           'VelocityY': 0,
           'YawNorth': 0,
           'WeekendInfo': [],
@@ -32,7 +80,8 @@ iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 
           'CarIdxTrackSurface': 0,
           'CarLeftRight': 0,
           'DRS_Status': 0,
-          'PushToPass': False}
+          'PushToPass': False
+          }
 
 # calculated data
 calcData = {'LastFuelLevel': 0,
@@ -108,7 +157,34 @@ calcData = {'LastFuelLevel': 0,
             'textColourDRS': (141, 141, 141),
             'textColourP2P': (141, 141, 141),
             'DRSCounter': 0,
-            'P2PCounter': 0}
+            'P2PCounter': 0,
+            'RenderLabel': [
+                True,   # Best
+                True,   # Last
+                True,   # Delta
+                True,   # FuelLevel
+                True,   # FuelCons
+                True,   # FuelLastCons
+                True,   # FuelLaps
+                True,   # FuelAdd
+                True,   # ABS
+                True,   # BBias
+                True,   # Mix
+                True,   # TC1
+                True,   # TC2
+                True,   # Lap
+                True,   # Clock
+                True,   # Remain
+                False,  # Elapsed
+                False,  # Joker
+                False,  # DRS
+                False,  # P2P
+            ],
+            'P2P': False,
+            'DRS': False,
+            'LapLimit': False,
+            'TimeLimit': False
+            }
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
