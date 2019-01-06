@@ -204,7 +204,7 @@ class RenderScreen(RenderMain):
             # DRS and P2P
             if self.db.DRS:
                 DRSRemaining = (self.db.DRSActivations - self.db.DRSCounter)
-                if self.db.DRSCounter == DRSRemaining:
+                if DRSRemaining == 1:
                     pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
                 if self.db.DRS_Status == 2:
                     pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
@@ -240,7 +240,7 @@ class RenderScreen(RenderMain):
             self.db.FuelAddStr = self.db.FuelAddStr
 
             if self.db.LapLimit:
-                self.db.LapStr = str(self.db.Lap) + '/' + str(self.db.LapsToGo)
+                self.db.LapStr = str(self.db.Lap) + '/' + str(self.db.RaceLaps)
             else:
                 self.db.LapStr = str(self.db.Lap)
             self.db.ClockStr = self.db.timeStr

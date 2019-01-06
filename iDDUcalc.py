@@ -209,14 +209,14 @@ class IDDUCalc:
                     self.db.FuelAddStr = '0'
 
                 # DRS and P2P
-                if self.db.DRSCounter == self.db.DRSActivations:
+                if self.db.DRSCounter == self.db.DRSActivations and self.db.DRSActivations > 0:
                     self.db.textColourDRS = self.red
                 else:
                     if not self.db.DRS_Status == self.db.old_DRS_Status:
                         if self.db.DRS_Status == 1:
                             self.db.textColourDRS = self.green
-                        elif self.db.DRS_Status == 0:
-                            self.db.textColourDRS = self.red
+                        # elif self.db.DRS_Status == 0:
+                        #     self.db.textColourDRS = self.red
                         elif self.db.DRS_Status == 2:
                             self.db.textColourDRS = self.black
                             self.db.DRSCounter = self.db.DRSCounter + 1
@@ -224,7 +224,7 @@ class IDDUCalc:
                             self.db.textColourDRS = self.db.textColour
                         self.db.old_DRS_Status = self.db.DRS_Status
 
-                if self.db.P2PCounter == self.db.P2PActivations:
+                if self.db.P2PCounter == self.db.P2PActivations and self.db.P2PActivations > 0:
                     self.db.textColourP2P = self.red
                 elif (self.db.P2PCounter + 1) == self.db.P2PActivations:
                     self.db.textColourP2P = self.orange
@@ -522,6 +522,10 @@ class IDDUCalc:
                 self.db.RaceLaps = self.db.UserRaceLaps
                 self.db.LapLimit = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.RaceLaps))
+                    self.db.LapLimit = True
+
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
@@ -539,26 +543,26 @@ class IDDUCalc:
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
-            # limited laps
-            elif int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']) >= 2000: # alternative
-                self.db.RaceLaps = self.db.UserRaceLaps
-                self.db.LapLimit = True
-                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
-                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
-                    self.db.SessionLength = 86400
-                    self.db.RenderLabel[15] = False
-                    self.db.RenderLabel[16] = True
-                    self.db.TimeLimit = False
-                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
-                    print(self.db.timeStr + ':\tRace mode 2')
-                else:
-                    tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
-                    self.db.RenderLabel[15] = True
-                    self.db.RenderLabel[16] = False
-                    self.db.TimeLimit = True
-                    self.db.SessionLength = float(tempSessionLength.split(' ')[0])
-                    print(self.db.timeStr + ':\tRace mode 3')
-                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+            # # limited laps
+            # elif int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']) >= 2000: # alternative
+            #     self.db.RaceLaps = self.db.UserRaceLaps
+            #     self.db.LapLimit = True
+            #     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+            #     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
+            #         self.db.SessionLength = 86400
+            #         self.db.RenderLabel[15] = False
+            #         self.db.RenderLabel[16] = True
+            #         self.db.TimeLimit = False
+            #         print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
+            #         print(self.db.timeStr + ':\tRace mode 2')
+            #     else:
+            #         tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
+            #         self.db.RenderLabel[15] = True
+            #         self.db.RenderLabel[16] = False
+            #         self.db.TimeLimit = True
+            #         self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+            #         print(self.db.timeStr + ':\tRace mode 3')
+            #         print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
             # limited laps
             else:
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
@@ -567,16 +571,21 @@ class IDDUCalc:
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
                     self.db.TimeLimit = False
+                    self.db.RenderLabel[15] = False
+                    self.db.RenderLabel[16] = True
                     print(self.db.timeStr + ':\tRace mode 4')
                     print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
                 # limited time
                 else:
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
-                    if self.db.SessionLength > (800*self.db.RaceLaps):
-                        self.db.TimeLimit = False
-                    else:
-                        self.db.TimeLimit = False
+                    self.db.RenderLabel[15] = True
+                    self.db.RenderLabel[16] = False
+                    self.db.TimeLimit = True
+                    # if self.db.SessionLength > (800*self.db.RaceLaps):
+                    #     self.db.TimeLimit = False
+                    # else:
+                    #     self.db.TimeLimit = False
                     print(self.db.timeStr + ':\tRace mode 5')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
 
