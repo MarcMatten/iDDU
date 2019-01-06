@@ -224,19 +224,23 @@ class IDDUCalc:
                             self.db.textColourDRS = self.db.textColour
                         self.db.old_DRS_Status = self.db.DRS_Status
 
-                if self.db.P2PCounter == self.db.P2PActivations and self.db.P2PActivations > 0:
+                if self.db.P2PCounter >= self.db.P2PActivations and self.db.P2PActivations > 0:
                     self.db.textColourP2P = self.red
                 elif (self.db.P2PCounter + 1) == self.db.P2PActivations:
                     self.db.textColourP2P = self.orange
                 else:
-                    if not self.db.PushToPass == self.db.old_PushToPass:
-                        if not self.db.PushToPass:
-                            self.db.textColourP2P = self.green
-                        elif self.db.PushToPass:
-                            self.db.textColourP2P = self.black
-                            self.db.P2PCounter = self.db.P2PCounter + 1
-                        self.db.old_PushToPass = self.db.PushToPass
-
+                    self.db.textColourP2P = self.db.textColour
+                if not self.db.PushToPass == self.db.old_PushToPass:
+                    if self.db.PushToPass == True:
+                        self.db.P2PTime = self.db.SessionTime
+                        self.db.Alarm.extend([5])
+                        self.db.P2PCounter = self.db.P2PCounter + 1
+                
+                if self.db.SessionTime < self.db.P2PTime + 3:
+                    self.db.Alarm.extend([5])
+                
+                self.db.old_PushToPass = self.db.PushToPass
+                
                 # alarm
                 if self.db.dcTractionControlToggle:
                     self.db.Alarm.extend([1])
@@ -471,7 +475,8 @@ class IDDUCalc:
                     'P2P': False,
                     'DRS': False,
                     'LapLimit': False,
-                    'TimeLimit': False
+                    'TimeLimit': False,
+                    'P2PTime': 0
                     }
 
         self.db.StopDDU = True

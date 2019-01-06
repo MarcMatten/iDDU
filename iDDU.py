@@ -183,7 +183,8 @@ calcData = {'LastFuelLevel': 0,
             'P2P': False,
             'DRS': False,
             'LapLimit': False,
-            'TimeLimit': False
+            'TimeLimit': False,
+            'P2PTime': 0
             }
 
 # Create RTDB and initialise with

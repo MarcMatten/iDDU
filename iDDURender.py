@@ -200,8 +200,11 @@ class RenderScreen(RenderMain):
                     pygame.draw.rect(self.screen, self.orange, [413, 167, 195, 65])
                 if [1 for i in self.db.Alarm if i in [4]]:  # Fuel Laps 2
                     pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
-
-            # DRS and P2P
+                if [1 for i in self.db.Alarm if i in [5]]:  # P2P
+                    self.db.textColourP2P = self.black
+                    pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
+                    
+            # DRS
             if self.db.DRS:
                 DRSRemaining = (self.db.DRSActivations - self.db.DRSCounter)
                 if DRSRemaining == 1:
@@ -213,13 +216,13 @@ class RenderScreen(RenderMain):
                     self.db.DRSStr = str(DRSRemaining)
                 else:
                     self.db.DRSStr = str(self.db.DRSCounter)
-
+            # P2P
             if self.db.P2P:
                 P2PRemaining = (self.db.P2PActivations - self.db.P2PCounter)
-                if self.db.P2PActivations == 0:
-                    self.db.P2PStr = str(P2PRemaining)
-                else:
+                if self.db.P2PActivations > 100:
                     self.db.P2PStr = str(self.db.P2PCounter)
+                else:
+                    self.db.P2PStr = str(P2PRemaining)
 
             # LabelStrings
             self.db.BestLapStr = iDDUhelper.convertTimeMMSSsss(self.db.LapBestLapTime)
