@@ -39,6 +39,9 @@ class IDDUCalc:
         self.getTrackFiles()
         self.loadTrack('cota gp')
 
+        self.DRSList = ['formularenault35', 'mclarenmp430']
+        self.P2PList = ['dallaradw12', 'dallarair18']
+
     def calc(self):
         # t = time.time()
         if self.db.isRunning == False:

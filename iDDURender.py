@@ -108,7 +108,7 @@ class RenderScreen(RenderMain):
         # List of lables to display
         self.frames[0].addLabel('BestLapStr', LabeledValue('Best', 200, 50, 350, '12:34.567', self.fontSmall, self.fontLarge, self.db, 0), 0)
         self.frames[0].addLabel('LastLapStr', LabeledValue('Last', 200, 120, 350, '00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 1)
-        self.frames[0].addLabel('DeltaBestStr', LabeledValue('DBest', 200, 190, 350, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 2), 2)
+        self.frames[0].addLabel('DeltaBestStr', LabeledValue('DBest', 200, 190, 350, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 2)
 
         self.frames[1].addLabel('FuelLevelStr', LabeledValue('Fuel', 607, 60, 250, '-', self.fontSmall, self.fontLarge, self.db, 0), 3)
         self.frames[1].addLabel('FuelConsStr', LabeledValue('Avg', 513, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 4)
