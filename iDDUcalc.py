@@ -586,6 +586,7 @@ class IDDUCalc:
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.DRSList:
                 self.db.DRS = True
                 self.db.RenderLabel[18] = True
+                self.db.DRSCounter = 0
             else:
                 self.db.DRS = False
                 self.db.RenderLabel[18] = False
@@ -593,6 +594,7 @@ class IDDUCalc:
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.P2PList:
                 self.db.P2P = True
                 self.db.RenderLabel[19] = True
+                self.db.P2PCounter = 0
             else:
                 self.db.P2P = False
                 self.db.RenderLabel[19] = False
