@@ -150,12 +150,15 @@ calcData = {'LastFuelLevel': 0,
             'old_DRS_Status': 0,
             'DRSActivations': 8,
             'P2PActivations': 12,
+            'DRSActivationsGUI': 8,
+            'P2PActivationsGUI': 12,
             'JokerLapDelta': 2,
             'JokerLaps': 1,
             'MapHighlight': True,
             'old_PushToPass': False,
             'textColourDRS': (141, 141, 141),
             'textColourP2P': (141, 141, 141),
+            'textColourJoker': (141, 141, 141),
             'DRSCounter': 0,
             'P2PCounter': 0,
             'RenderLabel': [
@@ -184,7 +187,8 @@ calcData = {'LastFuelLevel': 0,
             'DRS': False,
             'LapLimit': False,
             'TimeLimit': False,
-            'P2PTime': 0
+            'P2PTime': 0,
+            'DRSRemaining': 0
             }
 
 # Create RTDB and initialise with

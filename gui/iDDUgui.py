@@ -386,7 +386,9 @@ class Gui(object):
         self.retranslateUi(self.Form)
 
     def assignDRS(self):
-        self.db.DRSActivations = self.doubleSpinBox_DRSActivations.value()
+        if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+            self.db.DRSActivations = self.doubleSpinBox_DRSActivations.value()
+        self.db.DRSActivationsGUI = self.doubleSpinBox_DRSActivations.value()
         self.retranslateUi(self.Form)
 
     def assignJokerDelta(self):
@@ -402,7 +404,9 @@ class Gui(object):
         self.retranslateUi(self.Form)
 
     def assignP2P(self):
-        self.db.P2PActivations = self.doubleSpinBox_P2PActivations.value()
+        if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+            self.db.P2PActivations = self.doubleSpinBox_P2PActivations.value()
+        self.db.P2PActivationsGUI = self.doubleSpinBox_P2PActivations.value()
         self.retranslateUi(self.Form)
 
     def assignPitStopDelta(self):

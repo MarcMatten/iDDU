@@ -7,7 +7,6 @@ import os
 import glob
 import time
 
-
 class IDDUCalc:
     def __init__(self, db):
         self.db = db
@@ -66,20 +65,29 @@ class IDDUCalc:
                 self.db.Alarm = []
 
                 if self.db.RX:
-                    self.db.JokerLaps = []
+                    self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
+                    NumDrivers = len(self.db.DriverInfo['Drivers'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] is not None:
-                        length = len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])
+                        NumResults = len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])
                     else:
-                        length = 0
-                    for n in range(0, length):
+                        NumResults = 0
+                    self.db.JokerLaps = [0] * NumDrivers
+                    self.db.textColorJoker = self.db.textColour
+                    for n in range(0, NumResults):
                         self.db.JokerLaps[self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
 
                     if not self.db.JokerLapsRequired == 0:
                         self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(self.db.JokerLapsRequired)
                     else:
                         self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx])
-                else:
-                    self.db.JokerStr = '-'
+
+                    if self.db.JokerLaps[self.db.JokerLaps[self.db.DriverCarIdx]] < self.db.JokerLapsRequired:
+                        if self.db.LapsToGo == self.db.JokerLapsRequired + 1:
+                            self.db.Alarm.extend([8])
+                        elif self.db.LapsToGo <= self.db.JokerLapsRequired:
+                            self.db.Alarm.extend([9])
+                    else:
+                        self.db.textColorJoker = self.green
 
                 if self.db.init:  # do when getting into the car
                     print(self.db.timeStr+':\tGetting into car')
@@ -208,38 +216,46 @@ class IDDUCalc:
                     self.db.FuelLapStr = '0'
                     self.db.FuelAddStr = '0'
 
-                # DRS and P2P
-                if self.db.DRSCounter == self.db.DRSActivations and self.db.DRSActivations > 0:
-                    self.db.textColourDRS = self.red
-                else:
-                    if not self.db.DRS_Status == self.db.old_DRS_Status:
+                # DRS
+                if self.db.DRS:
+                    if self.db.DRSCounter >= self.db.DRSActivations and self.db.DRSActivations > 0:
+                        self.db.textColourDRS = self.red
+                    else:
+                        if not self.db.DRS_Status == self.db.old_DRS_Status:
+                            if self.db.DRS_Status == 2:
+                                self.db.DRSCounter = self.db.DRSCounter + 1
+                            else:
+                                self.db.textColourDRS = self.db.textColour
                         if self.db.DRS_Status == 1:
                             self.db.textColourDRS = self.green
-                        # elif self.db.DRS_Status == 0:
-                        #     self.db.textColourDRS = self.red
-                        elif self.db.DRS_Status == 2:
-                            self.db.textColourDRS = self.black
-                            self.db.DRSCounter = self.db.DRSCounter + 1
-                        else:
-                            self.db.textColourDRS = self.db.textColour
-                        self.db.old_DRS_Status = self.db.DRS_Status
 
-                if self.db.P2PCounter >= self.db.P2PActivations and self.db.P2PActivations > 0:
-                    self.db.textColourP2P = self.red
-                elif (self.db.P2PCounter + 1) == self.db.P2PActivations:
-                    self.db.textColourP2P = self.orange
-                else:
-                    self.db.textColourP2P = self.db.textColour
-                if not self.db.PushToPass == self.db.old_PushToPass:
-                    if self.db.PushToPass == True:
-                        self.db.P2PTime = self.db.SessionTime
+                    self.db.DRSRemaining = (self.db.DRSActivations - self.db.DRSCounter)
+                    if self.db.DRSRemaining == 1 and not self.db.DRS_Status == 2:
+                        self.db.Alarm.extend([6])
+                    
+                    if self.db.DRS_Status == 2:
+                        self.db.Alarm.extend([7])
+
+                    self.db.old_DRS_Status = self.db.DRS_Status
+
+                # P2P
+                if self.db.P2P:
+                    if self.db.P2PCounter >= self.db.P2PActivations and self.db.P2PActivations > 0:
+                        self.db.textColourP2P = self.red
+                    elif (self.db.P2PCounter + 1) == self.db.P2PActivations:
+                        self.db.textColourP2P = self.orange
+                    else:
+                        self.db.textColourP2P = self.db.textColour
+                    if not self.db.PushToPass == self.db.old_PushToPass:
+                        if self.db.PushToPass == True:
+                            self.db.P2PTime = self.db.SessionTime
+                            self.db.Alarm.extend([5])
+                            self.db.P2PCounter = self.db.P2PCounter + 1
+                    
+                    if self.db.SessionTime < self.db.P2PTime + 3:
                         self.db.Alarm.extend([5])
-                        self.db.P2PCounter = self.db.P2PCounter + 1
-                
-                if self.db.SessionTime < self.db.P2PTime + 3:
-                    self.db.Alarm.extend([5])
-                
-                self.db.old_PushToPass = self.db.PushToPass
+                    
+                    self.db.old_PushToPass = self.db.PushToPass
                 
                 # alarm
                 if self.db.dcTractionControlToggle:
@@ -442,12 +458,15 @@ class IDDUCalc:
                     'old_DRS_Status': 0,
                     'DRSActivations': 8,
                     'P2PActivations': 12,
+                    'DRSActivationsGUI': 8,
+                    'P2PActivationsGUI': 12,
                     'JokerLapDelta': 2,
                     'JokerLaps': 1,
                     'MapHighlight': True,
                     'old_PushToPass': False,
                     'textColourDRS': (141, 141, 141),
                     'textColourP2P': (141, 141, 141),
+                    'textColorJoker': (141, 141, 141),
                     'DRSCounter': 0,
                     'P2PCounter': 0,
                     'RenderLabel': [
@@ -476,7 +495,8 @@ class IDDUCalc:
                     'DRS': False,
                     'LapLimit': False,
                     'TimeLimit': False,
-                    'P2PTime': 0
+                    'P2PTime': 0,
+                    'DRSRemaining': 0
                     }
 
         self.db.StopDDU = True
@@ -492,6 +512,7 @@ class IDDUCalc:
         print(self.db.timeStr+': Initialising Session ==========================')
         self.getTrackFiles()
         if self.db.startUp:
+            self.db.StartDDU = True
             self.db.oldSessionNum = self.db.SessionNum
             self.SessionInfo = True
             self.db.WeekendInfo = self.db.WeekendInfo
@@ -597,18 +618,28 @@ class IDDUCalc:
             print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.RaceLaps))
             print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))
 
+            # DRS
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.DRSList:
                 self.db.DRS = True
                 self.db.RenderLabel[18] = True
                 self.db.DRSCounter = 0
+                if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    self.db.DRSActivations = 1000
+                else:
+                    self.db.DRSActivations = self.db.DRSActivationsGUI
             else:
                 self.db.DRS = False
                 self.db.RenderLabel[18] = False
 
+            # P2P
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.P2PList:
                 self.db.P2P = True
                 self.db.RenderLabel[19] = True
                 self.db.P2PCounter = 0
+                if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    self.db.P2PActivations = 1000
+                else:
+                    self.db.P2PActivations = self.db.P2PActivationsGUI
             else:
                 self.db.P2P = False
                 self.db.RenderLabel[19] = False
