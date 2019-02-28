@@ -42,7 +42,6 @@ class RenderMain:
         self.resolution = (800, 480)
         # self.fullscreen = False
         import os
-        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
         # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
         self.screen = self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
@@ -129,6 +128,7 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '0/0', self.fontSmall, self.fontLarge, self.db, 0), 17)
         self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 2), 18)
         self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3), 19)
+        self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
 
         # misc
         self.done = False
@@ -241,8 +241,10 @@ class RenderScreen(RenderMain):
 
             if self.db.LapLimit:
                 self.db.LapStr = str(self.db.Lap) + '/' + str(self.db.RaceLaps)
+                self.db.ToGoStr = str(self.db.RaceLaps - self.db.Lap)
             else:
                 self.db.LapStr = str(self.db.Lap)
+                self.db.ToGoStr = 'Tog'
             self.db.ClockStr = self.db.timeStr
             if self.db.RX:
                 self.db.JokerStr = self.db.JokerStr
@@ -391,6 +393,12 @@ class LabeledValue(RenderMain):
         if self.colourTag == 1:
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
+        elif self.colourTag == 2:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDRS)
+        elif self.colourTag == 3:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
         else:
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
@@ -416,6 +424,53 @@ class LabeledValue(RenderMain):
 
         self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
         self.screen.blit(self.ValLabel, (self.x + self.width / 2 - self.ValSize[0], self.y - 36))
+
+class LabeledValue2(RenderMain):
+    def __init__(self, title, x, y, width, initValue, labFont, valFont, db, colourTag):
+        RenderMain.__init__(self, db)
+        self.x = x
+        self.y = y
+        self.title = title
+        self.width = width
+        self.value = initValue
+        self.valFont = valFont
+        self.labFont = labFont
+        self.colourTag = colourTag
+        # self.ID = ID
+        if self.colourTag == 1:
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
+        elif self.colourTag == 2:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDRS)
+        elif self.colourTag == 3:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
+        else:
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
+        self.LabSize = labFont.size(self.title)
+        self.ValSize = self.valFont.size(self.value)
+
+    def drawLabel(self, value):
+        # if self.db.RenderLabel[self.ID]:
+        self.value = value
+        if self.colourTag == 1:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
+        elif self.colourTag == 2:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDRS)
+        elif self.colourTag == 3:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
+        else:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
+        self.ValSize = self.valFont.size(self.value)
+
+        self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
+        self.screen.blit(self.ValLabel, (self.x + self.width / 2, self.y + 15))
 
     # def setTextColour(self, colour):
     #     self.textColour = colour

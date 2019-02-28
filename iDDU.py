@@ -105,6 +105,7 @@ calcData = {'LastFuelLevel': 0,
             'RemLapValueStr': '10',
             'FuelLapStr': '0',
             'FuelAddStr': '0.0',
+            'ToGoStr': 'Aog',
             'FlagCallTime': 0,
             'FlagException': False,
             'FlagExceptionVal': 0,
@@ -179,6 +180,7 @@ calcData = {'LastFuelLevel': 0,
                 False,  # Joker
                 False,  # DRS
                 False,  # P2P
+                True,  # ToGo
             ],
             'P2P': False,
             'DRS': False,

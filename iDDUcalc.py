@@ -393,6 +393,7 @@ class IDDUCalc:
                     'RemLapValueStr': '10',
                     'FuelLapStr': '0',
                     'FuelAddStr': '0.0',
+                    'ToGoStr': '100',
                     'FlagCallTime': 0,
                     'FlagException': False,
                     'FlagExceptionVal': 0,
@@ -467,6 +468,7 @@ class IDDUCalc:
                         False,  # Joker
                         False,  # DRS
                         False,  # P2P
+                        True,  # ToGo
                     ],
                     'P2P': False,
                     'DRS': False,
