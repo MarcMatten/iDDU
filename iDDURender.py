@@ -125,7 +125,7 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('ClockStr', LabeledValue('Clock', 350, 450, 50, '-', self.fontTiny, self.fontSmall, self.db, 0), 14)
         self.frames[3].addLabel('RemainingStr', LabeledValue('Remaining', 200, 290, 350, '-', self.fontSmall, self.fontLarge, self.db, 0), 15)
         self.frames[3].addLabel('ElapsedStr', LabeledValue('Elapsed', 200, 290, 350, '-', self.fontSmall, self.fontLarge, self.db, 0), 16)
-        self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '0/0', self.fontSmall, self.fontLarge, self.db, 0), 17)
+        self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '0/0', self.fontSmall, self.fontLarge, self.db, 4), 17)
         self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 2), 18)
         self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3), 19)
         self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
@@ -200,26 +200,32 @@ class RenderScreen(RenderMain):
                     pygame.draw.rect(self.screen, self.orange, [413, 167, 195, 65])
                 if [1 for i in self.db.Alarm if i in [4]]:  # Fuel Laps 2
                     pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
-
-            # DRS and P2P
-            if self.db.DRS:
-                DRSRemaining = (self.db.DRSActivations - self.db.DRSCounter)
-                if DRSRemaining == 1:
-                    pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
-                if self.db.DRS_Status == 2:
+                if [1 for i in self.db.Alarm if i in [5]]:  # P2P
+                    self.db.textColourP2P = self.black
                     pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
-
-                if self.db.DRSActivations == 0:
-                    self.db.DRSStr = str(DRSRemaining)
+                if [1 for i in self.db.Alarm if i in [6]]:  # DRS warning
+                    pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
+                if [1 for i in self.db.Alarm if i in [7]]:  # DRS open
+                    self.db.textColourDRS = self.black
+                    pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
+                if [1 for i in self.db.Alarm if i in [8]]:  # Joker warning
+                    pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
+                if [1 for i in self.db.Alarm if i in [9]]:  # Joker last warning
+                    pygame.draw.rect(self.screen, self.red, [20, 395, 170, 70])
+                    
+            # DRS
+            if self.db.DRS:
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    self.db.DRSStr = str(int(self.db.DRSRemaining))
                 else:
-                    self.db.DRSStr = str(self.db.DRSCounter)
-
+                    self.db.DRSStr = str(int(self.db.DRSCounter))
+            # P2P
             if self.db.P2P:
                 P2PRemaining = (self.db.P2PActivations - self.db.P2PCounter)
-                if self.db.P2PActivations == 0:
-                    self.db.P2PStr = str(P2PRemaining)
+                if self.db.P2PActivations > 100:
+                    self.db.P2PStr = str(int(self.db.P2PCounter))
                 else:
-                    self.db.P2PStr = str(self.db.P2PCounter)
+                    self.db.P2PStr = str(int(P2PRemaining))
 
             # LabelStrings
             self.db.BestLapStr = iDDUhelper.convertTimeMMSSsss(self.db.LapBestLapTime)
@@ -280,14 +286,16 @@ class RenderScreen(RenderMain):
             y = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.y)
 
             if self.db.DriverInfo['DriverCarIdx'] == Idx:
-                if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
-                    self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
+                if self.db.RX:
+                    if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
+                        self.drawCar(Idx, x, y, self.green, self.black)
                 self.drawCar(Idx, x, y, self.red, self.white)
 
             else:
                 if not self.db.CarIdxOnPitRoad[Idx]:
-                    if self.db.RX and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired + 1):
-                        self.drawCar(Idx, x, y, self.green, self.black)
+                    if self.db.RX:
+                        if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
+                            self.drawCar(Idx, x, y, self.green, self.black)
                     else:
                         self.drawCar(Idx, x, y, self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor']), self.black)
                 else:
@@ -417,6 +425,9 @@ class LabeledValue(RenderMain):
         elif self.colourTag == 3:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
+        elif self.colourTag == 4:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourJoker)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
