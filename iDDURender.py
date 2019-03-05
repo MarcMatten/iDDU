@@ -42,8 +42,8 @@ class RenderMain:
         self.resolution = (800, 480)
         # self.fullscreen = False
         import os
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
-        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
         self.screen = self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
         self.fullscreen = True
         self.pygame.display.set_caption('iDDU')
@@ -128,7 +128,8 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '0/0', self.fontSmall, self.fontLarge, self.db, 4), 17)
         self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 2), 18)
         self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3), 19)
-        self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
+        # self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
+        self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 295, 360, 160, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
 
         # misc
         self.done = False
@@ -250,7 +251,7 @@ class RenderScreen(RenderMain):
                 self.db.ToGoStr = str(self.db.RaceLaps - self.db.Lap)
             else:
                 self.db.LapStr = str(self.db.Lap)
-                self.db.ToGoStr = 'Tog'
+                self.db.ToGoStr = '000'
             self.db.ClockStr = self.db.timeStr
             if self.db.RX:
                 self.db.JokerStr = self.db.JokerStr

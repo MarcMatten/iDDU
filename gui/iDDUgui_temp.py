@@ -1,45 +1,15 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'C:\Users\Marc\Documents\Projekte\iDDU\gui\iDDUgui.ui'
+#
+# Created by: PyQt5 UI code generator 5.9.1
+#
+# WARNING! All changes made in this file will be lost!
+
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
-import sys
-import time
-import threading
-import csv
 
-
-class iDDUgui(threading.Thread):
-    def __init__(self, RTDB, rate):
-        threading.Thread.__init__(self)
-        self.rate = rate
-        self.db = RTDB
-
-    def run(self):
-        while 1:
-            myGui = Gui(self.db)
-            myGui.start(self.db)
-            time.sleep(self.rate)
-
-class Stream(QtCore.QObject):
-    newText = QtCore.pyqtSignal(str)
-
-    def write(self, text):
-        self.newText.emit(str(text))
-
-class Gui(object):
-    def __init__(self, db):
-        import sys
-        app = QtWidgets.QApplication(sys.argv)
-        Form = QtWidgets.QWidget()
-        Form.setFixedSize(320, 480)
-        # Form.move(-1920,0)
-        self.setupUi(Form, db)
-        # sys.stdout = Stream(newText=self.onUpdateText)
-        # sys.stderr = Stream(newText=self.onUpdateText)
-        Form.show()
-        sys.exit(app.exec_())
-
-    def setupUi(self, Form, db):
-        self.db = db
-        self.Form = Form
+class Ui_Form(object):
+    def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(320, 480)
         self.tabWidget = QtWidgets.QTabWidget(Form)
@@ -281,7 +251,6 @@ class Gui(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.setCurrentIndex(1)
         self.label_9 = QtWidgets.QLabel(self.groupBox)
         self.label_9.setGeometry(QtCore.QRect(20, 60, 101, 22))
         self.label_9.setObjectName("label_9")
@@ -298,62 +267,25 @@ class Gui(object):
         self.tabWidget.addTab(self.tabUpshiftTone, "")
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
-        self.pushButtonInvoke = QtWidgets.QPushButton(self.tabDebug)
-        self.pushButtonInvoke.setGeometry(QtCore.QRect(230, 430, 75, 23))
-        self.pushButtonInvoke.setObjectName("pushButtonInvoke")
-        self.lineEditInvoke = QtWidgets.QLineEdit(self.tabDebug)
-        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 430, 211, 20))
-        self.lineEditInvoke.setObjectName("lineEditInvoke")
+        self.pushButton = QtWidgets.QPushButton(self.tabDebug)
+        self.pushButton.setGeometry(QtCore.QRect(230, 430, 75, 23))
+        self.pushButton.setObjectName("pushButton")
+        self.lineEdit = QtWidgets.QLineEdit(self.tabDebug)
+        self.lineEdit.setGeometry(QtCore.QRect(10, 430, 211, 20))
+        self.lineEdit.setObjectName("lineEdit")
         self.textEdit = QtWidgets.QTextEdit(self.tabDebug)
         self.textEdit.setGeometry(QtCore.QRect(10, 10, 291, 411))
         self.textEdit.setObjectName("textEdit")
         self.tabWidget.addTab(self.tabDebug, "")
 
-        self.spinBoxRaceLaps.setValue(self.db.RaceLaps)
-        self.doubleSpinBox_PitStopDelta.setValue(self.db.PitStopDelta)
-        self.doubleSpinBox_PitStopsRequired.setValue(self.db.PitStopsRequired)
-
-        self.spinBoxRaceLaps.valueChanged.connect(self.assignRaceLaps)
-        self.doubleSpinBox_PitStopDelta.valueChanged.connect(self.assignPitStopDelta)
-        self.doubleSpinBox_PitStopsRequired.valueChanged.connect(self.assignPitStopsRequired)
-
-        self.checkBox_UpshiftTone.stateChanged.connect(self.EnableShiftTone)
-        self.comboBox.currentIndexChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear1.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear1.stateChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear2.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear2.stateChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear3.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear3.stateChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear4.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear4.stateChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear5.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear5.stateChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear6.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear6.stateChanged.connect(self.UpshiftStrategy)
-        self.spinBox_Gear7.valueChanged.connect(self.UpshiftStrategy)
-        self.checkBox_Gear7.stateChanged.connect(self.UpshiftStrategy)
-        self.pushButtonInvoke.clicked.connect(self.InvokeUserCommand)
-        self.lineEditInvoke.returnPressed.connect(self.InvokeUserCommand)
-        self.pushButton_StartDDU.clicked.connect(self.StartDDU)
-        self.pushButton_StopDDU.clicked.connect(self.StopDDU)
-        self.saveButton.clicked.connect(self.saveShiftToneSettings)
-        self.openButton.clicked.connect(self.loadShiftToneSettings)
-
-        self.doubleSpinBox_DRSActivations.valueChanged.connect(self.assignDRS)
-        self.doubleSpinBox_JokerLapDelta.valueChanged.connect(self.assignJokerDelta)
-        self.doubleSpinBox_JokerLapsRequired.valueChanged.connect(self.assignJokerLaps)
-        self.doubleSpinBox_P2PActivations.valueChanged.connect(self.assignP2P)
-        self.checkBox_MapHighlight.stateChanged.connect(self.MapHighlight)
-
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
+        self.comboBox.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Form)
-        self.UpshiftStrategy()
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "iDDU"))
+        Form.setWindowTitle(_translate("Form", "Form"))
         self.groupBox_2.setTitle(_translate("Form", "DDU"))
         self.pushButton_StartDDU.setText(_translate("Form", "Start DDU"))
         self.pushButton_StopDDU.setText(_translate("Form", "Stop DDU"))
@@ -401,143 +333,16 @@ class Gui(object):
         self.saveButton.setText(_translate("Form", "Save"))
         self.openButton.setText(_translate("Form", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabUpshiftTone), _translate("Form", "Upshift Tone"))
-        self.pushButtonInvoke.setText(_translate("Form", "Invoke"))
+        self.pushButton.setText(_translate("Form", "PushButton"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("Form", "Debug"))
 
-    def assignRaceLaps(self):
-        # self.db.LapsToGo = self.spinBoxRaceLaps.value()
-        self.db.UserRaceLaps = self.spinBoxRaceLaps.value()
-        self.retranslateUi(self.Form)
 
-    def assignDRS(self):
-        if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-            self.db.DRSActivations = self.doubleSpinBox_DRSActivations.value()
-        self.db.DRSActivationsGUI = self.doubleSpinBox_DRSActivations.value()
-        self.retranslateUi(self.Form)
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
 
-    def assignJokerDelta(self):
-        self.db.JokerLapDelta = self.doubleSpinBox_JokerLapDelta.value()
-        self.retranslateUi(self.Form)
-
-    def MapHighlight(self):
-        self.db.MapHighlight = self.checkBox_MapHighlight.isChecked()
-        self.retranslateUi(self.Form)
-
-    def assignJokerLaps(self):
-        self.db.JokerLaps = self.doubleSpinBox_JokerLapsRequired.value()
-        self.retranslateUi(self.Form)
-
-    def assignP2P(self):
-        if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-            self.db.P2PActivations = self.doubleSpinBox_P2PActivations.value()
-        self.db.P2PActivationsGUI = self.doubleSpinBox_P2PActivations.value()
-        self.retranslateUi(self.Form)
-
-    def assignPitStopDelta(self):
-        self.db.PitStopDelta = self.doubleSpinBox_PitStopDelta.value()
-        self.retranslateUi(self.Form)
-
-    def assignPitStopsRequired(self):
-        self.db.PitStopsRequired = self.doubleSpinBox_PitStopsRequired.value()
-        self.retranslateUi(self.Form)
-
-    def UpshiftStrategy(self):
-        self.db.UpshiftStrategy = self.comboBox.currentIndex()
-        self.db.UserShiftRPM = [self.spinBox_Gear1.value(), self.spinBox_Gear2.value(), self.spinBox_Gear3.value(), self.spinBox_Gear4.value(), self.spinBox_Gear5.value(), self.spinBox_Gear6.value(), self.spinBox_Gear7.value()]
-        self.db.UserShiftFlag = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(), self.checkBox_Gear6.isChecked(), self.checkBox_Gear7.isChecked()]
-        self.retranslateUi(self.Form)
-
-    def EnableShiftTone(self):
-        self.db.ShiftToneEnabled = self.checkBox_UpshiftTone.isChecked()
-        self.retranslateUi(self.Form)
-
-    def InvokeUserCommand(self):
-        try:
-            cmd = self.lineEditInvoke.text()
-            print(self.db.timeStr+": >> " + cmd)
-            if "=" in cmd:
-                exec(cmd)
-                outstr = cmd.split('=')
-                print(self.db.timeStr+': '+str(eval(outstr[0])))
-            else:
-                print(self.db.timeStr+': '+str(eval(cmd)))
-        except:
-            print(self.db.timeStr+': User command not working!')
-
-    def onUpdateText(self, text):
-        cursor = self.textEdit.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.End)
-        cursor.insertText(text)
-        self.textEdit.setTextCursor(cursor)
-        self.textEdit.ensureCursorVisible()
-
-    def StartDDU(self):
-        self.db.StartDDU = True
-
-    def StopDDU(self):
-        self.db.StopDDU = True
-
-    def saveShiftToneSettings(self):
-
-        SaveFileName = QFileDialog.getSaveFileName(self.Form, 'Save Shift Tone File', './shiftTone', 'CSV(*.csv)')
-
-        with open(SaveFileName[0], 'w', newline='') as f:
-            thewriter = csv.writer(f)
-            for l in range(0, 7):
-                thewriter.writerow([self.db.UserShiftRPM[l], self.db.UserShiftFlag[l], self.db.UpshiftStrategy])
-
-        print(self.db.timeStr + ': Saved Shift Tone settings to: ' + SaveFileName[0])
-
-    def loadShiftToneSettings(self):
-        OpenFileName = QFileDialog.getOpenFileName(self.Form, 'Load Shift Tone File', './shiftTone', 'CSV(*.csv)')
-        i = 0
-        UserShiftRPM = [0,0,0,0,0,0,0]
-        UserShiftFlag = [0,0,0,0,0,0,0]
-
-        with open(OpenFileName[0]) as csv_file:
-            csv_reader = csv.reader(csv_file)
-            for line in csv_reader:
-                UserShiftRPM[i] = float(line[0])
-                UserShiftFlag[i] = eval(line[1])
-                UpshiftStrategy = int(line[2])
-                i = i + 1
-
-        csv_file.close()
-
-        self.checkBox_Gear1.setChecked(UserShiftFlag[0])
-        self.checkBox_Gear2.setChecked(UserShiftFlag[1])
-        self.checkBox_Gear3.setChecked(UserShiftFlag[2])
-        self.checkBox_Gear4.setChecked(UserShiftFlag[3])
-        self.checkBox_Gear5.setChecked(UserShiftFlag[4])
-        self.checkBox_Gear6.setChecked(UserShiftFlag[5])
-        self.checkBox_Gear7.setChecked(UserShiftFlag[6])
-
-        self.spinBox_Gear1.setValue(UserShiftRPM[0])
-        self.spinBox_Gear2.setValue(UserShiftRPM[1])
-        self.spinBox_Gear3.setValue(UserShiftRPM[2])
-        self.spinBox_Gear4.setValue(UserShiftRPM[3])
-        self.spinBox_Gear5.setValue(UserShiftRPM[4])
-        self.spinBox_Gear6.setValue(UserShiftRPM[5])
-        self.spinBox_Gear7.setValue(UserShiftRPM[6])
-
-        self.comboBox.setCurrentIndex(UpshiftStrategy)
-
-        self.db.UserShiftFlag = UserShiftFlag
-        self.db.UserShiftRPM = UserShiftRPM
-        self.db.UpshiftStrategy = UpshiftStrategy
-
-        print(self.db.timeStr + ': Loaded Shift Tone settings from: ' + OpenFileName[0])
-
-    def __del__(self):
-        sys.stdout = sys.__stdout__
-
-    def CloseEvent(self, event):
-        print("CloseEvent")
-        time.sleep(10)
-        reply = QtGui.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
-        if reply == QtGui.QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
