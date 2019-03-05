@@ -42,8 +42,8 @@ class RenderMain:
         self.resolution = (800, 480)
         # self.fullscreen = False
         import os
-        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
         self.screen = self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
         self.fullscreen = True
         self.pygame.display.set_caption('iDDU')
@@ -248,7 +248,7 @@ class RenderScreen(RenderMain):
 
             if self.db.LapLimit:
                 self.db.LapStr = str(self.db.Lap) + '/' + str(self.db.RaceLaps)
-                self.db.ToGoStr = str(self.db.RaceLaps - self.db.Lap)
+                self.db.ToGoStr = str(self.db.RaceLaps - self.db.Lap + 1)
             else:
                 self.db.LapStr = str(self.db.Lap)
                 self.db.ToGoStr = '000'

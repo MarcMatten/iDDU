@@ -32,8 +32,8 @@ class Gui(object):
         Form.setFixedSize(320, 480)
         # Form.move(-1920,0)
         self.setupUi(Form, db)
-        # sys.stdout = Stream(newText=self.onUpdateText)
-        # sys.stderr = Stream(newText=self.onUpdateText)
+        sys.stdout = Stream(newText=self.onUpdateText)
+        sys.stderr = Stream(newText=self.onUpdateText)
         Form.show()
         sys.exit(app.exec_())
 
