@@ -4,6 +4,7 @@ import sys
 import time
 import threading
 import csv
+import os
 
 
 class iDDUgui(threading.Thread):
@@ -29,8 +30,12 @@ class Gui(object):
         import sys
         app = QtWidgets.QApplication(sys.argv)
         Form = QtWidgets.QWidget()
-        Form.setFixedSize(320, 480)
-        # Form.move(-1920,0)
+        Form.setFixedSize(784, 441)
+        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+            Form.move(-1920,0)
+        else:
+            Form.move(0,1080)
+
         self.setupUi(Form, db)
         sys.stdout = Stream(newText=self.onUpdateText)
         sys.stderr = Stream(newText=self.onUpdateText)
@@ -40,10 +45,11 @@ class Gui(object):
     def setupUi(self, Form, db):
         self.db = db
         self.Form = Form
-        Form.setObjectName("Form")
-        Form.resize(320, 480)
+        Form.setObjectName("iDDU")
+        Form.resize(784, 441)
+
         self.tabWidget = QtWidgets.QTabWidget(Form)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 320, 480))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 764, 424))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -53,7 +59,7 @@ class Gui(object):
         self.tabGeneral = QtWidgets.QWidget()
         self.tabGeneral.setObjectName("tabGeneral")
         self.groupBox_2 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_2.setGeometry(QtCore.QRect(10, 389, 291, 51))
+        self.groupBox_2.setGeometry(QtCore.QRect(20, 320, 291, 51))
         self.groupBox_2.setObjectName("groupBox_2")
         self.pushButton_StartDDU = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_StartDDU.setGeometry(QtCore.QRect(40, 20, 75, 23))
@@ -101,7 +107,7 @@ class Gui(object):
         self.label_15.setGeometry(QtCore.QRect(20, 100, 101, 16))
         self.label_15.setObjectName("label_15")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_4.setGeometry(QtCore.QRect(10, 190, 291, 91))
+        self.groupBox_4.setGeometry(QtCore.QRect(320, 10, 291, 91))
         self.groupBox_4.setObjectName("groupBox_4")
         self.label_11 = QtWidgets.QLabel(self.groupBox_4)
         self.label_11.setGeometry(QtCore.QRect(20, 60, 101, 16))
@@ -128,7 +134,7 @@ class Gui(object):
         self.label_10.setGeometry(QtCore.QRect(20, 20, 81, 16))
         self.label_10.setObjectName("label_10")
         self.groupBox_5 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_5.setGeometry(QtCore.QRect(10, 290, 291, 91))
+        self.groupBox_5.setGeometry(QtCore.QRect(320, 110, 291, 91))
         self.groupBox_5.setObjectName("groupBox_5")
         self.label_13 = QtWidgets.QLabel(self.groupBox_5)
         self.label_13.setGeometry(QtCore.QRect(20, 60, 101, 16))
@@ -158,10 +164,10 @@ class Gui(object):
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
         self.groupBox = QtWidgets.QGroupBox(self.tabUpshiftTone)
-        self.groupBox.setGeometry(QtCore.QRect(10, 0, 291, 451))
+        self.groupBox.setGeometry(QtCore.QRect(10, 0, 301, 391))
         self.groupBox.setObjectName("groupBox")
         self.groupBox_Gear1 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear1.setGeometry(QtCore.QRect(10, 90, 271, 51))
+        self.groupBox_Gear1.setGeometry(QtCore.QRect(10, 20, 271, 51))
         self.groupBox_Gear1.setObjectName("groupBox_Gear1")
         self.spinBox_Gear1 = QtWidgets.QSpinBox(self.groupBox_Gear1)
         self.spinBox_Gear1.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -179,7 +185,7 @@ class Gui(object):
         self.checkBox_Gear1.setChecked(True)
         self.checkBox_Gear1.setObjectName("checkBox_Gear1")
         self.groupBox_Gear2 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear2.setGeometry(QtCore.QRect(10, 140, 271, 51))
+        self.groupBox_Gear2.setGeometry(QtCore.QRect(10, 70, 271, 51))
         self.groupBox_Gear2.setObjectName("groupBox_Gear2")
         self.spinBox_Gear2 = QtWidgets.QSpinBox(self.groupBox_Gear2)
         self.spinBox_Gear2.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -195,7 +201,7 @@ class Gui(object):
         self.checkBox_Gear2.setChecked(True)
         self.checkBox_Gear2.setObjectName("checkBox_Gear2")
         self.groupBox_Gear3 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear3.setGeometry(QtCore.QRect(10, 190, 271, 51))
+        self.groupBox_Gear3.setGeometry(QtCore.QRect(10, 120, 271, 51))
         self.groupBox_Gear3.setObjectName("groupBox_Gear3")
         self.spinBox_Gear3 = QtWidgets.QSpinBox(self.groupBox_Gear3)
         self.spinBox_Gear3.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -211,7 +217,7 @@ class Gui(object):
         self.checkBox_Gear3.setChecked(True)
         self.checkBox_Gear3.setObjectName("checkBox_Gear3")
         self.groupBox_Gear4 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear4.setGeometry(QtCore.QRect(10, 240, 271, 51))
+        self.groupBox_Gear4.setGeometry(QtCore.QRect(10, 170, 271, 51))
         self.groupBox_Gear4.setObjectName("groupBox_Gear4")
         self.spinBox_Gear4 = QtWidgets.QSpinBox(self.groupBox_Gear4)
         self.spinBox_Gear4.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -227,7 +233,7 @@ class Gui(object):
         self.checkBox_Gear4.setChecked(True)
         self.checkBox_Gear4.setObjectName("checkBox_Gear4")
         self.groupBox_Gear2_4 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear2_4.setGeometry(QtCore.QRect(10, 290, 271, 51))
+        self.groupBox_Gear2_4.setGeometry(QtCore.QRect(10, 220, 271, 51))
         self.groupBox_Gear2_4.setObjectName("groupBox_Gear2_4")
         self.spinBox_Gear5 = QtWidgets.QSpinBox(self.groupBox_Gear2_4)
         self.spinBox_Gear5.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -243,7 +249,7 @@ class Gui(object):
         self.checkBox_Gear5.setChecked(True)
         self.checkBox_Gear5.setObjectName("checkBox_Gear5")
         self.groupBox_Gear6 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear6.setGeometry(QtCore.QRect(10, 340, 271, 51))
+        self.groupBox_Gear6.setGeometry(QtCore.QRect(10, 270, 271, 51))
         self.groupBox_Gear6.setObjectName("groupBox_Gear6")
         self.spinBox_Gear6 = QtWidgets.QSpinBox(self.groupBox_Gear6)
         self.spinBox_Gear6.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -258,7 +264,7 @@ class Gui(object):
         self.checkBox_Gear6.setGeometry(QtCore.QRect(170, 20, 51, 22))
         self.checkBox_Gear6.setObjectName("checkBox_Gear6")
         self.groupBox_Gear7 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_Gear7.setGeometry(QtCore.QRect(10, 390, 271, 51))
+        self.groupBox_Gear7.setGeometry(QtCore.QRect(10, 330, 271, 51))
         self.groupBox_Gear7.setObjectName("groupBox_Gear7")
         self.spinBox_Gear7 = QtWidgets.QSpinBox(self.groupBox_Gear7)
         self.spinBox_Gear7.setGeometry(QtCore.QRect(20, 20, 71, 22))
@@ -272,7 +278,23 @@ class Gui(object):
         self.checkBox_Gear7 = QtWidgets.QCheckBox(self.groupBox_Gear7)
         self.checkBox_Gear7.setGeometry(QtCore.QRect(170, 20, 51, 22))
         self.checkBox_Gear7.setObjectName("checkBox_Gear7")
-        self.comboBox = QtWidgets.QComboBox(self.groupBox)
+        self.groupBox_6 = QtWidgets.QGroupBox(self.tabUpshiftTone)
+        self.groupBox_6.setGeometry(QtCore.QRect(340, 0, 401, 141))
+        self.groupBox_6.setObjectName("groupBox_6")
+        self.saveButton = QtWidgets.QPushButton(self.groupBox_6)
+        self.saveButton.setGeometry(QtCore.QRect(100, 100, 41, 23))
+        self.saveButton.setObjectName("saveButton")
+        self.label_9 = QtWidgets.QLabel(self.groupBox_6)
+        self.label_9.setGeometry(QtCore.QRect(20, 60, 101, 22))
+        self.label_9.setObjectName("label_9")
+        self.checkBox_UpshiftTone = QtWidgets.QCheckBox(self.groupBox_6)
+        self.checkBox_UpshiftTone.setGeometry(QtCore.QRect(20, 30, 251, 17))
+        self.checkBox_UpshiftTone.setChecked(True)
+        self.checkBox_UpshiftTone.setObjectName("checkBox_UpshiftTone")
+        self.openButton = QtWidgets.QPushButton(self.groupBox_6)
+        self.openButton.setGeometry(QtCore.QRect(20, 100, 41, 23))
+        self.openButton.setObjectName("openButton")
+        self.comboBox = QtWidgets.QComboBox(self.groupBox_6)
         self.comboBox.setGeometry(QtCore.QRect(150, 60, 131, 22))
         self.comboBox.setMaxVisibleItems(5)
         self.comboBox.setObjectName("comboBox")
@@ -281,32 +303,18 @@ class Gui(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.setCurrentIndex(1)
-        self.label_9 = QtWidgets.QLabel(self.groupBox)
-        self.label_9.setGeometry(QtCore.QRect(20, 60, 101, 22))
-        self.label_9.setObjectName("label_9")
-        self.checkBox_UpshiftTone = QtWidgets.QCheckBox(self.groupBox)
-        self.checkBox_UpshiftTone.setGeometry(QtCore.QRect(20, 30, 251, 17))
-        self.checkBox_UpshiftTone.setChecked(True)
-        self.checkBox_UpshiftTone.setObjectName("checkBox_UpshiftTone")
-        self.saveButton = QtWidgets.QPushButton(self.groupBox)
-        self.saveButton.setGeometry(QtCore.QRect(230, 20, 41, 23))
-        self.saveButton.setObjectName("saveButton")
-        self.openButton = QtWidgets.QPushButton(self.groupBox)
-        self.openButton.setGeometry(QtCore.QRect(170, 20, 41, 23))
-        self.openButton.setObjectName("openButton")
         self.tabWidget.addTab(self.tabUpshiftTone, "")
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
+        self.textEdit = QtWidgets.QTextEdit(self.tabDebug)
+        self.textEdit.setGeometry(QtCore.QRect(10, 10, 741, 351))
+        self.textEdit.setObjectName("textEdit")
         self.pushButtonInvoke = QtWidgets.QPushButton(self.tabDebug)
-        self.pushButtonInvoke.setGeometry(QtCore.QRect(230, 430, 75, 23))
+        self.pushButtonInvoke.setGeometry(QtCore.QRect(650, 370, 101, 23))
         self.pushButtonInvoke.setObjectName("pushButtonInvoke")
         self.lineEditInvoke = QtWidgets.QLineEdit(self.tabDebug)
-        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 430, 211, 20))
+        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 370, 631, 20))
         self.lineEditInvoke.setObjectName("lineEditInvoke")
-        self.textEdit = QtWidgets.QTextEdit(self.tabDebug)
-        self.textEdit.setGeometry(QtCore.QRect(10, 10, 291, 411))
-        self.textEdit.setObjectName("textEdit")
         self.tabWidget.addTab(self.tabDebug, "")
 
         self.spinBoxRaceLaps.setValue(self.db.RaceLaps)
@@ -345,6 +353,13 @@ class Gui(object):
         self.doubleSpinBox_JokerLapsRequired.valueChanged.connect(self.assignJokerLaps)
         self.doubleSpinBox_P2PActivations.valueChanged.connect(self.assignP2P)
         self.checkBox_MapHighlight.stateChanged.connect(self.MapHighlight)
+
+
+        # QtCore.QMetaObject.connectSlotsByName(Form)
+        # app.aboutToQuit.connect(self.closeEvent)
+        #
+        # finish = QtWidgets.QAction("Quit", self.Form)
+        # finish.triggered.connect(self.closeEvent)
 
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
@@ -531,9 +546,10 @@ class Gui(object):
     def __del__(self):
         sys.stdout = sys.__stdout__
 
-    def CloseEvent(self, event):
+    def closeEvent(self):
         print("CloseEvent")
         time.sleep(10)
+        sys.exit()
         reply = QtGui.QMessageBox.question(self, 'Message',
             "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 

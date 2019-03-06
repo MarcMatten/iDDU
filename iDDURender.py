@@ -2,6 +2,7 @@ import iDDUhelper
 import pygame
 import numpy
 import warnings
+import os
 
 class RenderMain:
     def __init__(self, db):
@@ -41,9 +42,11 @@ class RenderMain:
         # display
         self.resolution = (800, 480)
         # self.fullscreen = False
-        import os
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
-        # os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+            os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+        else:
+            os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+
         self.screen = self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
         self.fullscreen = True
         self.pygame.display.set_caption('iDDU')
@@ -152,12 +155,13 @@ class RenderScreen(RenderMain):
 ##            if event.type == self.pygame.KEYDOWN and event.key == self.pygame.K_ESCAPE:
 ##                self.done = True
             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 3:
-                if self.fullscreen:
-                    self.pygame.display.set_mode(self.resolution)
-                    self.fullscreen = False
-                else:
-                    self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
-                    self.fullscreen = True
+                self.db.StopDDU = True
+                # if self.fullscreen:
+                #     self.pygame.display.set_mode(self.resolution)
+                #     self.fullscreen = False
+                # else:
+                #     self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
+                #     self.fullscreen = True
             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 25:
             # if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 1:
                 if self.ScreenNumber == 1:
