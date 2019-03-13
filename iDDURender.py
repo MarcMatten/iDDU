@@ -280,6 +280,8 @@ class RenderScreen(RenderMain):
             for n in range(0, len(self.db.DriverInfo['Drivers'])):
                 self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
 
+        self.warningLabel('PIT LIMITER', self.blue)
+
         self.pygame.display.flip()
         self.clocker.tick(30)
 
@@ -355,6 +357,12 @@ class RenderScreen(RenderMain):
                 self.pygame.draw.lines(self.screen, colour, False, map2, 20)
         except:
             warnings.warn(self.db.timeStr+': Error in highlightSection!')
+
+    def warningLabel(self, text, colour):
+        self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100],0)
+        LabelSize = self.fontLarge.size(text)
+        Label = self.fontLarge.render(text, True, self.white)
+        self.screen.blit(Label, (400-LabelSize[0]/2, 50-LabelSize[1]/2))
 
 class Frame(RenderMain):
     def __init__(self, title, x1, y1, dx, dy, db):

@@ -45,8 +45,10 @@ class Gui(object):
     def setupUi(self, Form, db):
         self.db = db
         self.Form = Form
-        Form.setObjectName("iDDU")
-        Form.resize(784, 441)
+        # Form.setObjectName("iDDU")
+        # Form.resize(784, 441)
+        self.Form.setObjectName("iDDU")
+        self.Form.resize(784, 441)
 
         self.tabWidget = QtWidgets.QTabWidget(Form)
         self.tabWidget.setGeometry(QtCore.QRect(10, 10, 764, 424))
@@ -303,6 +305,7 @@ class Gui(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.setCurrentIndex(1)
         self.tabWidget.addTab(self.tabUpshiftTone, "")
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
@@ -354,7 +357,7 @@ class Gui(object):
         self.doubleSpinBox_P2PActivations.valueChanged.connect(self.assignP2P)
         self.checkBox_MapHighlight.stateChanged.connect(self.MapHighlight)
 
-
+        # finish = self.Form.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(Form)
         # app.aboutToQuit.connect(self.closeEvent)
         #
