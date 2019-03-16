@@ -374,7 +374,16 @@ class IDDUCalc:
                 if not self.db.dcFuelMixture == self.db.dcFuelMixtureOld:
                     self.db.dcFuelMixtureChange = True
                     self.db.dcChangeTime = self.db.SessionTime
-
+                    
+                if self.db.SessionTime > self.db.dcChangeTime + 0.75:
+                    self.db.dcBrakeBiasChange = False
+                    self.db.dcABSChange = False
+                    self.db.dcTractionControlToggleChange = False
+                    self.db.dcTractionControlChange = False
+                    self.db.dcTractionControl2Change = False
+                    self.db.dcThrottleShapeChange = False
+                    self.db.dcFuelMixtureChange = False
+            
             self.db.dcBrakeBiasOld = self.db.dcBrakeBias
             self.db.dcABSOld = self.db.dcABS
             self.db.dcTractionControlToggleOld = self.db.dcTractionControlToggle

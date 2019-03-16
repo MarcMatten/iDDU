@@ -316,8 +316,8 @@ class RenderScreen(RenderMain):
             self.warningLabel('BLACK', self.white, self.black)
         if self.db.SessionFlags & 0x20000:
             self.warningLabel('DISQUALIFIED', self.white, self.black)
-        if self.db.SessionFlags & 0x80000:
-            self.warningLabel('FURLED', self.white, self.black)
+        #if self.db.SessionFlags & 0x80000:
+        #    self.warningLabel('FURLED', self.white, self.black)
         # if self.db.SessionFlags & 0x100000:
         #     self.warningLabel('REPAIR', self.white, self.black)
 
