@@ -280,7 +280,17 @@ class RenderScreen(RenderMain):
             for n in range(0, len(self.db.DriverInfo['Drivers'])):
                 self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
 
-        self.warningLabel('PIT LIMITER', self.blue)
+        # warning and alarm messages
+        if self.db.EngineWarnings & 0x10:
+            self.warningLabel('PIT LIMITER', self.blue, self.white)
+        if self.db.EngineWarnings & 0x1:
+            self.warningLabel('WATER TEMP HIGH', self.red, self.white)
+        if self.db.EngineWarnings & 0x2:
+            self.warningLabel('LOW FUEL PRESSURE', self.red, self.white)
+        if self.db.EngineWarnings & 0x4:
+            self.warningLabel('LOW OIL PRESSURE', self.red, self.white)
+        if self.db.EngineWarnings & 0x8:
+            self.warningLabel('ENGINE STALLED', self.yellow, self.black)
 
         self.pygame.display.flip()
         self.clocker.tick(30)
@@ -358,10 +368,10 @@ class RenderScreen(RenderMain):
         except:
             warnings.warn(self.db.timeStr+': Error in highlightSection!')
 
-    def warningLabel(self, text, colour):
+    def warningLabel(self, text, colour, textcolour):
         self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100],0)
         LabelSize = self.fontLarge.size(text)
-        Label = self.fontLarge.render(text, True, self.white)
+        Label = self.fontLarge.render(text, True, textcolour)
         self.screen.blit(Label, (400-LabelSize[0]/2, 50-LabelSize[1]/2))
 
 class Frame(RenderMain):
