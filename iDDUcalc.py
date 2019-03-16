@@ -95,6 +95,7 @@ class IDDUCalc:
                     self.db.OutLap = True
                     self.db.LastFuelLevel = self.db.FuelLevel
                     self.db.FuelConsumption = []
+                    self.db.RunStartTime = self.db.SessionTime
 
                     self.ir.pit_command(7)
 
@@ -349,6 +350,39 @@ class IDDUCalc:
                     self.db.textColour = self.grey
                     self.db.FlagException = False
                     self.db.FlagExceptionVal = 0
+
+            # change in driver controls
+            if self.db.SessionTime > self.db.RunStartTime + 1:
+                if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld:
+                    self.db.dcBrakeBiasChange = True
+                    self.db.dcChangeTime = self.db.SessionTime
+                if not self.db.dcABS == self.db.dcABSOld:
+                    self.db.dcABSChange = True
+                    self.db.dcChangeTime = self.db.SessionTime
+                if not self.db.dcTractionControlToggle == self.db.dcTractionControlToggleOld:
+                    self.db.dcTractionControlToggleChange = True
+                    self.db.dcChangeTime = self.db.SessionTime
+                if not self.db.dcTractionControl == self.db.dcTractionControlOld:
+                    self.db.dcTractionControlChange = True
+                    self.db.dcChangeTime = self.db.SessionTime
+                if not self.db.dcTractionControl2 == self.db.dcTractionControl2Old:
+                    self.db.dcTractionControl2Change = True
+                    self.db.dcChangeTime = self.db.SessionTime
+                if not self.db.dcThrottleShape == self.db.dcThrottleShapeOld:
+                    self.db.dcThrottleShapeChange = True
+                    self.db.dcChangeTime = self.db.SessionTime
+                if not self.db.dcFuelMixture == self.db.dcFuelMixtureOld:
+                    self.db.dcFuelMixtureChange = True
+                    self.db.dcChangeTime = self.db.SessionTime
+
+            self.db.dcBrakeBiasOld = self.db.dcBrakeBias
+            self.db.dcABSOld = self.db.dcABS
+            self.db.dcTractionControlToggleOld = self.db.dcTractionControlToggle
+            self.db.dcTractionControlOld = self.db.dcTractionControl
+            self.db.dcTractionControl2Old = self.db.dcTractionControl2
+            self.db.dcThrottleShapeOld = self.db.dcThrottleShape
+            self.db.dcFuelMixtureOld = self.db.dcFuelMixture
+
             self.db.isRunning = True
         else:
             # do if sim is not running -------------------------------------------------------------------------------------
@@ -366,20 +400,49 @@ class IDDUCalc:
         print(self.db.timeStr+': Starting RTDB reinitialisation.')
         helpData = {'done': False, 'timeStr': 0, 'waiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
         # data from iRacing
-        iRData = {'LapBestLapTime': 0, 'LapLastLapTime': 0, 'LapDeltaToSessionBestLap': 0, 'dcFuelMixture': 0,
-                  'dcThrottleShape': 0, 'dcTractionControl': 0, 'dcTractionControl2': 0, 'dcTractionControlToggle': 0,
-                  'dcABS': 0, 'dcBrakeBias': 0, 'FuelLevel': 0, 'Lap': 0, 'IsInGarage': 0, 'LapDistPct': 0,
+        iRData = {'LapBestLapTime': 0,
+                  'LapLastLapTime': 0,
+                  'LapDeltaToSessionBestLap': 0,
+                  'dcFuelMixture': 0,
+                  'dcThrottleShape': 0,
+                  'dcTractionControl': 0,
+                  'dcTractionControl2': 0,
+                  'dcTractionControlToggle': 0,
+                  'dcABS': 0,
+                  'dcBrakeBias': 0,
+                  'FuelLevel': 0,
+                  'Lap': 0,
+                  'IsInGarage': 0,
+                  'LapDistPct': 0,
                   'OnPitRoad': 0,
-                  'PlayerCarClassPosition': 0, 'PlayerCarPosition': 0, 'SessionLapsRemain': 0, 'Throttle': 0,
-                  'SessionTimeRemain': 0, 'SessionTime': 0, 'SessionFlags': 0, 'SessionNum': 0, 'IsOnTrack': False,
+                  'PlayerCarClassPosition': 0,
+                  'PlayerCarPosition': 0,
+                  'SessionLapsRemain': 0,
+                  'Throttle': 0,
+                  'SessionTimeRemain': 0,
+                  'SessionTime': 0,
+                  'SessionFlags': 0,
+                  'SessionNum': 0,
+                  'IsOnTrack': False,
                   'Gear': 0,
-                  'Speed': 0, 'DriverInfo': {'DriverCarIdx': 0, 'DriverCarFuelMaxLtr': 0, 'DriverCarMaxFuelPct': 1,
-                                             'Drivers': [], 'DriverPitTrkPct': 0}, 'CarIdxLapDistPct': [0],
+                  'Speed': 0,
+                  'DriverInfo': {
+                      'DriverCarIdx': 0,
+                      'DriverCarFuelMaxLtr': 0,
+                      'DriverCarMaxFuelPct': 1,
+                      'Drivers': [],
+                      'DriverPitTrkPct': 0},
+                  'CarIdxLapDistPct': [0],
                   'CarIdxOnPitRoad': [True]*64,
                   'SessionInfo': {'Sessions':
-                                      [{'SessionType': 'Session', 'SessionTime': 'unlimited', 'SessionLaps': 0,
+                                      [{'SessionType': 'Session',
+                                        'SessionTime': 'unlimited',
+                                        'SessionLaps': 0,
                                         'ResultsPositions':
-                                            [{'CarIdx': 0, 'JokerLapsComplete': 0}]}]}, 'Yaw': 0, 'VelocityX': 0,
+                                            [{'CarIdx': 0,
+                                              'JokerLapsComplete': 0}]}]},
+                  'Yaw': 0,
+                  'VelocityX': 0,
                   'VelocityY': 0,
                   'YawNorth': 0,
                   'WeekendInfo': [],
@@ -497,7 +560,24 @@ class IDDUCalc:
                     'LapLimit': False,
                     'TimeLimit': False,
                     'P2PTime': 0,
-                    'DRSRemaining': 0
+                    'DRSRemaining': 0,
+                    'dcFuelMixtureOld': 0,
+                    'dcThrottleShapeOld': 0,
+                    'dcTractionControlOld': 0,
+                    'dcTractionControl2Old': 0,
+                    'dcTractionControlToggleOld': 0,
+                    'dcABSOld': 0,
+                    'dcBrakeBiasOld': 0,
+                    'RunStartTime': 0,
+                    'changeLabelsOn': True,
+                    'dcChangeTime': 0,
+                    'dcFuelMixtureChange': False,
+                    'dcThrottleShapeChange': False,
+                    'dcTractionControlChange': False,
+                    'dcTractionControl2Change': False,
+                    'dcTractionControlToggleChange': False,
+                    'dcABSChange': False,
+                    'dcBrakeBiasChange': False
                     }
 
         self.db.StopDDU = True

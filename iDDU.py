@@ -190,7 +190,24 @@ calcData = {'LastFuelLevel': 0,
             'LapLimit': False,
             'TimeLimit': False,
             'P2PTime': 0,
-            'DRSRemaining': 0
+            'DRSRemaining': 0,
+            'dcFuelMixtureOld': 0,
+            'dcThrottleShapeOld': 0,
+            'dcTractionControlOld': 0,
+            'dcTractionControl2Old': 0,
+            'dcTractionControlToggleOld': 0,
+            'dcABSOld': 0,
+            'dcBrakeBiasOld': 0,
+            'RunStartTime': 0,
+            'changeLabelsOn': True,
+            'dcChangeTime': 0,
+            'dcFuelMixtureChange': False,
+            'dcThrottleShapeChange': False,
+            'dcTractionControlChange': False,
+            'dcTractionControl2Change': False,
+            'dcTractionControlToggleChange': False,
+            'dcABSChange': False,
+            'dcBrakeBiasChange': False
             }
 
 # Create RTDB and initialise with

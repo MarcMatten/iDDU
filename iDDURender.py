@@ -35,6 +35,7 @@ class RenderMain:
         self.fontSmall = self.pygame.font.Font("files\KhmerUI.ttf", 20)
         self.fontMedium = self.pygame.font.Font("files\KhmerUI.ttf", 40)
         self.fontLarge = self.pygame.font.Font("files\KhmerUI.ttf", 60)
+        self.fontReallyLarge = self.pygame.font.Font("files\KhmerUI.ttf", 350)
         self.fontHuge = self.pygame.font.Font("files\KhmerUI.ttf", 480)
 
         self.SCLabel = self.fontHuge.render('SC', True, self.black)
@@ -293,6 +294,13 @@ class RenderScreen(RenderMain):
             if self.db.EngineWarnings & 0x8:
                 self.warningLabel('ENGINE STALLED', self.yellow, self.black)
 
+            # if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld:
+            #     self.dcBrakeBiasChangeTime = self.db.SessionTime
+            #     self.db.dcBrakeBiasOld = self.db.dcBrakeBias
+            #
+            # if self.db.SessionTime < self.dcBrakeBiasChangeTime + 0.5 and self.db.SessionTime > self.db.RunStartTime + 1:
+            #     self.warningLabel('BBIAS', self.white, self.black)
+
         # for testing purposes....
         if self.db.SessionFlags & 0x80:
             self.warningLabel('CROSSED', self.white, self.black)
@@ -312,6 +320,23 @@ class RenderScreen(RenderMain):
             self.warningLabel('FURLED', self.white, self.black)
         # if self.db.SessionFlags & 0x100000:
         #     self.warningLabel('REPAIR', self.white, self.black)
+
+        # driver control change
+        if self.db.SessionTime < self.db.dcChangeTime + 0.75:
+            if self.db.dcBrakeBiasChange:
+                self.changeLabel('Brake Pressure Bias', iDDUhelper.roundedStr1(self.db.dcBrakeBias))
+            if self.db.dcFuelMixtureChange:
+                self.changeLabel('Mix', iDDUhelper.roundedStr0(self.db.dcFuelMixture))
+            if self.db.dcThrottleShapeChange:
+                self.changeLabel('Pedal Map', iDDUhelper.roundedStr0(self.db.dcThrottleShape))
+            if self.db.dcTractionControlChange:
+                self.changeLabel('TC1', iDDUhelper.roundedStr0(self.db.dcTractionControl))
+            if self.db.dcTractionControl2Change:
+                self.changeLabel('TC2', iDDUhelper.roundedStr0(self.db.dcTractionControl2))
+            if self.db.dcTractionControlToggleChange:
+                self.changeLabel('TC Toggle', iDDUhelper.roundedStr0(self.db.dcTractionControlToggle))
+            if self.db.dcABSChange:
+                self.changeLabel('ABS', iDDUhelper.roundedStr0(self.db.dcABS))
 
         self.pygame.display.flip()
         self.clocker.tick(30)
@@ -394,6 +419,15 @@ class RenderScreen(RenderMain):
         LabelSize = self.fontLarge.size(text)
         Label = self.fontLarge.render(text, True, textcolour)
         self.screen.blit(Label, (400-LabelSize[0]/2, 50-LabelSize[1]/2))
+
+    def changeLabel(self, text, value):
+        self.pygame.draw.rect(self.screen, self.black, [0, 0, 800, 480], 0)
+        LabelSize = self.fontLarge.size(text)
+        Label = self.fontLarge.render(text, True, self.white)
+        self.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
+        ValueSize = self.fontReallyLarge.size(value)
+        Value = self.fontReallyLarge.render(value, True, self.white)
+        self.screen.blit(Value, (400 - ValueSize[0] / 2, 270 - ValueSize[1] / 2))
 
 class Frame(RenderMain):
     def __init__(self, title, x1, y1, dx, dy, db):
