@@ -303,44 +303,43 @@ class IDDUCalc:
             else:
                 if not (self.db.SessionFlags == self.db.oldSessionFlags):
                     self.FlagCallTime = self.db.SessionTime
-                    Flags = str(("0x%x" % self.db.SessionFlags)[2:11])
                     self.db.FlagExceptionVal = 0
-                    if Flags[0] == '8':  # Flags[7] == '4' or Flags[0] == '1':
+                    if self.db.SessionFlags & 0x8000000: # startGo
                         self.db.backgroundColour = self.green
                         self.db.GreenTime = self.db.SessionTimeRemain
                         self.db.CarIdxPitStops = [0] * 64
-                    if Flags[7] == '2':
+                    if self.db.SessionFlags & 0x2: # white
                         self.db.backgroundColour = self.white
                         self.db.textColour = self.black
-                    if Flags[6] == '2':
+                    if self.db.SessionFlags & 0x20: # blue
                         self.db.backgroundColour = self.blue
-                    if Flags[7] == '1':  # checkered
+                    if self.db.SessionFlags & 0x1: # checkered
                         self.db.textColour = self.grey
                         self.db.FlagExceptionVal = 1
                         self.db.FlagException = True
-                    if Flags[2] == '1':  # repair
+                    if self.db.SessionFlags & 0x100000: # repair
                         self.db.FlagException = True
                         self.db.FlagExceptionVal = 2
                         self.db.backgroundColour = self.black
-                    if Flags[3] == '1' or Flags[3] == '2' or Flags[3] == '5':  # disqualified or Flags[3] == '4'
+                    if self.db.SessionFlags & 0x10000 or self.db.SessionFlags & 0x20000:  # disqualified
                         self.db.textColour = self.grey
                         self.db.FlagException = True
                         self.db.FlagExceptionVal = 4
-                    if Flags[6] == '4':  # debry
+                    if self.db.SessionFlags & 0x40:  # debry
                         self.db.FlagExceptionVal = 5
-                    if Flags[3] == '8' or Flags[3] == 'c':  # warning
+                    if self.db.SessionFlags & 0x80000:  # warning
                         self.db.FlagException = True
                         self.db.textColour = self.grey
                         self.db.FlagExceptionVal = 6
-                    if Flags[7] == '8' or Flags[5] == '1' or Flags[4] == '4' or Flags[4] == '8':
+                    if self.db.SessionFlags & 0x8 or self.db.SessionFlags & 0x100: # yellow
                         self.db.backgroundColour = self.yellow
                         self.db.textColour = self.black
-                    if Flags[4] == '4' or Flags[4] == '8':  # SC
+                    if self.db.SessionFlags & 0x4000 or self.db.SessionFlags & 0x8000:  # SC
                         self.db.FlagException = True
                         self.db.backgroundColour = self.yellow
                         self.db.textColour = self.black
                         self.db.FlagExceptionVal = 3
-                    if Flags[7] == '1':  # or Flags[0] == '4'
+                    if self.db.SessionFlags & 0x10: # red
                         self.db.backgroundColour = self.red
 
                     self.db.oldSessionFlags = self.db.SessionFlags

@@ -217,7 +217,7 @@ class RenderScreen(RenderMain):
                     pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
                 if [1 for i in self.db.Alarm if i in [9]]:  # Joker last warning
                     pygame.draw.rect(self.screen, self.red, [20, 395, 170, 70])
-                    
+
             # DRS
             if self.db.DRS:
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
@@ -280,17 +280,38 @@ class RenderScreen(RenderMain):
             for n in range(0, len(self.db.DriverInfo['Drivers'])):
                 self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
 
-        # warning and alarm messages
-        if self.db.EngineWarnings & 0x10:
-            self.warningLabel('PIT LIMITER', self.blue, self.white)
-        if self.db.EngineWarnings & 0x1:
-            self.warningLabel('WATER TEMP HIGH', self.red, self.white)
-        if self.db.EngineWarnings & 0x2:
-            self.warningLabel('LOW FUEL PRESSURE', self.red, self.white)
-        if self.db.EngineWarnings & 0x4:
-            self.warningLabel('LOW OIL PRESSURE', self.red, self.white)
-        if self.db.EngineWarnings & 0x8:
-            self.warningLabel('ENGINE STALLED', self.yellow, self.black)
+        if self.db.IsOnTrack:
+            # warning and alarm messages
+            if self.db.EngineWarnings & 0x10:
+                self.warningLabel('PIT LIMITER', self.blue, self.white)
+            if self.db.EngineWarnings & 0x1:
+                self.warningLabel('WATER TEMP HIGH', self.red, self.white)
+            if self.db.EngineWarnings & 0x2:
+                self.warningLabel('LOW FUEL PRESSURE', self.red, self.white)
+            if self.db.EngineWarnings & 0x4:
+                self.warningLabel('LOW OIL PRESSURE', self.red, self.white)
+            if self.db.EngineWarnings & 0x8:
+                self.warningLabel('ENGINE STALLED', self.yellow, self.black)
+
+        # for testing purposes....
+        if self.db.SessionFlags & 0x80:
+            self.warningLabel('CROSSED', self.white, self.black)
+        if self.db.SessionFlags & 0x100:
+            self.warningLabel('YELLOW WAVING', self.white, self.black)
+        if self.db.SessionFlags & 0x400:
+            self.warningLabel('GREEN HELD', self.white, self.black)
+        if self.db.SessionFlags & 0x2000:
+            self.warningLabel('RANDOM WAVING', self.white, self.black)
+        if self.db.SessionFlags & 0x8000:
+            self.warningLabel('CAUTION WAVING', self.white, self.black)
+        if self.db.SessionFlags & 0x10000:
+            self.warningLabel('BLACK', self.white, self.black)
+        if self.db.SessionFlags & 0x20000:
+            self.warningLabel('DISQUALIFIED', self.white, self.black)
+        if self.db.SessionFlags & 0x80000:
+            self.warningLabel('FURLED', self.white, self.black)
+        # if self.db.SessionFlags & 0x100000:
+        #     self.warningLabel('REPAIR', self.white, self.black)
 
         self.pygame.display.flip()
         self.clocker.tick(30)
