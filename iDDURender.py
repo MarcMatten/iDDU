@@ -301,42 +301,42 @@ class RenderScreen(RenderMain):
             # if self.db.SessionTime < self.dcBrakeBiasChangeTime + 0.5 and self.db.SessionTime > self.db.RunStartTime + 1:
             #     self.warningLabel('BBIAS', self.white, self.black)
 
-        # for testing purposes....
-        if self.db.SessionFlags & 0x80:
-            self.warningLabel('CROSSED', self.white, self.black)
-        if self.db.SessionFlags & 0x100:
-            self.warningLabel('YELLOW WAVING', self.white, self.black)
-        if self.db.SessionFlags & 0x400:
-            self.warningLabel('GREEN HELD', self.white, self.black)
-        if self.db.SessionFlags & 0x2000:
-            self.warningLabel('RANDOM WAVING', self.white, self.black)
-        if self.db.SessionFlags & 0x8000:
-            self.warningLabel('CAUTION WAVING', self.white, self.black)
-        if self.db.SessionFlags & 0x10000:
-            self.warningLabel('BLACK', self.white, self.black)
-        if self.db.SessionFlags & 0x20000:
-            self.warningLabel('DISQUALIFIED', self.white, self.black)
-        if self.db.SessionFlags & 0x80000:
-            self.warningLabel('FURLED', self.white, self.black)
-        # if self.db.SessionFlags & 0x100000:
-        #     self.warningLabel('REPAIR', self.white, self.black)
+            # for testing purposes....
+            if self.db.SessionFlags & 0x80:
+                self.warningLabel('CROSSED', self.white, self.black)
+            # if self.db.SessionFlags & 0x100: # normal yellow
+            #     self.warningLabel('YELLOW WAVING', self.white, self.black)
+            if self.db.SessionFlags & 0x400:
+                self.warningLabel('GREEN HELD', self.white, self.black)
+            if self.db.SessionFlags & 0x2000:
+                self.warningLabel('RANDOM WAVING', self.white, self.black)
+            if self.db.SessionFlags & 0x8000:
+                self.warningLabel('CAUTION WAVING', self.white, self.black)
+            if self.db.SessionFlags & 0x10000:
+                self.warningLabel('BLACK', self.white, self.black)
+            if self.db.SessionFlags & 0x20000:
+                self.warningLabel('DISQUALIFIED', self.white, self.black)
+            if self.db.SessionFlags & 0x80000:
+                self.warningLabel('FURLED', self.white, self.black)
+            # if self.db.SessionFlags & 0x100000:
+            #     self.warningLabel('REPAIR', self.white, self.black)
 
-        # driver control change
-        if self.db.SessionTime < self.db.dcChangeTime + 0.75:
-            if self.db.dcBrakeBiasChange:
-                self.changeLabel('Brake Pressure Bias', iDDUhelper.roundedStr1(self.db.dcBrakeBias))
-            if self.db.dcFuelMixtureChange:
-                self.changeLabel('Mix', iDDUhelper.roundedStr0(self.db.dcFuelMixture))
-            if self.db.dcThrottleShapeChange:
-                self.changeLabel('Pedal Map', iDDUhelper.roundedStr0(self.db.dcThrottleShape))
-            if self.db.dcTractionControlChange:
-                self.changeLabel('TC1', iDDUhelper.roundedStr0(self.db.dcTractionControl))
-            if self.db.dcTractionControl2Change:
-                self.changeLabel('TC2', iDDUhelper.roundedStr0(self.db.dcTractionControl2))
-            if self.db.dcTractionControlToggleChange:
-                self.changeLabel('TC Toggle', iDDUhelper.roundedStr0(self.db.dcTractionControlToggle))
-            if self.db.dcABSChange:
-                self.changeLabel('ABS', iDDUhelper.roundedStr0(self.db.dcABS))
+            # driver control change
+            if self.db.SessionTime < self.db.dcChangeTime + 0.75:
+                if self.db.dcBrakeBiasChange:
+                    self.changeLabel('Brake Pressure Bias', iDDUhelper.roundedStr1(self.db.dcBrakeBias))
+                if self.db.dcFuelMixtureChange:
+                    self.changeLabel('Mix', iDDUhelper.roundedStr0(self.db.dcFuelMixture))
+                if self.db.dcThrottleShapeChange:
+                    self.changeLabel('Pedal Map', iDDUhelper.roundedStr0(self.db.dcThrottleShape))
+                if self.db.dcTractionControlChange:
+                    self.changeLabel('TC1', iDDUhelper.roundedStr0(self.db.dcTractionControl))
+                if self.db.dcTractionControl2Change:
+                    self.changeLabel('TC2', iDDUhelper.roundedStr0(self.db.dcTractionControl2))
+                if self.db.dcTractionControlToggleChange:
+                    self.changeLabel('TC Toggle', iDDUhelper.roundedStr0(self.db.dcTractionControlToggle))
+                if self.db.dcABSChange:
+                    self.changeLabel('ABS', iDDUhelper.roundedStr0(self.db.dcABS))
 
         self.pygame.display.flip()
         self.clocker.tick(30)
