@@ -370,7 +370,7 @@ class RenderScreen(RenderMain):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
         if self.db.CarIdxOnPitRoad[Idx]:
             self.pygame.draw.circle(self.screen, self.yellow, [int(x), int(y)], 12, 0)
-        elif self.db.CarIdxPitStops[Idx] > self.db.PitStopsRequired:
+        elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired:
             self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
         self.pygame.draw.circle(self.screen, dotColour, [int(x), int(y)], 10, 0)
         self.screen.blit(Label, (int(x) - 6, int(y) - 7))

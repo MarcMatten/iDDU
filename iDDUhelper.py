@@ -1,3 +1,5 @@
+import numpy as np
+
 def convertTimeMMSSsss(sec):
     if type(sec) is float:
         if sec < 0:
@@ -100,3 +102,31 @@ def getData(ir, list):
         data.update({list[i]: ir[list[i]]})
 
     return data
+
+def smartAverageMax(x_in, tol):
+    avg_raw = np.mean(x_in)
+    if len(x_in) > 3:
+        indices = np.where(x_in > (1+tol) * avg_raw)
+        x = x_in.copy()
+        for i in range(0,len(indices[0])):
+            x.__delitem__(indices[0][len(indices[0])-i-1])
+        avg = np.mean(x)
+        return avg
+    else:
+        return avg_raw
+
+
+def smartAverageMinMax(x_in, tol):
+    avg_raw = np.mean(x_in)
+    if len(x_in) > 3:
+        indices = np.where(x_in > (1+tol) * avg_raw)
+        x = x_in.copy()
+        for i in range(0,len(indices[0])):
+            x.__delitem__(indices[0][len(indices[0])-i-1])
+        indices = np.where(x < (1-tol) * avg_raw)
+        for i in range(0,len(indices[0])):
+            x.__delitem__(indices[0][len(indices[0])-i-1])
+        avg = np.mean(x)
+        return avg
+    else:
+        return avg_raw

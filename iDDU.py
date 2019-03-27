@@ -80,7 +80,9 @@ iRData = {'LapBestLapTime': 0,
           'CarIdxTrackSurface': 0,
           'CarLeftRight': 0,
           'DRS_Status': 0,
-          'PushToPass': False
+          'PushToPass': False,
+          'CarIdxF2Time': [],
+          'LapLastLapTime': 0
           }
 
 # calculated data

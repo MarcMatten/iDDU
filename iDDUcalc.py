@@ -121,6 +121,60 @@ class IDDUCalc:
 
                     self.db.LastFuelLevel = self.db.FuelLevel
 
+                    LapStr='Lap_'"{:02d}".format(self.db.Lap)
+                    f = open(LapStr, 'x')
+                    f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
+                    f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
+                    f.write('self.db.TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
+                    f.write('self.db.SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
+                    f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
+                    f.write('self.db.SessionTimeRemain = ' + repr(self.db.SessionTimeRemain) + '\n')
+                    f.write('self.db.DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
+                    f.write('self.db.CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
+                    f.write('self.db.LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
+                    f.write('self.db.PitStopsRequired = ' + repr(self.db.PitStopsRequired) + '\n')
+                    f.write('self.db.CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
+                    f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
+                    f.write('self.db.SessionNum = ' + repr(self.db.SessionNum) + '\n')
+                    f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
+                    f.close()
+
+                    # Race Lap Estimation
+                    # if self.db.TimeLimit and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.Lap > 2:
+                    #     myLineCrossingTime = self.db.SessionTime - self.db.SessionTimeRemain
+                    #     meBehind = self.db.CarIdxF2Time[self.db.DriverCarIdx]
+                    #     LeaderLineCrossingTime = myLineCrossingTime - meBehind
+                    #     self.db.LapTimes.extend(self.db.LapLastLapTime)
+                    #     avgLapTime = iDDUhelper.smartAverageMax(self.db.LapTimes, 0.03)
+                    #
+                    #     estLapsToGo = (self.db.SessionTimeRemain - self.db.PitStopDelta*max(0,self.db.PitStopsRequired-self.db.CarIdxPitStops[self.db.DriverCarIdx]))/avgLapTime
+                    #
+                    #     for i in range(int(estLapsToGo)-2, int(estLapsToGo)+3):
+                    #         finishTime = myLineCrossingTime + self.db.PitStopDelta*max(0,self.db.PitStopsRequired-self.db.CarIdxPitStops[self.db.DriverCarIdx]) + avgLapTime * i
+                    #         finishLap = i
+                    #         if finishTime >= self.db.SessionTime:
+                    #             break
+                    #
+                    #     CarIdxBehind = [0] * 64
+                    #     CarIdxAvgLapTime = [0] * 64
+                    #     CarIdxEstLapsToGo = [0] * 64
+                    #     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
+                    #         Idx = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
+                    #         self.db.CarIdxLapTimes[Idx].extend = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
+                    #         CarIdxBehind[Idx] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Time']
+                    #         CarIdxAvgLapTime[Idx] = iDDUhelper.smartAverageMax(self.db.CarIdxLapTimes[Idx], 0.03)
+                    #
+                    #         CarIdxEstLapsToGo = (self.db.SessionTime - LeaderLineCrossingTime + CarIdxBehind[Idx] - self.db.PitStopDeltaFastetClass * max(0, self.db.PitStopsRequired -self.db.CarIdxPitStops[Idx])) / CarIdxAvgLapTime[Idx]
+                    #
+                    #         finishTimes = [] * 64
+                    #         for i in range(int(estLapsToGo) - 2, int(estLapsToGo) + 3):
+                    #             temp = myLineCrossingTime + self.db.PitStopDelta * max(0, self.db.PitStopsRequired - self.db.CarIdxPitStops[self.db.DriverCarIdx]) + avgLapTime * i
+                    #             finishTimes.extend([(i, temp)])
+                    #
+                    #     find minimum of all finish time but for maximum lap number
+                    #     where am i relative to it?
+                    #     that's the time i'm lokking for!
+
                 else:
                     newLap = False
 
@@ -461,7 +515,9 @@ class IDDUCalc:
                   'CarIdxTrackSurface': 0,
                   'CarLeftRight': 0,
                   'DRS_Status': 0,
-                  'PushToPass': False}
+                  'PushToPass': False,
+                  'CarIdxF2Time': [],
+                  'LapLastLapTime': 0}
         # calculated data
         calcData = {'LastFuelLevel': 0,
                     'GearStr': '-',
@@ -600,6 +656,9 @@ class IDDUCalc:
 
     def initSession(self):
         print(self.db.timeStr+': Initialising Session ==========================')
+
+        self.reinit()
+
         self.getTrackFiles()
         if self.db.startUp:
             self.db.StartDDU = True
