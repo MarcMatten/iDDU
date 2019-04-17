@@ -6,6 +6,7 @@ import numpy as np
 import os
 import glob
 import time
+from datetime import datetime
 
 class IDDUCalc:
     def __init__(self, db):
@@ -120,8 +121,10 @@ class IDDUCalc:
                         self.db.OutLap = False
 
                     self.db.LastFuelLevel = self.db.FuelLevel
+                    now = datetime.now()
+                    date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-                    LapStr='Lap_'"{:02d}".format(self.db.Lap)
+                    LapStr=date_time+'_Lap_'"{:02d}".format(self.db.Lap)
                     f = open(LapStr, 'x')
                     f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
                     f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
