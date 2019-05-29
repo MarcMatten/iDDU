@@ -97,6 +97,7 @@ class IDDUCalc:
                     self.db.LastFuelLevel = self.db.FuelLevel
                     self.db.FuelConsumption = []
                     self.db.RunStartTime = self.db.SessionTime
+                    self.db.Run = self.db.Run + 1
 
                     self.ir.pit_command(7)
 
@@ -124,7 +125,7 @@ class IDDUCalc:
                     now = datetime.now()
                     date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-                    LapStr=date_time+'_Lap_'"{:02d}".format(self.db.Lap)
+                    LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap)
                     f = open(LapStr, 'x')
                     f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
                     f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
@@ -140,6 +141,7 @@ class IDDUCalc:
                     f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
                     f.write('self.db.SessionNum = ' + repr(self.db.SessionNum) + '\n')
                     f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
+                    f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
                     f.close()
 
                     # Race Lap Estimation
@@ -573,6 +575,7 @@ class IDDUCalc:
                     'FuelAdd': 1,
                     'PitStopDelta': 61,
                     'time': [],
+                    'Run': 0,
                     'UpshiftStrategy': 0,
                     'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
                     'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1],
@@ -660,7 +663,7 @@ class IDDUCalc:
     def initSession(self):
         print(self.db.timeStr+': Initialising Session ==========================')
 
-        self.reinit()
+        #self.reinit()
 
         self.getTrackFiles()
         if self.db.startUp:
