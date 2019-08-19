@@ -10,7 +10,7 @@ from functionalities.UpshiftTone import UpshiftTone
 # data for initialisation of RTDB
 # helper variables
 helpData = {'done': False,
-            'timeStr': 0,
+            'timeStr': time.strftime("%H:%M:%S", time.localtime()),
             'waiting': False,
             'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]
             }
@@ -90,7 +90,7 @@ calcData = {'LastFuelLevel': 0,
             'GearStr': '-',
             'SessionInfoAvailable': False,
             'SessionNum': 0,
-            'init': True,
+            'init': False,
             'onPitRoad': True,
             'isRunning': False,
             'WasOnTrack': False,

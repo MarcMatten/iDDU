@@ -466,204 +466,205 @@ class IDDUCalc:
 
     def reinit(self):
         print(self.db.timeStr+': Starting RTDB reinitialisation.')
-        helpData = {'done': False, 'timeStr': 0, 'waiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
-        # data from iRacing
-        iRData = {'LapBestLapTime': 0,
-                  'LapLastLapTime': 0,
-                  'LapDeltaToSessionBestLap': 0,
-                  'dcFuelMixture': 0,
-                  'dcThrottleShape': 0,
-                  'dcTractionControl': 0,
-                  'dcTractionControl2': 0,
-                  'dcTractionControlToggle': 0,
-                  'dcABS': 0,
-                  'dcBrakeBias': 0,
-                  'FuelLevel': 0,
-                  'Lap': 0,
-                  'IsInGarage': 0,
-                  'LapDistPct': 0,
-                  'OnPitRoad': 0,
-                  'PlayerCarClassPosition': 0,
-                  'PlayerCarPosition': 0,
-                  'SessionLapsRemain': 0,
-                  'Throttle': 0,
-                  'SessionTimeRemain': 0,
-                  'SessionTime': 0,
-                  'SessionFlags': 0,
-                  'SessionNum': 0,
-                  'IsOnTrack': False,
-                  'Gear': 0,
-                  'Speed': 0,
-                  'DriverInfo': {
-                      'DriverCarIdx': 0,
-                      'DriverCarFuelMaxLtr': 0,
-                      'DriverCarMaxFuelPct': 1,
-                      'Drivers': [],
-                      'DriverPitTrkPct': 0},
-                  'CarIdxLapDistPct': [0],
-                  'CarIdxOnPitRoad': [True]*64,
-                  'SessionInfo': {'Sessions':
-                                      [{'SessionType': 'Session',
-                                        'SessionTime': 'unlimited',
-                                        'SessionLaps': 0,
-                                        'ResultsPositions':
-                                            [{'CarIdx': 0,
-                                              'JokerLapsComplete': 0}]}]},
-                  'Yaw': 0,
-                  'VelocityX': 0,
-                  'VelocityY': 0,
-                  'YawNorth': 0,
-                  'WeekendInfo': [],
-                  'RPM': 0,
-                  'LapCurrentLapTime': 0,
-                  'EngineWarnings': 0,
-                  'CarIdxTrackSurface': 0,
-                  'CarLeftRight': 0,
-                  'DRS_Status': 0,
-                  'PushToPass': False,
-                  'CarIdxF2Time': [],
-                  'LapLastLapTime': 0}
-        # calculated data
-        calcData = {'LastFuelLevel': 0,
-                    'GearStr': '-',
-                    'SessionInfoAvailable': False,
-                    'SessionNum': 0,
-                    'init': True,
-                    'onPitRoad': True,
-                    'isRunning': False,
-                    'WasOnTrack': False,
-                    'StintLap': 0,
-                    'oldSessionNum': -1,
-                    'oldLap': 0.1,
-                    'FuelConsumption': [],
-                    'FuelLastCons': 0,
-                    'OutLap': True,
-                    'oldSessionlags': 0,
-                    'LapsToGo': 27,
-                    'SessionLapRemain': 0,
-                    'FuelConsumptionStr': '0.00',
-                    'RemLapValueStr': '10',
-                    'FuelLapStr': '0',
-                    'FuelAddStr': '0.0',
-                    'ToGoStr': '100',
-                    'FlagCallTime': 0,
-                    'FlagException': False,
-                    'FlagExceptionVal': 0,
-                    'Alarm': [],
-                    'oldFuelAdd': 1,
-                    'GreenTime': 0,
-                    'RemTimeValue': 0,
-                    'RaceLaps': 100000,
-                    'JokerStr': '-/-',
-                    'dist': [],
-                    'x': [],
-                    'y': [],
-                    'map': [],
-                    'RX': False,
-                    'createTrack': True,
-                    'dx': [],
-                    'dy': [],
-                    'logLap': 0,
-                    'Logging': False,
-                    'tempdist': -1,
-                    'StartUp': False,
-                    'oldSessionFlags': 0,
-                    'backgroundColour': (0, 0, 0),
-                    'textColourFuelAdd': (141, 141, 141),
-                    'textColour': (141, 141, 141),
-                    'FuelLaps': 1,
-                    'FuelAdd': 1,
-                    'PitStopDelta': 61,
-                    'time': [],
-                    'Run': 0,
-                    'UpshiftStrategy': 0,
-                    'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
-                    'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1],
-                    'iRShiftRPM': [100000, 100000, 100000, 100000],
-                    'ShiftToneEnabled': True,
-                    'StartDDU': False,
-                    'StopDDU': False,
-                    'DDUrunning': False,
-                    'UserRaceLaps': 0,
-                    'SessionLength': 86400,
-                    'CarIdxPitStops': [0] * 64,
-                    'CarIdxOnPitRoadOld': [True]*64,
-                    'PitStopsRequired': 1,
-                    'old_DRS_Status': 0,
-                    'DRSActivations': 8,
-                    'P2PActivations': 12,
-                    'DRSActivationsGUI': 8,
-                    'P2PActivationsGUI': 12,
-                    'JokerLapDelta': 2,
-                    'JokerLaps': 1,
-                    'MapHighlight': True,
-                    'old_PushToPass': False,
-                    'textColourDRS': (141, 141, 141),
-                    'textColourP2P': (141, 141, 141),
-                    'textColorJoker': (141, 141, 141),
-                    'DRSCounter': 0,
-                    'P2PCounter': 0,
-                    'RenderLabel': [
-                        True,   # Best
-                        True,   # Last
-                        True,   # Delta
-                        True,   # FuelLevel
-                        True,   # FuelCons
-                        True,   # FuelLastCons
-                        True,   # FuelLaps
-                        True,   # FuelAdd
-                        True,   # ABS
-                        True,   # BBias
-                        True,   # Mix
-                        True,   # TC1
-                        True,   # TC2
-                        True,   # Lap
-                        True,   # Clock
-                        True,   # Remain
-                        False,  # Elapsed
-                        False,  # Joker
-                        False,  # DRS
-                        False,  # P2P
-                        True,  # ToGo
-                    ],
-                    'P2P': False,
-                    'DRS': False,
-                    'LapLimit': False,
-                    'TimeLimit': False,
-                    'P2PTime': 0,
-                    'DRSRemaining': 0,
-                    'dcFuelMixtureOld': 0,
-                    'dcThrottleShapeOld': 0,
-                    'dcTractionControlOld': 0,
-                    'dcTractionControl2Old': 0,
-                    'dcTractionControlToggleOld': 0,
-                    'dcABSOld': 0,
-                    'dcBrakeBiasOld': 0,
-                    'RunStartTime': 0,
-                    'changeLabelsOn': True,
-                    'dcChangeTime': 0,
-                    'dcFuelMixtureChange': False,
-                    'dcThrottleShapeChange': False,
-                    'dcTractionControlChange': False,
-                    'dcTractionControl2Change': False,
-                    'dcTractionControlToggleChange': False,
-                    'dcABSChange': False,
-                    'dcBrakeBiasChange': False
-                    }
-
-        self.db.StopDDU = True
-        self.db.initialise(helpData)
-        self.db.initialise(iRData)
-        self.db.initialise(calcData)
-        # print(self.db.timeStr+': RTDB reinitialisied')
-        self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
-        self.db.StartDDU = True
+        self.db.reinitialise()
+        # helpData = {'done': False, 'timeStr': 0, 'waiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
+        # # data from iRacing
+        # iRData = {'LapBestLapTime': 0,
+        #           'LapLastLapTime': 0,
+        #           'LapDeltaToSessionBestLap': 0,
+        #           'dcFuelMixture': 0,
+        #           'dcThrottleShape': 0,
+        #           'dcTractionControl': 0,
+        #           'dcTractionControl2': 0,
+        #           'dcTractionControlToggle': 0,
+        #           'dcABS': 0,
+        #           'dcBrakeBias': 0,
+        #           'FuelLevel': 0,
+        #           'Lap': 0,
+        #           'IsInGarage': 0,
+        #           'LapDistPct': 0,
+        #           'OnPitRoad': 0,
+        #           'PlayerCarClassPosition': 0,
+        #           'PlayerCarPosition': 0,
+        #           'SessionLapsRemain': 0,
+        #           'Throttle': 0,
+        #           'SessionTimeRemain': 0,
+        #           'SessionTime': 0,
+        #           'SessionFlags': 0,
+        #           'SessionNum': 0,
+        #           'IsOnTrack': False,
+        #           'Gear': 0,
+        #           'Speed': 0,
+        #           'DriverInfo': {
+        #               'DriverCarIdx': 0,
+        #               'DriverCarFuelMaxLtr': 0,
+        #               'DriverCarMaxFuelPct': 1,
+        #               'Drivers': [],
+        #               'DriverPitTrkPct': 0},
+        #           'CarIdxLapDistPct': [0],
+        #           'CarIdxOnPitRoad': [True]*64,
+        #           'SessionInfo': {'Sessions':
+        #                               [{'SessionType': 'Session',
+        #                                 'SessionTime': 'unlimited',
+        #                                 'SessionLaps': 0,
+        #                                 'ResultsPositions':
+        #                                     [{'CarIdx': 0,
+        #                                       'JokerLapsComplete': 0}]}]},
+        #           'Yaw': 0,
+        #           'VelocityX': 0,
+        #           'VelocityY': 0,
+        #           'YawNorth': 0,
+        #           'WeekendInfo': [],
+        #           'RPM': 0,
+        #           'LapCurrentLapTime': 0,
+        #           'EngineWarnings': 0,
+        #           'CarIdxTrackSurface': 0,
+        #           'CarLeftRight': 0,
+        #           'DRS_Status': 0,
+        #           'PushToPass': False,
+        #           'CarIdxF2Time': [],
+        #           'LapLastLapTime': 0}
+        # # calculated data
+        # calcData = {'LastFuelLevel': 0,
+        #             'GearStr': '-',
+        #             'SessionInfoAvailable': False,
+        #             'SessionNum': 0,
+        #             'init': True,
+        #             'onPitRoad': True,
+        #             'isRunning': False,
+        #             'WasOnTrack': False,
+        #             'StintLap': 0,
+        #             'oldSessionNum': -1,
+        #             'oldLap': 0.1,
+        #             'FuelConsumption': [],
+        #             'FuelLastCons': 0,
+        #             'OutLap': True,
+        #             'oldSessionlags': 0,
+        #             'LapsToGo': 27,
+        #             'SessionLapRemain': 0,
+        #             'FuelConsumptionStr': '0.00',
+        #             'RemLapValueStr': '10',
+        #             'FuelLapStr': '0',
+        #             'FuelAddStr': '0.0',
+        #             'ToGoStr': '100',
+        #             'FlagCallTime': 0,
+        #             'FlagException': False,
+        #             'FlagExceptionVal': 0,
+        #             'Alarm': [],
+        #             'oldFuelAdd': 1,
+        #             'GreenTime': 0,
+        #             'RemTimeValue': 0,
+        #             'RaceLaps': 100000,
+        #             'JokerStr': '-/-',
+        #             'dist': [],
+        #             'x': [],
+        #             'y': [],
+        #             'map': [],
+        #             'RX': False,
+        #             'createTrack': True,
+        #             'dx': [],
+        #             'dy': [],
+        #             'logLap': 0,
+        #             'Logging': False,
+        #             'tempdist': -1,
+        #             'StartUp': False,
+        #             'oldSessionFlags': 0,
+        #             'backgroundColour': (0, 0, 0),
+        #             'textColourFuelAdd': (141, 141, 141),
+        #             'textColour': (141, 141, 141),
+        #             'FuelLaps': 1,
+        #             'FuelAdd': 1,
+        #             'PitStopDelta': 61,
+        #             'time': [],
+        #             'Run': 0,
+        #             'UpshiftStrategy': 0,
+        #             'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
+        #             'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1],
+        #             'iRShiftRPM': [100000, 100000, 100000, 100000],
+        #             'ShiftToneEnabled': True,
+        #             'StartDDU': False,
+        #             'StopDDU': False,
+        #             'DDUrunning': False,
+        #             'UserRaceLaps': 0,
+        #             'SessionLength': 86400,
+        #             'CarIdxPitStops': [0] * 64,
+        #             'CarIdxOnPitRoadOld': [True]*64,
+        #             'PitStopsRequired': 1,
+        #             'old_DRS_Status': 0,
+        #             'DRSActivations': 8,
+        #             'P2PActivations': 12,
+        #             'DRSActivationsGUI': 8,
+        #             'P2PActivationsGUI': 12,
+        #             'JokerLapDelta': 2,
+        #             'JokerLaps': 1,
+        #             'MapHighlight': True,
+        #             'old_PushToPass': False,
+        #             'textColourDRS': (141, 141, 141),
+        #             'textColourP2P': (141, 141, 141),
+        #             'textColorJoker': (141, 141, 141),
+        #             'DRSCounter': 0,
+        #             'P2PCounter': 0,
+        #             'RenderLabel': [
+        #                 True,   # Best
+        #                 True,   # Last
+        #                 True,   # Delta
+        #                 True,   # FuelLevel
+        #                 True,   # FuelCons
+        #                 True,   # FuelLastCons
+        #                 True,   # FuelLaps
+        #                 True,   # FuelAdd
+        #                 True,   # ABS
+        #                 True,   # BBias
+        #                 True,   # Mix
+        #                 True,   # TC1
+        #                 True,   # TC2
+        #                 True,   # Lap
+        #                 True,   # Clock
+        #                 True,   # Remain
+        #                 False,  # Elapsed
+        #                 False,  # Joker
+        #                 False,  # DRS
+        #                 False,  # P2P
+        #                 True,  # ToGo
+        #             ],
+        #             'P2P': False,
+        #             'DRS': False,
+        #             'LapLimit': False,
+        #             'TimeLimit': False,
+        #             'P2PTime': 0,
+        #             'DRSRemaining': 0,
+        #             'dcFuelMixtureOld': 0,
+        #             'dcThrottleShapeOld': 0,
+        #             'dcTractionControlOld': 0,
+        #             'dcTractionControl2Old': 0,
+        #             'dcTractionControlToggleOld': 0,
+        #             'dcABSOld': 0,
+        #             'dcBrakeBiasOld': 0,
+        #             'RunStartTime': 0,
+        #             'changeLabelsOn': True,
+        #             'dcChangeTime': 0,
+        #             'dcFuelMixtureChange': False,
+        #             'dcThrottleShapeChange': False,
+        #             'dcTractionControlChange': False,
+        #             'dcTractionControl2Change': False,
+        #             'dcTractionControlToggleChange': False,
+        #             'dcABSChange': False,
+        #             'dcBrakeBiasChange': False
+        #             }
+        #
+        # self.db.StopDDU = True
+        # self.db.initialise(helpData)
+        # self.db.initialise(iRData)
+        # self.db.initialise(calcData)
+        # # print(self.db.timeStr+': RTDB reinitialisied')
+        # self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
+        # self.db.StartDDU = True
         print(self.db.timeStr + ':RTDB reinitialisied')
 
     def initSession(self):
         print(self.db.timeStr+': Initialising Session ==========================')
 
-        #self.reinit()
+        self.reinit()
 
         self.getTrackFiles()
         if self.db.startUp:

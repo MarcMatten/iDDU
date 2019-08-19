@@ -425,6 +425,7 @@ class Gui(object):
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
         self.db.UserRaceLaps = self.spinBoxRaceLaps.value()
+        self.db.RaceLaps = self.spinBoxRaceLaps.value()
         self.retranslateUi(self.Form)
 
     def assignDRS(self):
