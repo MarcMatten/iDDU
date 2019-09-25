@@ -1,5 +1,5 @@
 import irsdk
-import iDDUhelper
+from libs import iDDUhelper
 import csv
 import math
 import numpy as np
@@ -43,15 +43,17 @@ class IDDUCalc:
         self.P2PList = ['dallaradw12', 'dallarair18']
 
     def calc(self):
-        # t = time.time()
-        if self.db.isRunning == False:
+        # Check if DDU is initialised
+        if self.db.BDDUexecuting == False:
             # initialise
-            if not self.db.waiting:
+            if not self.db.BWaiting:
                 print(self.db.timeStr+': Waiting for iRacing')
-                self.db.waiting = True
+                self.db.BWaiting = True
 
+        # Check if iRacing Service is running
         if self.db.startUp:
-            if self.db.isRunning == False:
+            # iRacing is running
+            if self.db.BDDUexecuting == False:
                 print(self.db.timeStr+': Connecting to iRacing')
 
             if self.db.oldSessionNum < self.db.SessionNum:
@@ -451,12 +453,12 @@ class IDDUCalc:
             self.db.dcThrottleShapeOld = self.db.dcThrottleShape
             self.db.dcFuelMixtureOld = self.db.dcFuelMixture
 
-            self.db.isRunning = True
+            self.db.BDDUexecuting = True
         else:
-            # do if sim is not running -------------------------------------------------------------------------------------
-            if self.db.isRunning == True:
-                self.db.isRunning = False
-                self.db.waiting = True
+            # iRacing is not running
+            if self.db.BDDUexecuting == True: # necssary?
+                #self.db.BDDUexecuting = False
+                self.db.BWaiting = True
                 self.db.oldSessionNum = -1
                 self.db.SessionNum = 0
                 self.reinit()
@@ -467,7 +469,7 @@ class IDDUCalc:
     def reinit(self):
         print(self.db.timeStr+': Starting RTDB reinitialisation.')
         self.db.reinitialise()
-        # helpData = {'done': False, 'timeStr': 0, 'waiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
+        # helpData = {'done': False, 'timeStr': 0, 'BWaiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
         # # data from iRacing
         # iRData = {'LapBestLapTime': 0,
         #           'LapLastLapTime': 0,
@@ -531,7 +533,7 @@ class IDDUCalc:
         #             'SessionNum': 0,
         #             'init': True,
         #             'onPitRoad': True,
-        #             'isRunning': False,
+        #             'BDDUexecuting': False,
         #             'WasOnTrack': False,
         #             'StintLap': 0,
         #             'oldSessionNum': -1,

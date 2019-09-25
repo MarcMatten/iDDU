@@ -1,8 +1,11 @@
-import iDDUhelper
-import pygame
-import numpy
-import warnings
 import os
+import warnings
+
+import numpy
+import pygame
+
+from libs import iDDUhelper
+
 
 class RenderMain:
     def __init__(self, db):

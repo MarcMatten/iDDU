@@ -1,17 +1,16 @@
 # import all required packages
 import time
 
-from gui.iDDUgui import iDDUgui
-import iDDURender
-import iDDUcalc
 from functionalities.RTDB import RTDB
 from functionalities.UpshiftTone import UpshiftTone
+from gui.iDDUgui import iDDUgui
+from libs import iDDURender, iDDUcalc
 
 # data for initialisation of RTDB
 # helper variables
 helpData = {'done': False,
             'timeStr': time.strftime("%H:%M:%S", time.localtime()),
-            'waiting': False,
+            'BWaiting': False,
             'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]
             }
 # data from iRacing
@@ -87,7 +86,7 @@ calcData = {'LastFuelLevel': 0,
             'SessionNum': 0,
             'init': False,
             'onPitRoad': True,
-            'isRunning': False,
+            'BDDUexecuting': False,
             'WasOnTrack': False,
             'StintLap': 0,
             'oldSessionNum': -1,
