@@ -457,14 +457,15 @@ class IDDUCalc:
         else:
             # iRacing is not running
             if self.db.BDDUexecuting == True: # necssary?
-                #self.db.BDDUexecuting = False
+                self.db.BDDUexecuting = False
                 self.db.BWaiting = True
                 self.db.oldSessionNum = -1
                 self.db.SessionNum = 0
-                self.reinit()
+                self.db.StopDDU = True
+                # self.reinit()
                 print(self.db.timeStr+': Lost connection to iRacing')
-
-        # print((time.time()-t)*1000)
+                print(self.db.timeStr+': Last Lap Fuel Consumption: ', self.db.FuelLastConsStr)
+                print(self.db.timeStr+': Average Fuel Consumption: ', self.db.FuelConsStr)
 
     def reinit(self):
         print(self.db.timeStr+': Starting RTDB reinitialisation.')
@@ -651,7 +652,8 @@ class IDDUCalc:
         #             'dcTractionControl2Change': False,
         #             'dcTractionControlToggleChange': False,
         #             'dcABSChange': False,
-        #             'dcBrakeBiasChange': False
+        #             'dcBrakeBiasChange': False,
+        #             'BUpshiftToneInitRequest': False
         #             }
         #
         # self.db.StopDDU = True
@@ -666,14 +668,17 @@ class IDDUCalc:
     def initSession(self):
         print(self.db.timeStr+': Initialising Session ==========================')
 
-        self.reinit()
+        # self.reinit()
 
         self.getTrackFiles()
+
+        self.db.BUpshiftToneInitRequest = True
+
         if self.db.startUp:
             self.db.StartDDU = True
             self.db.oldSessionNum = self.db.SessionNum
             self.SessionInfo = True
-            self.db.WeekendInfo = self.db.WeekendInfo
+            #self.db.WeekendInfo = self.db.WeekendInfo
             self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * \
                                           self.db.DriverInfo['DriverCarMaxFuelPct']
             self.db.DriverCarIdx = self.db.DriverInfo['DriverCarIdx']
@@ -830,3 +835,6 @@ class IDDUCalc:
             self.trackList.append(file)
             # print(self.db.timeStr+':\t- ' + str(file))
         os.chdir(self.dir)
+
+    def newLap(self):
+        return 0

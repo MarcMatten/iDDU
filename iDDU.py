@@ -204,7 +204,8 @@ calcData = {'LastFuelLevel': 0,
             'dcTractionControl2Change': False,
             'dcTractionControlToggleChange': False,
             'dcABSChange': False,
-            'dcBrakeBiasChange': False
+            'dcBrakeBiasChange': False,
+            'BUpshiftToneInitRequest': False
             }
 
 # Create RTDB and initialise with
