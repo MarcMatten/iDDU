@@ -60,6 +60,9 @@ class IDDUCalc:
                 print(self.db.timeStr+':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
                 self.initSession()
 
+            if self.db.SessionTime < 10:
+                self.db.CarIdxPitStops = [0] * 64
+
             if self.db.IsOnTrack:
                 # do if car is on track ------------------------------------------------------------------------------------
                 if self.db.WasOnTrack == False:
@@ -111,82 +114,14 @@ class IDDUCalc:
 
                 # check if new lap
                 if self.db.Lap > self.db.oldLap:
-                    newLap = True
-                    self.db.StintLap = self.db.StintLap + 1
-                    self.db.oldLap = self.db.Lap
-                    self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
-
-                    self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
-
-                    if (not self.db.OutLap) and (not self.db.onPitRoad):
-                        self.db.FuelConsumption.extend([self.db.FuelLastCons])
-                    else:
-                        self.db.OutLap = False
-
-                    self.db.LastFuelLevel = self.db.FuelLevel
-                    now = datetime.now()
-                    date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
-
-                    LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap)
-                    f = open(LapStr, 'x')
-                    f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
-                    f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
-                    f.write('self.db.TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
-                    f.write('self.db.SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
-                    f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
-                    f.write('self.db.SessionTimeRemain = ' + repr(self.db.SessionTimeRemain) + '\n')
-                    f.write('self.db.DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
-                    f.write('self.db.CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
-                    f.write('self.db.LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
-                    f.write('self.db.PitStopsRequired = ' + repr(self.db.PitStopsRequired) + '\n')
-                    f.write('self.db.CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
-                    f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
-                    f.write('self.db.SessionNum = ' + repr(self.db.SessionNum) + '\n')
-                    f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
-                    f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
-                    f.close()
-
-                    # Race Lap Estimation
-                    # if self.db.TimeLimit and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.Lap > 2:
-                    #     myLineCrossingTime = self.db.SessionTime - self.db.SessionTimeRemain
-                    #     meBehind = self.db.CarIdxF2Time[self.db.DriverCarIdx]
-                    #     LeaderLineCrossingTime = myLineCrossingTime - meBehind
-                    #     self.db.LapTimes.extend(self.db.LapLastLapTime)
-                    #     avgLapTime = iDDUhelper.smartAverageMax(self.db.LapTimes, 0.03)
-                    #
-                    #     estLapsToGo = (self.db.SessionTimeRemain - self.db.PitStopDelta*max(0,self.db.PitStopsRequired-self.db.CarIdxPitStops[self.db.DriverCarIdx]))/avgLapTime
-                    #
-                    #     for i in range(int(estLapsToGo)-2, int(estLapsToGo)+3):
-                    #         finishTime = myLineCrossingTime + self.db.PitStopDelta*max(0,self.db.PitStopsRequired-self.db.CarIdxPitStops[self.db.DriverCarIdx]) + avgLapTime * i
-                    #         finishLap = i
-                    #         if finishTime >= self.db.SessionTime:
-                    #             break
-                    #
-                    #     CarIdxBehind = [0] * 64
-                    #     CarIdxAvgLapTime = [0] * 64
-                    #     CarIdxEstLapsToGo = [0] * 64
-                    #     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
-                    #         Idx = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
-                    #         self.db.CarIdxLapTimes[Idx].extend = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
-                    #         CarIdxBehind[Idx] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Time']
-                    #         CarIdxAvgLapTime[Idx] = iDDUhelper.smartAverageMax(self.db.CarIdxLapTimes[Idx], 0.03)
-                    #
-                    #         CarIdxEstLapsToGo = (self.db.SessionTime - LeaderLineCrossingTime + CarIdxBehind[Idx] - self.db.PitStopDeltaFastetClass * max(0, self.db.PitStopsRequired -self.db.CarIdxPitStops[Idx])) / CarIdxAvgLapTime[Idx]
-                    #
-                    #         finishTimes = [] * 64
-                    #         for i in range(int(estLapsToGo) - 2, int(estLapsToGo) + 3):
-                    #             temp = myLineCrossingTime + self.db.PitStopDelta * max(0, self.db.PitStopsRequired - self.db.CarIdxPitStops[self.db.DriverCarIdx]) + avgLapTime * i
-                    #             finishTimes.extend([(i, temp)])
-                    #
-                    #     find minimum of all finish time but for maximum lap number
-                    #     where am i relative to it?
-                    #     that's the time i'm lokking for!
-
+                    self.db.BNewLap = True
+                    self.newLap()
                 else:
-                    newLap = False
+                    self.db.BNewLap = False
 
-                if self.createTrack and not self.db.OutLap and self.db.StintLap > 1:
-
+                # Create Track Map
+                if self.BCreateTrack and not self.db.OutLap and self.db.StintLap > 1:
+                    # Logging track data
                     if not self.Logging:
                         self.logLap = self.db.Lap
                         self.Logging = True
@@ -202,47 +137,6 @@ class IDDUCalc:
                     self.dx.append(math.cos(self.db.Yaw)*self.db.VelocityX*0.033 - math.sin(self.db.Yaw)*self.db.VelocityY*0.033)
                     self.dy.append(math.cos(self.db.Yaw)*self.db.VelocityY*0.033 + math.sin(self.db.Yaw)*self.db.VelocityX*0.033)
 
-                if self.createTrack and self.Logging and self.logLap < self.db.Lap and newLap:
-                    tempx = np.cumsum(self.dx, dtype=float)
-                    tempy = np.cumsum(self.dy, dtype=float)
-
-                    dx = tempx[-1] - tempx[0]
-                    dy = tempy[-1] - tempy[0]
-
-                    self.x = np.cumsum(self.dx - dx/len(tempx), dtype=float)
-                    self.y = np.cumsum(self.dy - dy/len(tempy), dtype=float)
-
-                    width = max(self.x)-min(self.x)
-                    height = max(self.y)-min(self.y)
-
-                    scalingFactor = min(400/height,  720/width)
-
-                    self.x = 400 + (scalingFactor * self.x - (min(scalingFactor * self.x) + max(scalingFactor * self.x))/2)
-                    self.y = -(240 + (scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y))/2)) + 480
-
-                    with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
-                        thewriter = csv.writer(f)
-                        for l in range(0, len(self.dist)):
-                            if l > 2:
-                                if not self.dist[l-1] >= self.dist[l]:
-                                    thewriter.writerow([self.dist[l], self.x[l], self.y[l], self.time[l]])
-
-                    self.db.map = []
-                    self.db.x = []
-                    self.db.y = []
-                    for i in range(0, l):
-                        self.db.map.append([float(self.x[i]), float(self.y[i])])
-                    self.db.dist = self.dist[0:l]
-                    self.db.time = self.time[0:l]
-                    self.db.x = self.x[0:l]
-                    self.db.y = self.y[0:l]
-
-                    self.createTrack = False
-                    self.Logging = False
-
-                    print(self.db.timeStr+':\tTrack has been successfully created')
-                    print(self.db.timeStr+':\tSaved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
-
                 # fuel consumption -----------------------------------------------------------------------------------------
                 if len(self.db.FuelConsumption) >= 1:
                     avg = sum(self.db.FuelConsumption) / len(self.db.FuelConsumption)
@@ -253,7 +147,7 @@ class IDDUCalc:
                     if LapRem < 1:
                         self.db.Alarm.extend([4])
                     self.db.FuelLapStr = iDDUhelper.roundedStr1(LapRem)
-                    if newLap and not self.db.onPitRoad:
+                    if self.db.BNewLap and not self.db.onPitRoad:
                         fuelNeed = avg * (self.db.LapsToGo - 1)
                         fuelAdd = min(max(fuelNeed - self.db.FuelLevel + avg, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
                         self.db.FuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
@@ -462,213 +356,12 @@ class IDDUCalc:
                 self.db.oldSessionNum = -1
                 self.db.SessionNum = 0
                 self.db.StopDDU = True
-                # self.reinit()
                 print(self.db.timeStr+': Lost connection to iRacing')
                 print(self.db.timeStr+': Last Lap Fuel Consumption: ', self.db.FuelLastConsStr)
                 print(self.db.timeStr+': Average Fuel Consumption: ', self.db.FuelConsStr)
 
-    def reinit(self):
-        print(self.db.timeStr+': Starting RTDB reinitialisation.')
-        self.db.reinitialise()
-        # helpData = {'done': False, 'timeStr': 0, 'BWaiting': False, 'LabelSessionDisplay': [1, 1, 1, 0, 1, 1]}
-        # # data from iRacing
-        # iRData = {'LapBestLapTime': 0,
-        #           'LapLastLapTime': 0,
-        #           'LapDeltaToSessionBestLap': 0,
-        #           'dcFuelMixture': 0,
-        #           'dcThrottleShape': 0,
-        #           'dcTractionControl': 0,
-        #           'dcTractionControl2': 0,
-        #           'dcTractionControlToggle': 0,
-        #           'dcABS': 0,
-        #           'dcBrakeBias': 0,
-        #           'FuelLevel': 0,
-        #           'Lap': 0,
-        #           'IsInGarage': 0,
-        #           'LapDistPct': 0,
-        #           'OnPitRoad': 0,
-        #           'PlayerCarClassPosition': 0,
-        #           'PlayerCarPosition': 0,
-        #           'SessionLapsRemain': 0,
-        #           'Throttle': 0,
-        #           'SessionTimeRemain': 0,
-        #           'SessionTime': 0,
-        #           'SessionFlags': 0,
-        #           'SessionNum': 0,
-        #           'IsOnTrack': False,
-        #           'Gear': 0,
-        #           'Speed': 0,
-        #           'DriverInfo': {
-        #               'DriverCarIdx': 0,
-        #               'DriverCarFuelMaxLtr': 0,
-        #               'DriverCarMaxFuelPct': 1,
-        #               'Drivers': [],
-        #               'DriverPitTrkPct': 0},
-        #           'CarIdxLapDistPct': [0],
-        #           'CarIdxOnPitRoad': [True]*64,
-        #           'SessionInfo': {'Sessions':
-        #                               [{'SessionType': 'Session',
-        #                                 'SessionTime': 'unlimited',
-        #                                 'SessionLaps': 0,
-        #                                 'ResultsPositions':
-        #                                     [{'CarIdx': 0,
-        #                                       'JokerLapsComplete': 0}]}]},
-        #           'Yaw': 0,
-        #           'VelocityX': 0,
-        #           'VelocityY': 0,
-        #           'YawNorth': 0,
-        #           'WeekendInfo': [],
-        #           'RPM': 0,
-        #           'LapCurrentLapTime': 0,
-        #           'EngineWarnings': 0,
-        #           'CarIdxTrackSurface': 0,
-        #           'CarLeftRight': 0,
-        #           'DRS_Status': 0,
-        #           'PushToPass': False,
-        #           'CarIdxF2Time': [],
-        #           'LapLastLapTime': 0}
-        # # calculated data
-        # calcData = {'LastFuelLevel': 0,
-        #             'GearStr': '-',
-        #             'SessionInfoAvailable': False,
-        #             'SessionNum': 0,
-        #             'init': True,
-        #             'onPitRoad': True,
-        #             'BDDUexecuting': False,
-        #             'WasOnTrack': False,
-        #             'StintLap': 0,
-        #             'oldSessionNum': -1,
-        #             'oldLap': 0.1,
-        #             'FuelConsumption': [],
-        #             'FuelLastCons': 0,
-        #             'OutLap': True,
-        #             'oldSessionlags': 0,
-        #             'LapsToGo': 27,
-        #             'SessionLapRemain': 0,
-        #             'FuelConsumptionStr': '0.00',
-        #             'RemLapValueStr': '10',
-        #             'FuelLapStr': '0',
-        #             'FuelAddStr': '0.0',
-        #             'ToGoStr': '100',
-        #             'FlagCallTime': 0,
-        #             'FlagException': False,
-        #             'FlagExceptionVal': 0,
-        #             'Alarm': [],
-        #             'oldFuelAdd': 1,
-        #             'GreenTime': 0,
-        #             'RemTimeValue': 0,
-        #             'RaceLaps': 100000,
-        #             'JokerStr': '-/-',
-        #             'dist': [],
-        #             'x': [],
-        #             'y': [],
-        #             'map': [],
-        #             'RX': False,
-        #             'createTrack': True,
-        #             'dx': [],
-        #             'dy': [],
-        #             'logLap': 0,
-        #             'Logging': False,
-        #             'tempdist': -1,
-        #             'StartUp': False,
-        #             'oldSessionFlags': 0,
-        #             'backgroundColour': (0, 0, 0),
-        #             'textColourFuelAdd': (141, 141, 141),
-        #             'textColour': (141, 141, 141),
-        #             'FuelLaps': 1,
-        #             'FuelAdd': 1,
-        #             'PitStopDelta': 61,
-        #             'time': [],
-        #             'Run': 0,
-        #             'UpshiftStrategy': 0,
-        #             'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
-        #             'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1],
-        #             'iRShiftRPM': [100000, 100000, 100000, 100000],
-        #             'ShiftToneEnabled': True,
-        #             'StartDDU': False,
-        #             'StopDDU': False,
-        #             'DDUrunning': False,
-        #             'UserRaceLaps': 0,
-        #             'SessionLength': 86400,
-        #             'CarIdxPitStops': [0] * 64,
-        #             'CarIdxOnPitRoadOld': [True]*64,
-        #             'PitStopsRequired': 1,
-        #             'old_DRS_Status': 0,
-        #             'DRSActivations': 8,
-        #             'P2PActivations': 12,
-        #             'DRSActivationsGUI': 8,
-        #             'P2PActivationsGUI': 12,
-        #             'JokerLapDelta': 2,
-        #             'JokerLaps': 1,
-        #             'MapHighlight': True,
-        #             'old_PushToPass': False,
-        #             'textColourDRS': (141, 141, 141),
-        #             'textColourP2P': (141, 141, 141),
-        #             'textColorJoker': (141, 141, 141),
-        #             'DRSCounter': 0,
-        #             'P2PCounter': 0,
-        #             'RenderLabel': [
-        #                 True,   # Best
-        #                 True,   # Last
-        #                 True,   # Delta
-        #                 True,   # FuelLevel
-        #                 True,   # FuelCons
-        #                 True,   # FuelLastCons
-        #                 True,   # FuelLaps
-        #                 True,   # FuelAdd
-        #                 True,   # ABS
-        #                 True,   # BBias
-        #                 True,   # Mix
-        #                 True,   # TC1
-        #                 True,   # TC2
-        #                 True,   # Lap
-        #                 True,   # Clock
-        #                 True,   # Remain
-        #                 False,  # Elapsed
-        #                 False,  # Joker
-        #                 False,  # DRS
-        #                 False,  # P2P
-        #                 True,  # ToGo
-        #             ],
-        #             'P2P': False,
-        #             'DRS': False,
-        #             'LapLimit': False,
-        #             'TimeLimit': False,
-        #             'P2PTime': 0,
-        #             'DRSRemaining': 0,
-        #             'dcFuelMixtureOld': 0,
-        #             'dcThrottleShapeOld': 0,
-        #             'dcTractionControlOld': 0,
-        #             'dcTractionControl2Old': 0,
-        #             'dcTractionControlToggleOld': 0,
-        #             'dcABSOld': 0,
-        #             'dcBrakeBiasOld': 0,
-        #             'RunStartTime': 0,
-        #             'changeLabelsOn': True,
-        #             'dcChangeTime': 0,
-        #             'dcFuelMixtureChange': False,
-        #             'dcThrottleShapeChange': False,
-        #             'dcTractionControlChange': False,
-        #             'dcTractionControl2Change': False,
-        #             'dcTractionControlToggleChange': False,
-        #             'dcABSChange': False,
-        #             'dcBrakeBiasChange': False,
-        #             'BUpshiftToneInitRequest': False
-        #             }
-        #
-        # self.db.StopDDU = True
-        # self.db.initialise(helpData)
-        # self.db.initialise(iRData)
-        # self.db.initialise(calcData)
-        # # print(self.db.timeStr+': RTDB reinitialisied')
-        # self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
-        # self.db.StartDDU = True
-        print(self.db.timeStr + ':RTDB reinitialisied')
-
     def initSession(self):
         print(self.db.timeStr+': Initialising Session ==========================')
-
-        # self.reinit()
 
         self.getTrackFiles()
 
@@ -685,10 +378,10 @@ class IDDUCalc:
 
             if self.db.WeekendInfo['TrackName'] + '.csv' in self.trackList:
                 self.loadTrack(self.db.WeekendInfo['TrackName'])
-                self.createTrack = False
+                self.BCreateTrack = False
             else:
                 self.loadTrack('cota gp')
-                self.createTrack = True
+                self.BCreateTrack = True
                 print(self.db.timeStr+':\tCreating Track')
 
             print(self.db.timeStr + ':\tTrackName: ' + self.db.WeekendInfo['TrackDisplayName'])
@@ -837,4 +530,119 @@ class IDDUCalc:
         os.chdir(self.dir)
 
     def newLap(self):
-        return 0
+        # Lap Counting
+        self.db.StintLap = self.db.StintLap + 1
+        self.db.oldLap = self.db.Lap
+        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
+
+        # Fuel Calculations
+        self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
+        if (not self.db.OutLap) and (not self.db.onPitRoad):
+            self.db.FuelConsumption.extend([self.db.FuelLastCons])
+        else:
+            self.db.OutLap = False
+
+        self.db.LastFuelLevel = self.db.FuelLevel
+
+        # Logging for race lap estimation
+        now = datetime.now()
+        date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+        LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap)
+        f = open(LapStr, 'x')
+        f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
+        f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
+        f.write('self.db.TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
+        f.write('self.db.SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
+        f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
+        f.write('self.db.SessionTimeRemain = ' + repr(self.db.SessionTimeRemain) + '\n')
+        f.write('self.db.DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
+        f.write('self.db.CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
+        f.write('self.db.LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
+        f.write('self.db.PitStopsRequired = ' + repr(self.db.PitStopsRequired) + '\n')
+        f.write('self.db.CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
+        f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
+        f.write('self.db.SessionNum = ' + repr(self.db.SessionNum) + '\n')
+        f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
+        f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
+        f.close()
+
+        # Race Lap Estimation
+        # if self.db.TimeLimit and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.Lap > 2:
+        #     myLineCrossingTime = self.db.SessionTime - self.db.SessionTimeRemain
+        #     meBehind = self.db.CarIdxF2Time[self.db.DriverCarIdx]
+        #     LeaderLineCrossingTime = myLineCrossingTime - meBehind
+        #     self.db.LapTimes.extend(self.db.LapLastLapTime)
+        #     avgLapTime = iDDUhelper.smartAverageMax(self.db.LapTimes, 0.03)
+        #
+        #     estLapsToGo = (self.db.SessionTimeRemain - self.db.PitStopDelta*max(0,self.db.PitStopsRequired-self.db.CarIdxPitStops[self.db.DriverCarIdx]))/avgLapTime
+        #
+        #     for i in range(int(estLapsToGo)-2, int(estLapsToGo)+3):
+        #         finishTime = myLineCrossingTime + self.db.PitStopDelta*max(0,self.db.PitStopsRequired-self.db.CarIdxPitStops[self.db.DriverCarIdx]) + avgLapTime * i
+        #         finishLap = i
+        #         if finishTime >= self.db.SessionTime:
+        #             break
+        #
+        #     CarIdxBehind = [0] * 64
+        #     CarIdxAvgLapTime = [0] * 64
+        #     CarIdxEstLapsToGo = [0] * 64
+        #     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
+        #         Idx = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
+        #         self.db.CarIdxLapTimes[Idx].extend = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
+        #         CarIdxBehind[Idx] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Time']
+        #         CarIdxAvgLapTime[Idx] = iDDUhelper.smartAverageMax(self.db.CarIdxLapTimes[Idx], 0.03)
+        #
+        #         CarIdxEstLapsToGo = (self.db.SessionTime - LeaderLineCrossingTime + CarIdxBehind[Idx] - self.db.PitStopDeltaFastetClass * max(0, self.db.PitStopsRequired -self.db.CarIdxPitStops[Idx])) / CarIdxAvgLapTime[Idx]
+        #
+        #         finishTimes = [] * 64
+        #         for i in range(int(estLapsToGo) - 2, int(estLapsToGo) + 3):
+        #             temp = myLineCrossingTime + self.db.PitStopDelta * max(0, self.db.PitStopsRequired - self.db.CarIdxPitStops[self.db.DriverCarIdx]) + avgLapTime * i
+        #             finishTimes.extend([(i, temp)])
+        #
+        #     find minimum of all finish time but for maximum lap number
+        #     where am i relative to it?
+        #     that's the time i'm lokking for!
+
+        if self.BCreateTrack and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
+            self.createTrackFile()
+
+    def createTrackFile(self):
+        tempx = np.cumsum(self.dx, dtype=float)
+        tempy = np.cumsum(self.dy, dtype=float)
+
+        dx = tempx[-1] - tempx[0]
+        dy = tempy[-1] - tempy[0]
+
+        self.x = np.cumsum(self.dx - dx / len(tempx), dtype=float)
+        self.y = np.cumsum(self.dy - dy / len(tempy), dtype=float)
+
+        width = max(self.x) - min(self.x)
+        height = max(self.y) - min(self.y)
+
+        scalingFactor = min(400 / height, 720 / width)
+
+        self.x = 400 + (scalingFactor * self.x - (min(scalingFactor * self.x) + max(scalingFactor * self.x)) / 2)
+        self.y = -(240 + (scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y)) / 2)) + 480
+
+        with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
+            thewriter = csv.writer(f)
+            for l in range(0, len(self.dist)):
+                if l > 2:
+                    if not self.dist[l - 1] >= self.dist[l]:
+                        thewriter.writerow([self.dist[l], self.x[l], self.y[l], self.time[l]])
+
+        self.db.map = []
+        self.db.x = []
+        self.db.y = []
+        for i in range(0, l):
+            self.db.map.append([float(self.x[i]), float(self.y[i])])
+        self.db.dist = self.dist[0:l]
+        self.db.time = self.time[0:l]
+        self.db.x = self.x[0:l]
+        self.db.y = self.y[0:l]
+
+        self.BCreateTrack = False
+        self.Logging = False
+
+        print(self.db.timeStr + ':\tTrack has been successfully created')
+        print(self.db.timeStr + ':\tSaved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")

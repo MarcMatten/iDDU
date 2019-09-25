@@ -117,7 +117,7 @@ calcData = {'LastFuelLevel': 0,
             'y': [],
             'map': [],
             'RX': False,
-            'createTrack': True,
+            'BCreateTrack': True,
             'dx': [],
             'dy': [],
             'logLap': 0,
@@ -205,7 +205,8 @@ calcData = {'LastFuelLevel': 0,
             'dcTractionControlToggleChange': False,
             'dcABSChange': False,
             'dcBrakeBiasChange': False,
-            'BUpshiftToneInitRequest': False
+            'BUpshiftToneInitRequest': False,
+            'BNewLap': False
             }
 
 # Create RTDB and initialise with

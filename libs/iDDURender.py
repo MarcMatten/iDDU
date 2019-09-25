@@ -315,8 +315,8 @@ class RenderScreen(RenderMain):
                 self.warningLabel('RANDOM WAVING', self.white, self.black)
             if self.db.SessionFlags & 0x8000:
                 self.warningLabel('CAUTION WAVING', self.white, self.black)
-            if self.db.SessionFlags & 0x10000:
-                self.warningLabel('BLACK', self.white, self.black)
+            # if self.db.SessionFlags & 0x10000:
+            #     self.warningLabel('BLACK', self.white, self.black)
             if self.db.SessionFlags & 0x20000:
                 self.warningLabel('DISQUALIFIED', self.white, self.black)
             # if self.db.SessionFlags & 0x80000:
