@@ -366,6 +366,8 @@ class IDDUCalc:
         self.getTrackFiles()
 
         self.db.BUpshiftToneInitRequest = True
+        self.db.FuelConsumption = []
+        self.db.FuelLastCons = 0
 
         if self.db.startUp:
             self.db.StartDDU = True
