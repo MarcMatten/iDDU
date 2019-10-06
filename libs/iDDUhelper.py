@@ -130,3 +130,24 @@ def smartAverageMinMax(x_in, tol):
         return avg
     else:
         return avg_raw
+
+def meanTol(x_in, tol):
+    mean = np.mean(x_in)
+    print(len(x_in))
+    if len(x_in) < 3:
+        print('exit 1')
+        return mean
+    else:
+        x = np.array(x_in)
+        dev_abs = np.abs(x-mean)
+        dev_rel = dev_abs/mean
+        withintolerance = dev_rel < tol
+        indices = [i for i, x in enumerate(withintolerance) if x == True]
+        if len(indices) < 3:
+            print('exit 2')
+            return mean
+        else:
+            x_new = x[indices]
+            meanWithinTol = np.mean(x_new)
+            print('exit 3')
+            return meanWithinTol

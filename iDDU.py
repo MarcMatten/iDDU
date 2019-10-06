@@ -6,6 +6,13 @@ from functionalities.UpshiftTone import UpshiftTone
 from gui.iDDUgui import iDDUgui
 from libs import iDDURender, iDDUcalc
 
+nan = float('nan')
+CarNumber = 64
+LapNumber = 500
+CarIdxtLap_temp = [[]*LapNumber]*CarNumber
+for x in range(0,CarNumber):
+    CarIdxtLap_temp[x] = [nan]*LapNumber
+
 # data for initialisation of RTDB
 # helper variables
 helpData = {'done': False,
@@ -206,7 +213,9 @@ calcData = {'LastFuelLevel': 0,
             'dcABSChange': False,
             'dcBrakeBiasChange': False,
             'BUpshiftToneInitRequest': False,
-            'BNewLap': False
+            'BNewLap': False,
+            'CarIdxtLap_temp': CarIdxtLap_temp,
+            'CarIdxtLap': CarIdxtLap_temp
             }
 
 # Create RTDB and initialise with

@@ -139,7 +139,8 @@ class IDDUCalc:
 
                 # fuel consumption -----------------------------------------------------------------------------------------
                 if len(self.db.FuelConsumption) >= 1:
-                    avg = sum(self.db.FuelConsumption) / len(self.db.FuelConsumption)
+                    # avg = sum(self.db.FuelConsumption) / len(self.db.FuelConsumption)
+                    avg = iDDUhelper.meanTol(self.db.FuelConsumption, 0.03)
                     self.db.FuelConsumptionStr = iDDUhelper.roundedStr2(avg)
                     LapRem = self.db.FuelLevel / avg
                     if LapRem < 3:
@@ -171,6 +172,12 @@ class IDDUCalc:
                     self.db.FuelConsumptionStr = '0'
                     self.db.FuelLapStr = '0'
                     self.db.FuelAddStr = '0'
+
+                # race length esimation
+                if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] == None:
+                    for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
+                        CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
+                        self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete']-1] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
 
                 # DRS
                 if self.db.DRS:
@@ -369,6 +376,8 @@ class IDDUCalc:
         self.db.FuelConsumption = []
         self.db.FuelLastCons = 0
 
+        self.db.CarIdxtLap = self.db.CarIdxtLap_temp
+
         if self.db.startUp:
             self.db.StartDDU = True
             self.db.oldSessionNum = self.db.SessionNum
@@ -550,7 +559,7 @@ class IDDUCalc:
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-        LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap)
+        LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap) + '.laplog'
         f = open(LapStr, 'x')
         f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
         f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
@@ -567,6 +576,7 @@ class IDDUCalc:
         f.write('self.db.SessionNum = ' + repr(self.db.SessionNum) + '\n')
         f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
+        f.write('self.db.CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
         f.close()
 
         # Race Lap Estimation
