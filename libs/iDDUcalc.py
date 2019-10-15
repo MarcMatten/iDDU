@@ -100,7 +100,7 @@ class IDDUCalc:
                     self.db.init = False
                     self.db.OutLap = True
                     self.db.LastFuelLevel = self.db.FuelLevel
-                    self.db.FuelConsumption = []
+                    self.db.FuelConsumptionList = []
                     self.db.RunStartTime = self.db.SessionTime
                     self.db.Run = self.db.Run + 1
 
@@ -138,40 +138,37 @@ class IDDUCalc:
                     self.dy.append(math.cos(self.db.Yaw)*self.db.VelocityY*0.033 + math.sin(self.db.Yaw)*self.db.VelocityX*0.033)
 
                 # fuel consumption -----------------------------------------------------------------------------------------
-                if len(self.db.FuelConsumption) >= 1:
-                    # avg = sum(self.db.FuelConsumption) / len(self.db.FuelConsumption)
-                    avg = iDDUhelper.meanTol(self.db.FuelConsumption, 0.03)
-                    self.db.FuelConsumptionStr = iDDUhelper.roundedStr2(avg)
-                    LapRem = self.db.FuelLevel / avg
-                    if LapRem < 3:
+                if len(self.db.FuelConsumptionList) >= 1:
+                    # self.db.FuelAvgConsumption = sum(self.db.FuelConsumptionList) / len(self.db.FuelConsumptionList)
+                    self.db.FuelAvgConsumption = iDDUhelper.meanTol(self.db.FuelConsumptionList, 0.03)
+                    self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
+                    if self.db.NLapRemaining < 3:
                         self.db.Alarm.extend([3])
-                    if LapRem < 1:
+                    if self.db.NLapRemaining < 1:
                         self.db.Alarm.extend([4])
-                    self.db.FuelLapStr = iDDUhelper.roundedStr1(LapRem)
                     if self.db.BNewLap and not self.db.onPitRoad:
-                        fuelNeed = avg * (self.db.LapsToGo - 1)
-                        fuelAdd = min(max(fuelNeed - self.db.FuelLevel + avg, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
-                        self.db.FuelAddStr = iDDUhelper.roundedStr1(fuelAdd)
-                        if fuelAdd == 0:
+                        fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1)
+                        self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
+                        if self.db.VFuelAdd == 0:
                             self.ir.pit_command(2, 1)
                             self.ir.pit_command(11)
                             self.db.textColourFuelAdd = self.db.textColour
                         else:
-                            if not round(fuelAdd) == round(self.db.oldFuelAdd):
-                                self.ir.pit_command(2, round(fuelAdd + 1 + 1e-10))
-                            if fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + avg:
+                            if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
+                                self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
+                            if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
                                 self.db.textColourFuelAdd = self.green
-                            elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 2*avg:
+                            elif self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 2*self.db.FuelAvgConsumption:
                                 self.db.textColourFuelAdd = self.yellow
-                            elif fuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 3*avg:
+                            elif self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 3*self.db.FuelAvgConsumption:
                                 self.db.textColourFuelAdd = self.red
                             else:
                                 self.db.textColourFuelAdd = self.db.textColour
-                        self.db.oldFuelAdd = fuelAdd
+                        self.db.VFuelAddOld = self.db.VFuelAdd
                 else:
-                    self.db.FuelConsumptionStr = '0'
-                    self.db.FuelLapStr = '0'
-                    self.db.FuelAddStr = '0'
+                    self.db.FuelAvgConsumption=0
+                    self.db.NLapRemaining=0
+                    self.db.VFuelAdd = 0
 
                 # race length esimation
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] == None:
@@ -373,7 +370,7 @@ class IDDUCalc:
         self.getTrackFiles()
 
         self.db.BUpshiftToneInitRequest = True
-        self.db.FuelConsumption = []
+        self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
 
         self.db.CarIdxtLap = self.db.CarIdxtLap_temp
@@ -549,7 +546,7 @@ class IDDUCalc:
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
         if (not self.db.OutLap) and (not self.db.onPitRoad):
-            self.db.FuelConsumption.extend([self.db.FuelLastCons])
+            self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
         else:
             self.db.OutLap = False
 
@@ -562,7 +559,7 @@ class IDDUCalc:
         LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap) + '.laplog'
         f = open(LapStr, 'x')
         f.write('self.db.Lap = ' + repr(self.db.Lap) + '\n')
-        f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
+        f.write('self.db.FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
         f.write('self.db.TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
         f.write('self.db.SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
         f.write('self.db.SessionTime = ' + repr(self.db.SessionTime) + '\n')
@@ -577,7 +574,6 @@ class IDDUCalc:
         f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
         f.write('self.db.CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
-        f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
         f.close()
 
         # Race Lap Estimation

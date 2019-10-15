@@ -117,7 +117,7 @@ class RenderScreen(RenderMain):
         self.frames[0].addLabel('DeltaBestStr', LabeledValue('DBest', 200, 190, 350, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 2)
 
         self.frames[1].addLabel('FuelLevelStr', LabeledValue('Fuel', 607, 60, 250, '-', self.fontSmall, self.fontLarge, self.db, 0), 3)
-        self.frames[1].addLabel('FuelConsStr', LabeledValue('Avg', 513, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 4)
+        self.frames[1].addLabel('FuelAvgConsStr', LabeledValue('Avg', 513, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 4)
         self.frames[1].addLabel('FuelLastConsStr', LabeledValue('Last', 700, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 5)
         self.frames[1].addLabel('FuelLapsStr', LabeledValue('Laps', 513, 200, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 6)
         self.frames[1].addLabel('FuelAddStr', LabeledValue('Add', 700, 200, 180, '-', self.fontSmall, self.fontLarge, self.db, 1), 7)
@@ -249,10 +249,10 @@ class RenderScreen(RenderMain):
             self.db.dcABSStr = iDDUhelper.roundedStr0(self.db.dcABS)
 
             self.db.FuelLevelStr = iDDUhelper.roundedStr2(self.db.FuelLevel)
-            self.db.FuelConsStr = self.db.FuelConsumptionStr
+            self.db.FuelAvgConsStr = iDDUhelper.roundedStr2(self.db.FuelAvgConsumption)
             self.db.FuelLastConsStr = iDDUhelper.roundedStr2(self.db.FuelLastCons)
-            self.db.FuelLapsStr = self.db.FuelLapStr
-            self.db.FuelAddStr = self.db.FuelAddStr
+            self.db.FuelLapsStr = iDDUhelper.roundedStr1(self.db.NLapRemaining)
+            self.db.FuelAddStr = iDDUhelper.roundedStr1(self.db.VFuelAdd)
 
             if self.db.LapLimit:
                 self.db.LapStr = str(self.db.Lap) + '/' + str(self.db.RaceLaps)

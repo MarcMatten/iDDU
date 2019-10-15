@@ -1,7 +1,7 @@
 import numpy as np
 
 def convertTimeMMSSsss(sec):
-    if type(sec) is float:
+    if type(sec) is int or type(sec) is float:
         if sec < 0:
             sign = '-'
             sec = -sec
@@ -22,7 +22,7 @@ def convertTimeMMSSsss(sec):
 
 
 def convertDelta(sec):
-    if type(sec) is float:
+    if type(sec) is int or type(sec) is float:
         if sec < 0:
             sign = '-'
             sec = -sec
@@ -43,7 +43,7 @@ def convertDelta(sec):
 
 
 def convertTimeHHMMSS(sec):
-    if type(sec) is float:
+    if type(sec) is int or type(sec) is float:
         if sec < 0:
             sign = '-'
             sec = -sec
@@ -68,28 +68,28 @@ def convertTimeHHMMSS(sec):
 
 
 def roundedStr0(x):
-    if type(x) is float:
+    if type(x) is int or type(x) is float:
         return str(round(x))
     else:
         return ("-")
 
 
 def roundedStr1(x):
-    if type(x) is float:
+    if type(x) is int or type(x) is float:
         return '{0:.1f}'.format(round(x, 1))
     else:
         return ("-")
 
 
 def roundedStr2(x):
-    if type(x) is float:
+    if type(x) is int or type(x) is float:
         return '{0:.2f}'.format(round(x, 2))
     else:
         return ("-")
 
 
 def roundedStr3(x):
-    if type(x) is float:
+    if type(x) is int or type(x) is float:
         return '{0:.3f}'.format(round(x, 3))
     else:
         return ('-')
