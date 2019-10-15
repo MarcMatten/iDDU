@@ -577,6 +577,7 @@ class IDDUCalc:
         f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
         f.write('self.db.CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
+        f.write('self.db.FuelConsumption = ' + repr(self.db.FuelConsumption) + '\n')
         f.close()
 
         # Race Lap Estimation
