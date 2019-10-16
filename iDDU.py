@@ -191,6 +191,7 @@ calcData = {'LastFuelLevel': 0,
                 False,  # DRS
                 False,  # P2P
                 True,  # ToGo
+                True,  # Est
             ],
             'P2P': False,
             'DRS': False,

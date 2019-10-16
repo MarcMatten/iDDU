@@ -178,8 +178,13 @@ class IDDUCalc:
 
 
                         if self.db.TimeLimit and not self.db.LapLimit:
-                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp]) - (max(0, self.db.PitStopsRequired-self.db.CarIdxPitStops)*self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + len(self.db.CarIdxtLap[CarIdx_temp]) # use this to find winner
-                            self.db.TFinishPredicted[CarIdx_temp] = (math.ceil(self.db.NLapRaceTime[CarIdx_temp])-len(self.db.CarIdxtLap[CarIdx_temp]))*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)+np.sum(self.db.CarIdxtLap[CarIdx_temp])+(max(0, self.db.PitStopsRequired-self.db.CarIdxPitStops)*self.db.PitStopDelta) # if my value lower than the winners, then + 1 lap
+                            # use this to find winner
+                            temp_pitstopsremain = self.db.PitStopsRequired-np.array(self.db.CarIdxPitStops)
+                            temp_pitstopsremain=temp_pitstopsremain.tolist()
+                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp]) - (max(0, temp_pitstopsremain)*self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + len(self.db.CarIdxtLap[CarIdx_temp]) # use this to find winner
+
+                            # if my value lower than the winners, then + 1 lap
+                            self.db.TFinishPredicted[CarIdx_temp] = (math.ceil(self.db.NLapRaceTime[CarIdx_temp])-len(self.db.CarIdxtLap[CarIdx_temp]))*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)+np.sum(self.db.CarIdxtLap[CarIdx_temp])+(max(0, temp_pitstopsremain)*self.db.PitStopDelta) # if my value lower than the winners, then + 1 lap
 
                             self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
@@ -595,6 +600,11 @@ class IDDUCalc:
         f.write('self.db.ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('self.db.DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
         f.write('self.db.CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
+        
+        f.write('self.db.NLapRaceTime = ' + repr(self.db.NLapRaceTime) + '\n')
+        f.write('self.db.TFinishPredicted = ' + repr(self.db.TFinishPredicted) + '\n')
+        f.write('self.db.WinnerCarIdx = ' + repr(self.db.WinnerCarIdx) + '\n')
+        f.write('self.db.NLapDriver = ' + repr(self.db.NLapDriver) + '\n')
         f.close()
 
         # Race Lap Estimation
