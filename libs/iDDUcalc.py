@@ -170,7 +170,7 @@ class IDDUCalc:
                     self.db.NLapRemaining=0
                     self.db.VFuelAdd = 0
 
-                # race length esimation
+                # race length esimation ---------------------------------------------------------------------------------------
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] == None:
                     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
@@ -227,6 +227,8 @@ class IDDUCalc:
             else:
                 if self.db.WasOnTrack:
                     print(self.db.timeStr+':\tGetting out of car')
+                    print(self.db.timeStr+': Run: ' + str(self.db.Run))
+                    print(self.db.timeStr+':\tFuelAvgConsumption: ' + str(self.db.FuelAvgConsumption))
                     self.db.WasOnTrack = False
                     self.db.init = True
                 # do if car is not on track but don't do if car is on track ------------------------------------------------
@@ -361,8 +363,6 @@ class IDDUCalc:
                 self.db.SessionNum = 0
                 self.db.StopDDU = True
                 print(self.db.timeStr+': Lost connection to iRacing')
-                print(self.db.timeStr+': Last Lap Fuel Consumption: ', self.db.FuelLastConsStr)
-                print(self.db.timeStr+': Average Fuel Consumption: ', self.db.FuelConsStr)
 
     def initSession(self):
         print(self.db.timeStr+': Initialising Session ==========================')
