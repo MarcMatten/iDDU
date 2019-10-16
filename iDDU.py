@@ -221,8 +221,8 @@ calcData = {'LastFuelLevel': 0,
             'CarIdxtLap_temp': CarIdxtLap_temp,
             'CarIdxtLap': CarIdxtLap_temp,
             'NLapDriver': 0,
-            'NLapRaceTime': [],
-            'TFinishPredicted': [],
+            'NLapRaceTime': [0] * 64,
+            'TFinishPredicted': [0] * 64,
             'WinnerCarIdx': 0,
             }
 

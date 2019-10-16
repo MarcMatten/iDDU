@@ -147,3 +147,19 @@ def meanTol(x_in, tol):
             x_new = x[indices]
             meanWithinTol = np.mean(x_new)
             return float(meanWithinTol)
+
+
+def maxList(L, value):
+    
+    CondBool = np.array(L) < value
+    
+    if type(CondBool) is not list:
+        CondBool = [CondBool]
+        
+    indexes = [i for i, x in enumerate(CondBool) if x]
+    
+    for k in indexes:
+        L[k] = value
+        
+    return L
+    
