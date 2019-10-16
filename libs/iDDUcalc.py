@@ -176,6 +176,27 @@ class IDDUCalc:
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
                         self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete']-1] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
 
+
+                        if self.db.TimeLimit and not self.db.LapLimit:
+                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp]) - (max(0, self.db.PitStopsRequired-self.db.CarIdxPitStops)*self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + len(self.db.CarIdxtLap[CarIdx_temp]) # use this to find winner
+                            self.db.TFinishPredicted[CarIdx_temp] = (math.ceil(self.db.NLapRaceTime[CarIdx_temp])-len(self.db.CarIdxtLap[CarIdx_temp]))*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)+np.sum(self.db.CarIdxtLap[CarIdx_temp])+(max(0, self.db.PitStopsRequired-self.db.CarIdxPitStops)*self.db.PitStopDelta) # if my value lower than the winners, then + 1 lap
+
+                            self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
+
+                            if self.db.WinnerCarIdx == self.db.DriverCarIdx:
+                                self.db.NLapDriver = self.db.NLapRaceTime[self.db.DriverCarIdx]
+                            else:
+                                if self.db.NLapRaceTime[self.db.WinnerCarIdx] >= self.db.NLapRaceTime[self.db.DriverCarIdx]:
+                                    self.db.NLapDriver = self.db.NLapRaceTime[self.db.DriverCarIdx] + 1
+                                else:
+                                    self.db.NLapDriver = self.db.NLapRaceTime[self.db.DriverCarIdx]
+
+
+                            # NLapRaceTime = (3600 - numpy.sum(aa) - 30) / libs.iDDUhelper.meanTol(aa, 0.03) + len(aa) # use this to find winner
+                        # TFinishPredicted = (math.ceil(NLapRaceTime)-len(c))*libs.iDDUhelper.meanTol(c, 0.03)+numpy.sum(c) if my value lower than the winners, then + 1 lap
+                        # self.db.CarIdxPitStops PitStopsRequired PitStopDelta
+
+
                 # DRS
                 if self.db.DRS:
                     if self.db.DRSCounter >= self.db.DRSActivations and self.db.DRSActivations > 0:

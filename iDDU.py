@@ -218,7 +218,11 @@ calcData = {'LastFuelLevel': 0,
             'BUpshiftToneInitRequest': False,
             'BNewLap': False,
             'CarIdxtLap_temp': CarIdxtLap_temp,
-            'CarIdxtLap': CarIdxtLap_temp
+            'CarIdxtLap': CarIdxtLap_temp,
+            'NLapDriver': 0,
+            'NLapRaceTime': [],
+            'TFinishPredicted': [],
+            'WinnerCarIdx': 0,
             }
 
 # Create RTDB and initialise with
