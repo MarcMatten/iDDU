@@ -178,54 +178,16 @@ class IDDUCalc:
 
 
                         if self.db.TimeLimit and not self.db.LapLimit:
-                            # use this to find winner
+                            
                             temp_pitstopsremain_np = self.db.PitStopsRequired-np.array(self.db.CarIdxPitStops[CarIdx_temp])
                             temp_pitstopsremain=temp_pitstopsremain_np.tolist()
                             NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp]))
                             
-                            A = self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp])
-
-                            print(type(temp_pitstopsremain))
-                            B = iDDUhelper.maxList(temp_pitstopsremain, 0)*self.db.PitStopDelta
-                            C = iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)
-                            D = len(self.db.CarIdxtLap[CarIdx_temp])
-
-                            E=(self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp]) - (iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta))
-                            F=iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)
-                            G=len(self.db.CarIdxtLap[CarIdx_temp])
-
-                            #self.db.NLapRaceTime[CarIdx_temp]=0
-                            
+                            # use this to find winner
                             self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp]) - (iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed # use this to find winner
 
                             # if my value lower than the winners, then + 1 lap
-
-                            #print(self.db.NLapRaceTime[CarIdx_temp])
-
-                            #a=np.ceil(self.db.NLapRaceTime[CarIdx_temp]).tolist()
-                            #b=len(self.db.CarIdxtLap[CarIdx_temp])
-                            #c=iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)
-                            #d=np.sum(self.db.CarIdxtLap[CarIdx_temp])
-                            #e=iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta
-                            
-                            #f1=np.ceil(self.db.NLapRaceTime[CarIdx_temp])
-                            
-                            #f2=np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp])) # len(self.db.CarIdxtLap[CarIdx_temp])
-
-                            #print(f1)
-                            #print(f2)
-
-                            #f3 = f1-f2
-                            
-                            #f=(np.ceil(self.db.NLapRaceTime[CarIdx_temp])-np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp])))
-                            #g=(np.ceil(self.db.NLapRaceTime[CarIdx_temp])-np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp])))*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)
-                            #h=np.sum(self.db.CarIdxtLap[CarIdx_temp])+(iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta)
-                            
                             self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(self.db.NLapRaceTime[CarIdx_temp])-NLapTimed)*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)+np.sum(self.db.CarIdxtLap[CarIdx_temp])+(iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta) # if my value lower than the winners, then + 1 lap
-
-                            print(self.db.NLapRaceTime[CarIdx_temp])
-                            print(self.db.NLapRaceTime)
-                            print(type(self.db.NLapRaceTime))
                             
                             self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
