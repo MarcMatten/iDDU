@@ -174,7 +174,13 @@ class IDDUCalc:
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] == None:
                     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
-                        self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete']-1] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
+
+                        temp_CarIdxtLap = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
+                        if temp_CarIdxtLap < 0:
+                            temp_CarIdxtLap = float('nan')
+                        
+                        # self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete']-1] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
+                        self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete']-1] = temp_CarIdxtLap
 
 
                         if self.db.TimeLimit and not self.db.LapLimit:
@@ -182,12 +188,16 @@ class IDDUCalc:
                             temp_pitstopsremain_np = self.db.PitStopsRequired-np.array(self.db.CarIdxPitStops[CarIdx_temp])
                             temp_pitstopsremain=temp_pitstopsremain_np.tolist()
                             NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp]))
+
+                            # summed up laptime - remove nan first
+                            CarIdxtLap_cleaned = [x for x in self.db.CarIdxtLap[CarIdx_temp] if str(x) != 'nan']
+                            CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
                             
                             # use this to find winner
-                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - np.sum(self.db.CarIdxtLap[CarIdx_temp]) - (iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed # use this to find winner
+                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed # use this to find winner
 
                             # if my value lower than the winners, then + 1 lap
-                            self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(self.db.NLapRaceTime[CarIdx_temp])-NLapTimed)*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)+np.sum(self.db.CarIdxtLap[CarIdx_temp])+(iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta) # if my value lower than the winners, then + 1 lap
+                            self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(self.db.NLapRaceTime[CarIdx_temp])-NLapTimed)*iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03)+CarIdxtLapSum+(iDDUhelper.maxList(temp_pitstopsremain,0)*self.db.PitStopDelta) # if my value lower than the winners, then + 1 lap
                             
                             self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
@@ -257,7 +267,7 @@ class IDDUCalc:
                 if self.db.WasOnTrack:
                     print(self.db.timeStr+':\tGetting out of car')
                     print(self.db.timeStr+': Run: ' + str(self.db.Run))
-                    print(self.db.timeStr+':\tFuelAvgConsumption: ' + str(self.db.FuelAvgConsumption))
+                    print(self.db.timeStr+':\tFuelAvgConsumption: ' + iDDUhelper.roundedStr2(self.db.FuelAvgConsumption))
                     self.db.WasOnTrack = False
                     self.db.init = True
                 # do if car is not on track but don't do if car is on track ------------------------------------------------
@@ -283,11 +293,11 @@ class IDDUCalc:
                 pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                 Dv = self.db.Speed*3.6 - float(pitSpeedLimit.split(' ')[0])
 
-                r = np.interp(Dv, [-10, -5, -1, 1, 15, 30, 40],
+                r = np.interp(Dv, [-10, -1, 0, 1, 10, 30, 40],
                                  [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0]])
-                g = np.interp(Dv, [-10, -5, -1, 1, 15, 30, 40],
+                g = np.interp(Dv, [-10, -1, 0, 1, 10, 30, 40],
                                  [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1]])
-                b = np.interp(Dv, [-10, -5, -1, 1, 15, 30, 40],
+                b = np.interp(Dv, [-10, -1, 0, 1, 10, 30, 40],
                                  [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
                 self.db.backgroundColour = (r, g, b)
                 self.db.textColour = self.grey

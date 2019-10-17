@@ -137,7 +137,7 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3), 19)
         # self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
         self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 295, 360, 160, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)        
-        self.frames[3].addLabel('Est', LabeledValue('Est', 105, 425, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0), 21)
+        self.frames[3].addLabel('EstStr', LabeledValue('Est', 105, 425, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0), 21)
 
         # misc
         self.done = False
@@ -266,7 +266,7 @@ class RenderScreen(RenderMain):
                 self.db.JokerStr = self.db.JokerStr
             self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTime)
             self.db.RemainingStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
-            self.db.Est = iDDUhelper.roundedStr1(self.db.NLapDriver)
+            self.db.EstStr = iDDUhelper.roundedStr1(self.db.NLapDriver)
 
             for i in range(0, len(self.frames)):
                 self.frames[i].setTextColour(self.db.textColour)

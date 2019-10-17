@@ -132,11 +132,13 @@ def smartAverageMinMax(x_in, tol):
         return avg_raw
 
 def meanTol(x_in, tol):
-    mean = np.mean(x_in)
-    if len(x_in) < 3:
+    x_clean = [k for k in x_in if str(k) != 'nan']
+    
+    mean = np.mean(x_clean)
+    if len(x_clean) < 3:
         return float(mean)
     else:
-        x = np.array(x_in)
+        x = np.array(x_clean)
         dev_abs = np.abs(x-mean)
         dev_rel = dev_abs/mean
         withintolerance = dev_rel < tol
@@ -150,16 +152,18 @@ def meanTol(x_in, tol):
 
 
 def maxList(L, value):
-    
-    CondBool = np.array(L) < value
-    
-    if type(CondBool) is not list:
-        CondBool = [CondBool]
+
+    if type(L) is list:    
+        CondBool = np.array(L) < value
         
-    indexes = [i for i, x in enumerate(CondBool) if x]
-    
-    for k in indexes:
-        L[k] = value
+        if type(CondBool) is not list:
+            CondBool = [CondBool]
         
-    return L
-    
+        indexes = [i for i, x in enumerate(CondBool) if x]
+        
+        for k in indexes:
+            L[k] = value
+            
+        return L
+    elif type(L) is int:
+        return max(L, value)
