@@ -21,6 +21,7 @@ class RenderMain:
         self.grey = (141, 141, 141)
         self.black = (0, 0, 0)
         self.cyan = (0, 255, 255)
+        self.purple = (255, 0, 255)
 
         self.backgroundColour = self.black
         self.textColour = self.white
@@ -284,7 +285,10 @@ class RenderScreen(RenderMain):
             self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.map, 5)
 
             for n in range(0, len(self.db.DriverInfo['Drivers'])):
-                self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
+                temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
+                if not temp_CarIdx == self.db.DriverCarIdx:
+                    self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
+            self.CarOnMap(self.db.DriverCarIdx)
 
         if self.db.IsOnTrack:
             # warning and alarm messages
@@ -353,19 +357,32 @@ class RenderScreen(RenderMain):
             x = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.x)
             y = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.y)
 
-            if self.db.DriverInfo['DriverCarIdx'] == Idx:
+            if self.db.DriverInfo['DriverCarIdx'] == Idx:  # if player's car
                 if self.db.RX:
                     if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
                         self.drawCar(Idx, x, y, self.green, self.black)
                 self.drawCar(Idx, x, y, self.red, self.white)
+            else:  # other cars
+                if self.db.CarIdxClassPosition[Idx] == 1:
+                    if self.db.CarIdxPosition[Idx] == 1:  # overall leader
+                        labelColour = self.white
+                        dotColour = self.purple
+                    else:
+                        labelColour = self.purple  # class leaders
+                        dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
+                elif self.db.CarIdxClassPosition[Idx] == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
+                    labelColour = self.black
+                    dotColour = self.orange
+                else:
+                    labelColour = self.black
+                    dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
 
-            else:
                 if not self.db.CarIdxOnPitRoad[Idx]:
                     if self.db.RX:
                         if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
-                            self.drawCar(Idx, x, y, self.green, self.black)
+                            self.drawCar(Idx, x, y, self.green, labelColour)
                     else:
-                        self.drawCar(Idx, x, y, self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor']), self.black)
+                        self.drawCar(Idx, x, y, dotColour, labelColour)
                 else:
                     return
         except:
@@ -375,7 +392,7 @@ class RenderScreen(RenderMain):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
         if self.db.CarIdxOnPitRoad[Idx]:
             self.pygame.draw.circle(self.screen, self.yellow, [int(x), int(y)], 12, 0)
-        elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired:
+        elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
             self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
         self.pygame.draw.circle(self.screen, dotColour, [int(x), int(y)], 10, 0)
         self.screen.blit(Label, (int(x) - 6, int(y) - 7))
