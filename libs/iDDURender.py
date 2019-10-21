@@ -8,21 +8,22 @@ from libs import iDDUhelper
 
 
 class RenderMain:
+    __slots__ = 'joystick'
+
+    white = (255, 255, 255)
+    red = (255, 0, 0)
+    green = (0, 255, 0)
+    blue = (0, 0, 255)
+    yellow = (255, 255, 0)
+    orange = (255, 133, 13)
+    grey = (141, 141, 141)
+    black = (0, 0, 0)
+    cyan = (0, 255, 255)
+    purple = (255, 0, 255)
+
     def __init__(self, db):
 
         self.db = db
-
-        self.white = (255, 255, 255)
-        self.red = (255, 0, 0)
-        self.green = (0, 255, 0)
-        self.blue = (0, 0, 255)
-        self.yellow = (255, 255, 0)
-        self.orange = (255, 133, 13)
-        self.grey = (141, 141, 141)
-        self.black = (0, 0, 0)
-        self.cyan = (0, 255, 255)
-        self.purple = (255, 0, 255)
-
         self.backgroundColour = self.black
         self.textColour = self.white
         self.textColourFuelAdd = self.textColour
@@ -56,6 +57,7 @@ class RenderMain:
         self.fullscreen = True
         self.pygame.display.set_caption('iDDU')
         # self.screen = self.pygame.display.set_mode(self.resolution)
+        self.joystick = None
         self.clocker = self.pygame.time.Clock()
 
         # background
@@ -77,29 +79,28 @@ class RenderMain:
     def initJoystick(self, name):
         self.pygame.joystick.init()
         # joysticks = [self.pygame.joystick.Joystick(x) for x in range(self.pygame.joystick.get_count())]
-        print(self.db.timeStr+': \t' + str(pygame.joystick.get_count()) + ' joysticks detected:')
+        print(self.db.timeStr + ': \t' + str(pygame.joystick.get_count()) + ' joysticks detected:')
 
         desiredJoystick = 9999
 
         for i in range(self.pygame.joystick.get_count()):
-            print(self.db.timeStr+':\tJoystick ', i, ': ',self.pygame.joystick.Joystick(i).get_name())
+            print(self.db.timeStr + ':\tJoystick ', i, ': ', self.pygame.joystick.Joystick(i).get_name())
             if self.pygame.joystick.Joystick(i).get_name() == name:
                 desiredJoystick = i
 
         if not desiredJoystick == 9999:
-            print(self.db.timeStr+':\tConnecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
+            print(self.db.timeStr + ':\tConnecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
             self.joystick = pygame.joystick.Joystick(desiredJoystick)
             self.joystick.get_name()
             self.joystick.init()
-            print(self.db.timeStr+':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
+            print(self.db.timeStr + ':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
         else:
-            print(self.db.timeStr+':\tFANATEC ClubSport Wheel Base not found!')
+            print(self.db.timeStr + ':\tFANATEC ClubSport Wheel Base not found!')
 
 
 class RenderScreen(RenderMain):
     def __init__(self, db):
         RenderMain.__init__(self, db)
-        #self.db = db
 
         # initialize joystick
         self.initJoystick('FANATEC ClubSport Wheel Base')
@@ -137,7 +138,7 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 2), 18)
         self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3), 19)
         # self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
-        self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 295, 360, 160, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)        
+        self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 295, 360, 160, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
         self.frames[3].addLabel('EstStr', LabeledValue('Est', 105, 425, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0), 21)
 
         # misc
@@ -154,12 +155,12 @@ class RenderScreen(RenderMain):
         self.textColour = self.db.textColour
         self.textColourFuelAdd = self.db.textColourFuelAdd
 
-        ##### events ###########################################################################################################
+        # events ###########################################################################################################
         for event in self.pygame.event.get():
             if event.type == self.pygame.QUIT:
                 self.done = True
-##            if event.type == self.pygame.KEYDOWN and event.key == self.pygame.K_ESCAPE:
-##                self.done = True
+            # if event.type == self.pygame.KEYDOWN and event.key == self.pygame.K_ESCAPE:
+            #     self.done = True
             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 3:
                 self.db.StopDDU = True
                 # if self.fullscreen:
@@ -168,8 +169,9 @@ class RenderScreen(RenderMain):
                 # else:
                 #     self.pygame.display.set_mode(self.resolution, self.pygame.NOFRAME)  # self.pygame.FULLSCREEN
                 #     self.fullscreen = True
-            if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 25:
+
             # if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 1:
+            if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 25:
                 if self.ScreenNumber == 1:
                     self.ScreenNumber = 2
                 else:
@@ -385,8 +387,14 @@ class RenderScreen(RenderMain):
                         self.drawCar(Idx, x, y, dotColour, labelColour)
                 else:
                     return
-        except:
-            warnings.warn(self.db.timeStr+': Error in CarOnMap!')
+        except NameError:
+            print(self.db.timeStr + ': \tNameError')
+            warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+        except ValueError:
+            print(self.db.timeStr + ': \tValueError')
+            warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+        # else:
+        #    warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
@@ -397,19 +405,20 @@ class RenderScreen(RenderMain):
         self.pygame.draw.circle(self.screen, dotColour, [int(x), int(y)], 10, 0)
         self.screen.blit(Label, (int(x) - 6, int(y) - 7))
 
-    def bit2RBG(self, bitColor):
+    @staticmethod
+    def bit2RBG(bitColor):
         hexColor = format(bitColor, '06x')
-        return (int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0))
+        return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
 
-    def highlightSection(self, width, colour):
+    def highlightSection(self, width: int, colour: tuple):
         timeStamp = numpy.interp(float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100, self.db.dist, self.db.time)
-        timeStamp1 = timeStamp - self.db.PitStopDelta - width/2
+        timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
         while timeStamp1 < 0:
             timeStamp1 = timeStamp1 + self.db.time[-1]
         while timeStamp1 > self.db.time[-1]:
             timeStamp1 = timeStamp1 - self.db.time[-1]
 
-        timeStamp2 = timeStamp - self.db.PitStopDelta + width/2
+        timeStamp2 = timeStamp - self.db.PitStopDelta + width / 2
 
         while timeStamp2 < 0:
             timeStamp2 = timeStamp2 + self.db.time[-1]
@@ -421,26 +430,31 @@ class RenderScreen(RenderMain):
 
         try:
             if timeStamp2 > timeStamp1:
-                map = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                       ((self.db.time[t] < timeStampEnd) and (self.db.time[t] > timeStampStart))]
-                self.pygame.draw.lines(self.screen, colour, False, map, 20)
+                tempMap = [self.db.map[t] for t in range(0, len(self.db.map)) if ((self.db.time[t] < timeStampEnd) and (self.db.time[t] > timeStampStart))]
+                self.pygame.draw.lines(self.screen, colour, False, tempMap, 20)
             else:
 
                 map1 = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                       (self.db.time[t] <= max(timeStampEnd, self.db.time[1]))]
+                        (self.db.time[t] <= max(timeStampEnd, self.db.time[1]))]
                 map2 = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                       (self.db.time[t] >= min(timeStampStart, self.db.time[-1]))]
+                        (self.db.time[t] >= min(timeStampStart, self.db.time[-1]))]
 
                 self.pygame.draw.lines(self.screen, colour, False, map1, 20)
                 self.pygame.draw.lines(self.screen, colour, False, map2, 20)
-        except:
-            warnings.warn(self.db.timeStr+': Error in highlightSection!')
+        except NameError:
+            print(self.db.timeStr + ': \tNameError')
+            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
+        except ValueError:
+            print(self.db.timeStr + ': \tValueError')
+            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
+        # else:
+        #     warnings.warn(self.db.timeStr + ': Error in highlightSection!')
 
     def warningLabel(self, text, colour, textcolour):
-        self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100],0)
+        self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100], 0)
         LabelSize = self.fontLarge.size(text)
         Label = self.fontLarge.render(text, True, textcolour)
-        self.screen.blit(Label, (400-LabelSize[0]/2, 50-LabelSize[1]/2))
+        self.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
 
     def changeLabel(self, text, value):
         self.pygame.draw.rect(self.screen, self.black, [0, 0, 800, 480], 0)
@@ -450,6 +464,7 @@ class RenderScreen(RenderMain):
         ValueSize = self.fontReallyLarge.size(value)
         Value = self.fontReallyLarge.render(value, True, self.white)
         self.screen.blit(Value, (400 - ValueSize[0] / 2, 270 - ValueSize[1] / 2))
+
 
 class Frame(RenderMain):
     def __init__(self, title, x1, y1, dx, dy, db):
@@ -474,7 +489,7 @@ class Frame(RenderMain):
                 self.Labels[i][1].drawLabel(self.db.get(self.Labels[i][0]))
 
     def reinitFrame(self, title):
-        # self.title = title
+        self.title = title
         self.Title = self.fontSmall.render(self.title, True, self.textColour)
         self.textSize = self.fontSmall.size(self.title)
 
@@ -536,6 +551,7 @@ class LabeledValue(RenderMain):
         self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
         self.screen.blit(self.ValLabel, (self.x + self.width / 2 - self.ValSize[0], self.y - 36))
 
+
 class LabeledValue2(RenderMain):
     def __init__(self, title, x, y, width, initValue, labFont, valFont, db, colourTag):
         RenderMain.__init__(self, db)
@@ -583,7 +599,7 @@ class LabeledValue2(RenderMain):
         self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
         self.screen.blit(self.ValLabel, (self.x + self.width / 2, self.y + 15))
 
-    # def setTextColour(self, colour):
-    #     self.textColour = colour
-    #     self.LabLabel = self.labFont.render(self.title, True, colour)
-    #     self.ValLabel = self.valFont.render(self.value, True, colour)
+        # def setTextColour(self, colour):
+        #     self.textColour = colour
+        #     self.LabLabel = self.labFont.render(self.title, True, colour)
+        #     self.ValLabel = self.valFont.render(self.value, True, colour)

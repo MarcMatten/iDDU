@@ -9,9 +9,9 @@ from libs import iDDURender, iDDUcalc
 nan = float('nan')
 CarNumber = 64
 LapNumber = 500
-CarIdxtLap_temp = [[]*LapNumber]*CarNumber
+CarIdxtLap_temp = [[] * LapNumber] * CarNumber
 for x in range(0, CarNumber):
-    CarIdxtLap_temp[x] = [nan]*LapNumber
+    CarIdxtLap_temp[x] = [nan] * LapNumber
 
 # data for initialisation of RTDB
 # helper variables
@@ -48,33 +48,53 @@ iRData = {'LapBestLapTime': 0,
           'Gear': 0,
           'Speed': 0,
           'DriverInfo':
-              {'DriverCarIdx': 0, 'DriverUserID': 88407, 'PaceCarIdx': -1, 'DriverHeadPosX': -0.559, 'DriverHeadPosY': 0.376, 'DriverHeadPosZ': 0.62, 'DriverCarIdleRPM': 800.0, 'DriverCarRedLine': 7200.0, 'DriverCarEngCylinderCount': 8, 'DriverCarFuelKgPerLtr': 0.75, 'DriverCarFuelMaxLtr': 83.239, 'DriverCarMaxFuelPct': 1.0, 'DriverCarSLFirstRPM': 5500.0, 'DriverCarSLShiftRPM': 6500.0, 'DriverCarSLLastRPM': 6500.0, 'DriverCarSLBlinkRPM': 7200.0, 'DriverPitTrkPct': 0.136028, 'DriverCarEstLapTime': 17.001, 'DriverSetupName': 'southboston.sto', 'DriverSetupIsModified': 0, 'DriverSetupLoadTypeName': 'user', 'DriverSetupPassedTech': 1, 'DriverIncidentCount': 0, 'Drivers': [{'CarIdx': 0, 'UserName': 'Marc Matten', 'AbbrevName': None, 'Initials': None, 'UserID': 88407, 'TeamID': 0, 'TeamName': 'Marc Matten', 'CarNumber': '23', 'CarNumberRaw': 23, 'CarPath': 'streetstock', 'CarClassID': 34, 'CarID': 36, 'CarIsPaceCar': 0, 'CarIsAI': 0, 'CarScreenName': 'Street Stock', 'CarScreenNameShort': 'Street Stock', 'CarClassShortName': None, 'CarClassRelSpeed': 0, 'CarClassLicenseLevel': 0, 'CarClassMaxFuelPct': '1.000 %', 'CarClassWeightPenalty': '0.000 kg', 'CarClassColor': 16777215, 'IRating': 1, 'LicLevel': 1, 'LicSubLevel': 1, 'LicString': 'R 0.01', 'LicColor': 87003, 'IsSpectator': 0, 'CarDesignStr': '1,fd7704,000000,ffffff', 'HelmetDesignStr': '14,000000,000000,FFFFFF', 'SuitDesignStr': '0,000000,6D6E71,6D6E71', 'CarNumberDesignStr': '1,fd7704,000000,ffffff', 'CarSponsor_1': 107, 'CarSponsor_2': 2, 'CurDriverIncidentCount': 0, 'TeamIncidentCount': 0}]},
+              {'DriverCarIdx': 0, 'DriverUserID': 88407, 'PaceCarIdx': -1, 'DriverHeadPosX': -0.559, 'DriverHeadPosY': 0.376, 'DriverHeadPosZ': 0.62, 'DriverCarIdleRPM': 800.0,
+               'DriverCarRedLine': 7200.0, 'DriverCarEngCylinderCount': 8, 'DriverCarFuelKgPerLtr': 0.75, 'DriverCarFuelMaxLtr': 83.239, 'DriverCarMaxFuelPct': 1.0, 'DriverCarSLFirstRPM': 5500.0,
+               'DriverCarSLShiftRPM': 6500.0, 'DriverCarSLLastRPM': 6500.0, 'DriverCarSLBlinkRPM': 7200.0, 'DriverPitTrkPct': 0.136028, 'DriverCarEstLapTime': 17.001,
+               'DriverSetupName': 'southboston.sto', 'DriverSetupIsModified': 0, 'DriverSetupLoadTypeName': 'user', 'DriverSetupPassedTech': 1, 'DriverIncidentCount': 0, 'Drivers': [
+                  {'CarIdx': 0, 'UserName': 'Marc Matten', 'AbbrevName': None, 'Initials': None, 'UserID': 88407, 'TeamID': 0, 'TeamName': 'Marc Matten', 'CarNumber': '23', 'CarNumberRaw': 23,
+                   'CarPath': 'streetstock', 'CarClassID': 34, 'CarID': 36, 'CarIsPaceCar': 0, 'CarIsAI': 0, 'CarScreenName': 'Street Stock', 'CarScreenNameShort': 'Street Stock',
+                   'CarClassShortName': None, 'CarClassRelSpeed': 0, 'CarClassLicenseLevel': 0, 'CarClassMaxFuelPct': '1.000 %', 'CarClassWeightPenalty': '0.000 kg', 'CarClassColor': 16777215,
+                   'IRating': 1, 'LicLevel': 1, 'LicSubLevel': 1, 'LicString': 'R 0.01', 'LicColor': 87003, 'IsSpectator': 0, 'CarDesignStr': '1,fd7704,000000,ffffff',
+                   'HelmetDesignStr': '14,000000,000000,FFFFFF', 'SuitDesignStr': '0,000000,6D6E71,6D6E71', 'CarNumberDesignStr': '1,fd7704,000000,ffffff', 'CarSponsor_1': 107, 'CarSponsor_2': 2,
+                   'CurDriverIncidentCount': 0, 'TeamIncidentCount': 0}]},
           'CarIdxLapDistPct': [0],
-          'CarIdxOnPitRoad': [True]*64,
+          'CarIdxOnPitRoad': [True] * 64,
           'SessionInfo':
               {
-              'Sessions':
-                  [
-                      {
-                          'SessionType': 'Session',
-                          'SessionTime': 'unlimited',
-                          'SessionLaps': 0,
-                          'ResultsPositions':
-                              [
-                                  {
-                                      'CarIdx': 0,
-                                      'JokerLapsComplete': 0
-                                  }
-                              ]
-                      }
-                  ]
+                  'Sessions':
+                      [
+                          {
+                              'SessionType': 'Session',
+                              'SessionTime': 'unlimited',
+                              'SessionLaps': 0,
+                              'ResultsPositions':
+                                  [
+                                      {
+                                          'CarIdx': 0,
+                                          'JokerLapsComplete': 0
+                                      }
+                                  ]
+                          }
+                      ]
               },
           'Yaw': 0,
           'VelocityX': 0,
           'VelocityY': 0,
           'YawNorth': 0,
           'WeekendInfo':
-              {'TrackName': 'mosport', 'TrackID': 144, 'TrackLength': '3.91 km', 'TrackDisplayName': 'Canadian Tire Motorsport Park', 'TrackDisplayShortName': 'Mosport', 'TrackConfigName': None, 'TrackCity': 'Bowmanville', 'TrackCountry': 'Canada', 'TrackAltitude': '339.74 m', 'TrackLatitude': '44.054339 m', 'TrackLongitude': '-78.674384 m', 'TrackNorthOffset': '1.6678 rad', 'TrackNumTurns': 10, 'TrackPitSpeedLimit': '55.98 kph', 'TrackType': 'road course', 'TrackDirection': 'neutral', 'TrackWeatherType': 'Specified / Dynamic Sky', 'TrackSkies': 'Partly Cloudy', 'TrackSurfaceTemp': '32.58 C', 'TrackAirTemp': '18.33 C', 'TrackAirPressure': '28.73 Hg', 'TrackWindVel': '0.45 m/s', 'TrackWindDir': '0.00 rad', 'TrackRelativeHumidity': '55 %', 'TrackFogLevel': '0 %', 'TrackCleanup': 0, 'TrackDynamicTrack': 1, 'SeriesID': 0, 'SeasonID': 0, 'SessionID': 0, 'SubSessionID': 0, 'LeagueID': 0, 'Official': 0, 'RaceWeek': 0, 'EventType': 'Test', 'Category': 'Road', 'SimMode': 'full', 'TeamRacing': 0, 'MinDrivers': 0, 'MaxDrivers': 0, 'DCRuleSet': 'None', 'QualifierMustStartRace': 0, 'NumCarClasses': 1, 'NumCarTypes': 1, 'HeatRacing': 0, 'WeekendOptions': {'NumStarters': 0, 'StartingGrid': 'single file', 'QualifyScoring': 'best lap', 'CourseCautions': False, 'StandingStart': 0, 'Restarts': 'single file', 'WeatherType': 'Specified / Dynamic Sky', 'Skies': 'Partly Cloudy', 'WindDirection': 'N', 'WindSpeed': '1.61 km/h', 'WeatherTemp': '18.33 C', 'RelativeHumidity': '55 %', 'FogLevel': '0 %', 'TimeOfDay': '12:00 pm', 'Date': '2019-05-15', 'EarthRotationSpeedupFactor': 1, 'Unofficial': 0, 'CommercialMode': 'consumer', 'NightMode': 'variable', 'IsFixedSetup': 0, 'StrictLapsChecking': 'default', 'HasOpenRegistration': 0, 'HardcoreLevel': 1, 'NumJokerLaps': 0, 'IncidentLimit': 'unlimited'}, 'TelemetryOptions': {'TelemetryDiskFile': ''}},
+              {'TrackName': 'mosport', 'TrackID': 144, 'TrackLength': '3.91 km', 'TrackDisplayName': 'Canadian Tire Motorsport Park', 'TrackDisplayShortName': 'Mosport', 'TrackConfigName': None,
+               'TrackCity': 'Bowmanville', 'TrackCountry': 'Canada', 'TrackAltitude': '339.74 m', 'TrackLatitude': '44.054339 m', 'TrackLongitude': '-78.674384 m', 'TrackNorthOffset': '1.6678 rad',
+               'TrackNumTurns': 10, 'TrackPitSpeedLimit': '55.98 kph', 'TrackType': 'road course', 'TrackDirection': 'neutral', 'TrackWeatherType': 'Specified / Dynamic Sky',
+               'TrackSkies': 'Partly Cloudy', 'TrackSurfaceTemp': '32.58 C', 'TrackAirTemp': '18.33 C', 'TrackAirPressure': '28.73 Hg', 'TrackWindVel': '0.45 m/s', 'TrackWindDir': '0.00 rad',
+               'TrackRelativeHumidity': '55 %', 'TrackFogLevel': '0 %', 'TrackCleanup': 0, 'TrackDynamicTrack': 1, 'SeriesID': 0, 'SeasonID': 0, 'SessionID': 0, 'SubSessionID': 0, 'LeagueID': 0,
+               'Official': 0, 'RaceWeek': 0, 'EventType': 'Test', 'Category': 'Road', 'SimMode': 'full', 'TeamRacing': 0, 'MinDrivers': 0, 'MaxDrivers': 0, 'DCRuleSet': 'None',
+               'QualifierMustStartRace': 0, 'NumCarClasses': 1, 'NumCarTypes': 1, 'HeatRacing': 0,
+               'WeekendOptions': {'NumStarters': 0, 'StartingGrid': 'single file', 'QualifyScoring': 'best lap', 'CourseCautions': False, 'StandingStart': 0, 'Restarts': 'single file',
+                                  'WeatherType': 'Specified / Dynamic Sky', 'Skies': 'Partly Cloudy', 'WindDirection': 'N', 'WindSpeed': '1.61 km/h', 'WeatherTemp': '18.33 C',
+                                  'RelativeHumidity': '55 %', 'FogLevel': '0 %', 'TimeOfDay': '12:00 pm', 'Date': '2019-05-15', 'EarthRotationSpeedupFactor': 1, 'Unofficial': 0,
+                                  'CommercialMode': 'consumer', 'NightMode': 'variable', 'IsFixedSetup': 0, 'StrictLapsChecking': 'default', 'HasOpenRegistration': 0, 'HardcoreLevel': 1,
+                                  'NumJokerLaps': 0, 'IncidentLimit': 'unlimited'}, 'TelemetryOptions': {'TelemetryDiskFile': ''}},
           'RPM': 0,
           'LapCurrentLapTime': 0,
           'EngineWarnings': 0,
@@ -154,7 +174,7 @@ calcData = {'LastFuelLevel': 0,
             'UserRaceLaps': 0,
             'SessionLength': 86400,
             'CarIdxPitStops': [0] * 64,
-            'CarIdxOnPitRoadOld': [True]*64,
+            'CarIdxOnPitRoadOld': [True] * 64,
             'PitStopsRequired': 1,
             'old_DRS_Status': 0,
             'DRSActivations': 8,
@@ -171,22 +191,22 @@ calcData = {'LastFuelLevel': 0,
             'DRSCounter': 0,
             'P2PCounter': 0,
             'RenderLabel': [
-                True,   # Best
-                True,   # Last
-                True,   # Delta
-                True,   # FuelLevel
-                True,   # FuelCons
-                True,   # FuelLastCons
-                True,   # FuelLaps
-                True,   # FuelAdd
-                True,   # ABS
-                True,   # BBias
-                True,   # Mix
-                True,   # TC1
-                True,   # TC2
-                True,   # Lap
-                True,   # Clock
-                True,   # Remain
+                True,  # Best
+                True,  # Last
+                True,  # Delta
+                True,  # FuelLevel
+                True,  # FuelCons
+                True,  # FuelLastCons
+                True,  # FuelLaps
+                True,  # FuelAdd
+                True,  # ABS
+                True,  # BBias
+                True,  # Mix
+                True,  # TC1
+                True,  # TC2
+                True,  # Lap
+                True,  # Clock
+                True,  # Remain
                 False,  # Elapsed
                 False,  # Joker
                 False,  # DRS
@@ -225,6 +245,7 @@ calcData = {'LastFuelLevel': 0,
             'NLapRaceTime': [0] * 64,
             'TFinishPredicted': [0] * 64,
             'WinnerCarIdx': 0,
+            'DriverCarIdx': 0
             }
 
 # Create RTDB and initialise with
@@ -255,12 +276,12 @@ while not myRTDB.done:
             myRTDB.StartDDU = False
         myRTDB.done = iRRender.render()
     elif myRTDB.StartDDU:
-        print(myRTDB.timeStr+': Starting DDU')
+        print(myRTDB.timeStr + ': Starting DDU')
         iRRender = iDDURender.RenderScreen(myRTDB)
         myRTDB.StartDDU = False
         myRTDB.DDUrunning = True
     if myRTDB.StopDDU:
-        print(myRTDB.timeStr+': Stopping DDU')
+        print(myRTDB.timeStr + ': Stopping DDU')
         iRRender.stop()
         myRTDB.StopDDU = False
         myRTDB.DDUrunning = False

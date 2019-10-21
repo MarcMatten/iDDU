@@ -19,11 +19,13 @@ class iDDUgui(threading.Thread):
             myGui.start(self.db)
             time.sleep(self.rate)
 
+
 class Stream(QtCore.QObject):
     newText = QtCore.pyqtSignal(str)
 
     def write(self, text):
         self.newText.emit(str(text))
+
 
 class Gui(object):
     def __init__(self, db):
@@ -32,9 +34,9 @@ class Gui(object):
         Form = QtWidgets.QWidget()
         Form.setFixedSize(784, 441)
         if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            Form.move(-1920,0)
+            Form.move(-1920, 0)
         else:
-            Form.move(0,1080)
+            Form.move(0, 1080)
 
         self.setupUi(Form, db)
         sys.stdout = Stream(newText=self.onUpdateText)
@@ -462,8 +464,10 @@ class Gui(object):
 
     def UpshiftStrategy(self):
         self.db.UpshiftStrategy = self.comboBox.currentIndex()
-        self.db.UserShiftRPM = [self.spinBox_Gear1.value(), self.spinBox_Gear2.value(), self.spinBox_Gear3.value(), self.spinBox_Gear4.value(), self.spinBox_Gear5.value(), self.spinBox_Gear6.value(), self.spinBox_Gear7.value()]
-        self.db.UserShiftFlag = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(), self.checkBox_Gear6.isChecked(), self.checkBox_Gear7.isChecked()]
+        self.db.UserShiftRPM = [self.spinBox_Gear1.value(), self.spinBox_Gear2.value(), self.spinBox_Gear3.value(), self.spinBox_Gear4.value(), self.spinBox_Gear5.value(), self.spinBox_Gear6.value(),
+                                self.spinBox_Gear7.value()]
+        self.db.UserShiftFlag = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(),
+                                 self.checkBox_Gear6.isChecked(), self.checkBox_Gear7.isChecked()]
         self.retranslateUi(self.Form)
 
     def EnableShiftTone(self):
@@ -473,15 +477,15 @@ class Gui(object):
     def InvokeUserCommand(self):
         try:
             cmd = self.lineEditInvoke.text()
-            print(self.db.timeStr+": >> " + cmd)
+            print(self.db.timeStr + ": >> " + cmd)
             if "=" in cmd:
                 exec(cmd)
                 outstr = cmd.split('=')
-                print(self.db.timeStr+': '+str(eval(outstr[0])))
+                print(self.db.timeStr + ': ' + str(eval(outstr[0])))
             else:
-                print(self.db.timeStr+': '+str(eval(cmd)))
+                print(self.db.timeStr + ': ' + str(eval(cmd)))
         except:
-            print(self.db.timeStr+': User command not working!')
+            print(self.db.timeStr + ': User command not working!')
 
     def onUpdateText(self, text):
         cursor = self.textEdit.textCursor()
@@ -510,8 +514,8 @@ class Gui(object):
     def loadShiftToneSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.Form, 'Load Shift Tone File', './shiftTone', 'CSV(*.csv)')
         i = 0
-        UserShiftRPM = [0,0,0,0,0,0,0]
-        UserShiftFlag = [0,0,0,0,0,0,0]
+        UserShiftRPM = [0, 0, 0, 0, 0, 0, 0]
+        UserShiftFlag = [0, 0, 0, 0, 0, 0, 0]
 
         with open(OpenFileName[0]) as csv_file:
             csv_reader = csv.reader(csv_file)
@@ -555,7 +559,7 @@ class Gui(object):
         time.sleep(10)
         sys.exit()
         reply = QtGui.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                                           "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
             event.accept()
