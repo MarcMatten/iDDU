@@ -10,7 +10,7 @@ nan = float('nan')
 CarNumber = 64
 LapNumber = 500
 CarIdxtLap_temp = [[]*LapNumber]*CarNumber
-for x in range(0,CarNumber):
+for x in range(0, CarNumber):
     CarIdxtLap_temp[x] = [nan]*LapNumber
 
 # data for initialisation of RTDB
@@ -83,7 +83,8 @@ iRData = {'LapBestLapTime': 0,
           'DRS_Status': 0,
           'PushToPass': False,
           'CarIdxF2Time': [],
-          'LapLastLapTime': 0
+          'CarIdxClassPosition': [],
+          'CarIdxPosition': []
           }
 
 # calculated data
