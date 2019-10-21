@@ -296,14 +296,15 @@ class IDDUCalc:
 
             if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
                 pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
-                Dv = self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])
+                deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
-                r = np.interp(Dv, [-10, -1, 0, 1, 10, 30, 40],
+                r = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
                               [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0]])
-                g = np.interp(Dv, [-10, -1, 0, 1, 10, 30, 40],
+                g = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
                               [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1]])
-                b = np.interp(Dv, [-10, -1, 0, 1, 10, 30, 40],
+                b = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
                               [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
+
                 self.db.backgroundColour = (r, g, b)
                 self.db.textColour = self.grey
             else:
@@ -632,17 +633,17 @@ class IDDUCalc:
             self.createTrackFile()
 
     def createTrackFile(self):
-        tempx = np.cumsum(self.dx, dtype=float)
-        tempy = np.cumsum(self.dy, dtype=float)
+        tempx = np.cumsum(self.dx, dtype=float).tolist()
+        tempy = np.cumsum(self.dy, dtype=float).tolist()
 
         dx = tempx[-1] - tempx[0]
         dy = tempy[-1] - tempy[0]
 
-        self.x = np.cumsum(self.dx - dx / len(tempx), dtype=float)
-        self.y = np.cumsum(self.dy - dy / len(tempy), dtype=float)
+        self.x = np.cumsum(np.array(self.dx) - dx / len(tempx), dtype=float)
+        self.y = np.cumsum(np.array(self.dy) - dy / len(tempy), dtype=float)
 
-        width = max(self.x) - min(self.x)
-        height = max(self.y) - min(self.y)
+        width = np.max(self.x) - np.min(self.x)
+        height = np.max(self.y) - np.min(self.y)
 
         scalingFactor = min(400 / height, 720 / width)
 
@@ -651,7 +652,8 @@ class IDDUCalc:
 
         with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
             thewriter = csv.writer(f)
-            for l in range(0, len(self.dist)):
+            NTrackElements = len(self.dist)
+            for l in range(0, NTrackElements):
                 if l > 2:
                     if not self.dist[l - 1] >= self.dist[l]:
                         thewriter.writerow([self.dist[l], self.x[l], self.y[l], self.time[l]])
@@ -659,12 +661,12 @@ class IDDUCalc:
         self.db.map = []
         self.db.x = []
         self.db.y = []
-        for i in range(0, l):
+        for i in range(0, NTrackElements):
             self.db.map.append([float(self.x[i]), float(self.y[i])])
-        self.db.dist = self.dist[0:l]
-        self.db.time = self.time[0:l]
-        self.db.x = self.x[0:l]
-        self.db.y = self.y[0:l]
+        self.db.dist = self.dist[0:NTrackElements]
+        self.db.time = self.time[0:NTrackElements]
+        self.db.x = self.x[0:NTrackElements]
+        self.db.y = self.y[0:NTrackElements]
 
         self.BCreateTrack = False
         self.Logging = False

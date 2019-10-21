@@ -107,11 +107,11 @@ class RenderScreen(RenderMain):
         # self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
 
         # frames
-        self.frames = {}
-        self.frames[0] = Frame('Timing', 10, 10, 385, 230, self.db)
-        self.frames[1] = Frame('Fuel', 405, 10, 385, 280, self.db)
-        self.frames[2] = Frame('Control', 405, 300, 385, 170, self.db)
-        self.frames[3] = Frame('Session Info', 10, 250, 385, 220, self.db)
+        self.frames = list()
+        self.frames.append(Frame('Timing', 10, 10, 385, 230, self.db))
+        self.frames.append(Frame('Fuel', 405, 10, 385, 280, self.db))
+        self.frames.append(Frame('Control', 405, 300, 385, 170, self.db))
+        self.frames.append(Frame('Session Info', 10, 250, 385, 220, self.db))
 
         # List of lables to display
         self.frames[0].addLabel('BestLapStr', LabeledValue('Best', 200, 50, 350, '12:34.567', self.fontSmall, self.fontLarge, self.db, 0), 0)
@@ -356,8 +356,8 @@ class RenderScreen(RenderMain):
 
     def CarOnMap(self, Idx):
         try:
-            x = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.x)
-            y = numpy.interp(float(self.db.CarIdxLapDistPct[Idx]) * 100, self.db.dist, self.db.y)
+            x = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.x).tolist()[0]
+            y = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.y).tolist()[0]
 
             if self.db.DriverInfo['DriverCarIdx'] == Idx:  # if player's car
                 if self.db.RX:
@@ -411,7 +411,7 @@ class RenderScreen(RenderMain):
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
 
     def highlightSection(self, width: int, colour: tuple):
-        timeStamp = numpy.interp(float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100, self.db.dist, self.db.time)
+        timeStamp = numpy.interp([float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100], self.db.dist, self.db.time).tolist()[0]
         timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
         while timeStamp1 < 0:
             timeStamp1 = timeStamp1 + self.db.time[-1]
