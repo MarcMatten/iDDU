@@ -387,14 +387,15 @@ class RenderScreen(RenderMain):
                         self.drawCar(Idx, x, y, dotColour, labelColour)
                 else:
                     return
-        except NameError:
-            print(self.db.timeStr + ': \tNameError')
-            warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
-        except ValueError:
-            print(self.db.timeStr + ': \tValueError')
-            warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+        # except NameError:
+        #     print(self.db.timeStr + ': \tNameError')
+        #     warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+        # except ValueError:
+        #     print(self.db.timeStr + ': \tValueError')
+        #     warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
         # else:
-        #    warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+        except:
+            warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
