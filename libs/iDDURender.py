@@ -145,6 +145,8 @@ class RenderScreen(RenderMain):
         self.done = False
         self.ScreenNumber = 1
 
+        self.snapshot = False
+
     def stop(self):
         # self.done = True
         # self.pygame.quit()
@@ -321,8 +323,8 @@ class RenderScreen(RenderMain):
                 self.warningLabel('GREEN HELD', self.white, self.black)
             if self.db.SessionFlags & 0x2000:
                 self.warningLabel('RANDOM WAVING', self.white, self.black)
-            if self.db.SessionFlags & 0x8000:
-                self.warningLabel('CAUTION WAVING', self.white, self.black)
+            # if self.db.SessionFlags & 0x8000:
+            #     self.warningLabel('CAUTION WAVING', self.white, self.black)
             # if self.db.SessionFlags & 0x10000:
             #     self.warningLabel('BLACK', self.white, self.black)
             if self.db.SessionFlags & 0x20000:
@@ -372,7 +374,8 @@ class RenderScreen(RenderMain):
                     else:
                         labelColour = self.purple  # class leaders
                         dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
-                elif self.db.CarIdxClassPosition[Idx] == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
+                # elif self.db.CarIdxClassPosition[Idx] == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
+                elif Idx == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
                     labelColour = self.black
                     dotColour = self.orange
                 else:
@@ -396,6 +399,12 @@ class RenderScreen(RenderMain):
         # else:
         except:
             warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+            print('Error in iDDURender in CarOnMap')
+            if not self.snapshot:
+                self.db.snapshot()
+                print('RTDB snapshot saved!')
+                self.snapshot = True
+            
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
@@ -442,14 +451,20 @@ class RenderScreen(RenderMain):
 
                 self.pygame.draw.lines(self.screen, colour, False, map1, 20)
                 self.pygame.draw.lines(self.screen, colour, False, map2, 20)
-        except NameError:
-            print(self.db.timeStr + ': \tNameError')
-            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
-        except ValueError:
-            print(self.db.timeStr + ': \tValueError')
-            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
+##        except NameError:
+##            print(self.db.timeStr + ': \tNameError')
+##            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
+##        except ValueError:
+##            print(self.db.timeStr + ': \tValueError')
+##            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
         # else:
         #     warnings.warn(self.db.timeStr + ': Error in highlightSection!')
+        except:
+            print('Error in iDDURender in highlightSection')
+            if not self.snapshot:
+                self.db.snapshot()
+                print('RTDB snapshot saved!')
+                self.snapshot = True
 
     def warningLabel(self, text, colour, textcolour):
         self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100], 0)

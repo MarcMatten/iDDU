@@ -51,6 +51,7 @@ class IDDUCalc:
         self.trackList = None
         self.x = None
         self.y = None
+        self.snapshot = False
 
     def calc(self):
         # Check if DDU is initialised
@@ -182,7 +183,8 @@ class IDDUCalc:
                     self.db.VFuelAdd = 0
 
                 # race length esimation #########################################################################################################
-                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
+                # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit:
                     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
 
@@ -192,8 +194,8 @@ class IDDUCalc:
 
                         self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete'] - 1] = temp_CarIdxtLap
 
-                        if self.db.TimeLimit:  # and not self.db.LapLimit:
-
+                        # if self.db.TimeLimit:  # and not self.db.LapLimit:
+                        try:
                             temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(self.db.CarIdxPitStops[CarIdx_temp])
                             temp_pitstopsremain = temp_pitstopsremain_np.tolist()
                             NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp]))
@@ -220,6 +222,16 @@ class IDDUCalc:
                                     self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx] + 1)
                                 else:
                                     self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
+
+                        except:
+                            print('exceptoion in iDDUcalc!')
+                            print('i:')
+                            print(i)
+                            if not self.snapshot:
+                                self.db.snapshot()
+                                print('RTDB snapshot saved!')
+                                self.snapshot = True
+                                
 
                 # DRS
                 if self.db.DRS:
@@ -413,6 +425,8 @@ class IDDUCalc:
         print(self.db.timeStr + ': Initialising Session ==========================')
 
         self.getTrackFiles()
+
+        self.db.init = True
 
         self.db.BUpshiftToneInitRequest = True
         self.db.FuelConsumptionList = []
