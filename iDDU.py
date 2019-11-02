@@ -191,28 +191,28 @@ calcData = {'LastFuelLevel': 0,
             'DRSCounter': 0,
             'P2PCounter': 0,
             'RenderLabel': [
-                True,  # Best
-                True,  # Last
-                True,  # Delta
-                True,  # FuelLevel
-                True,  # FuelCons
-                True,  # FuelLastCons
-                True,  # FuelLaps
-                True,  # FuelAdd
-                True,  # ABS
-                True,  # BBias
-                True,  # Mix
-                True,  # TC1
-                True,  # TC2
-                True,  # Lap
-                True,  # Clock
-                True,  # Remain
-                False,  # Elapsed
-                False,  # Joker
-                False,  # DRS
-                False,  # P2P
-                True,  # ToGo
-                True,  # Est
+                True,  # 0 Best
+                True,  # 1 Last
+                True,  # 2 Delta
+                True,  # 3 FuelLevel
+                True,  # 4 FuelCons
+                True,  # 5 FuelLastCons
+                True,  # 6 FuelLaps
+                True,  # 7 FuelAdd
+                True,  # 8 ABS
+                True,  # 9 BBias
+                True,  # 10 Mix
+                True,  # 11 TC1
+                True,  # 12 TC2
+                True,  # 13Lap
+                True,  # 14 Clock
+                True,  # 15 Remain
+                False,  # 16 Elapsed
+                False,  # 17 Joker
+                False,  # 18 DRS
+                False,  # 19 P2P
+                True,  # 20 ToGo
+                False,  # 21 Est
             ],
             'P2P': False,
             'DRS': False,

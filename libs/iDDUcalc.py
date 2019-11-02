@@ -470,6 +470,7 @@ class IDDUCalc:
                 self.db.RaceLaps = self.db.UserRaceLaps
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
+                self.db.RenderLabel[21] = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                     print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.RaceLaps))
@@ -493,10 +494,15 @@ class IDDUCalc:
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
-            else:
+                    if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                        self.db.RenderLabel[21] = True
+                    else:
+                        self.db.RenderLabel[21] = False
+            else:  # limited laps
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LapLimit = True
                 self.db.RenderLabel[20] = True
+                self.db.RenderLabel[21] = False
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
@@ -538,7 +544,8 @@ class IDDUCalc:
             # DRS
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.DRSList:
                 self.db.DRS = True
-                self.db.RenderLabel[18] = True
+                if not self.db.WeekendInfo['Category'] == 'Oval':
+                    self.db.RenderLabel[18] = True
                 self.db.DRSCounter = 0
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                     self.db.DRSActivations = 1000
@@ -551,8 +558,9 @@ class IDDUCalc:
             # P2P
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.P2PList:
                 self.db.P2P = True
-                self.db.RenderLabel[19] = True
                 self.db.P2PCounter = 0
+                if not self.db.WeekendInfo['Category'] == 'Oval':
+                    self.db.RenderLabel[19] = True
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                     self.db.P2PActivations = 1000
                 else:
