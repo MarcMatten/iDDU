@@ -245,7 +245,8 @@ calcData = {'LastFuelLevel': 0,
             'NLapRaceTime': [0] * 64,
             'TFinishPredicted': [0] * 64,
             'WinnerCarIdx': 0,
-            'DriverCarIdx': 0
+            'DriverCarIdx': 0,
+            'NLapWinnerRaceTime': 0
             }
 
 # Create RTDB and initialise with

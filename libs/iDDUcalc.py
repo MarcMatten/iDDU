@@ -68,7 +68,8 @@ class IDDUCalc:
                 print(self.db.timeStr + ': Connecting to iRacing')
 
             if self.db.oldSessionNum < self.db.SessionNum:
-                print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+                print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                    'SessionType'])
                 self.initSession()
 
             if self.db.SessionTime < 10:
@@ -91,11 +92,14 @@ class IDDUCalc:
                     self.db.JokerLaps = [0] * NumDrivers
                     self.db.textColorJoker = self.db.textColour
                     for n in range(0, NumResults):
-                        self.db.JokerLaps[self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = \
-                         self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
+                        self.db.JokerLaps[
+                            self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = \
+                            self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n][
+                                'JokerLapsComplete']
 
                     if not self.db.JokerLapsRequired == 0:
-                        self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(self.db.JokerLapsRequired)
+                        self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(
+                            self.db.JokerLapsRequired)
                     else:
                         self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx])
 
@@ -146,8 +150,10 @@ class IDDUCalc:
                     self.dist.append(self.db.LapDistPct * 100)
                     self.time.append(self.db.SessionTime - self.timeLogingStart)
 
-                    self.dx.append(math.cos(self.db.Yaw) * self.db.VelocityX * 0.033 - math.sin(self.db.Yaw) * self.db.VelocityY * 0.033)
-                    self.dy.append(math.cos(self.db.Yaw) * self.db.VelocityY * 0.033 + math.sin(self.db.Yaw) * self.db.VelocityX * 0.033)
+                    self.dx.append(math.cos(self.db.Yaw) * self.db.VelocityX * 0.033 - math.sin(
+                        self.db.Yaw) * self.db.VelocityY * 0.033)
+                    self.dy.append(math.cos(self.db.Yaw) * self.db.VelocityY * 0.033 + math.sin(
+                        self.db.Yaw) * self.db.VelocityX * 0.033)
 
                 # fuel consumption -----------------------------------------------------------------------------------------
                 if len(self.db.FuelConsumptionList) >= 1:
@@ -160,7 +166,9 @@ class IDDUCalc:
                         self.db.Alarm.extend([4])
                     if self.db.BNewLap and not self.db.onPitRoad:
                         fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1)
-                        self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
+                        self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
+                                               self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
+                                                   'DriverCarMaxFuelPct'])
                         if self.db.VFuelAdd == 0:
                             self.ir.pit_command(2, 1)
                             self.ir.pit_command(11)
@@ -184,7 +192,9 @@ class IDDUCalc:
 
                 # race length esimation #########################################################################################################
                 # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
-                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit:
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and \
+                        self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                            'SessionType'] == 'Race' and self.db.TimeLimit:
                     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
 
@@ -196,7 +206,8 @@ class IDDUCalc:
 
                         # if self.db.TimeLimit:  # and not self.db.LapLimit:
                         try:
-                            temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(self.db.CarIdxPitStops[CarIdx_temp])
+                            temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(
+                                self.db.CarIdxPitStops[CarIdx_temp])
                             temp_pitstopsremain = temp_pitstopsremain_np.tolist()
                             NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp]))
 
@@ -205,23 +216,41 @@ class IDDUCalc:
                             CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
 
                             # use this to find winner
-                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(
+                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (
+                                    iDDUhelper.maxList(temp_pitstopsremain,
+                                                       0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(
                                 self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed  # use this to find winner
 
                             # if my value lower than the winners, then + 1 lap
-                            self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp],
-                                                                                                                                                  0.03) + CarIdxtLapSum + (
-                                                                    iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)  # if my value lower than the winners, then + 1 lap
+                            self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
+                                self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + CarIdxtLapSum + (
+                                                                            iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)  # if my value lower than the winners,
+                            # then + 1 lap
 
                             self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
+
+                            # if self.db.WinnerCarIdx == self.db.DriverCarIdx:
+                            #     self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
+                            # else:
+                            #     if self.db.NLapRaceTime[self.db.WinnerCarIdx] >= self.db.NLapRaceTime[self.db.DriverCarIdx]:
+                            #         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx] + 1)
+                            #     else:
+                            #         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
+
+                            temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(self.db.CarIdxPitStops[self.db.DriverCarIdx])
+                            temp_pitstopsremain = temp_pitstopsremain_np.tolist()
+                            CarIdxtLap_cleaned = [x for x in self.db.CarIdxtLap[self.db.DriverCarIdx] if str(x) != 'nan']
+                            CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
+                            NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[self.db.DriverCarIdx]))
+
+                            self.db.NLapWinnerRaceTime = (self.db.TFinishPredicted[self.db.WinnerCarIdx] - CarIdxtLapSum - (
+                                        iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
+                                                                                                                                 0.03) + NLapTimed  # use this to find winner
 
                             if self.db.WinnerCarIdx == self.db.DriverCarIdx:
                                 self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
                             else:
-                                if self.db.NLapRaceTime[self.db.WinnerCarIdx] >= self.db.NLapRaceTime[self.db.DriverCarIdx]:
-                                    self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx] + 1)
-                                else:
-                                    self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
+                                self.db.NLapDriver = float(self.db.NLapWinnerRaceTime)
 
                         except:
                             print('exceptoion in iDDUcalc!')
@@ -231,7 +260,6 @@ class IDDUCalc:
                                 self.db.snapshot()
                                 print('RTDB snapshot saved!')
                                 self.snapshot = True
-                                
 
                 # DRS
                 if self.db.DRS:
@@ -285,7 +313,8 @@ class IDDUCalc:
                 if self.db.WasOnTrack:
                     print(self.db.timeStr + ':\tGetting out of car')
                     print(self.db.timeStr + ': Run: ' + str(self.db.Run))
-                    print(self.db.timeStr + ':\tFuelAvgConsumption: ' + iDDUhelper.roundedStr2(self.db.FuelAvgConsumption))
+                    print(self.db.timeStr + ':\tFuelAvgConsumption: ' + iDDUhelper.roundedStr2(
+                        self.db.FuelAvgConsumption))
                     self.db.WasOnTrack = False
                     self.db.init = True
                 # do if car is not on track but don't do if car is on track ------------------------------------------------
@@ -293,8 +322,9 @@ class IDDUCalc:
 
             # do if sim is running after updating data ---------------------------------------------------------------------
             if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
-                self.db.RemLapValue = max(min(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] - self.db.Lap + 1,
-                                              self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']), 0)
+                self.db.RemLapValue = max(
+                    min(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] - self.db.Lap + 1,
+                        self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']), 0)
                 self.db.RemLapValueStr = str(self.db.RemLapValue)
             else:
                 self.db.RemLapValue = 0
@@ -311,11 +341,14 @@ class IDDUCalc:
                 deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
                 r = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                              [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0]])
+                              [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0],
+                               self.orange[0], self.red[0]])
                 g = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                              [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1]])
+                              [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1],
+                               self.orange[1], self.red[1]])
                 b = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                              [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
+                              [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2],
+                               self.orange[2], self.red[2]])
 
                 self.db.backgroundColour = (r, g, b)
                 self.db.textColour = self.grey
@@ -439,7 +472,8 @@ class IDDUCalc:
             self.db.oldSessionNum = self.db.SessionNum
             # self.SessionInfo = True
             # self.db.WeekendInfo = self.db.WeekendInfo
-            self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct']
+            self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
+                'DriverCarMaxFuelPct']
             self.db.DriverCarIdx = self.db.DriverInfo['DriverCarIdx']
 
             if self.db.WeekendInfo['TrackName'] + '.csv' in self.trackList:
@@ -453,7 +487,8 @@ class IDDUCalc:
             print(self.db.timeStr + ':\tTrackName: ' + self.db.WeekendInfo['TrackDisplayName'])
             print(self.db.timeStr + ':\tEventType: ' + self.db.WeekendInfo['EventType'])
             print(self.db.timeStr + ':\tCategory: ' + self.db.WeekendInfo['Category'])
-            print(self.db.timeStr + ':\tSessionType: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+            print(self.db.timeStr + ':\tSessionType: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                'SessionType'])
 
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.__setattr__('RX', True)
@@ -471,7 +506,8 @@ class IDDUCalc:
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
                 self.db.RenderLabel[21] = False
-                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                    'SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                     print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.RaceLaps))
                     self.db.LapLimit = True
@@ -483,7 +519,8 @@ class IDDUCalc:
                     self.db.RenderLabel[15] = False
                     self.db.RenderLabel[16] = True
                     self.db.TimeLimit = False
-                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
+                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                        'SessionTime'] + ' time')
                     print(self.db.timeStr + ':\tRace mode 0')
                 # limited time
                 else:
@@ -493,7 +530,8 @@ class IDDUCalc:
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     print(self.db.timeStr + ':\tRace mode 1')
-                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                        'SessionTime'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         self.db.RenderLabel[21] = True
                     else:
@@ -510,7 +548,8 @@ class IDDUCalc:
                     self.db.RenderLabel[15] = False
                     self.db.RenderLabel[16] = True
                     print(self.db.timeStr + ':\tRace mode 4')
-                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] + ' time')
+                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                        'SessionTime'] + ' time')
                 # limited time
                 else:
                     # tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
@@ -536,7 +575,8 @@ class IDDUCalc:
                     # else:
                     #     self.db.TimeLimit = False
                     print(self.db.timeStr + ':\tRace mode 5')
-                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'])
+                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
+                        'SessionTime'])
 
             print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.RaceLaps))
             print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))
@@ -636,11 +676,13 @@ class IDDUCalc:
         f.write('CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
         f.write('SessionTime = ' + repr(self.db.SessionTime) + '\n')
         f.write('SessionNum = ' + repr(self.db.SessionNum) + '\n')
-        f.write('ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
+        f.write('ResultsPositions = ' + repr(
+            self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
         f.write('CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
 
         f.write('NLapRaceTime = ' + repr(self.db.NLapRaceTime) + '\n')
+        f.write('NLapWinnerRaceTime = ' + repr(self.db.NLapWinnerRaceTime) + '\n')
         f.write('TFinishPredicted = ' + repr(self.db.TFinishPredicted) + '\n')
         f.write('WinnerCarIdx = ' + repr(self.db.WinnerCarIdx) + '\n')
         f.write('NLapDriver = ' + repr(self.db.NLapDriver) + '\n')
@@ -670,7 +712,8 @@ class IDDUCalc:
         scalingFactor = min(400 / height, 720 / width)
 
         self.x = 400 + (scalingFactor * self.x - (min(scalingFactor * self.x) + max(scalingFactor * self.x)) / 2)
-        self.y = -(240 + (scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y)) / 2)) + 480
+        self.y = -(240 + (
+                scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y)) / 2)) + 480
 
         with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
             thewriter = csv.writer(f)
