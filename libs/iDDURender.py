@@ -182,7 +182,7 @@ class RenderScreen(RenderMain):
         if self.ScreenNumber == 1:
 
             if self.db.init:
-                self.frames[2].reinitFrame(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+                self.frames[3].reinitFrame(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
 
             self.screen.fill(self.db.backgroundColour)
             if self.db.FlagException:
