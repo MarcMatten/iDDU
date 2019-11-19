@@ -6,6 +6,7 @@ import numpy as np
 import os
 import glob
 from datetime import datetime
+import winsound
 
 
 class IDDUCalc:
@@ -635,6 +636,7 @@ class IDDUCalc:
 
     def newLap(self):
         # Lap Counting
+        winsound.Beep(200, 200)
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
@@ -671,7 +673,6 @@ class IDDUCalc:
             self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
         f.write('CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
-
         f.write('NLapRaceTime = ' + repr(self.db.NLapRaceTime) + '\n')
         f.write('NLapWinnerRaceTime = ' + repr(self.db.NLapWinnerRaceTime) + '\n')
         f.write('TFinishPredicted = ' + repr(self.db.TFinishPredicted) + '\n')
@@ -681,7 +682,10 @@ class IDDUCalc:
         f.write('LapLimit = ' + repr(self.db.LapLimit) + '\n')
         f.write('SessionLength = ' + repr(self.db.SessionLength) + '\n')
         f.write('PitStopDelta = ' + repr(self.db.PitStopDelta) + '\n')
-        f.write('DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
+        f.write('CarIdxOnPitRoad = ' + repr(self.db.CarIdxOnPitRoad) + '\n')
+        f.write('CarIdxLapDistPct = ' + repr(self.db.CarIdxLapDistPct) + '\n')
+        f.write('PaceCarIdx = ' + repr(self.db.DriverInfo['PaceCarIdx']) + '\n')
+
         f.close()
 
         if self.BCreateTrack and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
