@@ -219,38 +219,12 @@ class IDDUCalc:
                             self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (
                                     iDDUhelper.maxList(temp_pitstopsremain,
                                                        0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(
-                                self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed  # use this to find winner
+                                self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed - self.db.ResultsPositions[i]['Lap']  # use this to find winner
 
                             # if my value lower than the winners, then + 1 lap
                             self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
                                 self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + CarIdxtLapSum + (
-                                                                            iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)  # if my value lower than the winners,
-                            # then + 1 lap
-
-                            self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
-
-                            # if self.db.WinnerCarIdx == self.db.DriverCarIdx:
-                            #     self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
-                            # else:
-                            #     if self.db.NLapRaceTime[self.db.WinnerCarIdx] >= self.db.NLapRaceTime[self.db.DriverCarIdx]:
-                            #         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx] + 1)
-                            #     else:
-                            #         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
-
-                            temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(self.db.CarIdxPitStops[self.db.DriverCarIdx])
-                            temp_pitstopsremain = temp_pitstopsremain_np.tolist()
-                            CarIdxtLap_cleaned = [x for x in self.db.CarIdxtLap[self.db.DriverCarIdx] if str(x) != 'nan']
-                            CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
-                            NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[self.db.DriverCarIdx]))
-
-                            self.db.NLapWinnerRaceTime = (self.db.TFinishPredicted[self.db.WinnerCarIdx] - CarIdxtLapSum - (
-                                        iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
-                                                                                                                                 0.03) + NLapTimed  # use this to find winner
-
-                            if self.db.WinnerCarIdx == self.db.DriverCarIdx:
-                                self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
-                            else:
-                                self.db.NLapDriver = float(self.db.NLapWinnerRaceTime)
+                                                                            iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)
 
                         except:
                             print('exceptoion in iDDUcalc!')
@@ -260,6 +234,23 @@ class IDDUCalc:
                                 self.db.snapshot()
                                 print('RTDB snapshot saved!')
                                 self.snapshot = True
+
+                    self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
+
+                    temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(self.db.CarIdxPitStops[self.db.DriverCarIdx])
+                    temp_pitstopsremain = temp_pitstopsremain_np.tolist()
+                    CarIdxtLap_cleaned = [x for x in self.db.CarIdxtLap[self.db.DriverCarIdx] if str(x) != 'nan']
+                    CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
+                    NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[self.db.DriverCarIdx]))
+
+                    self.db.NLapWinnerRaceTime = (self.db.TFinishPredicted[self.db.WinnerCarIdx] - CarIdxtLapSum - (
+                                iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
+                                                                                                                         0.03) + NLapTimed  # use this to find winner
+
+                    if self.db.WinnerCarIdx == self.db.DriverCarIdx:
+                        self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
+                    else:
+                        self.db.NLapDriver = float(self.db.NLapWinnerRaceTime)
 
                 # DRS
                 if self.db.DRS:
