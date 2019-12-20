@@ -400,10 +400,10 @@ class RenderScreen(RenderMain):
         except:
             warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
             print('Error in iDDURender in CarOnMap')
-            if not self.snapshot:
-                self.db.snapshot()
-                print('RTDB snapshot saved!')
-                self.snapshot = True
+##            if not self.snapshot:
+##                self.db.snapshot()
+##                print('RTDB snapshot saved!')
+##                self.snapshot = True
             
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
