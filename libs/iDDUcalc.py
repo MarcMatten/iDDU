@@ -499,7 +499,7 @@ class IDDUCalc:
                 self.db.RaceLaps = self.db.UserRaceLaps
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
-                self.db.RenderLabel[21] = False
+                #self.db.RenderLabel[21] = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                     'SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
@@ -528,13 +528,13 @@ class IDDUCalc:
                         'SessionTime'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         self.db.RenderLabel[21] = True
-                    else:
-                        self.db.RenderLabel[21] = False
+                    #else:
+                        #self.db.RenderLabel[21] = False
             else:  # limited laps
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LapLimit = True
                 self.db.RenderLabel[20] = True
-                self.db.RenderLabel[21] = False
+                #self.db.RenderLabel[21] = False
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
