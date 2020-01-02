@@ -458,6 +458,10 @@ class IDDUCalc:
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.oldLap = 0
+        self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
+        self.db.JokerLapsRequired = 0
+        self.db.PitStopsRequired = 0
+        self.db.MapHighlight = False
 
         self.db.CarIdxtLap = self.db.CarIdxtLap_temp
 
@@ -487,6 +491,7 @@ class IDDUCalc:
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.__setattr__('RX', True)
                 self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
+                self.db.MapHighlight = True
                 self.db.RenderLabel[17] = True
                 print(self.db.timeStr + ':\tDirt Racing')
             else:
@@ -499,7 +504,7 @@ class IDDUCalc:
                 self.db.RaceLaps = self.db.UserRaceLaps
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
-                #self.db.RenderLabel[21] = False
+                # self.db.RenderLabel[21] = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                     'SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
@@ -523,18 +528,26 @@ class IDDUCalc:
                     self.db.TimeLimit = True
                     tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+                    if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                        if self.db.SessionLength > 2100:
+                            self.db.PitStopsRequired = 1
+                            self.db.MapHighlight = True
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                         'SessionTime'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         self.db.RenderLabel[21] = True
-                    #else:
-                        #self.db.RenderLabel[21] = False
+                    # else:
+                        # self.db.RenderLabel[21] = False
             else:  # limited laps
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LapLimit = True
                 self.db.RenderLabel[20] = True
-                #self.db.RenderLabel[21] = False
+                # self.db.RenderLabel[21] = False
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    if (self.db.TrackLength*self.db.RaceLaps) > 145:
+                        self.db.PitStopsRequired = 1
+                        self.db.MapHighlight = True
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
