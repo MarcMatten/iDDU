@@ -463,7 +463,7 @@ class IDDUCalc:
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
 
-        self.db.CarIdxtLap = self.db.CarIdxtLap_temp
+        nan = float('nan')
 
         if self.db.startUp:
             self.db.StartDDU = True
@@ -584,6 +584,24 @@ class IDDUCalc:
                     print(self.db.timeStr + ':\tRace mode 5')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                         'SessionTime'])
+
+            CarNumber = len(self.db.DriverInfo['Drivers']) + 2
+            if not self.db.LapLimit:
+                LapNumber = self.db.SessionLength/(self.db.TrackLength*13) + 2
+            else:
+                if self.db.TimeLimit:
+                    LapNumber = self.db.RaceLaps + 3
+                else:
+                    LapNumber = 500
+
+            CarIdxtLap_temp = [[] * LapNumber] * CarNumber
+            for x in range(0, CarNumber):
+                CarIdxtLap_temp[x] = [nan] * LapNumber
+
+            self.db.CarIdxtLap = CarIdxtLap_temp
+
+            print(self.db.timeStr + ':\tinit LapNumber: ' + str(LapNumber))
+            print(self.db.timeStr + ':\tinit CarNumber: ' + str(CarNumber))
 
             print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.RaceLaps))
             print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))

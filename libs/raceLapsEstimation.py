@@ -72,4 +72,7 @@ class raceLapsEstimation(threading.Thread):
                         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
                     else:
                         self.db.NLapDriver = float(self.db.NLapWinnerRaceTime)
+
+                    print(self.db.timeStr + ':\tinit WinnerCarIdx: ' + str(self.db.WinnerCarIdx))
+                    print(self.db.timeStr + ':\tinit NLapDriver: ' + str(self.db.NLapDriver))
             time.sleep(self.rate)
