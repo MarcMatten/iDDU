@@ -243,8 +243,8 @@ class RenderScreen(RenderMain):
                     self.db.P2PStr = str(int(P2PRemaining))
 
             # LabelStrings
-            self.db.BestLapStr = iDDUhelper.convertTimeMMSSsss(self.db.LapBestLapTime)
-            self.db.LastLapStr = iDDUhelper.convertTimeMMSSsss(self.db.LapLastLapTime)
+            self.db.BestLapStr = iDDUhelper.convertTimeMMSSsss(max(0, self.db.LapBestLapTime))
+            self.db.LastLapStr = iDDUhelper.convertTimeMMSSsss(max(0, self.db.LapLastLapTime))
             self.db.DeltaBestStr = iDDUhelper.convertDelta(self.db.LapDeltaToSessionBestLap)
 
             self.db.dcTractionControlStr = iDDUhelper.roundedStr0(self.db.dcTractionControl)
@@ -255,22 +255,22 @@ class RenderScreen(RenderMain):
             self.db.dcABSStr = iDDUhelper.roundedStr0(self.db.dcABS)
 
             self.db.FuelLevelStr = iDDUhelper.roundedStr2(self.db.FuelLevel)
-            self.db.FuelAvgConsStr = iDDUhelper.roundedStr2(self.db.FuelAvgConsumption)
-            self.db.FuelLastConsStr = iDDUhelper.roundedStr2(self.db.FuelLastCons)
+            self.db.FuelAvgConsStr = iDDUhelper.roundedStr2(max(0, self.db.FuelAvgConsumption))
+            self.db.FuelLastConsStr = iDDUhelper.roundedStr2(max(0, self.db.FuelLastCons))
             self.db.FuelLapsStr = iDDUhelper.roundedStr1(self.db.NLapRemaining)
-            self.db.FuelAddStr = iDDUhelper.roundedStr1(self.db.VFuelAdd)
+            self.db.FuelAddStr = iDDUhelper.roundedStr1(max(0, self.db.VFuelAdd))
 
             if self.db.LapLimit:
-                self.db.LapStr = str(self.db.Lap) + '/' + str(self.db.RaceLaps)
+                self.db.LapStr = str(max(0, self.db.Lap)) + '/' + str(self.db.RaceLaps)
                 self.db.ToGoStr = str(self.db.RaceLaps - self.db.Lap + 1)
             else:
-                self.db.LapStr = str(self.db.Lap)
-                self.db.ToGoStr = '000'
+                self.db.LapStr = str(max(0, self.db.Lap))
+                self.db.ToGoStr = '0'
             self.db.ClockStr = self.db.timeStr
             if self.db.RX:
                 self.db.JokerStr = self.db.JokerStr
-            self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTime)
-            self.db.RemainingStr = iDDUhelper.convertTimeHHMMSS(self.db.SessionTimeRemain)
+            self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(max(0, self.db.SessionTime))
+            self.db.RemainingStr = iDDUhelper.convertTimeHHMMSS(max(0, self.db.SessionTimeRemain))
             self.db.EstStr = iDDUhelper.roundedStr1(self.db.NLapDriver)
 
             for i in range(0, len(self.frames)):
@@ -288,11 +288,12 @@ class RenderScreen(RenderMain):
 
             self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.map, 5)
 
-            for n in range(0, len(self.db.DriverInfo['Drivers'])):
+            for n in range(1, len(self.db.DriverInfo['Drivers'])):
                 temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
                 if not temp_CarIdx == self.db.DriverCarIdx:
                     self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
             self.CarOnMap(self.db.DriverCarIdx)
+            self.CarOnMap(0)
 
         if self.db.IsOnTrack:
             # warning and alarm messages
@@ -400,17 +401,17 @@ class RenderScreen(RenderMain):
         except:
             warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
             print('Error in iDDURender in CarOnMap')
-##            if not self.snapshot:
-##                self.db.snapshot()
-##                print('RTDB snapshot saved!')
-##                self.snapshot = True
+            if not self.snapshot:
+                self.db.snapshot()
+                print('RTDB snapshot saved!')
+                self.snapshot = True
             
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
         Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][Idx]['CarNumber'], True, labelColour)
         if self.db.CarIdxOnPitRoad[Idx]:
             self.pygame.draw.circle(self.screen, self.yellow, [int(x), int(y)], 12, 0)
-        elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+        elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired > 0 and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
             self.pygame.draw.circle(self.screen, self.green, [int(x), int(y)], 12, 0)
         self.pygame.draw.circle(self.screen, dotColour, [int(x), int(y)], 10, 0)
         self.screen.blit(Label, (int(x) - 6, int(y) - 7))

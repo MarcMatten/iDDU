@@ -212,7 +212,7 @@ calcData = {'LastFuelLevel': 0,
                 False,  # 18 DRS
                 False,  # 19 P2P
                 True,  # 20 ToGo
-                True,  # 21 Est
+                False,  # 21 Est
             ],
             'P2P': False,
             'DRS': False,
@@ -259,7 +259,7 @@ myRTDB.initialise(calcData)
 thread1 = RTDB.iRThread(myRTDB, list(iRData.keys()), 0.01)
 thread2 = UpshiftTone.UpShiftTone(myRTDB, 0.01)
 thread3 = iDDUgui(myRTDB, 0.1)
-thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 5)
+thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 15)
 thread1.start()
 time.sleep(1)
 thread3.start()

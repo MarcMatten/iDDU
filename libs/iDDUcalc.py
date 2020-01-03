@@ -504,7 +504,7 @@ class IDDUCalc:
                 self.db.RaceLaps = self.db.UserRaceLaps
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
-                # self.db.RenderLabel[21] = False
+                self.db.RenderLabel[21] = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                     'SessionLaps'] + ' laps')
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
@@ -537,13 +537,13 @@ class IDDUCalc:
                         'SessionTime'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         self.db.RenderLabel[21] = True
-                    # else:
-                        # self.db.RenderLabel[21] = False
+                    else:
+                        self.db.RenderLabel[21] = False
             else:  # limited laps
                 self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LapLimit = True
                 self.db.RenderLabel[20] = True
-                # self.db.RenderLabel[21] = False
+                self.db.RenderLabel[21] = False
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                     if (self.db.TrackLength*self.db.RaceLaps) > 145:
                         self.db.PitStopsRequired = 1
@@ -587,12 +587,16 @@ class IDDUCalc:
 
             CarNumber = len(self.db.DriverInfo['Drivers']) + 2
             if not self.db.LapLimit:
-                LapNumber = self.db.SessionLength/(self.db.TrackLength*13) + 2
+                LapNumber = int(self.db.SessionLength/(self.db.TrackLength*13)) + 2
             else:
                 if self.db.TimeLimit:
-                    LapNumber = self.db.RaceLaps + 3
+                    LapNumber = int(self.db.SessionLength / (self.db.TrackLength * 13)) + 2
+                    # LapNumber = self.db.RaceLaps + 3
                 else:
                     LapNumber = 500
+
+            print(LapNumber)
+            print(CarNumber)
 
             CarIdxtLap_temp = [[] * LapNumber] * CarNumber
             for x in range(0, CarNumber):
