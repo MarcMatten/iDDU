@@ -262,7 +262,8 @@ class RenderScreen(RenderMain):
 
             if self.db.LapLimit:
                 self.db.LapStr = str(max(0, self.db.Lap)) + '/' + str(self.db.RaceLaps)
-                self.db.ToGoStr = str(self.db.RaceLaps - self.db.Lap + 1)
+                self.db.ToGoStr = iDDUhelper.roundedStr1(max(0, self.db.RaceLaps - self.db.Lap + 1 - self.db.CarIdxLapDistPct[self.db.DriverCarIdx]))
+
             else:
                 self.db.LapStr = str(max(0, self.db.Lap))
                 self.db.ToGoStr = '0'
