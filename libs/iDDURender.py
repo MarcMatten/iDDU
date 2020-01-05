@@ -40,6 +40,7 @@ class RenderMain:
         self.fontSmall = self.pygame.font.Font("files\KhmerUI.ttf", 20)
         self.fontMedium = self.pygame.font.Font("files\KhmerUI.ttf", 40)
         self.fontLarge = self.pygame.font.Font("files\KhmerUI.ttf", 60)
+        self.fontGear = self.pygame.font.Font("files\KhmerUI.ttf", 163)
         self.fontReallyLarge = self.pygame.font.Font("files\KhmerUI.ttf", 350)
         self.fontHuge = self.pygame.font.Font("files\KhmerUI.ttf", 480)
 
@@ -108,38 +109,77 @@ class RenderScreen(RenderMain):
 
         # frames
         self.frames = list()
-        self.frames.append(Frame('Timing', 10, 10, 385, 230, self.db))
-        self.frames.append(Frame('Fuel', 405, 10, 385, 280, self.db))
-        self.frames.append(Frame('Control', 405, 300, 385, 170, self.db))
-        self.frames.append(Frame('Session Info', 10, 250, 385, 220, self.db))
+        # self.frames.append(Frame('Timing', 10, 10, 385, 230, self.db))
+        # self.frames.append(Frame('Fuel', 405, 10, 385, 280, self.db))
+        # self.frames.append(Frame('Control', 405, 300, 385, 170, self.db))
+        # self.frames.append(Frame('Session Info', 10, 250, 385, 220, self.db))
+
+        self.frames.append(Frame('Timing', 10, 10, 287, 267, self.db))
+        self.frames.append(Frame('Gear', 307, 10, 114, 178, self.db))
+        self.frames.append(Frame('Session Info', 431, 10, 359, 267, self.db))
+        self.frames.append(Frame('Speed', 307, 198, 114, 79, self.db))
+        self.frames.append(Frame('Control', 10, 287, 287, 183, self.db))
+        self.frames.append(Frame('Fuel', 307, 287, 483, 183, self.db))
 
         # List of lables to display
-        self.frames[0].addLabel('BestLapStr', LabeledValue('Best', 200, 50, 350, '12:34.567', self.fontSmall, self.fontLarge, self.db, 0), 0)
-        self.frames[0].addLabel('LastLapStr', LabeledValue('Last', 200, 120, 350, '00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 1)
-        self.frames[0].addLabel('DeltaBestStr', LabeledValue('DBest', 200, 190, 350, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 2)
+        # textColourTag: 1 = FuelAdd, 2 = DRS, 3 = P2P, 4 = Joker
+        # alarmTag: 1 = TC, 2 = Fuel Level, 3 = Fuel laps, 4 = P2P, 5 = DRS, 6 = Joker, 7 = Shift
+        # self.frames[0].addLabel('BestLapStr', LabeledValue('Best', 200, 50, 350, '12:34.567', self.fontSmall, self.fontLarge, self.db, 0), 0)
+        # self.frames[0].addLabel('LastLapStr', LabeledValue('Last', 200, 120, 350, '00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 1)
+        # self.frames[0].addLabel('DeltaBestStr', LabeledValue('DBest', 200, 190, 350, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0), 2)
+        #
+        # self.frames[1].addLabel('FuelLevelStr', LabeledValue('Fuel', 607, 60, 250, '-', self.fontSmall, self.fontLarge, self.db, 0), 3)
+        # self.frames[1].addLabel('FuelAvgConsStr', LabeledValue('Avg', 513, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 4)
+        # self.frames[1].addLabel('FuelLastConsStr', LabeledValue('Last', 700, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 5)
+        # self.frames[1].addLabel('FuelLapsStr', LabeledValue('Laps', 513, 200, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 6)
+        # self.frames[1].addLabel('FuelAddStr', LabeledValue('Add', 700, 200, 180, '-', self.fontSmall, self.fontLarge, self.db, 1), 7)
+        #
+        # self.frames[2].addLabel('dcABSStr', LabeledValue('ABS', 725, 350, 105, '-', self.fontSmall, self.fontLarge, self.db, 0), 8)
+        # self.frames[2].addLabel('dcBrakeBiasStr', LabeledValue('BBias', 516, 350, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 9)
+        # self.frames[2].addLabel('dcFuelMixtureStr', LabeledValue('Mix', 725, 425, 100, '-', self.fontSmall, self.fontLarge, self.db, 0), 10)
+        # self.frames[2].addLabel('dcTractionControlStr', LabeledValue('TC1', 469, 425, 100, '-', self.fontSmall, self.fontLarge, self.db, 0), 11)
+        # self.frames[2].addLabel('dcTractionControl2Str', LabeledValue('TC2', 607, 425, 100, '-', self.fontSmall, self.fontLarge, self.db, 0), 12)
+        #
+        # self.frames[3].addLabel('LapStr', LabeledValue('Lap', 100, 360, 140, '-', self.fontSmall, self.fontLarge, self.db, 0), 13)
+        # self.frames[3].addLabel('ClockStr', LabeledValue('Clock', 350, 450, 50, '-', self.fontTiny, self.fontSmall, self.db, 0), 14)
+        # self.frames[3].addLabel('RemainingStr', LabeledValue('Remaining', 200, 290, 350, '-', self.fontSmall, self.fontLarge, self.db, 0), 15)
+        # self.frames[3].addLabel('ElapsedStr', LabeledValue('Elapsed', 200, 290, 350, '-', self.fontSmall, self.fontLarge, self.db, 0), 16)
+        # self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '0/0', self.fontSmall, self.fontLarge, self.db, 4), 17)
+        # self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 295, 360, 160, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
+        # self.frames[3].addLabel('EstStr', LabeledValue('Est', 105, 425, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0), 21)
 
-        self.frames[1].addLabel('FuelLevelStr', LabeledValue('Fuel', 607, 60, 250, '-', self.fontSmall, self.fontLarge, self.db, 0), 3)
-        self.frames[1].addLabel('FuelAvgConsStr', LabeledValue('Avg', 513, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 4)
-        self.frames[1].addLabel('FuelLastConsStr', LabeledValue('Last', 700, 130, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 5)
-        self.frames[1].addLabel('FuelLapsStr', LabeledValue('Laps', 513, 200, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 6)
-        self.frames[1].addLabel('FuelAddStr', LabeledValue('Add', 700, 200, 180, '-', self.fontSmall, self.fontLarge, self.db, 1), 7)
+        self.frames[0].addLabel('BestLapStr', LabeledValue2('Best', 21, 26, 265, '12:34.567', self.fontSmall, self.fontLarge, self.db, 0, 0), 0)
+        self.frames[0].addLabel('LastLapStr', LabeledValue2('Last', 21, 110, 265, '00:00.000', self.fontSmall, self.fontLarge, self.db, 0, 0), 1)
+        self.frames[0].addLabel('DeltaBestStr', LabeledValue2('DBest', 21, 194, 265, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0, 0), 2)
 
-        self.frames[2].addLabel('dcABSStr', LabeledValue('ABS', 725, 350, 105, '-', self.fontSmall, self.fontLarge, self.db, 0), 8)
-        self.frames[2].addLabel('dcBrakeBiasStr', LabeledValue('BBias', 516, 350, 180, '-', self.fontSmall, self.fontLarge, self.db, 0), 9)
-        self.frames[2].addLabel('dcFuelMixtureStr', LabeledValue('Mix', 725, 425, 100, '-', self.fontSmall, self.fontLarge, self.db, 0), 10)
-        self.frames[2].addLabel('dcTractionControlStr', LabeledValue('TC1', 469, 425, 100, '-', self.fontSmall, self.fontLarge, self.db, 0), 11)
-        self.frames[2].addLabel('dcTractionControl2Str', LabeledValue('TC2', 607, 425, 100, '-', self.fontSmall, self.fontLarge, self.db, 0), 12)
+        self.frames[1].addLabel('GearStr', SimpleValue(318, -9, 92, '-', self.fontGear, self.db, 0, 7, 1), 22)
 
-        self.frames[3].addLabel('LapStr', LabeledValue('Lap', 100, 360, 140, '-', self.fontSmall, self.fontLarge, self.db, 0), 13)
-        self.frames[3].addLabel('ClockStr', LabeledValue('Clock', 350, 450, 50, '-', self.fontTiny, self.fontSmall, self.db, 0), 14)
-        self.frames[3].addLabel('RemainingStr', LabeledValue('Remaining', 200, 290, 350, '-', self.fontSmall, self.fontLarge, self.db, 0), 15)
-        self.frames[3].addLabel('ElapsedStr', LabeledValue('Elapsed', 200, 290, 350, '-', self.fontSmall, self.fontLarge, self.db, 0), 16)
-        self.frames[3].addLabel('JokerStr', LabeledValue('Joker', 105, 425, 160, '0/0', self.fontSmall, self.fontLarge, self.db, 4), 17)
-        self.frames[3].addLabel('DRSStr', LabeledValue('DRS', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 2), 18)
-        self.frames[3].addLabel('P2PStr', LabeledValue('P2P', 105, 425, 160, '0', self.fontSmall, self.fontLarge, self.db, 3), 19)
-        # self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 260, 399, 40, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
-        self.frames[3].addLabel('ToGoStr', LabeledValue('To Go', 295, 360, 160, '100', self.fontSmall, self.fontLarge, self.db, 3), 20)
-        self.frames[3].addLabel('EstStr', LabeledValue('Est', 105, 425, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0), 21)
+        self.frames[2].addLabel('SpeedStr', SimpleValue(318, 194, 92, '-', self.fontLarge, self.db, 0, 0, 0), 23)
+
+        self.frames[3].addLabel('RemainingStr', LabeledValue2('Remaining', 442, 26, 220, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 15)
+        self.frames[3].addLabel('ElapsedStr', LabeledValue2('Elapsed', 442, 26, 220, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 16)
+        self.frames[3].addLabel('JokerStr', LabeledValue2('Joker', 689, 26, 90, '0/0', self.fontSmall, self.fontLarge, self.db, 4, 6), 17)
+        self.frames[3].addLabel('LapStr', LabeledValue2('Lap', 442, 110, 160, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 13)
+        self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 662, 110, 117, '100', self.fontSmall, self.fontLarge, self.db, 0, 0), 20)
+        self.frames[3].addLabel('PosStr', LabeledValue2('Pos', 442, 194, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0, 0), 21)
+        self.frames[3].addLabel('EstStr', LabeledValue2('Est', 654, 194, 125, '0.0', self.fontSmall, self.fontLarge, self.db, 0, 0), 21)
+
+        self.frames[4].addLabel('dcBrakeBiasStr', LabeledValue2('BBias', 21, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 9)
+        self.frames[4].addLabel('dcABSStr', LabeledValue2('ABS', 219, 303, 67, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 8)
+        self.frames[4].addLabel('dcTractionControlStr', LabeledValue2('TC1', 21, 387, 67, '-', self.fontSmall, self.fontLarge, self.db, 0, 1), 11)
+        self.frames[4].addLabel('dcTractionControl2Str', LabeledValue2('TC2', 120, 387, 67, '-', self.fontSmall, self.fontLarge, self.db, 0, 1), 12)
+        self.frames[4].addLabel('DRSStr', LabeledValue2('DRS', 219, 387, 67, '0', self.fontSmall, self.fontLarge, self.db, 2, 5), 18)
+        self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 219, 387, 67, '0', self.fontSmall, self.fontLarge, self.db, 3, 4), 19)
+
+        self.frames[5].addLabel('FuelLevelStr', LabeledValue2('Remaining', 318, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 0, 2), 3)
+        self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 515, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 1, 0), 7)
+        self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 712, 303, 67, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 10)
+        self.frames[5].addLabel('FuelLapsStr', LabeledValue2('Laps', 318, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 3), 6)
+        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 481, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 5)
+        self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 644, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 4)
+
+
+        #self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 270, 320, 120, '100', self.fontSmall, self.fontLarge, self.db, 3, 3), 20)
 
         # misc
         self.done = False
@@ -254,11 +294,19 @@ class RenderScreen(RenderMain):
             self.db.dcThrottleShapeStr = iDDUhelper.roundedStr0(self.db.dcThrottleShape)
             self.db.dcABSStr = iDDUhelper.roundedStr0(self.db.dcABS)
 
-            self.db.FuelLevelStr = iDDUhelper.roundedStr2(self.db.FuelLevel)
+            self.db.FuelLevelStr = iDDUhelper.roundedStr1(self.db.FuelLevel)
             self.db.FuelAvgConsStr = iDDUhelper.roundedStr2(max(0, self.db.FuelAvgConsumption))
             self.db.FuelLastConsStr = iDDUhelper.roundedStr2(max(0, self.db.FuelLastCons))
             self.db.FuelLapsStr = iDDUhelper.roundedStr1(self.db.NLapRemaining)
             self.db.FuelAddStr = iDDUhelper.roundedStr1(max(0, self.db.VFuelAdd))
+
+            self.db.SpeedStr = iDDUhelper.roundedStr0(max(0, self.db.Speed))
+            if self.db.Gear > 0:
+                self.db.GearStr = str(int(self.db.Gear))
+            elif self.db.Gear == 0:
+                self.db.GearStr = 'N'
+            elif self.db.Gear < 0:
+                self.db.GearStr = 'R'
 
             if self.db.LapLimit:
                 self.db.LapStr = str(max(0, self.db.Lap)) + '/' + str(self.db.RaceLaps)
@@ -571,29 +619,36 @@ class LabeledValue(RenderMain):
 
 
 class LabeledValue2(RenderMain):
-    def __init__(self, title, x, y, width, initValue, labFont, valFont, db, colourTag):
+    def __init__(self, title, x, y, width, initValue, labFont, valFont, db, colourTag, alarmTag):
         RenderMain.__init__(self, db)
-        self.x = x
+        self.x = x-2
         self.y = y
         self.title = title
-        self.width = width
+        self.width = width+4
         self.value = initValue
         self.valFont = valFont
         self.labFont = labFont
+        # self.textColour = textColour
         self.colourTag = colourTag
+        self.alarmTag = alarmTag
         # self.ID = ID
         if self.colourTag == 1:
-            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
         elif self.colourTag == 2:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDRS)
         elif self.colourTag == 3:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
+        elif self.colourTag == 4:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourJoker)
         else:
-            self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
+        # self.LabLabel = self.labFont.render(self.title, True, self.textColour)
+        # self.ValLabel = self.valFont.render(self.value, True, self.textColour)
         self.LabSize = labFont.size(self.title)
         self.ValSize = self.valFont.size(self.value)
 
@@ -609,13 +664,87 @@ class LabeledValue2(RenderMain):
         elif self.colourTag == 3:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourP2P)
+        elif self.colourTag == 4:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourJoker)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
         self.ValSize = self.valFont.size(self.value)
 
-        self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
-        self.screen.blit(self.ValLabel, (self.x + self.width / 2, self.y + 15))
+        # self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
+        # self.screen.blit(self.ValLabel, (self.x + self.width / 2, self.y + 15))
+
+        if not self.alarmTag == 0:
+            if self.db.Alarm2[self.alarmTag] == 1:
+                self.pygame.draw.rect(self.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+            elif self.db.Alarm2[self.alarmTag] == 2:
+                self.pygame.draw.rect(self.screen, self.orange, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+            elif self.db.Alarm2[self.alarmTag] == 3:
+                self.pygame.draw.rect(self.screen, self.green, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+
+        self.screen.blit(self.LabLabel, (self.x, self.y))
+        self.screen.blit(self.ValLabel, (self.x + self.width - self.ValSize[0], self.y + 15))
+
+        # def setTextColour(self, colour):
+        #     self.textColour = colour
+        #     self.LabLabel = self.labFont.render(self.title, True, colour)
+        #     self.ValLabel = self.valFont.render(self.value, True, colour)
+
+
+class SimpleValue(RenderMain):
+    def __init__(self, x, y, width, initValue, valFont, db, colourTag, alarmTag, center):
+        RenderMain.__init__(self, db)
+        self.x = x-2
+        self.y = y
+        self.width = width+4
+        self.value = initValue
+        self.valFont = valFont
+        self.colourTag = colourTag
+        self.alarmTag = alarmTag
+        self.center = center
+        # self.ID = ID
+        if self.colourTag == 1:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
+        elif self.colourTag == 2:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
+        elif self.colourTag == 3:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
+        elif self.colourTag == 4:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
+        else:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
+        self.ValSize = self.valFont.size(self.value)
+
+    def drawLabel(self, value):
+        # if self.db.RenderLabel[self.ID]:
+        self.value = value
+        if self.colourTag == 1:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
+        elif self.colourTag == 2:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDRS)
+        elif self.colourTag == 3:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourP2P)
+        elif self.colourTag == 4:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
+        else:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
+        self.ValSize = self.valFont.size(self.value)
+
+        # self.screen.blit(self.LabLabel, (self.x - self.width / 2, self.y))
+        # self.screen.blit(self.ValLabel, (self.x + self.width / 2, self.y + 15))
+
+        if not self.alarmTag == 0:
+            if self.db.Alarm2[self.alarmTag] == 1:
+                self.pygame.draw.rect(self.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+            elif self.db.Alarm2[self.alarmTag] == 2:
+                self.pygame.draw.rect(self.screen, self.orange, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+            elif self.db.Alarm2[self.alarmTag] == 3:
+                self.pygame.draw.rect(self.screen, self.green, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+        if self.center:
+            self.screen.blit(self.ValLabel, (self.x + self.width/2 - self.ValSize[0]/2, self.y + 15))
+        else:
+            self.screen.blit(self.ValLabel, (self.x + self.width - self.ValSize[0], self.y + 15))
 
         # def setTextColour(self, colour):
         #     self.textColour = colour
