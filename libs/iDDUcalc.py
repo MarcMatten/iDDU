@@ -83,6 +83,7 @@ class IDDUCalc:
                     print(self.db.timeStr + ':\tIsOnTrack')
 
                 # self.db.Alarm = []
+                self.db.Alarm2 = [0] * 10
 
                 if self.db.RX:
                     self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
@@ -471,6 +472,7 @@ class IDDUCalc:
         self.db.JokerLapsRequired = 0
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
+        self.db.Alarm2 = [0]*10
 
         nan = float('nan')
 

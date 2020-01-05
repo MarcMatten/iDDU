@@ -109,7 +109,6 @@ iRData = {'LapBestLapTime': 0,
 
 # calculated data
 calcData = {'LastFuelLevel': 0,
-            'GearStr': '-',
             'SessionInfoAvailable': False,
             'SessionNum': 0,
             'init': False,

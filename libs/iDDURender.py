@@ -222,7 +222,7 @@ class RenderScreen(RenderMain):
         if self.ScreenNumber == 1:
 
             if self.db.init:
-                self.frames[3].reinitFrame(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
+                self.frames[2].reinitFrame(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
 
             self.screen.fill(self.db.backgroundColour)
             if self.db.FlagException:
@@ -300,7 +300,7 @@ class RenderScreen(RenderMain):
             self.db.FuelLapsStr = iDDUhelper.roundedStr1(self.db.NLapRemaining)
             self.db.FuelAddStr = iDDUhelper.roundedStr1(max(0, self.db.VFuelAdd))
 
-            self.db.SpeedStr = iDDUhelper.roundedStr0(max(0, self.db.Speed))
+            self.db.SpeedStr = iDDUhelper.roundedStr0(max(0, self.db.Speed*3.6))
             if self.db.Gear > 0:
                 self.db.GearStr = str(int(self.db.Gear))
             elif self.db.Gear == 0:
@@ -736,11 +736,11 @@ class SimpleValue(RenderMain):
 
         if not self.alarmTag == 0:
             if self.db.Alarm2[self.alarmTag] == 1:
-                self.pygame.draw.rect(self.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+                self.pygame.draw.rect(self.screen, self.green, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
             elif self.db.Alarm2[self.alarmTag] == 2:
                 self.pygame.draw.rect(self.screen, self.orange, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
             elif self.db.Alarm2[self.alarmTag] == 3:
-                self.pygame.draw.rect(self.screen, self.green, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+                self.pygame.draw.rect(self.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
         if self.center:
             self.screen.blit(self.ValLabel, (self.x + self.width/2 - self.ValSize[0]/2, self.y + 15))
         else:
