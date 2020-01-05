@@ -98,7 +98,8 @@ class raceLapsEstimation(threading.Thread):
                                                                                                                'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'],
                                                                                                                             'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
 
-                        self.db.classStruct.__delitem__('None')
+                        if 'None' in self.db.classStruct:
+                            self.db.classStruct.__delitem__('None')
                 self.db.NClasses = len(self.db.classStruct)
                 classNames = list(self.db.classStruct.keys())
                 self.db.NDrivers = 0
@@ -111,14 +112,13 @@ class raceLapsEstimation(threading.Thread):
                         tempSOFClass = tempSOFClass + self.db.classStruct[classNames[j]]['Drivers'][k]['IRating']
 
                     self.db.classStruct[classNames[j]]['SOF'] = tempSOFClass / self.db.classStruct[classNames[j]]['NDrivers']
-                    NDrivers = self.db.NDrivers + self.db.classStruct[classNames[j]]['NDrivers']
+                    self.db.NDrivers = self.db.NDrivers + self.db.classStruct[classNames[j]]['NDrivers']
                     tempSOF = tempSOF + tempSOFClass
 
                 self.db.SOF = tempSOF / self.db.NDrivers
 
-                self.db.NDriversMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['SOF']
-                self.db.SOFMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['NDrivers']
-                self.db.PosStr = str(self.db.PlayerCarClassPosition) + '/' + str(self.db.SOFMyClass)
-
+                self.db.SOFMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['SOF']
+                self.db.NDriversMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['NDrivers']
+                # self.db.PosStr = str(self.db.PlayerCarClassPosition) + '/' + str(self.db.SOFMyClass)
 
             time.sleep(self.rate)

@@ -162,7 +162,7 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('JokerStr', LabeledValue2('Joker', 689, 26, 90, '0/0', self.fontSmall, self.fontLarge, self.db, 4, 6), 17)
         self.frames[3].addLabel('LapStr', LabeledValue2('Lap', 442, 110, 160, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 13)
         self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 662, 110, 117, '100', self.fontSmall, self.fontLarge, self.db, 0, 0), 20)
-        self.frames[3].addLabel('PosStr', LabeledValue2('Pos', 442, 194, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0, 0), 21)
+        self.frames[3].addLabel('PosStr', LabeledValue2('Pos', 442, 194, 160, '0.0', self.fontSmall, self.fontLarge, self.db, 0, 0), 24)
         self.frames[3].addLabel('EstStr', LabeledValue2('Est', 654, 194, 125, '0.0', self.fontSmall, self.fontLarge, self.db, 0, 0), 21)
 
         self.frames[4].addLabel('dcBrakeBiasStr', LabeledValue2('BBias', 21, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 9)

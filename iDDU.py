@@ -217,6 +217,7 @@ calcData = {'LastFuelLevel': 0,
                 True,  # 21 Est
                 True,  # 22 Gear
                 True,  # 23 Speed
+                True,  # 24 Position
             ],
             'P2P': False,
             'DRS': False,
@@ -259,7 +260,9 @@ calcData = {'LastFuelLevel': 0,
             'NDrivers': 1,
             'NDriversMyClass': 1,
             'SOF': 0,
-            'SOFMyClass': 0
+            'SOFMyClass': 0,
+            'NClassPosition': 1,
+            'NPosition': 1
             }
 
 # Create RTDB and initialise with

@@ -76,6 +76,12 @@ class IDDUCalc:
             if self.db.SessionTime < 10:
                 self.db.CarIdxPitStops = [0] * 64
 
+            for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx'] == self.db.DriverCarIdx:
+                    self.db.NClassPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['ClassPosition'] + 1
+                    self.db.NPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Position']
+            self.db.PosStr = str(self.db.NClassPosition) + '/' + str(self.db.NDriversMyClass)
+
             if self.db.IsOnTrack:
                 # do if car is on track #############################################################################################
                 if not self.db.WasOnTrack:
@@ -664,7 +670,8 @@ class IDDUCalc:
                                                                                        'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
                                                                                        'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
 
-                self.db.classStruct.__delitem__('None')
+                if 'None' in self.db.classStruct:
+                    self.db.classStruct.__delitem__('None')
         self.db.NClasses = len(self.db.classStruct)
         classNames = list(self.db.classStruct.keys())
         self.db.NDrivers = 0
@@ -677,14 +684,14 @@ class IDDUCalc:
                 tempSOFClass = tempSOFClass + self.db.classStruct[classNames[j]]['Drivers'][k]['IRating']
 
             self.db.classStruct[classNames[j]]['SOF'] = tempSOFClass / self.db.classStruct[classNames[j]]['NDrivers']
-            NDrivers = self.db.NDrivers + self.db.classStruct[classNames[j]]['NDrivers']
+            self.db.NDrivers = self.db.NDrivers + self.db.classStruct[classNames[j]]['NDrivers']
             tempSOF = tempSOF + tempSOFClass
 
         self.db.SOF = tempSOF / self.db.NDrivers
 
-        self.db.NDriversMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['SOF']
-        self.db.SOFMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['NDrivers']
-        self.db.PosStr = str(self.db.PlayerCarClassPosition) + '/' + str(self.db.SOFMyClass)
+        self.db.SOFMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['SOF']
+        self.db.NDriversMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['NDrivers']
+        # self.db.PosStr = str(self.db.PlayerCarClassPosition) + '/' + str(self.db.SOFMyClass)
 
     def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.csv')
