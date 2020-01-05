@@ -114,12 +114,12 @@ class RenderScreen(RenderMain):
         # self.frames.append(Frame('Control', 405, 300, 385, 170, self.db))
         # self.frames.append(Frame('Session Info', 10, 250, 385, 220, self.db))
 
-        self.frames.append(Frame('Timing', 10, 10, 287, 267, self.db))
-        self.frames.append(Frame('Gear', 307, 10, 114, 178, self.db))
-        self.frames.append(Frame('Session Info', 431, 10, 359, 267, self.db))
-        self.frames.append(Frame('Speed', 307, 198, 114, 79, self.db))
-        self.frames.append(Frame('Control', 10, 287, 287, 183, self.db))
-        self.frames.append(Frame('Fuel', 307, 287, 483, 183, self.db))
+        self.frames.append(Frame('Timing', 10, 10, 287, 267, self.db, False))
+        self.frames.append(Frame('Gear', 307, 39, 114, 149, self.db, True))
+        self.frames.append(Frame('Session Info', 431, 10, 359, 267, self.db, False))
+        self.frames.append(Frame('Speed', 307, 204, 114, 73, self.db, True))
+        self.frames.append(Frame('Control', 10, 287, 287, 183, self.db, False))
+        self.frames.append(Frame('Fuel', 307, 287, 483, 183, self.db, False))
 
         # List of lables to display
         # textColourTag: 1 = FuelAdd, 2 = DRS, 3 = P2P, 4 = Joker
@@ -152,7 +152,8 @@ class RenderScreen(RenderMain):
         self.frames[0].addLabel('LastLapStr', LabeledValue2('Last', 21, 110, 265, '00:00.000', self.fontSmall, self.fontLarge, self.db, 0, 0), 1)
         self.frames[0].addLabel('DeltaBestStr', LabeledValue2('DBest', 21, 194, 265, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0, 0), 2)
 
-        self.frames[1].addLabel('GearStr', SimpleValue(318, -9, 92, '-', self.fontGear, self.db, 0, 7, 1), 22)
+        self.frames[1].addLabel('ClockStr', SimpleValue(318, -10, 92, '-', self.fontSmall, self.db, 0, 0, 1), 14)
+        self.frames[1].addLabel('GearStr', SimpleValue(318, 8, 92, '-', self.fontGear, self.db, 0, 7, 1), 22)
 
         self.frames[2].addLabel('SpeedStr', SimpleValue(318, 194, 92, '-', self.fontLarge, self.db, 0, 0, 0), 23)
 
@@ -533,7 +534,7 @@ class RenderScreen(RenderMain):
 
 
 class Frame(RenderMain):
-    def __init__(self, title, x1, y1, dx, dy, db):
+    def __init__(self, title, x1, y1, dx, dy, db, center):
         RenderMain.__init__(self, db)
         self.x1 = x1
         self.x2 = x1 + dx - 1
@@ -542,13 +543,20 @@ class Frame(RenderMain):
         self.title = title
         self.Title = self.fontSmall.render(self.title, True, self.textColour)
         self.textSize = self.fontSmall.size(self.title)
+        self.center = center
         self.Labels = {}
 
     def drawFrame(self):
-        self.pygame.draw.lines(self.screen, self.textColour, False,
-                               [[self.x1 + 25, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
-                                [self.x2, self.y1], [self.x1 + 35 + self.textSize[0], self.y1]], 1)
-        self.screen.blit(self.Title, (self.x1 + 30, self.y1 - 10))
+        if self.center:
+            self.pygame.draw.lines(self.screen, self.textColour, False,
+                                   [[self.x1 + 25, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
+                                    [self.x2, self.y1], [self.x1 + 35 + self.textSize[0], self.y1]], 1)
+            self.screen.blit(self.Title, (self.x1 + 30, self.y1 - 10))
+        else:
+            self.pygame.draw.lines(self.screen, self.textColour, False,
+                                   [[self.x1 + 25, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
+                                    [self.x2, self.y1], [self.x1 + 35 + self.textSize[0], self.y1]], 1)
+            self.screen.blit(self.Title, (self.x1 + 30, self.y1 - 10))
 
         for i in range(0, len(self.Labels)):
             if self.db.RenderLabel[self.Labels[i][2]]:

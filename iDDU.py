@@ -210,11 +210,11 @@ calcData = {'LastFuelLevel': 0,
                 True,  # 14 Clock
                 True,  # 15 Remain
                 False,  # 16 Elapsed
-                False,  # 17 Joker
+                True,  # 17 Joker
                 False,  # 18 DRS
                 False,  # 19 P2P
                 True,  # 20 ToGo
-                False,  # 21 Est
+                True,  # 21 Est
                 True,  # 22 Gear
                 True,  # 23 Speed
             ],
@@ -253,7 +253,13 @@ calcData = {'LastFuelLevel': 0,
             'NLapWinnerRaceTime': 0,
             'PosStr': '64/64',
             'SpeedStr': '234',
-            'GearStr': 'N'
+            'GearStr': 'N',
+            'classStruct': {},
+            'NCLasses': 2,
+            'NDrivers': 1,
+            'NDriversMyClass': 1,
+            'SOF': 0,
+            'SOFMyClass': 0
             }
 
 # Create RTDB and initialise with
