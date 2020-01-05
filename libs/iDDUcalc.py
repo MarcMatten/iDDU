@@ -82,7 +82,7 @@ class IDDUCalc:
                     self.db.WasOnTrack = True
                     print(self.db.timeStr + ':\tIsOnTrack')
 
-                self.db.Alarm = []
+                # self.db.Alarm = []
 
                 if self.db.RX:
                     self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
@@ -107,9 +107,11 @@ class IDDUCalc:
 
                     if self.db.JokerLaps[self.db.JokerLaps[self.db.DriverCarIdx]] < self.db.JokerLapsRequired:
                         if self.db.LapsToGo == self.db.JokerLapsRequired + 1:
-                            self.db.Alarm.extend([8])
+                            # self.db.Alarm.extend([8])
+                            self.db.Alarm2[6] = 2
                         elif self.db.LapsToGo <= self.db.JokerLapsRequired:
-                            self.db.Alarm.extend([9])
+                            # self.db.Alarm.extend([9])
+                            self.db.Alarm2[6] = 3
                     else:
                         self.db.textColorJoker = self.green
 
@@ -163,9 +165,11 @@ class IDDUCalc:
                     self.db.FuelAvgConsumption = iDDUhelper.meanTol(self.db.FuelConsumptionList, 0.03)
                     self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
                     if self.db.NLapRemaining < 3:
-                        self.db.Alarm.extend([3])
+                        # self.db.Alarm.extend([3])
+                        self.db.Alarm2[3] = 2
                     if self.db.NLapRemaining < 1:
-                        self.db.Alarm.extend([4])
+                        # self.db.Alarm.extend([4])
+                        self.db.Alarm2[3] = 3
                     if self.db.BNewLap and not self.db.onPitRoad:
                         fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1)
                         self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
@@ -269,10 +273,11 @@ class IDDUCalc:
 
                     self.db.DRSRemaining = (self.db.DRSActivations - self.db.DRSCounter)
                     if self.db.DRSRemaining == 1 and not self.db.DRS_Status == 2:
-                        self.db.Alarm.extend([6])
-
+                        # self.db.Alarm.extend([6])
+                        self.db.Alarm2[5] = 2
                     if self.db.DRS_Status == 2:
-                        self.db.Alarm.extend([7])
+                        # self.db.Alarm.extend([7])
+                        self.db.Alarm2[5] = 1
 
                     self.db.old_DRS_Status = self.db.DRS_Status
 
@@ -287,21 +292,25 @@ class IDDUCalc:
                     if not self.db.PushToPass == self.db.old_PushToPass:
                         if self.db.PushToPass:
                             self.db.P2PTime = self.db.SessionTime
-                            self.db.Alarm.extend([5])
+                            # self.db.Alarm.extend([5])
+                            self.db.Alarm2[4] = 1
                             self.db.P2PCounter = self.db.P2PCounter + 1
 
                     if self.db.SessionTime < self.db.P2PTime + 3:
-                        self.db.Alarm.extend([5])
+                        # self.db.Alarm.extend([5])
+                        self.db.Alarm2[4] = 1
 
                     self.db.old_PushToPass = self.db.PushToPass
 
                 # alarm
                 if self.db.dcTractionControlToggle:
-                    self.db.Alarm.extend([1])
+                    # self.db.Alarm.extend([1])
+                    self.db.Alarm2[1] = 3
 
                 if type(self.db.FuelLevel) is float:
                     if self.db.FuelLevel <= 5:
-                        self.db.Alarm.extend([2])
+                        # self.db.Alarm.extend([2])
+                        self.db.Alarm2[2] = 3
             else:
                 if self.db.WasOnTrack:
                     print(self.db.timeStr + ':\tGetting out of car')
