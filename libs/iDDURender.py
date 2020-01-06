@@ -173,11 +173,11 @@ class RenderScreen(RenderMain):
         self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 219, 387, 67, '0', self.fontSmall, self.fontLarge, self.db, 3, 4), 19)
 
         self.frames[5].addLabel('FuelLevelStr', LabeledValue2('Remaining', 318, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 0, 2), 3)
-        self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 515, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 1, 0), 7)
-        self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 712, 303, 67, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 10)
-        self.frames[5].addLabel('FuelLapsStr', LabeledValue2('Laps', 318, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 3), 6)
-        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 481, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 5)
-        self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 644, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 4)
+        self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 481, 303, 125, '-', self.fontSmall, self.fontLarge, self.db, 1, 0), 7) # 515
+        self.frames[5].addLabel('FuelLapsStr', LabeledValue2('Laps', 644, 303, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 3), 6) # 318
+        self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 318, 387, 67, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 10) # 712
+        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 5) # 481
+        self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', self.fontSmall, self.fontLarge, self.db, 0, 0), 4) # 644
 
 
         #self.frames[3].addLabel('ToGoStr', LabeledValue2('To Go', 270, 320, 120, '100', self.fontSmall, self.fontLarge, self.db, 3, 3), 20)
