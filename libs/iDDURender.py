@@ -115,7 +115,7 @@ class RenderScreen(RenderMain):
         # self.frames.append(Frame('Session Info', 10, 250, 385, 220, self.db))
 
         self.frames.append(Frame('Timing', 10, 10, 287, 267, self.db, False))
-        self.frames.append(Frame('Gear', 307, 39, 114, 149, self.db, True))
+        self.frames.append(Frame('Gear', 307, 39, 114, 155, self.db, True))
         self.frames.append(Frame('Session Info', 431, 10, 359, 267, self.db, False))
         self.frames.append(Frame('Speed', 307, 204, 114, 73, self.db, True))
         self.frames.append(Frame('Control', 10, 287, 287, 183, self.db, False))
@@ -153,7 +153,7 @@ class RenderScreen(RenderMain):
         self.frames[0].addLabel('DeltaBestStr', LabeledValue2('DBest', 21, 194, 265, '+00:00.000', self.fontSmall, self.fontLarge, self.db, 0, 0), 2)
 
         self.frames[1].addLabel('ClockStr', SimpleValue(318, -10, 92, '-', self.fontSmall, self.db, 0, 0, 1), 14)
-        self.frames[1].addLabel('GearStr', SimpleValue(318, 8, 92, '-', self.fontGear, self.db, 0, 7, 1), 22)
+        self.frames[1].addLabel('GearStr', SimpleValue(318, 12, 92, '-', self.fontGear, self.db, 0, 7, 1), 22)
 
         self.frames[2].addLabel('SpeedStr', SimpleValue(318, 194, 92, '-', self.fontLarge, self.db, 0, 0, 0), 23)
 
