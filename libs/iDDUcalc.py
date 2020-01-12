@@ -81,7 +81,12 @@ class IDDUCalc:
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx'] == self.db.DriverCarIdx:
                         self.db.NClassPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['ClassPosition'] + 1
                         self.db.NPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Position']
-            self.db.PosStr = str(self.db.NClassPosition) + '/' + str(self.db.NDriversMyClass)
+                        self.db.BResults = True
+
+            if self.db.BResults:
+                self.db.PosStr = str(self.db.NClassPosition) + '/' + str(self.db.NDriversMyClass)
+            else:
+                self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
 
             if self.db.IsOnTrack:
                 # do if car is on track #############################################################################################
@@ -470,6 +475,7 @@ class IDDUCalc:
         self.getTrackFiles()
 
         self.db.init = True
+        self.db.BResults = False
 
         self.db.BUpshiftToneInitRequest = True
         self.db.FuelConsumptionList = []
@@ -660,20 +666,21 @@ class IDDUCalc:
             self.db.classStruct = {}
 
             for i in range(0, len(self.db.DriverInfo['Drivers'])):
-                if i == 0:
-                    self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'], 'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
-                                                                                       'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
-                                                                                       'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
-                else:
-                    if self.db.DriverInfo['Drivers'][i]['CarClassShortName'] in self.db.classStruct:
-                        self.db.classStruct[self.db.DriverInfo['Drivers'][i]['CarClassShortName']]['Drivers'].append({'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']})
-                    else:
+                if not str(self.db.DriverInfo['Drivers'][i]['UserName']) == 'Pace Car':
+                    if i == 0:
                         self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'], 'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
                                                                                            'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
                                                                                            'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
+                    else:
+                        if str(self.db.DriverInfo['Drivers'][i]['CarClassShortName']) in self.db.classStruct:
+                            self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])]['Drivers'].append({'Name': self.db.DriverInfo['Drivers'][i]['UserName'],
+                                                                                                                           'IRating': self.db.DriverInfo['Drivers'][i]['IRating']})
+                        else:
+                            self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'], 'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
+                                                                                               'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
+                                                                                               'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
 
-                    if 'None' in self.db.classStruct:
-                        self.db.classStruct.__delitem__('None')
+
             self.db.NClasses = len(self.db.classStruct)
             classNames = list(self.db.classStruct.keys())
             self.db.NDrivers = 0
@@ -691,9 +698,8 @@ class IDDUCalc:
 
             self.db.SOF = tempSOF / self.db.NDrivers
 
-            self.db.SOFMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['SOF']
-            self.db.NDriversMyClass = self.db.classStruct[self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName']]['NDrivers']
-            # self.db.PosStr = str(self.db.PlayerCarClassPosition) + '/' + str(self.db.SOFMyClass)
+            self.db.SOFMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['SOF']
+            self.db.NDriversMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['NDrivers']
 
     def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.csv')

@@ -262,7 +262,8 @@ calcData = {'LastFuelLevel': 0,
             'SOF': 0,
             'SOFMyClass': 0,
             'NClassPosition': 1,
-            'NPosition': 1
+            'NPosition': 1,
+            'BResults': False
             }
 
 # Create RTDB and initialise with
