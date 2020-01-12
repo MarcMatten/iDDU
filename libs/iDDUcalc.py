@@ -378,7 +378,7 @@ class IDDUCalc:
                     if self.db.SessionFlags & 0x2:  # white
                         self.db.backgroundColour = self.white
                         self.db.textColour = self.black
-                    if self.db.SessionFlags & 0x20:  # blue
+                    if self.db.SessionFlags & 0x20 and self.db.SessionTime > 20:  # blue
                         self.db.backgroundColour = self.blue
                     if self.db.SessionFlags & 0x1:  # checkered
                         self.db.textColour = self.grey
