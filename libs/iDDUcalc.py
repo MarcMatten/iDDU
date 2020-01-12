@@ -95,7 +95,7 @@ class IDDUCalc:
                     print(self.db.timeStr + ':\tIsOnTrack')
 
                 # self.db.Alarm = []
-                self.db.Alarm2 = [0] * 10
+                self.db.Alarm2[0:6] = [0] * 6
 
                 if self.db.RX:
                     self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']

@@ -687,11 +687,11 @@ class LabeledValue2(RenderMain):
 
         if not self.alarmTag == 0:
             if self.db.Alarm2[self.alarmTag] == 1:
-                self.pygame.draw.rect(self.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+                self.pygame.draw.rect(self.screen, self.green, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
             elif self.db.Alarm2[self.alarmTag] == 2:
                 self.pygame.draw.rect(self.screen, self.orange, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
             elif self.db.Alarm2[self.alarmTag] == 3:
-                self.pygame.draw.rect(self.screen, self.green, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+                self.pygame.draw.rect(self.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
 
         self.screen.blit(self.LabLabel, (self.x, self.y))
         self.screen.blit(self.ValLabel, (self.x + self.width - self.ValSize[0], self.y + 15))
