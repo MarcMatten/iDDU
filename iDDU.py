@@ -104,7 +104,15 @@ iRData = {'LapBestLapTime': 0,
           'PushToPass': False,
           'CarIdxF2Time': [],
           'CarIdxClassPosition': [],
-          'CarIdxPosition': []
+          'CarIdxPosition': [],
+          'AirDensity': 1.246246,
+          'AirPressure': 29.85,
+          'AirTemp': 25.134513,
+          'TrackTemp': 40.2436,
+          'WindDir': 0,
+          'WindVel': 13.246,
+          'RelativeHumidity': 50.2346,
+          'weatherStr': 'TAir: 25°C     TTrack: 40°C     pAir: 1.01 bar    rHum: 50 %     rhoAir: 1.25 kg/m³     vWind: '
           }
 
 # calculated data
@@ -263,7 +271,8 @@ calcData = {'LastFuelLevel': 0,
             'SOFMyClass': 0,
             'NClassPosition': 1,
             'NPosition': 1,
-            'BResults': False
+            'BResults': False,
+            'angle': 0
             }
 
 # Create RTDB and initialise with

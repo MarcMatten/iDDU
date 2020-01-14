@@ -473,6 +473,9 @@ class IDDUCalc:
         print(self.db.timeStr + ': Initialising Session ==========================')
 
         self.getTrackFiles()
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
+            self.db.AirPressure * 0.0338639) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(
+            self.db.AirDensity) + ' kg/m³     vWind: '
 
         self.db.init = True
         self.db.BResults = False
@@ -753,6 +756,8 @@ class IDDUCalc:
         # Logging for race lap estimation
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure*0.0338639) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
         LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap) + '.laplog'
         f = open(LapStr, 'x')

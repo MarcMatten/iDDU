@@ -37,6 +37,7 @@ class RenderMain:
         self.pygame.init()
 
         self.fontTiny = self.pygame.font.Font("files\KhmerUI.ttf", 12)  # Khmer UI Calibri
+        self.fontTiny2 = self.pygame.font.Font("files\KhmerUI.ttf", 18)
         self.fontSmall = self.pygame.font.Font("files\KhmerUI.ttf", 20)
         self.fontMedium = self.pygame.font.Font("files\KhmerUI.ttf", 40)
         self.fontLarge = self.pygame.font.Font("files\KhmerUI.ttf", 60)
@@ -62,11 +63,12 @@ class RenderMain:
         self.clocker = self.pygame.time.Clock()
 
         # background
-        self.checkered = self.pygame.image.load("files\checkered.gif")
-        self.dsq = self.pygame.image.load("files\dsq.gif")
-        self.debry = self.pygame.image.load("files\debry.gif")
-        self.pitClosed = self.pygame.image.load("files\pitClosed.gif")
-        self.warning = self.pygame.image.load("files\warning.gif")
+        self.checkered = self.pygame.image.load("files/checkered.gif")
+        self.dsq = self.pygame.image.load("files/dsq.gif")
+        self.debry = self.pygame.image.load("files/debry.gif")
+        self.pitClosed = self.pygame.image.load("files/pitClosed.gif")
+        self.warning = self.pygame.image.load("files/warning.gif")
+        self.arrow = self.pygame.image.load("files/arrow.gif")
 
         self.track = {'dist': [], 'x': [], 'y': []}
         self.map = []
@@ -329,6 +331,14 @@ class RenderScreen(RenderMain):
 
         elif self.ScreenNumber == 2:
             self.screen.fill(self.backgroundColour)
+            angleDeg = int(-(float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0]) )*180/numpy.pi) + self.db.WindDir
+            # angleDeg = self.db.UserRaceLaps
+            angleRad = angleDeg/180*numpy.pi
+
+            dx = abs(82.8427 * numpy.cos(2 * (45/180*numpy.pi + angleRad)))
+
+            self.screen.blit(self.pygame.transform.rotate(self.arrow, angleDeg), [200-dx, 40-dx])
+
 
             if self.db.MapHighlight:
                 self.highlightSection(5, self.green)
@@ -344,6 +354,14 @@ class RenderScreen(RenderMain):
                     self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
             self.CarOnMap(self.db.DriverCarIdx)
             self.CarOnMap(0)
+
+            # TAir TTrack pAir Humidity  AirDens WindSpeed WindDirection
+            Label = self.fontTiny2.render(self.db.weatherStr + iDDUhelper.roundedStr0(self.db.WindVel*3.6) + ' km/h', True, self.db.textColour)
+            self.screen.blit(Label, (5, 1))
+
+            Label2 = self.fontTiny2.render('SOF: ' + iDDUhelper.roundedStr0(self.db.SOF), True, self.db.textColour)
+            self.screen.blit(Label2, (5, 458))
+
 
         if self.db.IsOnTrack:
             # warning and alarm messages
@@ -531,6 +549,13 @@ class RenderScreen(RenderMain):
         ValueSize = self.fontReallyLarge.size(value)
         Value = self.fontReallyLarge.render(value, True, self.white)
         self.screen.blit(Value, (400 - ValueSize[0] / 2, 270 - ValueSize[1] / 2))
+
+    # def arrow(self, angle):
+    #     x1 = 400 + numpy.sin(angle) * 80
+    #     x2 = 400 - numpy.sin(angle) * 80
+    #     y1 = 240 + numpy.cos(angle) * 80
+    #     y2 = 240 - numpy.cos(angle) * 80
+    #     pygame.draw.aaline(self.screen, self.blue, [x1, y1], [x2, y2], True)
 
 
 class Frame(RenderMain):
