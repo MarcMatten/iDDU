@@ -473,9 +473,7 @@ class IDDUCalc:
         print(self.db.timeStr + ': Initialising Session ==========================')
 
         self.getTrackFiles()
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
-            self.db.AirPressure * 0.0338639) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(
-            self.db.AirDensity) + ' kg/m³     vWind: '
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
         self.db.init = True
         self.db.BResults = False
@@ -489,6 +487,7 @@ class IDDUCalc:
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
         self.db.Alarm2 = [0]*10
+        self.SOFstring()
 
         nan = float('nan')
 
@@ -722,6 +721,8 @@ class IDDUCalc:
                 self.db.time.append(float(line[3]))
 
                 self.db.map.append([float(line[1]), float(line[2])])
+
+        self.db.aOffsetTrack = iDDUhelper.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
     def getTrackFiles(self):
@@ -743,6 +744,7 @@ class IDDUCalc:
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
+        self.SOFstring()
 
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
@@ -833,8 +835,20 @@ class IDDUCalc:
         self.db.x = self.x[0:NTrackElements]
         self.db.y = self.y[0:NTrackElements]
 
+        self.db.aOffsetTrack = iDDUhelper.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
+
         self.BCreateTrack = False
         self.Logging = False
 
         print(self.db.timeStr + ':\tTrack has been successfully created')
         print(self.db.timeStr + ':\tSaved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
+
+    def SOFstring(self):
+        if self.db.NClasses > 1:
+            temp = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOFMyClass) + '('
+            keys = self.db.classStruct.keys()
+            for i in range(0, self.db.NClasses):
+                temp = temp + self.db.classStruct[keys[i]] + ': ' + iDDUhelper.roundedStr0(self.db.classStruct[keys[i]]['SOF'])
+            self.db.SOFstr = temp + ')'
+        else:
+            self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)

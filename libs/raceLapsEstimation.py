@@ -78,6 +78,17 @@ class raceLapsEstimation(threading.Thread):
                     else:
                         self.db.RaceLaps = self.db.UserRaceLaps
 
+                if self.db.NClasses > 1:
+                    temp = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF) + ' ('
+                    keys = list(self.db.classStruct.keys())
+                    for i in range(0, self.db.NClasses):
+                        temp = temp + keys[i] + ': ' + iDDUhelper.roundedStr0(self.db.classStruct[keys[i]]['SOF'])
+                        if i < self.db.NClasses - 1:
+                            temp = temp + ', '
+                    self.db.SOFstr = temp + ')'
+                else:
+                    self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
+
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
                     self.db.classStruct = {}
 

@@ -331,14 +331,11 @@ class RenderScreen(RenderMain):
 
         elif self.ScreenNumber == 2:
             self.screen.fill(self.backgroundColour)
-            angleDeg = int(-(float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0]) )*180/numpy.pi) + self.db.WindDir
-            # angleDeg = self.db.UserRaceLaps
+            angleDeg = int(((float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])) - self.db.aOffsetTrack - self.db.WindDir - numpy.pi)*180/numpy.pi)
             angleRad = angleDeg/180*numpy.pi
-
             dx = abs(82.8427 * numpy.cos(2 * (45/180*numpy.pi + angleRad)))
 
             self.screen.blit(self.pygame.transform.rotate(self.arrow, angleDeg), [200-dx, 40-dx])
-
 
             if self.db.MapHighlight:
                 self.highlightSection(5, self.green)
@@ -359,7 +356,9 @@ class RenderScreen(RenderMain):
             Label = self.fontTiny2.render(self.db.weatherStr + iDDUhelper.roundedStr0(self.db.WindVel*3.6) + ' km/h', True, self.db.textColour)
             self.screen.blit(Label, (5, 1))
 
-            Label2 = self.fontTiny2.render('SOF: ' + iDDUhelper.roundedStr0(self.db.SOF), True, self.db.textColour)
+            #Label2 = self.fontTiny2.render('SOF: ' + iDDUhelper.roundedStr0(self.db.SOF), True, self.db.textColour)
+            Label2 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
+
             self.screen.blit(Label2, (5, 458))
 
 

@@ -111,8 +111,7 @@ iRData = {'LapBestLapTime': 0,
           'TrackTemp': 40.2436,
           'WindDir': 0,
           'WindVel': 13.246,
-          'RelativeHumidity': 50.2346,
-          'weatherStr': 'TAir: 25°C     TTrack: 40°C     pAir: 1.01 bar    rHum: 50 %     rhoAir: 1.25 kg/m³     vWind: '
+          'RelativeHumidity': 50.2346
           }
 
 # calculated data
@@ -264,7 +263,7 @@ calcData = {'LastFuelLevel': 0,
             'SpeedStr': '234',
             'GearStr': 'N',
             'classStruct': {},
-            'NCLasses': 2,
+            'NClasses': 1,
             'NDrivers': 1,
             'NDriversMyClass': 1,
             'SOF': 0,
@@ -272,7 +271,9 @@ calcData = {'LastFuelLevel': 0,
             'NClassPosition': 1,
             'NPosition': 1,
             'BResults': False,
-            'angle': 0
+            'aOffsetTrack': 0,
+            'weatherStr': 'TAir: 25°C     TTrack: 40°C     pAir: 1.01 bar    rHum: 50 %     rhoAir: 1.25 kg/m³     vWind: ',
+            'SOFstr': 'SOF: 0'
             }
 
 # Create RTDB and initialise with

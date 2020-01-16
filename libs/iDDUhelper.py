@@ -169,3 +169,27 @@ def maxList(L, value):
         return L
     elif type(L) is int:
         return max(L, value)
+
+def angleVertical(dx, dy):
+    if dx == 0:
+        if dy > 0:
+            a = np.pi
+        else:
+            a = 0
+    elif dx > 0:
+        if dy > 0:
+            a = -np.arctan(dx/dy) + np.pi
+        elif dy < 0:
+            a = -np.arctan(dx/dy)
+        else:
+            a = np.pi / 2
+    elif dx < 0:
+        if dy > 0:
+            a = -np.arctan(dx/dy) + np.pi
+        elif dy < 0:
+            a = 2 * np.pi - np.arctan(dx/dy)
+        else:
+            a = np.pi * 1.5
+
+    return a
+
