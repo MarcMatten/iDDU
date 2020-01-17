@@ -487,7 +487,7 @@ class IDDUCalc:
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
         self.db.Alarm2 = [0]*10
-        self.SOFstring()
+        # self.SOFstring()
 
         nan = float('nan')
 
@@ -744,7 +744,7 @@ class IDDUCalc:
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
-        self.SOFstring()
+        # self.SOFstring()
 
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
