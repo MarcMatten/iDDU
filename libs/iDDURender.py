@@ -348,7 +348,8 @@ class RenderScreen(RenderMain):
             for n in range(1, len(self.db.DriverInfo['Drivers'])):
                 temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
                 if not temp_CarIdx == self.db.DriverCarIdx:
-                    self.CarOnMap(self.db.DriverInfo['Drivers'][n]['CarIdx'])
+                    # self.CarOnMap(min(self.db.DriverInfo['Drivers'][n]['CarIdx'], len(self.db.DriverInfo['Drivers'][n])-1))
+                    self.CarOnMap(n)
             self.CarOnMap(self.db.DriverCarIdx)
             self.CarOnMap(0)
 
@@ -425,39 +426,39 @@ class RenderScreen(RenderMain):
         return self.done
 
     def CarOnMap(self, Idx):
-        try:
-            x = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.x).tolist()[0]
-            y = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.y).tolist()[0]
+        # try:
+        x = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.x).tolist()[0]
+        y = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.y).tolist()[0]
 
-            if self.db.DriverInfo['DriverCarIdx'] == Idx:  # if player's car
+        if self.db.DriverInfo['DriverCarIdx'] == Idx:  # if player's car
+            if self.db.RX:
+                if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
+                    self.drawCar(Idx, x, y, self.green, self.black)
+            self.drawCar(Idx, x, y, self.red, self.white)
+        else:  # other cars
+            if self.db.CarIdxClassPosition[Idx] == 1:
+                if self.db.CarIdxPosition[Idx] == 1:  # overall leader
+                    labelColour = self.white
+                    dotColour = self.purple
+                else:
+                    labelColour = self.purple  # class leaders
+                    dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
+            # elif self.db.CarIdxClassPosition[Idx] == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
+            elif Idx == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
+                labelColour = self.black
+                dotColour = self.orange
+            else:
+                labelColour = self.black
+                dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
+
+            if not self.db.CarIdxOnPitRoad[Idx]:
                 if self.db.RX:
                     if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
-                        self.drawCar(Idx, x, y, self.green, self.black)
-                self.drawCar(Idx, x, y, self.red, self.white)
-            else:  # other cars
-                if self.db.CarIdxClassPosition[Idx] == 1:
-                    if self.db.CarIdxPosition[Idx] == 1:  # overall leader
-                        labelColour = self.white
-                        dotColour = self.purple
-                    else:
-                        labelColour = self.purple  # class leaders
-                        dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
-                # elif self.db.CarIdxClassPosition[Idx] == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
-                elif Idx == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
-                    labelColour = self.black
-                    dotColour = self.orange
+                        self.drawCar(Idx, x, y, self.green, labelColour)
                 else:
-                    labelColour = self.black
-                    dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
-
-                if not self.db.CarIdxOnPitRoad[Idx]:
-                    if self.db.RX:
-                        if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
-                            self.drawCar(Idx, x, y, self.green, labelColour)
-                    else:
-                        self.drawCar(Idx, x, y, dotColour, labelColour)
-                else:
-                    return
+                    self.drawCar(Idx, x, y, dotColour, labelColour)
+            else:
+                return
         # except NameError:
         #     print(self.db.timeStr + ': \tNameError')
         #     warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
@@ -465,13 +466,13 @@ class RenderScreen(RenderMain):
         #     print(self.db.timeStr + ': \tValueError')
         #     warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
         # else:
-        except:
-            warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
-            print('Error in iDDURender in CarOnMap')
-            if not self.snapshot:
-                self.db.snapshot()
-                print('RTDB snapshot saved!')
-                self.snapshot = True
+        #except:
+        #    warnings.warn(self.db.timeStr + ': Error in CarOnMap!')
+        #    print('Error in iDDURender in CarOnMap')
+        #    if not self.snapshot:
+        #        self.db.snapshot()
+        #        print('RTDB snapshot saved!')
+        #        self.snapshot = True
             
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
@@ -506,19 +507,19 @@ class RenderScreen(RenderMain):
         timeStampStart = timeStamp1
         timeStampEnd = timeStamp2
 
-        try:
-            if timeStamp2 > timeStamp1:
-                tempMap = [self.db.map[t] for t in range(0, len(self.db.map)) if ((self.db.time[t] < timeStampEnd) and (self.db.time[t] > timeStampStart))]
-                self.pygame.draw.lines(self.screen, colour, False, tempMap, 20)
-            else:
+        # try:
+        if timeStamp2 > timeStamp1:
+            tempMap = [self.db.map[t] for t in range(0, len(self.db.map)) if ((self.db.time[t] < timeStampEnd) and (self.db.time[t] > timeStampStart))]
+            self.pygame.draw.lines(self.screen, colour, False, tempMap, 20)
+        else:
 
-                map1 = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                        (self.db.time[t] <= max(timeStampEnd, self.db.time[1]))]
-                map2 = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                        (self.db.time[t] >= min(timeStampStart, self.db.time[-1]))]
+            map1 = [self.db.map[t] for t in range(0, len(self.db.map)) if
+                    (self.db.time[t] <= max(timeStampEnd, self.db.time[1]))]
+            map2 = [self.db.map[t] for t in range(0, len(self.db.map)) if
+                    (self.db.time[t] >= min(timeStampStart, self.db.time[-1]))]
 
-                self.pygame.draw.lines(self.screen, colour, False, map1, 20)
-                self.pygame.draw.lines(self.screen, colour, False, map2, 20)
+            self.pygame.draw.lines(self.screen, colour, False, map1, 20)
+            self.pygame.draw.lines(self.screen, colour, False, map2, 20)
 ##        except NameError:
 ##            print(self.db.timeStr + ': \tNameError')
 ##            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
@@ -527,12 +528,12 @@ class RenderScreen(RenderMain):
 ##            warnings.warn(self.db.timeStr + ': Error in highlightSection!')
         # else:
         #     warnings.warn(self.db.timeStr + ': Error in highlightSection!')
-        except:
-            print('Error in iDDURender in highlightSection')
-            if not self.snapshot:
-                self.db.snapshot()
-                print('RTDB snapshot saved!')
-                self.snapshot = True
+        #except:
+        #    print('Error in iDDURender in highlightSection')
+        #    if not self.snapshot:
+        #        self.db.snapshot()
+        #        print('RTDB snapshot saved!')
+        #        self.snapshot = True
 
     def warningLabel(self, text, colour, textcolour):
         self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100], 0)
