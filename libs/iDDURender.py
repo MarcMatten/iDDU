@@ -376,6 +376,10 @@ class RenderScreen(RenderMain):
             if self.db.EngineWarnings & 0x8:
                 self.warningLabel('ENGINE STALLED', self.yellow, self.black)
 
+            if self.db.SessionTime < self.db.tdcHeadlightFlash + 0.5:
+                if self.db.BdcHeadlightFlash:
+                    self.warningLabel('FLASH', self.green, self.white)
+
             # if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld:
             #     self.dcBrakeBiasChangeTime = self.db.SessionTime
             #     self.db.dcBrakeBiasOld = self.db.dcBrakeBias

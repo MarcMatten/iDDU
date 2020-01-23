@@ -111,7 +111,8 @@ iRData = {'LapBestLapTime': 0,
           'TrackTemp': 40.2436,
           'WindDir': 0,
           'WindVel': 13.246,
-          'RelativeHumidity': 50.2346
+          'RelativeHumidity': 50.2346,
+          'dcHeadlightFlash': False
           }
 
 # calculated data
@@ -273,7 +274,10 @@ calcData = {'LastFuelLevel': 0,
             'BResults': False,
             'aOffsetTrack': 0,
             'weatherStr': 'TAir: 25°C     TTrack: 40°C     pAir: 1.01 bar    rHum: 50 %     rhoAir: 1.25 kg/m³     vWind: ',
-            'SOFstr': 'SOF: 0'
+            'SOFstr': 'SOF: 0',
+            'BdcHeadlightFlash': False,
+            'tdcHeadlightFlash': 0,
+            'dcHeadlightFlashOld': False
             }
 
 # Create RTDB and initialise with

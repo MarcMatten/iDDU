@@ -458,6 +458,15 @@ class IDDUCalc:
             self.db.dcThrottleShapeOld = self.db.dcThrottleShape
             self.db.dcFuelMixtureOld = self.db.dcFuelMixture
 
+            if self.db.SessionTime > self.db.RunStartTime + 1:
+                if not self.db.dcHeadlightFlash == self.db.dcHeadlightFlashOld:
+                    self.db.BdcHeadlightFlash = True
+                    self.db.tdcHeadlightFlash = self.db.SessionTime
+
+                if self.db.SessionTime > self.db.tdcHeadlightFlash + 0.5:
+                    self.db.BdcHeadlightFlash = False
+
+
             self.db.BDDUexecuting = True
         else:
             # iRacing is not running
@@ -478,7 +487,6 @@ class IDDUCalc:
         self.db.init = True
         self.db.BResults = False
 
-        self.db.BUpshiftToneInitRequest = True
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.oldLap = 0
@@ -629,6 +637,8 @@ class IDDUCalc:
                 CarIdxtLap_temp[x] = [nan] * LapNumber
 
             self.db.CarIdxtLap = CarIdxtLap_temp
+
+            self.db.BUpshiftToneInitRequest = True
 
             print(self.db.timeStr + ':\tinit LapNumber: ' + str(LapNumber))
             print(self.db.timeStr + ':\tinit CarNumber: ' + str(CarNumber))
