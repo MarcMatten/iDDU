@@ -5,7 +5,6 @@ import numpy as np
 from libs import iDDUhelper
 
 
-# UpShiftTone Thread
 class raceLapsEstimation(threading.Thread):
     def __init__(self, RTDB, rate):
         threading.Thread.__init__(self)
@@ -17,7 +16,6 @@ class raceLapsEstimation(threading.Thread):
     def run(self):
         while 1:
             if self.db.BDDUexecuting:
-                # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit:
                     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
@@ -27,8 +25,6 @@ class raceLapsEstimation(threading.Thread):
 
                         self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete'] - 1] = temp_CarIdxtLap
 
-                        # if self.db.TimeLimit:  # and not self.db.LapLimit:
-                        # try:
                         temp_pitstopsremain_np = self.db.PitStopsRequired - np.array(self.db.CarIdxPitStops[CarIdx_temp])
                         temp_pitstopsremain = temp_pitstopsremain_np.tolist()
                         NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp]))
@@ -47,14 +43,6 @@ class raceLapsEstimation(threading.Thread):
                         self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
                             self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + CarIdxtLapSum + (
                                                                         iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)
-                        # except:
-                        #     print('exception in raceLapsEstimation!')
-                        #     print('i:')
-                        #     print(i)
-                        #     if not self.snapshot:
-                        #         self.db.snapshot()
-                        #         print('RTDB snapshot saved!')
-                        #         self.snapshot = True
 
                     self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
@@ -71,7 +59,7 @@ class raceLapsEstimation(threading.Thread):
                     if self.db.WinnerCarIdx == self.db.DriverCarIdx:
                         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])
                     else:
-                        self.db.NLapDriver = float(self.db.NLapWinnerRaceTime)
+                        self.db.NLapDriver = np.float64(self.db.NLapWinnerRaceTime)
 
                     if self.db.NLapDriver > 1:
                         self.db.RaceLaps = int(self.db.NLapDriver + 1)

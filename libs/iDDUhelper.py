@@ -171,6 +171,7 @@ def maxList(L, value):
         return max(L, value)
 
 def angleVertical(dx, dy):
+    a = 0
     if dx == 0:
         if dy > 0:
             a = np.pi
@@ -192,4 +193,6 @@ def angleVertical(dx, dy):
             a = np.pi * 1.5
 
     return a
+
+
 
