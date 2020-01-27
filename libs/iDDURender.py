@@ -369,6 +369,11 @@ class RenderScreen(RenderMain):
             elif Idx == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
                 labelColour = self.black
                 dotColour = self.orange
+                if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    return
+                else:
+                    if not self.db.SessionFlags & 0x4000 or self.db.SessionFlags & 0x8000:
+                        return
             else:
                 labelColour = self.black
                 dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
