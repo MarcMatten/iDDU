@@ -349,7 +349,9 @@ class RenderScreen(RenderMain):
         return self.done
 
     def CarOnMap(self, Idx):
-        # try:
+        if self.db.CarIdxLapDistPct[Idx] == -1.0:
+            return
+
         x = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.x).tolist()[0]
         y = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.y).tolist()[0]
 
