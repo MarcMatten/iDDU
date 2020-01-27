@@ -7,6 +7,7 @@ import os
 import glob
 from datetime import datetime
 import winsound
+import time
 
 
 class IDDUCalc:
@@ -127,6 +128,9 @@ class IDDUCalc:
                 if self.db.init:  # do when getting into the car
                     print(self.db.timeStr + ':\tGetting into car')
                     self.db.init = False
+                    self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
+                        self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity*100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(
+                        self.db.AirDensity) + ' kg/m³     vWind: '
                     self.db.OutLap = True
                     self.db.LastFuelLevel = self.db.FuelLevel
                     self.db.FuelConsumptionList = []
@@ -404,13 +408,11 @@ class IDDUCalc:
 
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')
-
+        time.sleep(3)
         self.getTrackFiles()
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
-
         self.db.init = True
         self.db.BResults = False
-
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.oldLap = 0
@@ -668,7 +670,7 @@ class IDDUCalc:
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure*0.0338639) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity*100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
         LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap) + '.laplog'
         f = open(LapStr, 'x')
