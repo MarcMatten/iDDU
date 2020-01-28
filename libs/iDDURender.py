@@ -200,29 +200,6 @@ class RenderScreen(RenderMain):
             if self.db.CarLeftRight > 2:
                 pygame.draw.polygon(self.screen, self.orange, self.ArrowRight, 0)
 
-            # alarms
-            if len(self.db.Alarm) > 0:
-                if [1 for i in self.db.Alarm if i in [1]]:  # Traction Control
-                    pygame.draw.rect(self.screen, self.red, [413, 388, 250, 65])
-                if [1 for i in self.db.Alarm if i in [2]]:  # Fuel Level
-                    pygame.draw.rect(self.screen, self.red, [413, 23, 370, 65])
-                if [1 for i in self.db.Alarm if i in [3]]:  # Fuel Laps 1
-                    pygame.draw.rect(self.screen, self.orange, [413, 167, 195, 65])
-                if [1 for i in self.db.Alarm if i in [4]]:  # Fuel Laps 2
-                    pygame.draw.rect(self.screen, self.red, [413, 167, 195, 65])
-                if [1 for i in self.db.Alarm if i in [5]]:  # P2P
-                    self.db.textColourP2P = self.black
-                    pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
-                if [1 for i in self.db.Alarm if i in [6]]:  # DRS warning
-                    pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
-                if [1 for i in self.db.Alarm if i in [7]]:  # DRS open
-                    self.db.textColourDRS = self.black
-                    pygame.draw.rect(self.screen, self.green, [20, 395, 170, 70])
-                if [1 for i in self.db.Alarm if i in [8]]:  # Joker warning
-                    pygame.draw.rect(self.screen, self.orange, [20, 395, 170, 70])
-                if [1 for i in self.db.Alarm if i in [9]]:  # Joker last warning
-                    pygame.draw.rect(self.screen, self.red, [20, 395, 170, 70])
-
             # DRS
             if self.db.DRS:
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
@@ -372,7 +349,9 @@ class RenderScreen(RenderMain):
         return self.done
 
     def CarOnMap(self, Idx):
-        # try:
+        if self.db.CarIdxLapDistPct[Idx] == -1.0:
+            return
+
         x = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.x).tolist()[0]
         y = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.y).tolist()[0]
 
@@ -392,6 +371,11 @@ class RenderScreen(RenderMain):
             elif Idx == self.db.DriverInfo['PaceCarIdx']:  # PaceCar
                 labelColour = self.black
                 dotColour = self.orange
+                if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    return
+                else:
+                    if not self.db.SessionFlags & 0x4000 or self.db.SessionFlags & 0x8000:
+                        return
             else:
                 labelColour = self.black
                 dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][Idx]['CarClassColor'])
