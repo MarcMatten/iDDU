@@ -7,6 +7,7 @@ import os
 import glob
 from datetime import datetime
 import winsound
+import time
 
 
 class IDDUCalc:
