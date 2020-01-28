@@ -404,15 +404,11 @@ class IDDUCalc:
 
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')
-
+        time.sleep(3)
         self.getTrackFiles()
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
-            self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' ' \
-                                                                                                                                                                                               'kg/m³     vWind: '
-
         self.db.init = True
         self.db.BResults = False
-
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.oldLap = 0
