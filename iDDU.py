@@ -277,7 +277,8 @@ calcData = {'LastFuelLevel': 0,
             'SOFstr': 'SOF: 0',
             'BdcHeadlightFlash': False,
             'tdcHeadlightFlash': 0,
-            'dcHeadlightFlashOld': False
+            'dcHeadlightFlashOld': False,
+            'newLapTime': 0
             }
 
 # Create RTDB and initialise with

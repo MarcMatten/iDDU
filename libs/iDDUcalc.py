@@ -143,7 +143,7 @@ class IDDUCalc:
                     self.db.OutLap = True
 
                 # check if new lap
-                if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.Lap > 1:
+                if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:
                     self.db.BNewLap = True
                     self.newLap()
                 else:
@@ -650,6 +650,7 @@ class IDDUCalc:
     def newLap(self):
         # Lap Counting
         winsound.Beep(200, 200)
+        self.db.newLapTime = self.db.SessionTime
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
@@ -670,23 +671,23 @@ class IDDUCalc:
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
             self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
-        LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.Lap) + '.laplog'
+        LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
         f = open(LapStr, 'x')
         f.write('Lap = ' + repr(self.db.Lap) + '\n')
+        f.write('Lap = ' + repr(self.db.StintLap) + '\n')
         f.write('FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
         f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
         f.write('SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
         f.write('SessionTime = ' + repr(self.db.SessionTime) + '\n')
+        f.write('GreenTime = ' + repr(self.db.GreenTime) + '\n')
         f.write('SessionTimeRemain = ' + repr(self.db.SessionTimeRemain) + '\n')
         f.write('DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
         f.write('CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
         f.write('LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
         f.write('PitStopsRequired = ' + repr(self.db.PitStopsRequired) + '\n')
         f.write('CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
-        f.write('SessionTime = ' + repr(self.db.SessionTime) + '\n')
         f.write('SessionNum = ' + repr(self.db.SessionNum) + '\n')
-        f.write('ResultsPositions = ' + repr(
-            self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
+        f.write('ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
         f.write('DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
         f.write('CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
         f.write('NLapRaceTime = ' + repr(self.db.NLapRaceTime) + '\n')
