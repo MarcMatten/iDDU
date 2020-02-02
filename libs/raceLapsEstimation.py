@@ -41,7 +41,7 @@ class raceLapsEstimation(threading.Thread):
 
                         # if my value lower than the winners, then + 1 lap
                         self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
-                            self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + CarIdxtLapSum + (
+                            self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.05) + CarIdxtLapSum + (
                                                                         iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)
 
                     self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
@@ -54,7 +54,7 @@ class raceLapsEstimation(threading.Thread):
 
                     self.db.NLapWinnerRaceTime = (self.db.TFinishPredicted[self.db.WinnerCarIdx] - CarIdxtLapSum - (
                             iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
-                                                                                                                     0.03) + NLapTimed  # use this to find winner
+                                                                                                                     0.05) + NLapTimed  # use this to find winner
 
                     if self.db.WinnerCarIdx == self.db.DriverCarIdx:
                         self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])

@@ -143,7 +143,7 @@ class IDDUCalc:
                     self.db.OutLap = True
 
                 # check if new lap
-                if self.db.Lap > self.db.oldLap:
+                if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.Lap > 1:
                     self.db.BNewLap = True
                     self.newLap()
                 else:
@@ -171,14 +171,14 @@ class IDDUCalc:
 
                 # fuel consumption -----------------------------------------------------------------------------------------
                 if len(self.db.FuelConsumptionList) >= 1:
-                    self.db.FuelAvgConsumption = iDDUhelper.meanTol(self.db.FuelConsumptionList, 0.03)
+                    self.db.FuelAvgConsumption = iDDUhelper.meanTol(self.db.FuelConsumptionList, 0.2)
                     self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
                     if self.db.NLapRemaining < 3:
                         self.db.Alarm[3] = 2
                     if self.db.NLapRemaining < 1:
                         self.db.Alarm[3] = 3
                     if self.db.BNewLap and not self.db.onPitRoad:
-                        fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1)
+                        fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.5)
                         self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
                                                self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
                                                    'DriverCarMaxFuelPct'])
@@ -298,12 +298,12 @@ class IDDUCalc:
                     self.db.FlagExceptionVal = 0
                     if self.db.SessionFlags & 0x8000000:  # startGo
                         self.db.backgroundColour = self.green
-                        self.db.GreenTime = self.db.SessionTimeRemain
+                        self.db.GreenTime = self.db.SessionTime
                         self.db.CarIdxPitStops = [0] * 64
                     if self.db.SessionFlags & 0x2:  # white
                         self.db.backgroundColour = self.white
                         self.db.textColour = self.black
-                    if self.db.SessionFlags & 0x20 and self.db.SessionTime > 20:  # blue
+                    if self.db.SessionFlags & 0x20 and self.db.SessionTime > 20 + self.db.GreenTime:  # blue
                         self.db.backgroundColour = self.blue
                     if self.db.SessionFlags & 0x1:  # checkered
                         self.db.textColour = self.grey

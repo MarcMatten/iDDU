@@ -112,7 +112,8 @@ iRData = {'LapBestLapTime': 0,
           'WindDir': 0,
           'WindVel': 13.246,
           'RelativeHumidity': 50.2346,
-          'dcHeadlightFlash': False
+          'dcHeadlightFlash': False,
+          'SessionState': 0
           }
 
 # calculated data
