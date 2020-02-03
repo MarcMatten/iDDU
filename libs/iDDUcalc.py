@@ -73,7 +73,7 @@ class IDDUCalc:
                     'SessionType'])
                 self.initSession()
 
-            if self.db.SessionTime < 10:
+            if self.db.SessionTime < 10 + self.db.GreenTime:
                 self.db.CarIdxPitStops = [0] * 64
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
@@ -87,6 +87,72 @@ class IDDUCalc:
                 self.db.PosStr = str(self.db.NClassPosition) + '/' + str(self.db.NDriversMyClass)
             else:
                 self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
+
+            if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
+                pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
+                deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
+
+                r = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
+                              [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0],
+                               self.orange[0], self.red[0]])
+                g = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
+                              [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1],
+                               self.orange[1], self.red[1]])
+                b = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
+                              [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2],
+                               self.orange[2], self.red[2]])
+
+                self.db.backgroundColour = (r, g, b)
+                self.db.textColour = self.white
+            else:
+                if not (self.db.SessionFlags == self.db.oldSessionFlags):
+                    self.FlagCallTime = self.db.SessionTime
+                    self.db.FlagExceptionVal = 0
+                    if self.db.SessionFlags & 0x80000000:  # startGo
+                        self.db.backgroundColour = self.green
+                        self.db.GreenTime = self.db.SessionTime
+                        self.db.CarIdxPitStops = [0] * 64
+                    if self.db.SessionFlags & 0x2:  # white
+                        self.db.backgroundColour = self.white
+                        self.db.textColour = self.black
+                    if self.db.SessionFlags & 0x20 and self.db.SessionTime > 20 + self.db.GreenTime:  # blue
+                        self.db.backgroundColour = self.blue
+                    if self.db.SessionFlags & 0x1:  # checkered
+                        self.db.textColour = self.grey
+                        self.db.FlagExceptionVal = 1
+                        self.db.FlagException = True
+                    if self.db.SessionFlags & 0x100000:  # repair
+                        self.db.FlagException = True
+                        self.db.FlagExceptionVal = 2
+                        self.db.backgroundColour = self.black
+                    if self.db.SessionFlags & 0x10000 or self.db.SessionFlags & 0x20000:  # disqualified
+                        self.db.textColour = self.grey
+                        self.db.FlagException = True
+                        self.db.FlagExceptionVal = 4
+                    if self.db.SessionFlags & 0x40:  # debry
+                        self.db.FlagExceptionVal = 5
+                    if self.db.SessionFlags & 0x80000:  # warning
+                        self.db.FlagException = True
+                        self.db.textColour = self.grey
+                        self.db.FlagExceptionVal = 6
+                    if self.db.SessionFlags & 0x8 or self.db.SessionFlags & 0x100:  # yellow
+                        self.db.backgroundColour = self.yellow
+                        self.db.textColour = self.black
+                    if self.db.SessionFlags & 0x4000 or self.db.SessionFlags & 0x8000:  # SC
+                        self.db.FlagException = True
+                        self.db.backgroundColour = self.yellow
+                        self.db.textColour = self.black
+                        self.db.FlagExceptionVal = 3
+                    if self.db.SessionFlags & 0x10:  # red
+                        self.db.backgroundColour = self.red
+
+                    self.db.oldSessionFlags = self.db.SessionFlags
+
+                elif self.db.SessionTime > (self.FlagCallTime + 3):
+                    self.db.backgroundColour = self.black
+                    self.db.textColour = self.white
+                    self.db.FlagException = False
+                    self.db.FlagExceptionVal = 0
 
             if self.db.IsOnTrack:
                 # do if car is on track #############################################################################################
@@ -104,7 +170,7 @@ class IDDUCalc:
                     else:
                         NumResults = 0
                     self.db.JokerLaps = [0] * NumDrivers
-                    self.db.textColorJoker = self.db.textColour
+                    self.db.textColourJoker = self.db.textColour
                     for n in range(0, NumResults):
                         self.db.JokerLaps[
                             self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = \
@@ -123,7 +189,8 @@ class IDDUCalc:
                         elif self.db.LapsToGo <= self.db.JokerLapsRequired:
                             self.db.Alarm[6] = 3
                     else:
-                        self.db.textColorJoker = self.green
+                        if self.db.JokerLapsRequired > 0:
+                            self.db.textColourJoker = self.green
 
                 if self.db.init:  # do when getting into the car
                     print(self.db.timeStr + ':\tGetting into car')
@@ -276,72 +343,6 @@ class IDDUCalc:
                     self.db.CarIdxPitStops[i] = self.db.CarIdxPitStops[i] + 1
             self.db.CarIdxOnPitRoadOld = self.db.CarIdxOnPitRoad
 
-            if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
-                pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
-                deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
-
-                r = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                              [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0],
-                               self.orange[0], self.red[0]])
-                g = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                              [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1],
-                               self.orange[1], self.red[1]])
-                b = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                              [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2],
-                               self.orange[2], self.red[2]])
-
-                self.db.backgroundColour = (r, g, b)
-                self.db.textColour = self.grey
-            else:
-                if not (self.db.SessionFlags == self.db.oldSessionFlags):
-                    self.FlagCallTime = self.db.SessionTime
-                    self.db.FlagExceptionVal = 0
-                    if self.db.SessionFlags & 0x80000000:  # startGo
-                        self.db.backgroundColour = self.green
-                        self.db.GreenTime = self.db.SessionTime
-                        self.db.CarIdxPitStops = [0] * 64
-                    if self.db.SessionFlags & 0x2:  # white
-                        self.db.backgroundColour = self.white
-                        self.db.textColour = self.black
-                    if self.db.SessionFlags & 0x20 and self.db.SessionTime > 20 + self.db.GreenTime:  # blue
-                        self.db.backgroundColour = self.blue
-                    if self.db.SessionFlags & 0x1:  # checkered
-                        self.db.textColour = self.grey
-                        self.db.FlagExceptionVal = 1
-                        self.db.FlagException = True
-                    if self.db.SessionFlags & 0x100000:  # repair
-                        self.db.FlagException = True
-                        self.db.FlagExceptionVal = 2
-                        self.db.backgroundColour = self.black
-                    if self.db.SessionFlags & 0x10000 or self.db.SessionFlags & 0x20000:  # disqualified
-                        self.db.textColour = self.grey
-                        self.db.FlagException = True
-                        self.db.FlagExceptionVal = 4
-                    if self.db.SessionFlags & 0x40:  # debry
-                        self.db.FlagExceptionVal = 5
-                    if self.db.SessionFlags & 0x80000:  # warning
-                        self.db.FlagException = True
-                        self.db.textColour = self.grey
-                        self.db.FlagExceptionVal = 6
-                    if self.db.SessionFlags & 0x8 or self.db.SessionFlags & 0x100:  # yellow
-                        self.db.backgroundColour = self.yellow
-                        self.db.textColour = self.black
-                    if self.db.SessionFlags & 0x4000 or self.db.SessionFlags & 0x8000:  # SC
-                        self.db.FlagException = True
-                        self.db.backgroundColour = self.yellow
-                        self.db.textColour = self.black
-                        self.db.FlagExceptionVal = 3
-                    if self.db.SessionFlags & 0x10:  # red
-                        self.db.backgroundColour = self.red
-
-                    self.db.oldSessionFlags = self.db.SessionFlags
-
-                elif self.db.SessionTime > (self.FlagCallTime + 3):
-                    self.db.backgroundColour = self.black
-                    self.db.textColour = self.grey
-                    self.db.FlagException = False
-                    self.db.FlagExceptionVal = 0
-
             # change in driver controls
             if self.db.SessionTime > self.db.RunStartTime + 1:
                 if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld and self.db.dcBrakeBias is not None:
@@ -412,7 +413,7 @@ class IDDUCalc:
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
-        self.db.oldLap = 0
+        self.db.oldLap = self.db.Lap
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
         self.db.JokerLapsRequired = 0
         self.db.PitStopsRequired = 0

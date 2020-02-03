@@ -461,19 +461,19 @@ class Frame(RenderMain):
         self.y2 = y1 + dy - 1
         self.dy = dy
         self.title = title
-        self.Title = self.fontSmall.render(self.title, True, self.textColour)
+        self.Title = self.fontSmall.render(self.title, True, self.db.textColour)
         self.textSize = self.fontSmall.size(self.title)
         self.center = center
         self.Labels = {}
 
     def drawFrame(self):
         if self.center:
-            self.pygame.draw.lines(self.screen, self.textColour, False,
+            self.pygame.draw.lines(self.screen, self.db.textColour, False,
                                    [[self.x1 + self.dx/2 - self.textSize[0]/2 - 5, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
                                     [self.x2, self.y1], [self.x1 + self.dx/2 + self.textSize[0]/2 + 5, self.y1]], 1)
             self.screen.blit(self.Title, (self.x1 + self.dx/2 - self.textSize[0]/2 , self.y1 - 10))
         else:
-            self.pygame.draw.lines(self.screen, self.textColour, False,
+            self.pygame.draw.lines(self.screen, self.db.textColour, False,
                                    [[self.x1 + 25, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
                                     [self.x2, self.y1], [self.x1 + 35 + self.textSize[0], self.y1]], 1)
             self.screen.blit(self.Title, (self.x1 + 30, self.y1 - 10))
@@ -484,7 +484,7 @@ class Frame(RenderMain):
 
     def reinitFrame(self, title):
         self.title = title
-        self.Title = self.fontSmall.render(self.title, True, self.textColour)
+        self.Title = self.fontSmall.render(self.title, True, self.db.textColour)
         self.textSize = self.fontSmall.size(self.title)
 
     def setTextColour(self, colour):
