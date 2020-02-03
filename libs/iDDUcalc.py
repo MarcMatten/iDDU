@@ -296,7 +296,7 @@ class IDDUCalc:
                 if not (self.db.SessionFlags == self.db.oldSessionFlags):
                     self.FlagCallTime = self.db.SessionTime
                     self.db.FlagExceptionVal = 0
-                    if self.db.SessionFlags & 0x8000000:  # startGo
+                    if self.db.SessionFlags & 0x80000000:  # startGo
                         self.db.backgroundColour = self.green
                         self.db.GreenTime = self.db.SessionTime
                         self.db.CarIdxPitStops = [0] * 64
@@ -344,25 +344,25 @@ class IDDUCalc:
 
             # change in driver controls
             if self.db.SessionTime > self.db.RunStartTime + 1:
-                if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld:
+                if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld and self.db.dcBrakeBias is not None:
                     self.db.dcBrakeBiasChange = True
                     self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcABS == self.db.dcABSOld:
+                if not self.db.dcABS == self.db.dcABSOld and self.db.dcABS is not None:
                     self.db.dcABSChange = True
                     self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcTractionControlToggle == self.db.dcTractionControlToggleOld:
+                if not self.db.dcTractionControlToggle == self.db.dcTractionControlToggleOld and self.db.dcTractionControlToggle is not None:
                     self.db.dcTractionControlToggleChange = True
                     self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcTractionControl == self.db.dcTractionControlOld:
+                if not self.db.dcTractionControl == self.db.dcTractionControlOld and self.db.dcTractionControl is not None:
                     self.db.dcTractionControlChange = True
                     self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcTractionControl2 == self.db.dcTractionControl2Old:
+                if not self.db.dcTractionControl2 == self.db.dcTractionControl2Old and self.db.dcTractionControl2 is not None:
                     self.db.dcTractionControl2Change = True
                     self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcThrottleShape == self.db.dcThrottleShapeOld:
+                if not self.db.dcThrottleShape == self.db.dcThrottleShapeOld and self.db.dcThrottleShape is not None:
                     self.db.dcThrottleShapeChange = True
                     self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcFuelMixture == self.db.dcFuelMixtureOld:
+                if not self.db.dcFuelMixture == self.db.dcFuelMixtureOld and self.db.dcFuelMixture is not None:
                     self.db.dcFuelMixtureChange = True
                     self.db.dcChangeTime = self.db.SessionTime
 
@@ -384,7 +384,7 @@ class IDDUCalc:
             self.db.dcFuelMixtureOld = self.db.dcFuelMixture
 
             if self.db.SessionTime > self.db.RunStartTime + 1:
-                if not self.db.dcHeadlightFlash == self.db.dcHeadlightFlashOld:
+                if not self.db.dcHeadlightFlash == self.db.dcHeadlightFlashOld and self.db.dcHeadlightFlash is not None:
                     self.db.BdcHeadlightFlash = True
                     self.db.tdcHeadlightFlash = self.db.SessionTime
 
@@ -651,14 +651,13 @@ class IDDUCalc:
         # Lap Counting
         winsound.Beep(200, 200)
         self.db.newLapTime = self.db.SessionTime
-        self.db.StintLap = self.db.StintLap + 1
-        self.db.oldLap = self.db.Lap
-        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
 
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
+        self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
         if (not self.db.OutLap) and (not self.db.onPitRoad):
-            self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
+            # self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
+            print('bla')
         else:
             self.db.OutLap = False
 
@@ -668,13 +667,10 @@ class IDDUCalc:
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
-            self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
-
         LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
         f = open(LapStr, 'x')
         f.write('Lap = ' + repr(self.db.Lap) + '\n')
-        f.write('Lap = ' + repr(self.db.StintLap) + '\n')
+        f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
         f.write('FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
         f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
         f.write('SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
@@ -702,8 +698,17 @@ class IDDUCalc:
         f.write('CarIdxOnPitRoad = ' + repr(self.db.CarIdxOnPitRoad) + '\n')
         f.write('CarIdxLapDistPct = ' + repr(self.db.CarIdxLapDistPct) + '\n')
         f.write('PaceCarIdx = ' + repr(self.db.DriverInfo['PaceCarIdx']) + '\n')
+        f.write('FuelLevel = ' + repr(self.db.FuelLevel) + '\n')
+        f.write('SessionFlags = ' + repr(self.db.SessionFlags) + '\n')
 
         f.close()
+
+        self.db.StintLap = self.db.StintLap + 1
+        self.db.oldLap = self.db.Lap
+        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
+
+        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
+            self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
         if self.BCreateTrack and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
             self.createTrackFile()
