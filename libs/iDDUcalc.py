@@ -252,23 +252,31 @@ class IDDUCalc:
                         if self.db.VFuelAdd == 0:
                             self.ir.pit_command(2, 1)
                             self.ir.pit_command(11)
-                            self.db.textColourFuelAdd = self.db.textColour
+                            self.db.BTextColourFuelAddOverride = False
                         else:
                             if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
                                 self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
                             if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
-                                self.db.textColourFuelAdd = self.green
+                                self.db.textColourFuelAddOverride = self.green
+                                self.db.BTextColourFuelAddOverride = True
                             elif self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 2 * self.db.FuelAvgConsumption:
-                                self.db.textColourFuelAdd = self.yellow
+                                self.db.textColourFuelAddOverride = self.yellow
+                                self.db.BTextColourFuelAddOverride = True
                             elif self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 3 * self.db.FuelAvgConsumption:
-                                self.db.textColourFuelAdd = self.red
+                                self.db.textColourFuelAddOverride = self.red
+                                self.db.BTextColourFuelAddOverride = True
                             else:
-                                self.db.textColourFuelAdd = self.db.textColour
+                                self.db.BTextColourFuelAddOverride = False
                         self.db.VFuelAddOld = self.db.VFuelAdd
                 else:
                     self.db.FuelAvgConsumption = 0
                     self.db.NLapRemaining = 0
                     self.db.VFuelAdd = 0
+
+                if self.db.BTextColourFuelAddOverride:
+                    self.db.textColourFuelAdd = self.db.textColourFuelAddOverride
+                else:
+                    self.db.textColourFuelAdd = self.db.textColour
 
                 # DRS
                 if self.db.DRS:
