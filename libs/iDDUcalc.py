@@ -421,6 +421,7 @@ class IDDUCalc:
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
+        self.db.newLapTime = 0
         self.db.oldLap = self.db.Lap
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
         self.db.JokerLapsRequired = 0
@@ -528,6 +529,11 @@ class IDDUCalc:
                     print(self.db.timeStr + ':\tRace mode 5')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                         'SessionTime'])
+
+            if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and not self.db.LapLimit and self.db.TimeLimit:
+                self.db.BEnableRaceLapEstimation = True
+            else:
+                self.db.BEnableRaceLapEstimation = False
 
             CarNumber = len(self.db.DriverInfo['Drivers']) + 2
             if not self.db.LapLimit:
@@ -663,10 +669,9 @@ class IDDUCalc:
 
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
-        self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
+        # self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
         if (not self.db.OutLap) and (not self.db.onPitRoad):
-            # self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
-            print('bla')
+            self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
         else:
             self.db.OutLap = False
 
@@ -680,6 +685,7 @@ class IDDUCalc:
         f = open(LapStr, 'x')
         f.write('Lap = ' + repr(self.db.Lap) + '\n')
         f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
+        f.write('RaceLaps = ' + repr(self.db.RaceLaps) + '\n')
         f.write('FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
         f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
         f.write('SessionInfo = ' + repr(self.db.SessionInfo) + '\n')

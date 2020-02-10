@@ -16,7 +16,9 @@ class raceLapsEstimation(threading.Thread):
     def run(self):
         while 1:
             if self.db.BDDUexecuting:
-                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit:
+                # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit and\
+                #          not self.db.LapLimit:
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.BEnableRaceLapEstimation:
                     for i in range(0, len(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'])):
                         CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
                         temp_CarIdxtLap = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']

@@ -280,7 +280,8 @@ calcData = {'LastFuelLevel': 0,
             'BdcHeadlightFlash': False,
             'tdcHeadlightFlash': 0,
             'dcHeadlightFlashOld': False,
-            'newLapTime': 0
+            'newLapTime': 0,
+            'BEnableRaceLapEstimation': False
             }
 
 # Create RTDB and initialise with
