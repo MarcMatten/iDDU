@@ -5,6 +5,7 @@ from functionalities.RTDB import RTDB
 from functionalities.UpshiftTone import UpshiftTone
 from gui.iDDUgui import iDDUgui
 from libs import iDDURender, iDDUcalc, raceLapsEstimation
+import os
 
 nan = float('nan')
 CarNumber = 64
@@ -281,8 +282,10 @@ calcData = {'LastFuelLevel': 0,
             'tdcHeadlightFlash': 0,
             'dcHeadlightFlashOld': False,
             'newLapTime': 0,
-            'BEnableRaceLapEstimation': False
-            }
+            'BEnableRaceLapEstimation': False,
+            'dir': os.getcwd(),
+            'track': None,
+            'car': None}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()

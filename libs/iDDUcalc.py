@@ -1,5 +1,5 @@
 import irsdk
-from libs import iDDUhelper
+from libs import iDDUhelper, Track, Car
 import csv
 import math
 import numpy as np
@@ -39,20 +39,28 @@ class IDDUCalc:
         self.logLap = 0
         self.timeLogingStart = 0
         self.BCreateTrack = False
+        self.BRecordtLap = False
 
         self.ir = irsdk.IRSDK()
 
-        self.getTrackFiles()
-        self.loadTrack('cota gp')
-
         self.DRSList = ['formularenault35', 'mclarenmp430']
         self.P2PList = ['dallaradw12', 'dallarair18']
+
         self.dir = None
         self.trackdir = None
         self.trackList = None
+        self.carDir = None
+        self.carList = None
+
         self.x = None
         self.y = None
         self.snapshot = False
+
+        self.getTrackFiles2()
+        self.loadTrack2('default')
+
+        self.getCarFiles()
+        self.loadCar('default')
 
     def calc(self):
         # Check if DDU is initialised
@@ -102,7 +110,7 @@ class IDDUCalc:
                               [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2],
                                self.orange[2], self.red[2]])
 
-                self.db.backgroundColour = (r, g, b)
+                self.db.backgroundColour = tuple([r, g, b])
                 self.db.textColour = self.white
             else:
                 if not (self.db.SessionFlags == self.db.oldSessionFlags):
@@ -217,7 +225,7 @@ class IDDUCalc:
                     self.db.BNewLap = False
 
                 # Create Track Map
-                if self.BCreateTrack and not self.db.OutLap and self.db.StintLap > 1:
+                if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
                     # Logging track data
                     if not self.Logging:
                         self.logLap = self.db.Lap
@@ -415,7 +423,7 @@ class IDDUCalc:
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')
         time.sleep(3)
-        self.getTrackFiles()
+        self.getTrackFiles2()
         self.db.init = True
         self.db.BResults = False
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
@@ -438,13 +446,33 @@ class IDDUCalc:
                 'DriverCarMaxFuelPct']
             self.db.DriverCarIdx = self.db.DriverInfo['DriverCarIdx']
 
-            if self.db.WeekendInfo['TrackName'] + '.csv' in self.trackList:
-                self.loadTrack(self.db.WeekendInfo['TrackName'])
+            # track
+            if self.db.WeekendInfo['TrackName'] + '.json' in self.trackList:
+                self.loadTrack2(self.db.WeekendInfo['TrackName'])
                 self.BCreateTrack = False
             else:
-                self.loadTrack('cota gp')
+                self.loadTrack2('default')
                 self.BCreateTrack = True
+                self.BRecordtLap = True
                 print(self.db.timeStr + ':\tCreating Track')
+
+            # car
+            carName = self.db.DriverInfo['Drivers'][self.db.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
+            if carName + '.json' in self.carList:
+                self.loadCar(carName)
+                if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
+                    self.BRecordtLap = False
+                    self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
+                else:
+                    self.BRecordtLap = True
+            else:
+                self.loadCar('default')
+                self.db.car = Car.Car(carName)
+                self.db.car.createCar(self.db)
+                self.db.car.saveJson(self.db.dir)
+                self.BRecordtLap = True
+
+                print(self.db.timeStr + ':\tCreated Car ' + carName)
 
             print(self.db.timeStr + ':\tTrackName: ' + self.db.WeekendInfo['TrackDisplayName'])
             print(self.db.timeStr + ':\tEventType: ' + self.db.WeekendInfo['EventType'])
@@ -650,6 +678,26 @@ class IDDUCalc:
         self.db.aOffsetTrack = iDDUhelper.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
+    def loadTrack2(self, name):
+        print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')
+
+        # self.db.track = Track.Track(name)
+        # self.db.track.loadFromCSV("track/" + name + '.csv')
+        self.db.track = Track.Track(name)
+        self.db.track.loadJson("track/" + name + '.json')
+
+        print(self.db.timeStr + ':\tTrack has been loaded successfully.')
+
+    def loadCar(self, name):
+        print(self.db.timeStr + ':\tLoading car: ' + r"car/" + name + '.json')
+
+        # self.db.track = Track.Track(name)
+        # self.db.track.loadFromCSV("track/" + name + '.csv')
+        self.db.car = Car.Car(name)
+        self.db.car.loadJson("car/" + name + '.json')
+
+        print(self.db.timeStr + ':\tCar has been loaded successfully.')
+
     def getTrackFiles(self):
         print(self.db.timeStr + ':\tCollecting Track files...')
         self.dir = os.getcwd()
@@ -660,6 +708,30 @@ class IDDUCalc:
         os.chdir(self.trackdir)
         for file in glob.glob("*.csv"):
             self.trackList.append(file)
+        os.chdir(self.dir)
+
+    def getTrackFiles2(self):
+        print(self.db.timeStr + ':\tCollecting Track files...')
+        self.dir = os.getcwd()
+        self.trackdir = self.dir + r"\track"
+        self.trackList = []
+
+        # get list of trackfiles
+        os.chdir(self.trackdir)
+        for file in glob.glob("*.json"):
+            self.trackList.append(file)
+        os.chdir(self.dir)
+
+    def getCarFiles(self):
+        print(self.db.timeStr + ':\tCollecting Car files...')
+        self.dir = os.getcwd()
+        self.carDir = self.dir + r"\car"
+        self.carList = []
+
+        # get list of trackfiles
+        os.chdir(self.carDir)
+        for file in glob.glob("*.json"):
+            self.carList.append(file)
         os.chdir(self.dir)
 
     def newLap(self):
@@ -682,7 +754,7 @@ class IDDUCalc:
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
         LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
-        f = open(LapStr, 'x')
+        f = open('laplog/' + LapStr, 'x')
         f.write('Lap = ' + repr(self.db.Lap) + '\n')
         f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
         f.write('RaceLaps = ' + repr(self.db.RaceLaps) + '\n')
@@ -725,53 +797,88 @@ class IDDUCalc:
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
             self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
-        if self.BCreateTrack and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
-            self.createTrackFile()
+        if (self.BCreateTrack or self.BRecordtLap) and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
+            self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
-    def createTrackFile(self):
-        tempx = np.cumsum(self.dx, dtype=float).tolist()
-        tempy = np.cumsum(self.dy, dtype=float).tolist()
+    def createTrackFile(self, BCreateTrack, BRecordtLap):
 
-        dx = tempx[-1] - tempx[0]
-        dy = tempy[-1] - tempy[0]
+        time.sleep(1)
 
-        self.x = np.cumsum(np.array(self.dx) - dx / len(tempx), dtype=float)
-        self.y = np.cumsum(np.array(self.dy) - dy / len(tempy), dtype=float)
+        index = np.unique(self.time, return_index=True)[1]
+        self.time = np.array(self.time)[index]
+        self.dist = np.array(self.dist)[index]
 
-        width = np.max(self.x) - np.min(self.x)
-        height = np.max(self.y) - np.min(self.y)
+        self.time = np.append(self.time, self.db.LapLastLapTime)
+        self.dist = np.append(self.dist, 100)
 
-        scalingFactor = min(400 / height, 720 / width)
+        if BCreateTrack:
+            tempx = np.cumsum(self.dx, dtype=float).tolist()
+            tempy = np.cumsum(self.dy, dtype=float).tolist()
 
-        self.x = 400 + (scalingFactor * self.x - (min(scalingFactor * self.x) + max(scalingFactor * self.x)) / 2)
-        self.y = -(240 + (
-                scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y)) / 2)) + 480
+            dx = tempx[-1] - tempx[0]
+            dy = tempy[-1] - tempy[0]
 
-        with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
-            thewriter = csv.writer(f)
-            NTrackElements = len(self.dist)
-            for l in range(0, NTrackElements):
-                if l > 2:
-                    if not self.dist[l - 1] >= self.dist[l]:
-                        thewriter.writerow([self.dist[l], self.x[l], self.y[l], self.time[l]])
+            self.x = np.cumsum(np.array(self.dx) - dx / len(tempx), dtype=float)[index]
+            self.y = np.cumsum(np.array(self.dy) - dy / len(tempy), dtype=float)[index]
 
-        self.db.map = []
-        self.db.x = []
-        self.db.y = []
-        for i in range(0, NTrackElements):
-            self.db.map.append([float(self.x[i]), float(self.y[i])])
-        self.db.dist = self.dist[0:NTrackElements]
-        self.db.time = self.time[0:NTrackElements]
-        self.db.x = self.x[0:NTrackElements]
-        self.db.y = self.y[0:NTrackElements]
+            # width = np.max(self.x) - np.min(self.x)
+            # height = np.max(self.y) - np.min(self.y)
 
-        self.db.aOffsetTrack = iDDUhelper.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
+            # scalingFactor = min(400 / height, 720 / width)
+            #
+            # self.x = 400 + (scalingFactor * self.x - (min(scalingFactor * self.x) + max(scalingFactor * self.x)) / 2)
+            # self.y = -(240 + (
+            #         scalingFactor * self.y - (min(scalingFactor * self.y) + max(scalingFactor * self.y)) / 2)) + 480
+
+            self.x = np.append(self.x, self.x[0])
+            self.y = np.append(self.y, self.y[0])
+
+            self.db.track = Track.Track(self.db.WeekendInfo['TrackName'])
+
+            aNorth = iDDUhelper.angleVertical(self.x[5] - self.x[0], self.y[5] - self.y[0])
+
+            self.db.track.createTrack(self.x, self.y, self.dist, aNorth, self.db.TrackLength*1000)
+        # self.db.track.saveJson(self.db.dir + "/track/" + self.db.WeekendInfo['TrackName'] + ".json")
+            self.db.track.saveJson(self.db.dir)
+
+            self.db.dist = self.db.track.dist
+
+            print(self.db.timeStr + ':\tTrack has been successfully created')
+            print(self.db.timeStr + ':\tSaved track as: ' + r"track/" + self.db.track.name + ".json")
+
+        if BRecordtLap:
+            self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.dist, self.db.track.dist)
+            self.db.car.saveJson(self.db.dir)
+            self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
+
+            print(self.db.timeStr + ':\tLap time has been recorded successfully!')
+            print(self.db.timeStr + ':\tSaved car as: ' + r"car/" + self.db.car.name + ".json")
+
+        # with open(r"track/" + self.db.WeekendInfo['TrackName'] + ".csv", 'w', newline='') as f:
+        #     thewriter = csv.writer(f)
+        #     NTrackElements = len(self.dist)
+        #     for l in range(0, NTrackElements):
+        #         if l > 2:
+        #             if not self.dist[l - 1] >= self.dist[l]:
+        #                 thewriter.writerow([self.dist[l], self.x[l], self.y[l], self.time[l]])
+        #
+        # self.db.map = []
+        # self.db.x = []
+        # self.db.y = []
+        # for i in range(0, NTrackElements):
+        #     self.db.map.append([float(self.x[i]), float(self.y[i])])
+        # self.db.dist = self.dist[0:NTrackElements]
+        # self.db.time = self.time[0:NTrackElements]
+        # self.db.x = self.x[0:NTrackElements]
+        # self.db.y = self.y[0:NTrackElements]
+        #
+        # self.db.aOffsetTrack = iDDUhelper.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
 
         self.BCreateTrack = False
+        self.BRecordtLap = False
         self.Logging = False
 
-        print(self.db.timeStr + ':\tTrack has been successfully created')
-        print(self.db.timeStr + ':\tSaved track as: ' + r"track/" + self.db.WeekendInfo['TrackName'] + ".csv")
+
 
     def SOFstring(self):
         if self.db.NClasses > 1:
@@ -782,3 +889,4 @@ class IDDUCalc:
             self.db.SOFstr = temp + ')'
         else:
             self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
+

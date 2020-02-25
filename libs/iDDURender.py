@@ -1,5 +1,5 @@
 import os
-import numpy
+import numpy as np
 import pygame
 from libs import iDDUhelper
 
@@ -260,9 +260,9 @@ class RenderScreen(RenderMain):
 
         elif self.ScreenNumber == 2:
             self.screen.fill(self.backgroundColour)
-            angleDeg = int(((float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])) - self.db.aOffsetTrack - self.db.WindDir - numpy.pi)*180/numpy.pi)
-            angleRad = angleDeg/180*numpy.pi
-            dx = abs(82.8427 * numpy.cos(2 * (45/180*numpy.pi + angleRad)))
+            angleDeg = int(((float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])) - self.db.aOffsetTrack - self.db.WindDir - np.pi)*180/np.pi)
+            angleRad = angleDeg/180*np.pi
+            dx = abs(82.8427 * np.cos(2 * (45/180*np.pi + angleRad)))
 
             self.screen.blit(self.pygame.transform.rotate(self.arrow, angleDeg), [200-dx, 40-dx])
 
@@ -270,14 +270,16 @@ class RenderScreen(RenderMain):
                 self.highlightSection(5, self.green)
                 self.highlightSection(1, self.red)
 
-            self.pygame.draw.lines(self.screen, self.db.textColour, True, [self.db.map[-1], self.db.map[0]], 30)
+            # SFLine
+            self.pygame.draw.polygon(self.screen, self.db.textColour, self.db.track.SFLine, 0)
+            # self.pygame.draw.lines(self.screen, self.db.textColour, True, [self.db.track.map[-1], self.db.track.map[0]], 30)
 
-            self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.map, 5)
+            self.pygame.draw.lines(self.screen, self.db.textColour, True, self.db.track.map, 5)
 
             for n in range(1, len(self.db.DriverInfo['Drivers'])):
                 temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
                 if not temp_CarIdx == self.db.DriverCarIdx:
-                    self.CarOnMap(n)
+                   self.CarOnMap(n)
             self.CarOnMap(self.db.DriverCarIdx)
             self.CarOnMap(0)
 
@@ -352,8 +354,8 @@ class RenderScreen(RenderMain):
         if self.db.CarIdxLapDistPct[Idx] == -1.0:
             return
 
-        x = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.x).tolist()[0]
-        y = numpy.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.dist, self.db.y).tolist()[0]
+        x = np.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.track.dist, self.db.track.x).tolist()[0]
+        y = np.interp([float(self.db.CarIdxLapDistPct[Idx]) * 100], self.db.track.dist, self.db.track.y).tolist()[0]
 
         if self.db.DriverInfo['DriverCarIdx'] == Idx:  # if player's car
             if self.db.RX:
@@ -405,33 +407,56 @@ class RenderScreen(RenderMain):
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
 
     def highlightSection(self, width: int, colour: tuple):
-        timeStamp = numpy.interp([float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100], self.db.dist, self.db.time).tolist()[0]
+        tLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
+        timeStamp = np.interp([float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100], self.db.track.dist, tLap).tolist()[0]
         timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
         while timeStamp1 < 0:
-            timeStamp1 = timeStamp1 + self.db.time[-1]
-        while timeStamp1 > self.db.time[-1]:
-            timeStamp1 = timeStamp1 - self.db.time[-1]
+            timeStamp1 = timeStamp1 + tLap[-1]
+        while timeStamp1 > tLap[-1]:
+            timeStamp1 = timeStamp1 - tLap[-1]
 
         timeStamp2 = timeStamp - self.db.PitStopDelta + width / 2
 
         while timeStamp2 < 0:
-            timeStamp2 = timeStamp2 + self.db.time[-1]
-        while timeStamp2 > self.db.time[-1]:
-            timeStamp2 = timeStamp2 - self.db.time[-1]
+            timeStamp2 = timeStamp2 + tLap[-1]
+        while timeStamp2 > tLap[-1]:
+            timeStamp2 = timeStamp2 - tLap[-1]
 
         timeStampStart = timeStamp1
         timeStampEnd = timeStamp2
 
         # try:
         if timeStamp2 > timeStamp1:
-            tempMap = [self.db.map[t] for t in range(0, len(self.db.map)) if ((self.db.time[t] < timeStampEnd) and (self.db.time[t] > timeStampStart))]
+            tempMap = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if ((tLap[t] < timeStampEnd) and (tLap[t] > timeStampStart))]
             self.pygame.draw.lines(self.screen, colour, False, tempMap, 20)
         else:
 
-            map1 = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                    (self.db.time[t] <= max(timeStampEnd, self.db.time[1]))]
-            map2 = [self.db.map[t] for t in range(0, len(self.db.map)) if
-                    (self.db.time[t] >= min(timeStampStart, self.db.time[-1]))]
+            # map1 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
+            #         (tLap[t] <= max(timeStampEnd, tLap[1]))]
+            # map2 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
+            #         (tLap[t] >= min(timeStampStart, tLap[-1]))]
+
+            indices1 = np.argwhere(np.array(tLap) <= max(timeStampEnd, tLap[1]))
+            if len(indices1) == 1:
+                indices1 = np.append(indices1, indices1[0]+1)
+
+            ind1 = []
+            for i in range(0,len(indices1)):
+                # ind1.append(indices1[i][0])
+                ind1.append(int(indices1[i]))
+
+            map1 = np.array(self.db.track.map)[ind1].tolist()
+
+            indices2 = np.argwhere(np.array(tLap) >= min(timeStampStart, tLap[-1]))
+            if len(indices2) == 1:
+                indices2 = np.append(indices2, indices2[0]-1)
+
+            ind2 = []
+            for i in range(0,len(indices2)):
+                # ind2.append(indices2[i][0])
+                ind2.append(int(indices2[i]))
+
+            map2 = np.array(self.db.track.map)[ind2].tolist()
 
             self.pygame.draw.lines(self.screen, colour, False, map1, 20)
             self.pygame.draw.lines(self.screen, colour, False, map2, 20)
