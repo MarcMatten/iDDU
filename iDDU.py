@@ -285,7 +285,8 @@ calcData = {'LastFuelLevel': 0,
             'BEnableRaceLapEstimation': False,
             'dir': os.getcwd(),
             'track': None,
-            'car': None}
+            'car': None,
+            'SubSessionIDOld': 0}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()

@@ -76,7 +76,7 @@ class IDDUCalc:
             if not self.db.BDDUexecuting:
                 print(self.db.timeStr + ': Connecting to iRacing')
 
-            if self.db.oldSessionNum < self.db.SessionNum:
+            if self.db.oldSessionNum < self.db.SessionNum or self.db.WeekendInfo['SubSessionID'] is not self.db.SubSessionIDOld:
                 print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                     'SessionType'])
                 self.initSession()
@@ -656,6 +656,8 @@ class IDDUCalc:
             self.db.SOFMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['SOF']
             self.db.NDriversMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['NDrivers']
 
+        self.db.SubSessionIDOld = self.db.WeekendInfo['SubSessionID']
+
     def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.csv')
 
@@ -878,8 +880,6 @@ class IDDUCalc:
         self.BRecordtLap = False
         self.Logging = False
 
-
-
     def SOFstring(self):
         if self.db.NClasses > 1:
             temp = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOFMyClass) + '('
@@ -889,4 +889,3 @@ class IDDUCalc:
             self.db.SOFstr = temp + ')'
         else:
             self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
-
