@@ -600,10 +600,10 @@ class Gui(object):
         self.db.snapshot()
 
     def rotateTrackLeft(self):
-        self.db.track.rotate(5/180*3.142)
+        self.db.track.rotate(-5/180*3.142)
 
     def rotateTrackRight(self):
-        self.db.track.rotate(-5/180*3.142)
+        self.db.track.rotate(5/180*3.142)
 
     def saveTrack(self):
         self.db.track.saveJson(self.db.dir)
@@ -615,6 +615,7 @@ class Gui(object):
         if self.db.NDDUPage == 2:
             BResetScreen = True
             self.db.NDDUPage = 1
+            time.sleep(0.2)
 
         self.db.track = Track.Track('default')
         self.db.track.loadJson(OpenFileName[0])

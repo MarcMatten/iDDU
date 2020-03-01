@@ -837,7 +837,7 @@ class IDDUCalc:
 
             self.db.track = Track.Track(self.db.WeekendInfo['TrackName'])
 
-            aNorth = iDDUhelper.angleVertical(self.x[5] - self.x[0], self.y[5] - self.y[0])
+            aNorth = float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])
 
             self.db.track.createTrack(self.x, self.y, self.dist, aNorth, self.db.TrackLength*1000)
         # self.db.track.saveJson(self.db.dir + "/track/" + self.db.WeekendInfo['TrackName'] + ".json")

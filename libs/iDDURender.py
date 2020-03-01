@@ -260,11 +260,11 @@ class RenderScreen(RenderMain):
 
         elif self.db.NDDUPage == 2:
             self.screen.fill(self.backgroundColour)
-            angleDeg = int(((float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])) - self.db.aOffsetTrack - self.db.WindDir - np.pi)*180/np.pi)
-            angleRad = angleDeg/180*np.pi
-            dx = abs(82.8427 * np.cos(2 * (45/180*np.pi + angleRad)))
 
-            self.screen.blit(self.pygame.transform.rotate(self.arrow, angleDeg), [200-dx, 40-dx])
+            # Wind arrow
+            aWind = (-self.db.WindDir + self.db.track.aNorth - self.db.track.a)*180/np.pi-180
+            dx = abs(82.8427 * np.cos(2 * (45/180*np.pi + aWind/180*np.pi)))
+            self.screen.blit(self.pygame.transform.rotate(self.arrow, int(aWind)), [200-dx, 40-dx])
 
             if self.db.MapHighlight:
                 self.highlightSection(5, self.green)

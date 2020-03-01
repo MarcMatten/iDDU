@@ -91,8 +91,8 @@ class Track:
         x_temp = np.array(self.x) - 400
         y_temp = np.array(self.y) - 240
 
-        self.x = x_temp * np.cos(a) + y_temp * np.sin(a)
-        self.y = -x_temp * np.sin(a) + y_temp * np.cos(a)
+        self.x = x_temp * np.cos(-a) + y_temp * np.sin(-a)
+        self.y = -x_temp * np.sin(-a) + y_temp * np.cos(-a)
 
         self.a = self.a + a
 
