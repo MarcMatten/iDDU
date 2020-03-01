@@ -137,7 +137,7 @@ class Track:
 
     def calcSFLine(self):
 
-        a = self.a - np.pi/2
+        a = -self.a + np.pi/2
         x1 = 15 * np.cos(a) + 0 * np.sin(a)
         y1 = -15 * np.sin(a) + 0 * np.cos(a)
 
