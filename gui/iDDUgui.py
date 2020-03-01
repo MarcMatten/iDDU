@@ -5,6 +5,7 @@ import time
 import threading
 import csv
 import os
+from libs import Track, Car
 
 
 class iDDUgui(threading.Thread):
@@ -31,28 +32,31 @@ class Gui(object):
     def __init__(self, db):
         import sys
         app = QtWidgets.QApplication(sys.argv)
-        Form = QtWidgets.QWidget()
-        Form.setFixedSize(784, 441)
+        iDDU = QtWidgets.QWidget()
+        iDDU.setFixedSize(784, 441)
         if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            Form.move(-1920, 0)
+            iDDU.move(-1920, 0)
         else:
-            Form.move(0, 1080)
+            iDDU.move(0, 1080)
 
-        self.setupUi(Form, db)
+        self.setupUi(iDDU, db)
         sys.stdout = Stream(newText=self.onUpdateText)
         sys.stderr = Stream(newText=self.onUpdateText)
-        Form.show()
+        iDDU.show()
         sys.exit(app.exec_())
 
-    def setupUi(self, Form, db):
+    def setupUi(self, iDDU, db):
         self.db = db
-        self.Form = Form
-        # Form.setObjectName("iDDU")
-        # Form.resize(784, 441)
-        self.Form.setObjectName("iDDU")
-        self.Form.resize(784, 441)
+        self.iDDU = iDDU
+        # iDDU.setObjectName("iDDU")
+        # iDDU.resize(784, 441)
+        self.iDDU.setObjectName("iDDU")
+        self.iDDU.resize(784, 441)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(self.db.dir + "/gui/iRacing_Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iDDU.setWindowIcon(icon)
 
-        self.tabWidget = QtWidgets.QTabWidget(Form)
+        self.tabWidget = QtWidgets.QTabWidget(iDDU)
         self.tabWidget.setGeometry(QtCore.QRect(10, 10, 764, 424))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -164,6 +168,21 @@ class Gui(object):
         self.doubleSpinBox_JokerLapsRequired.setSingleStep(1.0)
         self.doubleSpinBox_JokerLapsRequired.setProperty("value", 1.0)
         self.doubleSpinBox_JokerLapsRequired.setObjectName("doubleSpinBox_JokerLapsRequired")
+        self.groupBox_7 = QtWidgets.QGroupBox(self.tabGeneral)
+        self.groupBox_7.setGeometry(QtCore.QRect(10, 190, 291, 121))
+        self.groupBox_7.setObjectName("groupBox_7")
+        self.pushButtonTrackRotateLeft = QtWidgets.QPushButton(self.groupBox_7)
+        self.pushButtonTrackRotateLeft.setGeometry(QtCore.QRect(40, 20, 75, 21))
+        self.pushButtonTrackRotateLeft.setObjectName("pushButtonTrackRotateLeft")
+        self.pushButtonTrackRotateRight = QtWidgets.QPushButton(self.groupBox_7)
+        self.pushButtonTrackRotateRight.setGeometry(QtCore.QRect(160, 20, 75, 23))
+        self.pushButtonTrackRotateRight.setObjectName("pushButtonTrackRotateRight")
+        self.pushButtonLoadTrack = QtWidgets.QPushButton(self.groupBox_7)
+        self.pushButtonLoadTrack.setGeometry(QtCore.QRect(40, 70, 75, 21))
+        self.pushButtonLoadTrack.setObjectName("pushButtonLoadTrack")
+        self.pushButtonSaveTrack = QtWidgets.QPushButton(self.groupBox_7)
+        self.pushButtonSaveTrack.setGeometry(QtCore.QRect(160, 70, 75, 23))
+        self.pushButtonSaveTrack.setObjectName("pushButtonSaveTrack")
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
@@ -312,7 +331,7 @@ class Gui(object):
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
         self.textEdit = QtWidgets.QTextEdit(self.tabDebug)
-        self.textEdit.setGeometry(QtCore.QRect(10, 10, 741, 351))
+        self.textEdit.setGeometry(QtCore.QRect(10, 40, 741, 321))
         self.textEdit.setObjectName("textEdit")
         self.pushButtonInvoke = QtWidgets.QPushButton(self.tabDebug)
         self.pushButtonInvoke.setGeometry(QtCore.QRect(650, 370, 101, 23))
@@ -320,6 +339,12 @@ class Gui(object):
         self.lineEditInvoke = QtWidgets.QLineEdit(self.tabDebug)
         self.lineEditInvoke.setGeometry(QtCore.QRect(10, 370, 631, 20))
         self.lineEditInvoke.setObjectName("lineEditInvoke")
+        self.pushButtonSaveSnapshot = QtWidgets.QPushButton(self.tabDebug)
+        self.pushButtonSaveSnapshot.setGeometry(QtCore.QRect(10, 10, 101, 23))
+        self.pushButtonSaveSnapshot.setObjectName("pushButtonSaveSnapshot")
+        self.pushButtonLoadSnapshot = QtWidgets.QPushButton(self.tabDebug)
+        self.pushButtonLoadSnapshot.setGeometry(QtCore.QRect(120, 10, 101, 23))
+        self.pushButtonLoadSnapshot.setObjectName("pushButtonLoadSnapshot")
         self.tabWidget.addTab(self.tabDebug, "")
 
         self.spinBoxRaceLaps.setValue(self.db.RaceLaps)
@@ -352,6 +377,12 @@ class Gui(object):
         self.pushButton_StopDDU.clicked.connect(self.StopDDU)
         self.saveButton.clicked.connect(self.saveShiftToneSettings)
         self.openButton.clicked.connect(self.loadShiftToneSettings)
+        self.pushButtonLoadSnapshot.clicked.connect(self.loadRTDBSnapshot)
+        self.pushButtonSaveSnapshot.clicked.connect(self.saveRTDBSnapshot)
+        self.pushButtonTrackRotateLeft.clicked.connect(self.rotateTrackLeft)
+        self.pushButtonTrackRotateRight.clicked.connect(self.rotateTrackRight)
+        self.pushButtonLoadTrack.clicked.connect(self.loadTrack)
+        self.pushButtonSaveTrack.clicked.connect(self.saveTrack)
 
         self.doubleSpinBox_DRSActivations.valueChanged.connect(self.assignDRS)
         self.doubleSpinBox_JokerLapDelta.valueChanged.connect(self.assignJokerDelta)
@@ -359,108 +390,115 @@ class Gui(object):
         self.doubleSpinBox_P2PActivations.valueChanged.connect(self.assignP2P)
         self.checkBox_MapHighlight.stateChanged.connect(self.MapHighlight)
 
-        # finish = self.Form.closeEvent()
-        # QtCore.QMetaObject.connectSlotsByName(Form)
+        # finish = self.iDDU.closeEvent()
+        # QtCore.QMetaObject.connectSlotsByName(iDDU)
         # app.aboutToQuit.connect(self.closeEvent)
         #
-        # finish = QtWidgets.QAction("Quit", self.Form)
+        # finish = QtWidgets.QAction("Quit", self.iDDU)
         # finish.triggered.connect(self.closeEvent)
 
-        self.retranslateUi(Form)
+        self.retranslateUi(iDDU)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+        QtCore.QMetaObject.connectSlotsByName(iDDU)
         self.UpshiftStrategy()
 
-    def retranslateUi(self, Form):
+    def retranslateUi(self, iDDU):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "iDDU"))
-        self.groupBox_2.setTitle(_translate("Form", "DDU"))
-        self.pushButton_StartDDU.setText(_translate("Form", "Start DDU"))
-        self.pushButton_StopDDU.setText(_translate("Form", "Stop DDU"))
-        self.groupBox_3.setTitle(_translate("Form", "General"))
-        self.label_8.setText(_translate("Form", "Race Laps"))
-        self.label_14.setText(_translate("Form", "DRS Activations"))
-        self.checkBox_MapHighlight.setText(_translate("Form", "activate Delta on Map"))
-        self.label_15.setText(_translate("Form", "P2P Activations"))
-        self.groupBox_4.setTitle(_translate("Form", "Pit Stop"))
-        self.label_11.setText(_translate("Form", "Required Pit Stops"))
-        self.label_10.setText(_translate("Form", "Pit Stop Delta"))
-        self.groupBox_5.setTitle(_translate("Form", "RallyX"))
-        self.label_13.setText(_translate("Form", "Required Joker Laps"))
-        self.label_12.setText(_translate("Form", "Joker Lap Delta"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("Form", "General"))
-        self.groupBox.setTitle(_translate("Form", "Upshift RPM"))
-        self.groupBox_Gear1.setTitle(_translate("Form", "Gear 1"))
-        self.label.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear1.setText(_translate("Form", "active"))
-        self.groupBox_Gear2.setTitle(_translate("Form", "Gear 2"))
-        self.label_2.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear2.setText(_translate("Form", "active"))
-        self.groupBox_Gear3.setTitle(_translate("Form", "Gear 3"))
-        self.label_3.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear3.setText(_translate("Form", "active"))
-        self.groupBox_Gear4.setTitle(_translate("Form", "Gear 4"))
-        self.label_4.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear4.setText(_translate("Form", "active"))
-        self.groupBox_Gear2_4.setTitle(_translate("Form", "Gear 5"))
-        self.label_5.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear5.setText(_translate("Form", "active"))
-        self.groupBox_Gear6.setTitle(_translate("Form", "Gear 6"))
-        self.label_6.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear6.setText(_translate("Form", "active"))
-        self.groupBox_Gear7.setTitle(_translate("Form", "Gear 7"))
-        self.label_7.setText(_translate("Form", "RPM"))
-        self.checkBox_Gear7.setText(_translate("Form", "active"))
-        self.comboBox.setItemText(0, _translate("Form", "iRacing First RPM"))
-        self.comboBox.setItemText(1, _translate("Form", "iRacing Shift RPM"))
-        self.comboBox.setItemText(2, _translate("Form", "iRacing Last RPM"))
-        self.comboBox.setItemText(3, _translate("Form", "iRacing Blink RPM"))
-        self.comboBox.setItemText(4, _translate("Form", "User defined"))
-        self.label_9.setText(_translate("Form", "Upshift RPM Source"))
-        self.checkBox_UpshiftTone.setText(_translate("Form", "activate Upshift Tone"))
-        self.saveButton.setText(_translate("Form", "Save"))
-        self.openButton.setText(_translate("Form", "Load"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabUpshiftTone), _translate("Form", "Upshift Tone"))
-        self.pushButtonInvoke.setText(_translate("Form", "Invoke"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("Form", "Debug"))
+        iDDU.setWindowTitle(_translate("iDDU", "iDDU"))
+        self.groupBox_2.setTitle(_translate("iDDU", "DDU"))
+        self.pushButton_StartDDU.setText(_translate("iDDU", "Start DDU"))
+        self.pushButton_StopDDU.setText(_translate("iDDU", "Stop DDU"))
+        self.groupBox_3.setTitle(_translate("iDDU", "General"))
+        self.label_8.setText(_translate("iDDU", "Race Laps"))
+        self.label_14.setText(_translate("iDDU", "DRS Activations"))
+        self.checkBox_MapHighlight.setText(_translate("iDDU", "activate Delta on Map"))
+        self.label_15.setText(_translate("iDDU", "P2P Activations"))
+        self.groupBox_4.setTitle(_translate("iDDU", "Pit Stop"))
+        self.label_11.setText(_translate("iDDU", "Required Pit Stops"))
+        self.label_10.setText(_translate("iDDU", "Pit Stop Delta"))
+        self.groupBox_5.setTitle(_translate("iDDU", "RallyX"))
+        self.label_13.setText(_translate("iDDU", "Required Joker Laps"))
+        self.label_12.setText(_translate("iDDU", "Joker Lap Delta"))
+        self.groupBox_7.setTitle(_translate("iDDU", "Track"))
+        self.pushButtonTrackRotateLeft.setText(_translate("iDDU", "Rotate Left"))
+        self.pushButtonTrackRotateRight.setText(_translate("iDDU", "Rotate Right"))
+        self.pushButtonLoadTrack.setText(_translate("iDDU", "Load"))
+        self.pushButtonSaveTrack.setText(_translate("iDDU", "Save"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("iDDU", "General"))
+        self.groupBox.setTitle(_translate("iDDU", "Upshift RPM"))
+        self.groupBox_Gear1.setTitle(_translate("iDDU", "Gear 1"))
+        self.label.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear1.setText(_translate("iDDU", "active"))
+        self.groupBox_Gear2.setTitle(_translate("iDDU", "Gear 2"))
+        self.label_2.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear2.setText(_translate("iDDU", "active"))
+        self.groupBox_Gear3.setTitle(_translate("iDDU", "Gear 3"))
+        self.label_3.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear3.setText(_translate("iDDU", "active"))
+        self.groupBox_Gear4.setTitle(_translate("iDDU", "Gear 4"))
+        self.label_4.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear4.setText(_translate("iDDU", "active"))
+        self.groupBox_Gear2_4.setTitle(_translate("iDDU", "Gear 5"))
+        self.label_5.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear5.setText(_translate("iDDU", "active"))
+        self.groupBox_Gear6.setTitle(_translate("iDDU", "Gear 6"))
+        self.label_6.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear6.setText(_translate("iDDU", "active"))
+        self.groupBox_Gear7.setTitle(_translate("iDDU", "Gear 7"))
+        self.label_7.setText(_translate("iDDU", "RPM"))
+        self.checkBox_Gear7.setText(_translate("iDDU", "active"))
+        self.comboBox.setItemText(0, _translate("iDDU", "iRacing First RPM"))
+        self.comboBox.setItemText(1, _translate("iDDU", "iRacing Shift RPM"))
+        self.comboBox.setItemText(2, _translate("iDDU", "iRacing Last RPM"))
+        self.comboBox.setItemText(3, _translate("iDDU", "iRacing Blink RPM"))
+        self.comboBox.setItemText(4, _translate("iDDU", "User defined"))
+        self.label_9.setText(_translate("iDDU", "Upshift RPM Source"))
+        self.checkBox_UpshiftTone.setText(_translate("iDDU", "activate Upshift Tone"))
+        self.saveButton.setText(_translate("iDDU", "Save"))
+        self.openButton.setText(_translate("iDDU", "Load"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabUpshiftTone), _translate("iDDU", "Upshift Tone"))
+        self.pushButtonInvoke.setText(_translate("iDDU", "Invoke Command"))
+        self.pushButtonSaveSnapshot.setText(_translate("iDDU", "RTDB Snapshot"))
+        self.pushButtonLoadSnapshot.setText(_translate("iDDU", "Load Snapshot"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("iDDU", "Debug"))
 
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
         self.db.UserRaceLaps = self.spinBoxRaceLaps.value()
         self.db.RaceLaps = self.spinBoxRaceLaps.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def assignDRS(self):
         if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
             self.db.DRSActivations = self.doubleSpinBox_DRSActivations.value()
         self.db.DRSActivationsGUI = self.doubleSpinBox_DRSActivations.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def assignJokerDelta(self):
         self.db.JokerLapDelta = self.doubleSpinBox_JokerLapDelta.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def MapHighlight(self):
         self.db.MapHighlight = self.checkBox_MapHighlight.isChecked()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def assignJokerLaps(self):
         self.db.JokerLaps = self.doubleSpinBox_JokerLapsRequired.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def assignP2P(self):
         if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
             self.db.P2PActivations = self.doubleSpinBox_P2PActivations.value()
         self.db.P2PActivationsGUI = self.doubleSpinBox_P2PActivations.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def assignPitStopDelta(self):
         self.db.PitStopDelta = self.doubleSpinBox_PitStopDelta.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def assignPitStopsRequired(self):
         self.db.PitStopsRequired = self.doubleSpinBox_PitStopsRequired.value()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def UpshiftStrategy(self):
         self.db.UpshiftStrategy = self.comboBox.currentIndex()
@@ -468,11 +506,11 @@ class Gui(object):
                                 self.spinBox_Gear7.value()]
         self.db.UserShiftFlag = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(),
                                  self.checkBox_Gear6.isChecked(), self.checkBox_Gear7.isChecked()]
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def EnableShiftTone(self):
         self.db.ShiftToneEnabled = self.checkBox_UpshiftTone.isChecked()
-        self.retranslateUi(self.Form)
+        self.retranslateUi(self.iDDU)
 
     def InvokeUserCommand(self):
         try:
@@ -502,7 +540,7 @@ class Gui(object):
 
     def saveShiftToneSettings(self):
 
-        SaveFileName = QFileDialog.getSaveFileName(self.Form, 'Save Shift Tone File', './shiftTone', 'CSV(*.csv)')
+        SaveFileName = QFileDialog.getSaveFileName(self.iDDU, 'Save Shift Tone File', './shiftTone', 'CSV(*.csv)')
 
         with open(SaveFileName[0], 'w', newline='') as f:
             thewriter = csv.writer(f)
@@ -512,7 +550,7 @@ class Gui(object):
         print(self.db.timeStr + ': Saved Shift Tone settings to: ' + SaveFileName[0])
 
     def loadShiftToneSettings(self):
-        OpenFileName = QFileDialog.getOpenFileName(self.Form, 'Load Shift Tone File', './shiftTone', 'CSV(*.csv)')
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Shift Tone File', './shiftTone', 'CSV(*.csv)')
         i = 0
         UserShiftRPM = [0, 0, 0, 0, 0, 0, 0]
         UserShiftFlag = [0, 0, 0, 0, 0, 0, 0]
@@ -550,6 +588,39 @@ class Gui(object):
         self.db.UpshiftStrategy = UpshiftStrategy
 
         print(self.db.timeStr + ': Loaded Shift Tone settings from: ' + OpenFileName[0])
+
+    def loadRTDBSnapshot(self):
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './snapshots', 'JSON(*.json)')
+        OpenFileName = OpenFileName[0].split('/')
+        OpenFileName = OpenFileName[-1]
+        OpenFileName = OpenFileName.split('.')
+        self.db.loadSnapshot(OpenFileName[0])
+
+    def saveRTDBSnapshot(self):
+        self.db.snapshot()
+
+    def rotateTrackLeft(self):
+        self.db.track.rotate(5/180*3.142)
+
+    def rotateTrackRight(self):
+        self.db.track.rotate(-5/180*3.142)
+
+    def saveTrack(self):
+        self.db.track.saveJson(self.db.dir)
+
+    def loadTrack(self):
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './track', 'JSON(*.json)')
+        NDDUPageTemp = self.db.NDDUPage
+        BResetScreen = False
+        if self.db.NDDUPage == 2:
+            BResetScreen = True
+            self.db.NDDUPage = 1
+
+        self.db.track = Track.Track('default')
+        self.db.track.loadJson(OpenFileName[0])
+
+        if BResetScreen:
+            self.db.NDDUPage = NDDUPageTemp
 
     def __del__(self):
         sys.stdout = sys.__stdout__

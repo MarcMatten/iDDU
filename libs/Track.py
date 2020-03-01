@@ -3,6 +3,7 @@ from libs import iDDUhelper
 import matplotlib.pyplot as plt
 import json
 import numpy as np
+import time
 
 
 class Track:
@@ -52,6 +53,8 @@ class Track:
 
         with open(filepath, 'w') as outfile:
             json.dump(data, outfile, indent=4, sort_keys=True)
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved track ' + filepath)
 
 
     def loadFromCSV(self, path):
@@ -129,6 +132,8 @@ class Track:
             self.__setattr__(temp[i][0], temp[i][1])
 
         self.createMap()
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded track ' + path)
 
     def calcSFLine(self):
 

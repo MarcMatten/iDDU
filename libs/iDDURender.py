@@ -149,7 +149,7 @@ class RenderScreen(RenderMain):
 
         # misc
         self.done = False
-        self.ScreenNumber = 1
+        self.db.NDDUPage = 1
 
         self.snapshot = False
 
@@ -169,12 +169,12 @@ class RenderScreen(RenderMain):
                 self.db.StopDDU = True
 
             if event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == self.pygame.JOYBUTTONDOWN and event.button == 25:
-                if self.ScreenNumber == 1:
-                    self.ScreenNumber = 2
+                if self.db.NDDUPage == 1:
+                    self.db.NDDUPage = 2
                 else:
-                    self.ScreenNumber = 1
+                    self.db.NDDUPage = 1
 
-        if self.ScreenNumber == 1:
+        if self.db.NDDUPage == 1:
 
             if self.db.init:
                 self.frames[2].reinitFrame(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
@@ -258,7 +258,7 @@ class RenderScreen(RenderMain):
                 self.frames[i].setTextColour(self.db.textColour)
                 self.frames[i].drawFrame()
 
-        elif self.ScreenNumber == 2:
+        elif self.db.NDDUPage == 2:
             self.screen.fill(self.backgroundColour)
             angleDeg = int(((float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])) - self.db.aOffsetTrack - self.db.WindDir - np.pi)*180/np.pi)
             angleRad = angleDeg/180*np.pi

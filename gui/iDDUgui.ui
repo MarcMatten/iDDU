@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>//MYCLOUDEX2ULTRA/MarcsWD/Projekte/iRacing_Icon.ico</normaloff>//MYCLOUDEX2ULTRA/MarcsWD/Projekte/iRacing_Icon.ico</iconset>
+  </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
@@ -29,7 +33,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabGeneral">
     <attribute name="title">
@@ -401,6 +405,71 @@
       </property>
       <property name="value">
        <double>1.000000000000000</double>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>291</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Track</string>
+     </property>
+     <widget class="QPushButton" name="pushButtonTrackRotateLeft">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>75</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rotate Left</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonTrackRotateRight">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>20</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rotate Right</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonLoadTrack">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>70</y>
+        <width>75</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Load</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonSaveTrack">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>70</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save</string>
       </property>
      </widget>
     </widget>
@@ -967,9 +1036,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>10</y>
+       <y>40</y>
        <width>741</width>
-       <height>351</height>
+       <height>321</height>
       </rect>
      </property>
     </widget>
@@ -994,6 +1063,32 @@
        <width>631</width>
        <height>20</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonSaveSnapshot">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>101</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RTDB Snapshot</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonLoadSnapshot">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>10</y>
+       <width>101</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load Snapshot</string>
      </property>
     </widget>
    </widget>

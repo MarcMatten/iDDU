@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import time
 
 class Car:
     def __init__(self, name):
@@ -71,6 +72,8 @@ class Car:
         with open(filepath, 'w') as outfile:
             json.dump(data, outfile, indent=4, sort_keys=True)
 
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved car ' + filepath)
+
     def loadJson(self, path):
         with open(path) as jsonFile:
             data = json.loads(jsonFile.read())
@@ -78,3 +81,5 @@ class Car:
         temp = list(data.items())
         for i in range(0, len(data)):
             self.__setattr__(temp[i][0], temp[i][1])
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded car ' + path)
