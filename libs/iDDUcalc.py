@@ -837,7 +837,8 @@ class IDDUCalc:
 
             self.db.track = Track.Track(self.db.WeekendInfo['TrackName'])
 
-            aNorth = float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])
+            # aNorth = float(self.db.WeekendInfo['TrackNorthOffset'].split(' ')[0])
+            aNorth = np.mean(self.YawNorth[0:5])
 
             self.db.track.createTrack(self.x, self.y, self.dist, aNorth, self.db.TrackLength*1000)
         # self.db.track.saveJson(self.db.dir + "/track/" + self.db.WeekendInfo['TrackName'] + ".json")
