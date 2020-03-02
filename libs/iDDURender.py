@@ -330,20 +330,7 @@ class RenderScreen(RenderMain):
 
             # driver control change
             if self.db.SessionTime < self.db.dcChangeTime + 0.75:
-                if self.db.dcBrakeBiasChange:
-                    self.changeLabel('Brake Pressure Bias', iDDUhelper.roundedStr1(self.db.dcBrakeBias))
-                if self.db.dcFuelMixtureChange:
-                    self.changeLabel('Mix', iDDUhelper.roundedStr0(self.db.dcFuelMixture))
-                if self.db.dcThrottleShapeChange:
-                    self.changeLabel('Pedal Map', iDDUhelper.roundedStr0(self.db.dcThrottleShape))
-                if self.db.dcTractionControlChange:
-                    self.changeLabel('TC1', iDDUhelper.roundedStr0(self.db.dcTractionControl))
-                if self.db.dcTractionControl2Change:
-                    self.changeLabel('TC2', iDDUhelper.roundedStr0(self.db.dcTractionControl2))
-                if self.db.dcTractionControlToggleChange:
-                    self.changeLabel('TC Toggle', iDDUhelper.roundedStr0(self.db.dcTractionControlToggle))
-                if self.db.dcABSChange:
-                    self.changeLabel('ABS', iDDUhelper.roundedStr0(self.db.dcABS))
+                self.changeLabel(list(self.db.dcChangedItems.keys())[0], iDDUhelper.roundedStr0(list(self.db.dcChangedItems.values())[0]))
 
         self.pygame.display.flip()
         self.clocker.tick(30)

@@ -360,45 +360,16 @@ class IDDUCalc:
             self.db.CarIdxOnPitRoadOld = self.db.CarIdxOnPitRoad
 
             # change in driver controls
+            for i in range(0, len(self.db.car.dcList)):
+                self.db.dc[self.db.car.dcList[i]] = self.db.get(self.db.car.dcList[i])
+
             if self.db.SessionTime > self.db.RunStartTime + 1:
-                if not self.db.dcBrakeBias == self.db.dcBrakeBiasOld and self.db.dcBrakeBias is not None:
-                    self.db.dcBrakeBiasChange = True
-                    self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcABS == self.db.dcABSOld and self.db.dcABS is not None:
-                    self.db.dcABSChange = True
-                    self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcTractionControlToggle == self.db.dcTractionControlToggleOld and self.db.dcTractionControlToggle is not None:
-                    self.db.dcTractionControlToggleChange = True
-                    self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcTractionControl == self.db.dcTractionControlOld and self.db.dcTractionControl is not None:
-                    self.db.dcTractionControlChange = True
-                    self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcTractionControl2 == self.db.dcTractionControl2Old and self.db.dcTractionControl2 is not None:
-                    self.db.dcTractionControl2Change = True
-                    self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcThrottleShape == self.db.dcThrottleShapeOld and self.db.dcThrottleShape is not None:
-                    self.db.dcThrottleShapeChange = True
-                    self.db.dcChangeTime = self.db.SessionTime
-                if not self.db.dcFuelMixture == self.db.dcFuelMixtureOld and self.db.dcFuelMixture is not None:
-                    self.db.dcFuelMixtureChange = True
+                if not self.db.dc == self.db.dcOld:
+                    self.db.dcChangedItems = {}
+                    self.db.dcChangedItems = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
                     self.db.dcChangeTime = self.db.SessionTime
 
-                if self.db.SessionTime > self.db.dcChangeTime + 0.75:
-                    self.db.dcBrakeBiasChange = False
-                    self.db.dcABSChange = False
-                    self.db.dcTractionControlToggleChange = False
-                    self.db.dcTractionControlChange = False
-                    self.db.dcTractionControl2Change = False
-                    self.db.dcThrottleShapeChange = False
-                    self.db.dcFuelMixtureChange = False
-
-            self.db.dcBrakeBiasOld = self.db.dcBrakeBias
-            self.db.dcABSOld = self.db.dcABS
-            self.db.dcTractionControlToggleOld = self.db.dcTractionControlToggle
-            self.db.dcTractionControlOld = self.db.dcTractionControl
-            self.db.dcTractionControl2Old = self.db.dcTractionControl2
-            self.db.dcThrottleShapeOld = self.db.dcThrottleShape
-            self.db.dcFuelMixtureOld = self.db.dcFuelMixture
+            self.db.dcOld = self.db.dc.copy()
 
             if self.db.SessionTime > self.db.RunStartTime + 1:
                 if not self.db.dcHeadlightFlash == self.db.dcHeadlightFlashOld and self.db.dcHeadlightFlash is not None:
