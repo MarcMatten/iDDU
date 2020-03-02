@@ -291,12 +291,12 @@ calcData = {'LastFuelLevel': 0,
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
-myRTDB.initialise(helpData)
-myRTDB.initialise(iRData)
-myRTDB.initialise(calcData)
+myRTDB.initialise(helpData, False)
+myRTDB.initialise(iRData, True)
+myRTDB.initialise(calcData, False)
 
 # initialise and start thread
-thread1 = RTDB.iRThread(myRTDB, list(iRData.keys()), 0.01)
+thread1 = RTDB.iRThread(myRTDB, 0.01)
 thread2 = UpshiftTone.UpShiftTone(myRTDB, 0.01)
 thread3 = iDDUgui(myRTDB, 0.1)
 thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 15)

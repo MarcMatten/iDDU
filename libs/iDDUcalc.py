@@ -472,6 +472,8 @@ class IDDUCalc:
                 self.db.car.saveJson(self.db.dir)
                 self.BRecordtLap = True
 
+                self.db.queryData.extend(self.db.car.dcList)
+
                 print(self.db.timeStr + ':\tCreated Car ' + carName)
 
             print(self.db.timeStr + ':\tTrackName: ' + self.db.WeekendInfo['TrackDisplayName'])
@@ -697,6 +699,8 @@ class IDDUCalc:
         # self.db.track.loadFromCSV("track/" + name + '.csv')
         self.db.car = Car.Car(name)
         self.db.car.loadJson("car/" + name + '.json')
+
+        self.db.queryData.extend(self.db.car.dcList)
 
         print(self.db.timeStr + ':\tCar has been loaded successfully.')
 

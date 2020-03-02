@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import time
+import irsdk
 
 class Car:
     def __init__(self, name):
@@ -33,14 +34,19 @@ class Car:
         else:
             self.BP2P = False
 
-        keys = db.__dir__()
+        ir = irsdk.IRSDK()
 
-        for i in range(0, len(keys)):
-            temp = keys[i]
-            if temp.startswith('dc'):
-                if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
-                    if not db.get(keys[i]) is None:
-                        self.dcList.append(keys[i])
+        if ir.startup():
+            keys = ir.var_headers_names
+
+            for i in range(0, len(keys)):
+                temp = keys[i]
+                if temp.startswith('dc'):
+                    if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
+                        if not keys[i] is None:
+                            self.dcList.append(keys[i])
+
+        ir.shutdown()
 
         self.setUserShiftRPM(db)
 
