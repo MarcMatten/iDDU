@@ -361,12 +361,12 @@ class IDDUCalc:
 
             # change in driver controls
             for i in range(0, len(self.db.car.dcList)):
-                self.db.dc[self.db.car.dcList[i]] = self.db.get(self.db.car.dcList[i])
+                self.db.dc[list(self.db.car.dcList.keys())[i]] = self.db.get(list(self.db.car.dcList.keys())[i])
 
             if self.db.SessionTime > self.db.RunStartTime + 1:
                 if not self.db.dc == self.db.dcOld:
-                    self.db.dcChangedItems = {}
-                    self.db.dcChangedItems = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
+                    temp = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
+                    self.db.dcChangedItems = list(temp.keys())
                     self.db.dcChangeTime = self.db.SessionTime
 
             self.db.dcOld = self.db.dc.copy()
@@ -443,7 +443,7 @@ class IDDUCalc:
                 self.db.car.saveJson(self.db.dir)
                 self.BRecordtLap = True
 
-                self.db.queryData.extend(self.db.car.dcList)
+                self.db.queryData.extend(list(self.db.car.dcList.keys()))
 
                 print(self.db.timeStr + ':\tCreated Car ' + carName)
 
@@ -671,7 +671,9 @@ class IDDUCalc:
         self.db.car = Car.Car(name)
         self.db.car.loadJson("car/" + name + '.json')
 
-        self.db.queryData.extend(self.db.car.dcList)
+        self.db.queryData.extend(list(self.db.car.dcList.keys()))
+
+        time.sleep(0.2)
 
         print(self.db.timeStr + ':\tCar has been loaded successfully.')
 

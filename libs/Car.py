@@ -9,7 +9,7 @@ class Car:
         self.iRShiftRPM = []
         self.BDRS = False
         self.BP2P = False
-        self.dcList = []
+        self.dcList = {}
         self.NABSDisabled = 0
         self.NTC1Disabled = 0
         self.NTC2Disabled = 0
@@ -22,19 +22,30 @@ class Car:
         self.name = db.DriverInfo['Drivers'][db.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
         self.iRShiftRPM = [db.DriverInfo['DriverCarSLFirstRPM'], db.DriverInfo['DriverCarSLShiftRPM'], db.DriverInfo['DriverCarSLLastRPM'], db.DriverInfo['DriverCarSLBlinkRPM']]
 
-        DRSList = ['formularenault35', 'mclarenmp430']
+        DRSList = ['formularenault35',
+                   'mclarenmp430']
+
         if any(self.name in s for s in DRSList):
             self.BDRS = True
         else:
             self.BDRS = False
 
-        P2PList = ['dallaradw12', 'dallarair18']
+        P2PList = ['dallaradw12',
+                   'dallarair18']
+
         if any(self.name in s for s in P2PList):
             self.BP2P = True
         else:
             self.BP2P = False
 
         ir = irsdk.IRSDK()
+
+        dcIgnoreList =['dcHeadlightFlash',
+                       'dcPitSpeedLimiterToggle',
+                       'dcStarter']
+
+
+        dcNotInt =['dcBrakeBias']
 
         if ir.startup():
             keys = ir.var_headers_names
@@ -44,7 +55,13 @@ class Car:
                 if temp.startswith('dc'):
                     if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
                         if not keys[i] is None:
-                            self.dcList.append(keys[i])
+                            if any(keys[i] in s for s in dcIgnoreList):
+                                self.dcList[keys[i]] = (keys[i].split('dc')[1], False, 0)
+                            else:
+                                if any(keys[i] in s for s in dcNotInt):
+                                    self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 1)
+                                else:
+                                    self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 0)
 
         ir.shutdown()
 

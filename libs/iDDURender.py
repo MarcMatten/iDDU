@@ -330,7 +330,15 @@ class RenderScreen(RenderMain):
 
             # driver control change
             if self.db.SessionTime < self.db.dcChangeTime + 0.75:
-                self.changeLabel(list(self.db.dcChangedItems.keys())[0], iDDUhelper.roundedStr0(list(self.db.dcChangedItems.values())[0]))
+                if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
+                    if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
+                        valueStr = iDDUhelper.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                    elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 1:
+                        valueStr = iDDUhelper.roundedStr1(self.db.get(self.db.dcChangedItems[0]))
+                    else:
+                        valueStr = str(self.db.get(self.db.dcChangedItems[0]))
+
+                    self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
 
         self.pygame.display.flip()
         self.clocker.tick(30)

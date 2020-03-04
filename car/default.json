@@ -23,9 +23,13 @@
         4000,
         4000
     ],
-    "dcList": [
-        "dcBrakeBias"
-    ],
+    "dcList": {
+        "dcBrakeBias": [
+            "BrakeBias",
+            true,
+            1
+        ]
+    },
     "iRShiftRPM": [
         8000.0,
         8400.0,
