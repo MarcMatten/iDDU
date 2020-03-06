@@ -31,8 +31,8 @@ class IDDUCalc:
         self.YawNorth = []
         self.VelocityX = []
         self.VelocityY = []
-        self.dist = []
-        self.time = []
+        self.dist = np.array([])
+        self.time = np.array([])
         self.dx = []
         self.dy = []
         self.Logging = False
@@ -236,8 +236,8 @@ class IDDUCalc:
                     self.YawNorth.append(self.db.YawNorth)
                     self.VelocityX.append(self.db.VelocityX)
                     self.VelocityY.append(self.db.VelocityY)
-                    self.dist.append(self.db.LapDistPct * 100)
-                    self.time.append(self.db.SessionTime - self.timeLogingStart)
+                    self.dist = np.append(self.dist, self.db.LapDistPct * 100)
+                    self.time = np.append(self.time, self.db.SessionTime - self.timeLogingStart)
 
                     self.dx.append(math.cos(self.db.Yaw) * self.db.VelocityX * 0.033 - math.sin(
                         self.db.Yaw) * self.db.VelocityY * 0.033)

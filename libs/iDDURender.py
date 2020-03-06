@@ -402,59 +402,65 @@ class RenderScreen(RenderMain):
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
 
     def highlightSection(self, width: int, colour: tuple):
-        tLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
-        timeStamp = np.interp([float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100], self.db.track.dist, tLap).tolist()[0]
-        timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
-        while timeStamp1 < 0:
-            timeStamp1 = timeStamp1 + tLap[-1]
-        while timeStamp1 > tLap[-1]:
-            timeStamp1 = timeStamp1 - tLap[-1]
+        if self.db.WeekendInfo['TrackName'] in  self.db.car.tLap:
+            tLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
+            timeStamp = np.interp([float(self.db.CarIdxLapDistPct[self.db.DriverInfo['DriverCarIdx']]) * 100], self.db.track.dist, tLap).tolist()[0]
+            timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
+            while timeStamp1 < 0:
+                timeStamp1 = timeStamp1 + tLap[-1]
+            while timeStamp1 > tLap[-1]:
+                timeStamp1 = timeStamp1 - tLap[-1]
 
-        timeStamp2 = timeStamp - self.db.PitStopDelta + width / 2
+            timeStamp2 = timeStamp - self.db.PitStopDelta + width / 2
 
-        while timeStamp2 < 0:
-            timeStamp2 = timeStamp2 + tLap[-1]
-        while timeStamp2 > tLap[-1]:
-            timeStamp2 = timeStamp2 - tLap[-1]
+            while timeStamp2 < 0:
+                timeStamp2 = timeStamp2 + tLap[-1]
+            while timeStamp2 > tLap[-1]:
+                timeStamp2 = timeStamp2 - tLap[-1]
 
-        timeStampStart = timeStamp1
-        timeStampEnd = timeStamp2
+            timeStampStart = timeStamp1
+            timeStampEnd = timeStamp2
 
-        # try:
-        if timeStamp2 > timeStamp1:
-            tempMap = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if ((tLap[t] < timeStampEnd) and (tLap[t] > timeStampStart))]
-            self.pygame.draw.lines(self.screen, colour, False, tempMap, 20)
+            # try:
+            if timeStamp2 > timeStamp1:
+                tempMap = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if ((tLap[t] < timeStampEnd) and (tLap[t] > timeStampStart))]
+                if len(tempMap) < 2:
+                    return
+
+                self.pygame.draw.lines(self.screen, colour, False, tempMap, 20)
+            else:
+
+                # map1 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
+                #         (tLap[t] <= max(timeStampEnd, tLap[1]))]
+                # map2 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
+                #         (tLap[t] >= min(timeStampStart, tLap[-1]))]
+
+                indices1 = np.argwhere(np.array(tLap) <= max(timeStampEnd, tLap[1]))
+                if len(indices1) == 1:
+                    indices1 = np.append(indices1, indices1[0]+1)
+
+                ind1 = []
+                for i in range(0,len(indices1)):
+                    # ind1.append(indices1[i][0])
+                    ind1.append(int(indices1[i]))
+
+                map1 = np.array(self.db.track.map)[ind1].tolist()
+
+                indices2 = np.argwhere(np.array(tLap) >= min(timeStampStart, tLap[-1]))
+                if len(indices2) == 1:
+                    indices2 = np.append(indices2, indices2[0]-1)
+
+                ind2 = []
+                for i in range(0,len(indices2)):
+                    # ind2.append(indices2[i][0])
+                    ind2.append(int(indices2[i]))
+
+                map2 = np.array(self.db.track.map)[ind2].tolist()
+
+                self.pygame.draw.lines(self.screen, colour, False, map1, 20)
+                self.pygame.draw.lines(self.screen, colour, False, map2, 20)
         else:
-
-            # map1 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
-            #         (tLap[t] <= max(timeStampEnd, tLap[1]))]
-            # map2 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
-            #         (tLap[t] >= min(timeStampStart, tLap[-1]))]
-
-            indices1 = np.argwhere(np.array(tLap) <= max(timeStampEnd, tLap[1]))
-            if len(indices1) == 1:
-                indices1 = np.append(indices1, indices1[0]+1)
-
-            ind1 = []
-            for i in range(0,len(indices1)):
-                # ind1.append(indices1[i][0])
-                ind1.append(int(indices1[i]))
-
-            map1 = np.array(self.db.track.map)[ind1].tolist()
-
-            indices2 = np.argwhere(np.array(tLap) >= min(timeStampStart, tLap[-1]))
-            if len(indices2) == 1:
-                indices2 = np.append(indices2, indices2[0]-1)
-
-            ind2 = []
-            for i in range(0,len(indices2)):
-                # ind2.append(indices2[i][0])
-                ind2.append(int(indices2[i]))
-
-            map2 = np.array(self.db.track.map)[ind2].tolist()
-
-            self.pygame.draw.lines(self.screen, colour, False, map1, 20)
-            self.pygame.draw.lines(self.screen, colour, False, map2, 20)
+            return
 
     def warningLabel(self, text, colour, textcolour):
         self.pygame.draw.rect(self.screen, colour, [0, 0, 800, 100], 0)
