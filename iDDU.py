@@ -4,7 +4,7 @@ import time
 from functionalities.RTDB import RTDB
 from functionalities.UpshiftTone import UpshiftTone
 from gui.iDDUgui import iDDUgui
-from libs import iDDURender, iDDUcalc, raceLapsEstimation
+from libs import iDDURender, iDDUcalc, raceLapsEstimation, Logger
 import os
 
 nan = float('nan')
@@ -290,7 +290,8 @@ calcData = {'LastFuelLevel': 0,
             'NDDUPage': 1,
             'dc': {},
             'dcOld': {},
-            'dcChangedItems': {}}
+            'dcChangedItems': {},
+            'BLoggerActive': False}
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
@@ -303,6 +304,7 @@ thread1 = RTDB.iRThread(myRTDB, 0.01)
 thread2 = UpshiftTone.UpShiftTone(myRTDB, 0.01)
 thread3 = iDDUgui(myRTDB, 0.1)
 thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 15)
+thread5 = Logger.Logger(myRTDB, 0.05)
 thread1.start()
 time.sleep(1)
 thread3.start()
@@ -310,6 +312,8 @@ time.sleep(1)
 thread2.start()
 time.sleep(1)
 thread4.start()
+time.sleep(1)
+thread5.start()
 time.sleep(1)
 
 # create objects for rendering and calculation
@@ -340,4 +344,5 @@ del thread1
 del thread2
 del thread3
 del thread4
+del thread5
 exit()
