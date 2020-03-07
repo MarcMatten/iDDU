@@ -166,6 +166,7 @@ class IDDUCalc:
                 # do if car is on track #############################################################################################
                 if not self.db.WasOnTrack:
                     self.db.WasOnTrack = True
+                    self.db.StintLap = 0
                     print(self.db.timeStr + ':\tIsOnTrack')
 
                 self.db.Alarm[0:6] = [0] * 6

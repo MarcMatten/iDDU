@@ -26,7 +26,7 @@ class Logger(threading.Thread):
                     if self.db.IsOnTrack:
                         # normal logging
                         now = datetime.now()
-                        self.file.write(now.strftime("%H:%M:%S.%f") + "," + str(self.db.SessionTime) + "," + str(self.db.RPM) + "," + str(self.db.Gear) + "," + str(self.db.Alarm[7]) + "\n")
+                        self.file.write(now.strftime("%H:%M:%S.%f") + "," + str(self.db.SessionTime) + "," + str(self.db.RPM) + "," + str(self.db.Gear) + "," + str(self.db.Alarm[7]) + "," + str(self.db.OnPitRoad) + "," + str(self.db.OutLap) + "," + str(self.db.StintLap) + "," + str(self.db.Lap) + "," + str(self.db.WasOnTrack) + "," + str(self.db.Run) + "\n")
                         self.file.flush()
                     else:
                         # stop logging, close logfile,
@@ -47,13 +47,13 @@ class Logger(threading.Thread):
 
                         self.file = open(self.db.dir + '/laplog/' + fileName, "a")
                         # write header
-                        if os.stat(self.db.dir + "/data_log.csv").st_size == 0:
-                            self.file.write("Time,SessionTime,RPM,Gear,Alarm\n")
+                        if os.stat(self.db.dir + '/laplog/' + fileName).st_size == 0:
+                            self.file.write("Time,SessionTime,RPM,Gear,Alarm,OnPitRoad,OutLap,StintLap,Lap,WasOnTrack,Run\n")
 
                         # log first line
                         now = datetime.now()
                         # if self.ir.startup():
-                        self.file.write(now.strftime("%H:%M:%S.%f") + "," + str(self.db.SessionTime) + "," + str(self.db.RPM) + "," + str(self.db.Gear) + "," + str(self.db.Alarm[7]) + "\n")
+                        self.file.write(now.strftime("%H:%M:%S.%f") + "," + str(self.db.SessionTime) + "," + str(self.db.RPM) + "," + str(self.db.Gear) + "," + str(self.db.Alarm[7]) + "," + str(self.db.OnPitRoad) + "," + str(self.db.OutLap) + "," + str(self.db.StintLap) + "," + str(self.db.Lap) + "," + str(self.db.WasOnTrack) + "," + str(self.db.Run) + "\n")
                         self.file.flush()
 
                         self.logging = True
