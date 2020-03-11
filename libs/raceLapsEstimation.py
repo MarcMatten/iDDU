@@ -15,6 +15,7 @@ class raceLapsEstimation(threading.Thread):
 
     def run(self):
         while 1:
+            t = time.time()
             if self.db.BDDUexecuting:
                 # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit and\
                 #          not self.db.LapLimit:
@@ -120,5 +121,7 @@ class raceLapsEstimation(threading.Thread):
 
                     self.db.SOFMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['SOF']
                     self.db.NDriversMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['NDrivers']
+
+            self.db.tExecuteRaceLapsEstimation = time.time() - t
 
             time.sleep(self.rate)

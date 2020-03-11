@@ -16,9 +16,11 @@ class iDDUgui(threading.Thread):
 
     def run(self):
         while 1:
+            t = time.time()
             myGui = Gui(self.db)
             myGui.start(self.db)
             time.sleep(self.rate)
+            self.db.tExecuteGUI = time.time() - t
 
 
 class Stream(QtCore.QObject):

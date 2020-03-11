@@ -63,6 +63,7 @@ class IDDUCalc:
         self.loadCar('default')
 
     def calc(self):
+        t = time.time()
         # Check if DDU is initialised
         if not self.db.BDDUexecuting:
             # initialise
@@ -391,6 +392,8 @@ class IDDUCalc:
                 self.db.SessionNum = 0
                 self.db.StopDDU = True
                 print(self.db.timeStr + ': Lost connection to iRacing')
+
+        self.db.tExecuteCalc = time.time() - t
 
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')

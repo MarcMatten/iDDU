@@ -291,7 +291,16 @@ calcData = {'LastFuelLevel': 0,
             'dc': {},
             'dcOld': {},
             'dcChangedItems': {},
-            'BLoggerActive': False}
+            'BLoggerActive': False,
+            'tExecuteRTDB': 0,
+            'tExecuteUpshiftTone': 0,
+            'tExecuteGUI': 0,
+            'tExecuteRaceLapsEstimation': 0,
+            'tExecuteLogger': 0,
+            'tExecuteRender': 0,
+            'tExecuteCalc': 0,
+            'tShiftReaction': float('nan')
+            }
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
