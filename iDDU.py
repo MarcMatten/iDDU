@@ -299,7 +299,8 @@ calcData = {'LastFuelLevel': 0,
             'tExecuteLogger': 0,
             'tExecuteRender': 0,
             'tExecuteCalc': 0,
-            'tShiftReaction': float('nan')
+            'tShiftReaction': float('nan'),
+            'BEnableLapLogging': False
             }
 
 # Create RTDB and initialise with
