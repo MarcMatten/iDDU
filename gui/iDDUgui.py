@@ -185,6 +185,15 @@ class Gui(object):
         self.pushButtonSaveTrack = QtWidgets.QPushButton(self.groupBox_7)
         self.pushButtonSaveTrack.setGeometry(QtCore.QRect(160, 70, 75, 23))
         self.pushButtonSaveTrack.setObjectName("pushButtonSaveTrack")
+        self.groupBox_8 = QtWidgets.QGroupBox(self.tabGeneral)
+        self.groupBox_8.setGeometry(QtCore.QRect(320, 210, 291, 80))
+        self.groupBox_8.setObjectName("groupBox_8")
+        self.checkBox_BEnableLogger = QtWidgets.QCheckBox(self.groupBox_8)
+        self.checkBox_BEnableLogger.setGeometry(QtCore.QRect(10, 20, 161, 17))
+        self.checkBox_BEnableLogger.setObjectName("checkBox_BEnableLogger")
+        self.checkBox_BEnableLapLogging = QtWidgets.QCheckBox(self.groupBox_8)
+        self.checkBox_BEnableLapLogging.setGeometry(QtCore.QRect(10, 50, 161, 17))
+        self.checkBox_BEnableLapLogging.setObjectName("checkBox_BEnableLapLogging")
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
@@ -391,6 +400,8 @@ class Gui(object):
         self.doubleSpinBox_JokerLapsRequired.valueChanged.connect(self.assignJokerLaps)
         self.doubleSpinBox_P2PActivations.valueChanged.connect(self.assignP2P)
         self.checkBox_MapHighlight.stateChanged.connect(self.MapHighlight)
+        self.checkBox_BEnableLogger.stateChanged.connect(self.enableLogger)
+        self.checkBox_BEnableLapLogging.stateChanged.connect(self.enableLapLogging)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -426,6 +437,9 @@ class Gui(object):
         self.pushButtonTrackRotateRight.setText(_translate("iDDU", "Rotate Right"))
         self.pushButtonLoadTrack.setText(_translate("iDDU", "Load"))
         self.pushButtonSaveTrack.setText(_translate("iDDU", "Save"))
+        self.groupBox_8.setTitle(_translate("iDDU", "Logging"))
+        self.checkBox_BEnableLogger.setText(_translate("iDDU", "enable Logger"))
+        self.checkBox_BEnableLapLogging.setText(_translate("iDDU", "enable  end of lap logging"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("iDDU", "General"))
         self.groupBox.setTitle(_translate("iDDU", "Upshift RPM"))
         self.groupBox_Gear1.setTitle(_translate("iDDU", "Gear 1"))
@@ -449,15 +463,16 @@ class Gui(object):
         self.groupBox_Gear7.setTitle(_translate("iDDU", "Gear 7"))
         self.label_7.setText(_translate("iDDU", "RPM"))
         self.checkBox_Gear7.setText(_translate("iDDU", "active"))
+        self.groupBox_6.setTitle(_translate("iDDU", "Settings"))
+        self.saveButton.setText(_translate("iDDU", "Save"))
+        self.label_9.setText(_translate("iDDU", "Upshift RPM Source"))
+        self.checkBox_UpshiftTone.setText(_translate("iDDU", "activate Upshift Tone"))
+        self.openButton.setText(_translate("iDDU", "Load"))
         self.comboBox.setItemText(0, _translate("iDDU", "iRacing First RPM"))
         self.comboBox.setItemText(1, _translate("iDDU", "iRacing Shift RPM"))
         self.comboBox.setItemText(2, _translate("iDDU", "iRacing Last RPM"))
         self.comboBox.setItemText(3, _translate("iDDU", "iRacing Blink RPM"))
         self.comboBox.setItemText(4, _translate("iDDU", "User defined"))
-        self.label_9.setText(_translate("iDDU", "Upshift RPM Source"))
-        self.checkBox_UpshiftTone.setText(_translate("iDDU", "activate Upshift Tone"))
-        self.saveButton.setText(_translate("iDDU", "Save"))
-        self.openButton.setText(_translate("iDDU", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabUpshiftTone), _translate("iDDU", "Upshift Tone"))
         self.pushButtonInvoke.setText(_translate("iDDU", "Invoke Command"))
         self.pushButtonSaveSnapshot.setText(_translate("iDDU", "RTDB Snapshot"))
@@ -609,6 +624,14 @@ class Gui(object):
 
     def saveTrack(self):
         self.db.track.saveJson(self.db.dir)
+
+    def enableLogger(self):
+        self.db.BLoggerActive = self.checkBox_BEnableLogger.isChecked()
+        self.retranslateUi(self.iDDU)
+
+    def enableLapLogging(self):
+        self.db.BEnableLapLogging = self.checkBox_BEnableLapLogging.isChecked()
+        self.retranslateUi(self.iDDU)
 
     def loadTrack(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './track', 'JSON(*.json)')

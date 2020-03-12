@@ -9,8 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_iDDU(object):
-    
-	def setupUi(self, iDDU):
+    def setupUi(self, iDDU):
         iDDU.setObjectName("iDDU")
         iDDU.resize(784, 441)
         icon = QtGui.QIcon()
@@ -31,6 +30,7 @@ class Ui_iDDU(object):
         self.groupBox_2.setObjectName("groupBox_2")
         self.pushButton_StartDDU = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_StartDDU.setGeometry(QtCore.QRect(40, 20, 75, 23))
+        self.pushButton_StartDDU.setToolTip("")
         self.pushButton_StartDDU.setObjectName("pushButton_StartDDU")
         self.pushButton_StopDDU = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_StopDDU.setGeometry(QtCore.QRect(160, 20, 75, 23))
@@ -143,6 +143,15 @@ class Ui_iDDU(object):
         self.pushButtonSaveTrack = QtWidgets.QPushButton(self.groupBox_7)
         self.pushButtonSaveTrack.setGeometry(QtCore.QRect(160, 70, 75, 23))
         self.pushButtonSaveTrack.setObjectName("pushButtonSaveTrack")
+        self.groupBox_8 = QtWidgets.QGroupBox(self.tabGeneral)
+        self.groupBox_8.setGeometry(QtCore.QRect(320, 210, 291, 80))
+        self.groupBox_8.setObjectName("groupBox_8")
+        self.checkBox_BEnableLogger = QtWidgets.QCheckBox(self.groupBox_8)
+        self.checkBox_BEnableLogger.setGeometry(QtCore.QRect(10, 20, 161, 17))
+        self.checkBox_BEnableLogger.setObjectName("checkBox_BEnableLogger")
+        self.checkBox_BEnableLapLogging = QtWidgets.QCheckBox(self.groupBox_8)
+        self.checkBox_BEnableLapLogging.setGeometry(QtCore.QRect(10, 50, 161, 17))
+        self.checkBox_BEnableLapLogging.setObjectName("checkBox_BEnableLapLogging")
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
@@ -333,6 +342,9 @@ class Ui_iDDU(object):
         self.pushButtonTrackRotateRight.setText(_translate("iDDU", "Rotate Right"))
         self.pushButtonLoadTrack.setText(_translate("iDDU", "Load"))
         self.pushButtonSaveTrack.setText(_translate("iDDU", "Save"))
+        self.groupBox_8.setTitle(_translate("iDDU", "Logging"))
+        self.checkBox_BEnableLogger.setText(_translate("iDDU", "enable Logger"))
+        self.checkBox_BEnableLapLogging.setText(_translate("iDDU", "enable  end of lap logging"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("iDDU", "General"))
         self.groupBox.setTitle(_translate("iDDU", "Upshift RPM"))
         self.groupBox_Gear1.setTitle(_translate("iDDU", "Gear 1"))
