@@ -81,7 +81,7 @@ class IDDUCalc(threading.Thread):
                 if not self.db.BDDUexecuting:
                     print(self.db.timeStr + ': Connecting to iRacing')
 
-                if self.db.oldSessionNum < self.db.SessionNum or self.db.WeekendInfo['SubSessionID'] is not self.db.SubSessionIDOld:
+                if self.db.oldSessionNum < self.db.SessionNum or not self.db.WeekendInfo['SubSessionID'] == self.db.SubSessionIDOld:
                     print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                         'SessionType'])
                     self.initSession()
@@ -384,7 +384,6 @@ class IDDUCalc(threading.Thread):
 
                     if self.db.SessionTime > self.db.tdcHeadlightFlash + 0.5:
                         self.db.BdcHeadlightFlash = False
-
 
                 self.db.BDDUexecuting = True
             else:
