@@ -118,7 +118,8 @@ iRData = {'LapBestLapTime': 0,
           }
 
 # calculated data
-calcData = {'LastFuelLevel': 0,
+calcData = {'startUp': False,
+            'LastFuelLevel': 0,
             'SessionInfoAvailable': False,
             'SessionNum': 0,
             'init': False,
@@ -310,11 +311,14 @@ myRTDB.initialise(iRData, True)
 myRTDB.initialise(calcData, False)
 
 # initialise and start thread
+thread0 = iDDUcalc.IDDUCalc(myRTDB, 0.005)
 thread1 = RTDB.iRThread(myRTDB, 0.01)
 thread2 = UpshiftTone.UpShiftTone(myRTDB, 0.01)
 thread3 = iDDUgui(myRTDB, 0.1)
 thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 15)
 thread5 = Logger.Logger(myRTDB, 0.01)
+thread0.start()
+time.sleep(1)
 thread1.start()
 time.sleep(1)
 thread3.start()
@@ -326,12 +330,12 @@ time.sleep(1)
 thread5.start()
 time.sleep(1)
 
-# create objects for rendering and calculation
-iDDUcalc = iDDUcalc.IDDUCalc(myRTDB)
+# create objects for rendering
+# iDDUcalc = iDDUcalc.IDDUCalc(myRTDB)
 
 # loop to run programme
 while not myRTDB.done:
-    iDDUcalc.calc()
+    # iDDUcalc.calc()
     if myRTDB.DDUrunning:
         if myRTDB.StartDDU:
             myRTDB.StartDDU = False
@@ -350,6 +354,7 @@ while not myRTDB.done:
 iRRender.pygame.quit()
 del iRRender
 del iDDUcalc
+del thread0
 del thread1
 del thread2
 del thread3

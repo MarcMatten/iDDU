@@ -87,7 +87,7 @@ class Logger(threading.Thread):
                         self.file.write(self.getDataStr())
                         self.logging = True
 
-                self.db.tExecuteLogger = time.time() - t
+                self.db.tExecuteLogger = (time.time() - t) * 1000
 
                 time.sleep(self.rate)
 

@@ -20,7 +20,7 @@ class iDDUgui(threading.Thread):
             myGui = Gui(self.db)
             myGui.start(self.db)
             time.sleep(self.rate)
-            self.db.tExecuteGUI = time.time() - t
+            self.db.tExecuteGUI = (time.time() - t) * 1000
 
 
 class Stream(QtCore.QObject):

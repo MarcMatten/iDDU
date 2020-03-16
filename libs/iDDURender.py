@@ -343,7 +343,7 @@ class RenderScreen(RenderMain):
                     self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
 
         self.pygame.display.flip()
-        self.db.tExecuteRender = time.time() - t
+        self.db.tExecuteRender = (time.time() - t) * 1000
         self.clocker.tick(30)
 
         return self.done

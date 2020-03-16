@@ -122,6 +122,6 @@ class raceLapsEstimation(threading.Thread):
                     self.db.SOFMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['SOF']
                     self.db.NDriversMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['NDrivers']
 
-            self.db.tExecuteRaceLapsEstimation = time.time() - t
+            self.db.tExecuteRaceLapsEstimation = (time.time() - t) * 1000
 
             time.sleep(self.rate)
