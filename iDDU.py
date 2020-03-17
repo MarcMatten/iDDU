@@ -295,7 +295,6 @@ calcData = {'startUp': False,
             'BLoggerActive': False,
             'tExecuteRTDB': 0,
             'tExecuteUpshiftTone': 0,
-            'tExecuteGUI': 0,
             'tExecuteRaceLapsEstimation': 0,
             'tExecuteLogger': 0,
             'tExecuteRender': 0,
@@ -314,7 +313,7 @@ myRTDB.initialise(calcData, False)
 thread0 = iDDUcalc.IDDUCalc(myRTDB, 0.005)
 thread1 = RTDB.iRThread(myRTDB, 0.01)
 thread2 = UpshiftTone.UpShiftTone(myRTDB, 0.01)
-thread3 = iDDUgui(myRTDB, 0.1)
+thread3 = iDDUgui(myRTDB)
 thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 15)
 thread5 = Logger.Logger(myRTDB, 0.01)
 thread0.start()

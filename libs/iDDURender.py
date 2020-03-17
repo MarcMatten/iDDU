@@ -158,7 +158,8 @@ class RenderScreen(RenderMain):
         self.pygame.display.quit()
 
     def render(self):
-        t = time.time()
+        # t = time.time()
+        t = time.perf_counter()
         self.backgroundColour = self.db.backgroundColour
         self.textColour = self.db.textColour
         self.textColourFuelAdd = self.db.textColourFuelAdd
@@ -343,7 +344,7 @@ class RenderScreen(RenderMain):
                     self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
 
         self.pygame.display.flip()
-        self.db.tExecuteRender = (time.time() - t) * 1000
+        self.db.tExecuteRender = (time.perf_counter() - t) * 1000
         self.clocker.tick(30)
 
         return self.done

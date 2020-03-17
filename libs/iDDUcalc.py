@@ -67,7 +67,7 @@ class IDDUCalc(threading.Thread):
 
     def run(self):
         while 1:
-            t = time.time()
+            t = time.perf_counter()
             # Check if DDU is initialised
             if not self.db.BDDUexecuting:
                 # initialise
@@ -396,7 +396,7 @@ class IDDUCalc(threading.Thread):
                     self.db.StopDDU = True
                     print(self.db.timeStr + ': Lost connection to iRacing')
 
-            self.db.tExecuteCalc = (time.time() - t) * 1000
+            self.db.tExecuteCalc = (time.perf_counter() - t) * 1000
 
             time.sleep(self.rate)
 

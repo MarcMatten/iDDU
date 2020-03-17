@@ -9,18 +9,14 @@ from libs import Track, Car
 
 
 class iDDUgui(threading.Thread):
-    def __init__(self, RTDB, rate):
+    def __init__(self, RTDB):
         threading.Thread.__init__(self)
-        self.rate = rate
         self.db = RTDB
 
     def run(self):
         while 1:
-            t = time.time()
             myGui = Gui(self.db)
             myGui.start(self.db)
-            time.sleep(self.rate)
-            self.db.tExecuteGUI = (time.time() - t) * 1000
 
 
 class Stream(QtCore.QObject):

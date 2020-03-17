@@ -45,7 +45,7 @@ class Logger(threading.Thread):
     def run(self):
         while 1:
             while self.db.BLoggerActive:
-                t = time.time()
+                t = time.perf_counter()
                 if not self.init:
                     self.init = True
                     print('Logger active')
@@ -87,7 +87,7 @@ class Logger(threading.Thread):
                         self.file.write(self.getDataStr())
                         self.logging = True
 
-                self.db.tExecuteLogger = (time.time() - t) * 1000
+                self.db.tExecuteLogger = (time.perf_counter() - t) * 1000
 
                 time.sleep(self.rate)
 
