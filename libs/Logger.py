@@ -14,6 +14,7 @@ class Logger(threading.Thread):
         self.file = []
         self.rate = rate
         self.keys=['SessionTime',
+                   'Speed'
                    'RPM',
                    'Gear',
                    'Alarm',
@@ -25,12 +26,12 @@ class Logger(threading.Thread):
                    'Run',
                    'tExecuteRTDB',
                    'tExecuteUpshiftTone',
-                   'tExecuteGUI',
                    'tExecuteRaceLapsEstimation',
                    'tExecuteLogger',
                    'tExecuteRender',
                    'tExecuteCalc',
-                   'tShiftReaction'
+                   'tShiftReaction',
+                   'BNewLap'
                    ]
 
         self.header = 'Time'

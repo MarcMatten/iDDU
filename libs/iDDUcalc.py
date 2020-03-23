@@ -218,10 +218,12 @@ class IDDUCalc(threading.Thread):
                         self.ir.pit_command(7)
 
                     if self.db.OnPitRoad:
-                        self.db.onPitRoad = True
-                    elif (not self.db.OnPitRoad) and self.db.onPitRoad:  # pit exit
-                        self.db.onPitRoad = False
+                        self.db.BWasOnPitRoad = True
+                    elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit
+                        self.db.BWasOnPitRoad = False
                         self.db.OutLap = True
+                        self.db.FuelConsumptionList = []
+                        self.db.FuelAvgConsumption = 0
 
                     # check if new lap
                     if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:
@@ -258,7 +260,7 @@ class IDDUCalc(threading.Thread):
                             self.db.Alarm[3] = 2
                         if self.db.NLapRemaining < 1:
                             self.db.Alarm[3] = 3
-                        if self.db.BNewLap and not self.db.onPitRoad:
+                        if self.db.BNewLap and not self.db.OnPitRoad:
                             fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.5)
                             self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
                                                    self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
@@ -730,7 +732,7 @@ class IDDUCalc(threading.Thread):
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
         # self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
-        if (not self.db.OutLap) and (not self.db.onPitRoad):
+        if (not self.db.OutLap) and (not self.db.OnPitRoad):
             self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
         else:
             self.db.OutLap = False
