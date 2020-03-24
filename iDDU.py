@@ -123,7 +123,7 @@ calcData = {'startUp': False,
             'SessionInfoAvailable': False,
             'SessionNum': 0,
             'init': False,
-            'BWasOnPitRoad': True,
+            'BWasOnPitRoad': False,
             'BDDUexecuting': False,
             'WasOnTrack': False,
             'StintLap': 0,
@@ -300,7 +300,12 @@ calcData = {'startUp': False,
             'tExecuteRender': 0,
             'tExecuteCalc': 0,
             'tShiftReaction': float('nan'),
-            'BEnableLapLogging': False
+            'BEnableLapLogging': False,
+            'BChangeTyres': False,
+            'BBeginFueling': False,
+            'VUserFuelSet': 0,
+            'NFuelSetMethod': 0, # 0 = User pre set; 1 = calculated
+            'BPitCommandUpdate': False
             }
 
 # Create RTDB and initialise with

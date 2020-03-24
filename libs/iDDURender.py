@@ -32,6 +32,8 @@ class RenderMain:
 
         self.ArrowLeft = [[20, 240], [100, 20], [100, 460]]
         self.ArrowRight = [[780, 240], [700, 20], [700, 460]]
+        self.ArrowLeft2 = [[120, 240], [200, 20], [200, 460]]
+        self.ArrowRight2 = [[680, 240], [600, 20], [600, 460]]
 
         self.pygame = pygame
         self.pygame.init()
@@ -201,10 +203,15 @@ class RenderScreen(RenderMain):
                         self.screen.blit(self.warning, [0, 0])
 
                 # Radar Incicators
-                if self.ir['CarLeftRight'] == 2 or self.ir['CarLeftRight'] > 3:
+                CarLeftRight = self.ir['CarLeftRight']
+                if np.isin(CarLeftRight, [2, 4, 5]):
                     pygame.draw.polygon(self.screen, self.orange, self.ArrowLeft, 0)
-                if self.ir['CarLeftRight'] > 2:
+                    if CarLeftRight == 5:
+                        pygame.draw.polygon(self.screen, self.orange, self.ArrowLeft2, 0)
+                if np.isin(CarLeftRight, [3, 4, 6]):
                     pygame.draw.polygon(self.screen, self.orange, self.ArrowRight, 0)
+                    if CarLeftRight == 6:
+                        pygame.draw.polygon(self.screen, self.orange, self.ArrowRight2, 0)
 
                 # DRS
                 if self.db.DRS:

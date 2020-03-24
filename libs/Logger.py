@@ -31,7 +31,9 @@ class Logger(threading.Thread):
                    'tExecuteRender',
                    'tExecuteCalc',
                    'tShiftReaction',
-                   'BNewLap'
+                   'BNewLap',
+                   'OnPitRoad',
+                   'PlayerTrackSurface'
                    ]
 
         self.header = 'Time'

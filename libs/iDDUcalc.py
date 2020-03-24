@@ -101,7 +101,7 @@ class IDDUCalc(threading.Thread):
                 else:
                     self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
 
-                if self.db.OnPitRoad or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 1 or self.db.CarIdxTrackSurface[self.db.DriverCarIdx] == 2:
+                if self.db.OnPitRoad or self.db.PlayerTrackSurface == 1 or self.db.PlayerTrackSurface == 2:
                     pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                     deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
@@ -214,11 +214,31 @@ class IDDUCalc(threading.Thread):
                         self.db.FuelConsumptionList = []
                         self.db.RunStartTime = self.db.SessionTime
                         self.db.Run = self.db.Run + 1
+                        self.setPitCommands()
 
-                        self.ir.pit_command(7)
+                        # if not self.db.BChangeTyres:
+                        #     self.ir.pit_command(7) # clear tires
 
                     if self.db.OnPitRoad:
+                        # if not self.db.BWasOnPitRoad:
+                        #     if not self.db.BChangeTyres:
+                        #         self.ir.pit_command(7) # clear tires
+                        #     else:
+                        #         self.ir.pit_command(3)
+                        #         self.ir.pit_command(4)
+                        #         self.ir.pit_command(5)
+                        #         self.ir.pit_command(6)
+                        #
+                        #     if not self.db.BBeginFueling:
+                        #         self.ir.pit_command(11) # Uncheck add fuel
+                        #     else:
+                        #         if self.db.NFuelSetMethod == 0:
+                        #             self.ir.pit_command(2, self.db.VUserFuelSet)
+                        #         elif self.db.NFuelSetMethod == 1:
+                        #             self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
+
                         self.db.BWasOnPitRoad = True
+
                     elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit
                         self.db.BWasOnPitRoad = False
                         self.db.OutLap = True
@@ -266,12 +286,13 @@ class IDDUCalc(threading.Thread):
                                                    self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
                                                        'DriverCarMaxFuelPct'])
                             if self.db.VFuelAdd == 0:
-                                self.ir.pit_command(2, 1)
-                                self.ir.pit_command(11)
+                                # self.ir.pit_command(2, 1) # Add fuel, optionally specify the amount to add in liters or pass '0' to use existing amount
+                                self.ir.pit_command(11) # Uncheck add fuel
                                 self.db.BTextColourFuelAddOverride = False
                             else:
                                 if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
-                                    self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
+                                    if self.db.NFuelSetMethod == 1 and self.db.BBeginFueling:
+                                        self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10)) # Add fuel
                                 if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
                                     self.db.textColourFuelAddOverride = self.green
                                     self.db.BTextColourFuelAddOverride = True
@@ -729,6 +750,9 @@ class IDDUCalc(threading.Thread):
         winsound.Beep(200, 200)
         self.db.newLapTime = self.db.SessionTime
 
+        if self.db.BPitCommandUpdate:
+            self.setPitCommands()
+
         # Fuel Calculations
         self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
         # self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
@@ -738,7 +762,6 @@ class IDDUCalc(threading.Thread):
             self.db.OutLap = False
 
         self.db.LastFuelLevel = self.db.FuelLevel
-
 
         if self.db.BEnableLapLogging:
             now = datetime.now()
@@ -878,3 +901,22 @@ class IDDUCalc(threading.Thread):
             self.db.SOFstr = temp + ')'
         else:
             self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
+
+    def setPitCommands(self):
+        if not self.db.BChangeTyres:
+            self.ir.pit_command(7)  # clear tires
+        else:
+            self.ir.pit_command(3)
+            self.ir.pit_command(4)
+            self.ir.pit_command(5)
+            self.ir.pit_command(6)
+
+        if not self.db.BBeginFueling:
+            self.ir.pit_command(11)  # Uncheck add fuel
+        else:
+            if self.db.NFuelSetMethod == 0:
+                self.ir.pit_command(2, self.db.VUserFuelSet)
+            elif self.db.NFuelSetMethod == 1:
+                self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
+
+        self.db.BPitCommandUpdate = False

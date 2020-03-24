@@ -107,13 +107,13 @@ class Gui(object):
         self.doubleSpinBox_DRSActivations.setObjectName("doubleSpinBox_DRSActivations")
         self.checkBox_MapHighlight = QtWidgets.QCheckBox(self.groupBox_3)
         self.checkBox_MapHighlight.setGeometry(QtCore.QRect(20, 140, 251, 17))
-        self.checkBox_MapHighlight.setChecked(True)
+        self.checkBox_MapHighlight.setChecked(False)
         self.checkBox_MapHighlight.setObjectName("checkBox_MapHighlight")
         self.label_15 = QtWidgets.QLabel(self.groupBox_3)
         self.label_15.setGeometry(QtCore.QRect(20, 100, 101, 16))
         self.label_15.setObjectName("label_15")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_4.setGeometry(QtCore.QRect(320, 10, 291, 91))
+        self.groupBox_4.setGeometry(QtCore.QRect(320, 10, 261, 191))
         self.groupBox_4.setObjectName("groupBox_4")
         self.label_11 = QtWidgets.QLabel(self.groupBox_4)
         self.label_11.setGeometry(QtCore.QRect(20, 60, 101, 16))
@@ -139,8 +139,31 @@ class Gui(object):
         self.label_10 = QtWidgets.QLabel(self.groupBox_4)
         self.label_10.setGeometry(QtCore.QRect(20, 20, 81, 16))
         self.label_10.setObjectName("label_10")
+        self.comboBox_FuelMethod = QtWidgets.QComboBox(self.groupBox_4)
+        self.comboBox_FuelMethod.setGeometry(QtCore.QRect(140, 120, 101, 22))
+        self.comboBox_FuelMethod.setObjectName("comboBox_FuelMethod")
+        self.comboBox_FuelMethod.addItem("")
+        self.comboBox_FuelMethod.addItem("")
+        self.spinBox_FuelSetting = QtWidgets.QSpinBox(self.groupBox_4)
+        self.spinBox_FuelSetting.setGeometry(QtCore.QRect(140, 150, 101, 22))
+        self.spinBox_FuelSetting.setMaximum(200)
+        self.spinBox_FuelSetting.setObjectName("spinBox_FuelSetting")
+        self.checkBox_FuelUp = QtWidgets.QCheckBox(self.groupBox_4)
+        self.checkBox_FuelUp.setGeometry(QtCore.QRect(150, 90, 81, 17))
+        self.checkBox_FuelUp.setObjectName("checkBox_FuelUp")
+        self.checkBox_ChangeTyres = QtWidgets.QCheckBox(self.groupBox_4)
+        self.checkBox_ChangeTyres.setEnabled(True)
+        self.checkBox_ChangeTyres.setGeometry(QtCore.QRect(20, 90, 121, 17))
+        self.checkBox_ChangeTyres.setAcceptDrops(False)
+        self.checkBox_ChangeTyres.setObjectName("checkBox_ChangeTyres")
+        self.label_16 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_16.setGeometry(QtCore.QRect(20, 120, 101, 21))
+        self.label_16.setObjectName("label_16")
+        self.label_17 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_17.setGeometry(QtCore.QRect(20, 150, 101, 21))
+        self.label_17.setObjectName("label_17")
         self.groupBox_5 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_5.setGeometry(QtCore.QRect(320, 110, 291, 91))
+        self.groupBox_5.setGeometry(QtCore.QRect(320, 210, 261, 91))
         self.groupBox_5.setObjectName("groupBox_5")
         self.label_13 = QtWidgets.QLabel(self.groupBox_5)
         self.label_13.setGeometry(QtCore.QRect(20, 60, 101, 16))
@@ -182,7 +205,7 @@ class Gui(object):
         self.pushButtonSaveTrack.setGeometry(QtCore.QRect(160, 70, 75, 23))
         self.pushButtonSaveTrack.setObjectName("pushButtonSaveTrack")
         self.groupBox_8 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_8.setGeometry(QtCore.QRect(320, 210, 291, 80))
+        self.groupBox_8.setGeometry(QtCore.QRect(320, 310, 261, 80))
         self.groupBox_8.setObjectName("groupBox_8")
         self.checkBox_BEnableLogger = QtWidgets.QCheckBox(self.groupBox_8)
         self.checkBox_BEnableLogger.setGeometry(QtCore.QRect(10, 20, 161, 17))
@@ -334,6 +357,7 @@ class Gui(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setCurrentIndex(1)
+        self.comboBox_FuelMethod.setCurrentIndex(0)
         self.tabWidget.addTab(self.tabUpshiftTone, "")
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
@@ -399,6 +423,11 @@ class Gui(object):
         self.checkBox_BEnableLogger.stateChanged.connect(self.enableLogger)
         self.checkBox_BEnableLapLogging.stateChanged.connect(self.enableLapLogging)
 
+        self.checkBox_FuelUp.stateChanged.connect(self.enableFuelUp)
+        self.checkBox_ChangeTyres.stateChanged.connect(self.enableTyreChange)
+        self.spinBox_FuelSetting.valueChanged.connect(self.setUserFuelPreset)
+        self.comboBox_FuelMethod.currentIndexChanged.connect(self.setFuelSetMethod)
+
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
         # app.aboutToQuit.connect(self.closeEvent)
@@ -425,6 +454,12 @@ class Gui(object):
         self.groupBox_4.setTitle(_translate("iDDU", "Pit Stop"))
         self.label_11.setText(_translate("iDDU", "Required Pit Stops"))
         self.label_10.setText(_translate("iDDU", "Pit Stop Delta"))
+        self.comboBox_FuelMethod.setItemText(0, _translate("iDDU", "User pre set"))
+        self.comboBox_FuelMethod.setItemText(1, _translate("iDDU", "calculated"))
+        self.checkBox_FuelUp.setText(_translate("iDDU", "Fuel up"))
+        self.checkBox_ChangeTyres.setText(_translate("iDDU", "Change Tyres"))
+        self.label_16.setText(_translate("iDDU", "Pit stop fuel setting"))
+        self.label_17.setText(_translate("iDDU", "User fuel pre set"))
         self.groupBox_5.setTitle(_translate("iDDU", "RallyX"))
         self.label_13.setText(_translate("iDDU", "Required Joker Laps"))
         self.label_12.setText(_translate("iDDU", "Joker Lap Delta"))
@@ -643,6 +678,26 @@ class Gui(object):
 
         if BResetScreen:
             self.db.NDDUPage = NDDUPageTemp
+
+    def setUserFuelPreset(self):
+        self.db.VUserFuelSet = self.spinBox_FuelSetting.value()
+        self.db.BPitCommandUpdate = True
+        self.retranslateUi(self.iDDU)
+
+    def enableFuelUp(self):
+        self.db.BBeginFueling = self.checkBox_FuelUp.isChecked()
+        self.db.BPitCommandUpdate = True
+        self.retranslateUi(self.iDDU)
+
+    def enableTyreChange(self):
+        self.db.BChangeTyres = self.checkBox_ChangeTyres.isChecked()
+        self.db.BPitCommandUpdate = True
+        self.retranslateUi(self.iDDU)
+
+    def setFuelSetMethod(self):
+        self.db.NFuelSetMethod = self.comboBox_FuelMethod.currentIndex()
+        self.db.BPitCommandUpdate = True
+        self.retranslateUi(self.iDDU)
 
     def __del__(self):
         sys.stdout = sys.__stdout__
