@@ -358,6 +358,8 @@ while not myRTDB.done:
         myRTDB.StopDDU = False
         myRTDB.DDUrunning = False
 
+    time.sleep(0.01)
+
 # iRRender.pygame.quit()
 # del iRRender
 # del iDDUcalc

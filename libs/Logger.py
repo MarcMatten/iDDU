@@ -99,7 +99,7 @@ class Logger(threading.Thread):
                 self.init = False
                 print('Logger inactive')
 
-                time.sleep(self.rate)
+            time.sleep(1)
 
 
     def getDataStr(self):
