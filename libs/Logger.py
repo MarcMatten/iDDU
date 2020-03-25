@@ -14,7 +14,7 @@ class Logger(threading.Thread):
         self.file = []
         self.rate = rate
         self.keys=['SessionTime',
-                   'Speed'
+                   'Speed',
                    'RPM',
                    'Gear',
                    'Alarm',
@@ -32,8 +32,9 @@ class Logger(threading.Thread):
                    'tExecuteCalc',
                    'tShiftReaction',
                    'BNewLap',
-                   'OnPitRoad',
-                   'PlayerTrackSurface'
+                   'PlayerTrackSurface',
+                   'BWasOnPitRoad',
+                   'BEnteringPits'
                    ]
 
         self.header = 'Time'

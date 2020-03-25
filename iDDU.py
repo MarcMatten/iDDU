@@ -39,6 +39,7 @@ iRData = {'LapBestLapTime': 0,
           'OnPitRoad': 0,
           'PlayerCarClassPosition': 0,
           'PlayerCarPosition': 0,
+          'PlayerTrackSurface': 0,
           'SessionLapsRemain': 0,
           'Throttle': 0,
           'SessionTimeRemain': 86400,
@@ -305,7 +306,9 @@ calcData = {'startUp': False,
             'BBeginFueling': False,
             'VUserFuelSet': 0,
             'NFuelSetMethod': 0, # 0 = User pre set; 1 = calculated
-            'BPitCommandUpdate': False
+            'BPitCommandUpdate': False,
+            'PlayerTrackSurfaceOld': 0,
+            'BEnteringPits': False
             }
 
 # Create RTDB and initialise with
@@ -341,27 +344,27 @@ time.sleep(1)
 while not myRTDB.done:
     # iDDUcalc.calc()
     if myRTDB.DDUrunning:
+        myRTDB.done = iRRender.render()
         if myRTDB.StartDDU:
             myRTDB.StartDDU = False
-        myRTDB.done = iRRender.render()
     elif myRTDB.StartDDU:
         print(myRTDB.timeStr + ': Starting DDU')
         iRRender = iDDURender.RenderScreen(myRTDB)
-        myRTDB.StartDDU = False
+        # myRTDB.StartDDU = False
         myRTDB.DDUrunning = True
     if myRTDB.StopDDU:
         print(myRTDB.timeStr + ': Stopping DDU')
-        iRRender.stop()
+        iRRender.stopRendering()
         myRTDB.StopDDU = False
         myRTDB.DDUrunning = False
 
-iRRender.pygame.quit()
-del iRRender
-del iDDUcalc
-del thread0
-del thread1
-del thread2
-del thread3
-del thread4
-del thread5
-exit()
+# iRRender.pygame.quit()
+# del iRRender
+# del iDDUcalc
+# del thread0
+# del thread1
+# del thread2
+# del thread3
+# del thread4
+# del thread5
+# exit()

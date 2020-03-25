@@ -101,7 +101,12 @@ class IDDUCalc(threading.Thread):
                 else:
                     self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
 
-                if self.db.OnPitRoad or self.db.PlayerTrackSurface == 1 or self.db.PlayerTrackSurface == 2:
+                if self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:
+                    self.db.BEnteringPits = True
+
+                self.db.PlayerTrackSurfaceOld = self.db.PlayerTrackSurface
+
+                if self.db.OnPitRoad or self.db.BEnteringPits:
                     pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                     deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
@@ -238,9 +243,9 @@ class IDDUCalc(threading.Thread):
                         #             self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
 
                         self.db.BWasOnPitRoad = True
+                        self.db.BEnteringPits = False
 
                     elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit
-                        self.db.BWasOnPitRoad = False
                         self.db.OutLap = True
                         self.db.FuelConsumptionList = []
                         self.db.FuelAvgConsumption = 0
@@ -264,7 +269,7 @@ class IDDUCalc(threading.Thread):
                         self.YawNorth.append(self.db.YawNorth)
                         self.VelocityX.append(self.db.VelocityX)
                         self.VelocityY.append(self.db.VelocityY)
-                        self.dist = np.append(self.dist, self.db.LapDistPct * 100)
+                        self.dist = np.append(self.dist, [self.db.LapDistPct * 100])
                         self.time = np.append(self.time, self.db.SessionTime - self.timeLogingStart)
 
                         self.dx.append(math.cos(self.db.Yaw) * self.db.VelocityX * 0.033 - math.sin(
@@ -807,6 +812,8 @@ class IDDUCalc(threading.Thread):
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
+        if not self.db.OnPitRoad:
+            self.db.BWasOnPitRoad = False
 
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
             self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
@@ -823,7 +830,7 @@ class IDDUCalc(threading.Thread):
         self.dist = np.array(self.dist)[index]
 
         self.time = np.append(self.time, self.db.LapLastLapTime)
-        self.dist = np.append(self.dist, 100)
+        self.dist = np.append(self.dist, [100])
 
         if BCreateTrack:
             tempx = np.cumsum(self.dx, dtype=float).tolist()
@@ -832,8 +839,8 @@ class IDDUCalc(threading.Thread):
             dx = tempx[-1] - tempx[0]
             dy = tempy[-1] - tempy[0]
 
-            self.x = np.cumsum(np.array(self.dx) - dx / len(tempx), dtype=float)[index]
-            self.y = np.cumsum(np.array(self.dy) - dy / len(tempy), dtype=float)[index]
+            self.x = np.cumsum([np.array(self.dx) - dx / len(tempx)], dtype=float)[index]
+            self.y = np.cumsum([np.array(self.dy) - dy / len(tempy)], dtype=float)[index]
 
             # width = np.max(self.x) - np.min(self.x)
             # height = np.max(self.y) - np.min(self.y)
