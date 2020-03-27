@@ -358,7 +358,7 @@ while not myRTDB.done:
         myRTDB.StopDDU = False
         myRTDB.DDUrunning = False
 
-    time.sleep(0.01)
+    time.sleep(0.001)
 
 # iRRender.pygame.quit()
 # del iRRender
