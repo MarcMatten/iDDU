@@ -44,7 +44,8 @@ class Logger(threading.Thread):
 
         self.header = self.header + '\n'
 
-        # self.ir = irsdk.IRSDK()
+        if not os.path.exists("laplog/"):
+            os.mkdir("laplog/")
 
     def run(self):
         while 1:
