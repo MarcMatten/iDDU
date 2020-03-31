@@ -82,8 +82,6 @@ class IDDUCalc(threading.Thread):
                     print(self.db.timeStr + ': Connecting to iRacing')
 
                 if self.db.oldSessionNum < self.db.SessionNum or not self.db.WeekendInfo['SubSessionID'] == self.db.SubSessionIDOld:
-                    print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                        'SessionType'])
                     self.initSession()
 
                 if self.db.SessionTime < 10 + self.db.GreenTime:
@@ -260,10 +258,10 @@ class IDDUCalc(threading.Thread):
                     # Create Track Map
                     if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
                         # Logging track data
-                        if not self.Logging:
-                            self.logLap = self.db.Lap
-                            self.Logging = True
-                            self.timeLogingStart = self.db.SessionTime
+                        #if not self.Logging:
+                        #    self.logLap = self.db.Lap
+                        #    self.Logging = True
+                        #    self.timeLogingStart = self.db.SessionTime
 
                         self.Yaw.append(self.db.Yaw)
                         self.YawNorth.append(self.db.YawNorth)
@@ -431,6 +429,7 @@ class IDDUCalc(threading.Thread):
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')
         time.sleep(3)
+        print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
         self.getTrackFiles2()
         self.db.init = True
         self.db.BResults = False
@@ -501,18 +500,18 @@ class IDDUCalc(threading.Thread):
                 self.db.RenderLabel[17] = False
                 print(self.db.timeStr + ':\tRoad Racing')
 
+
             # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
                 self.db.RaceLaps = self.db.UserRaceLaps
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
                 self.db.RenderLabel[21] = False
-                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                    'SessionLaps'] + ' laps')
-                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                    print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.RaceLaps))
-                    self.db.LapLimit = True
-                    self.db.RenderLabel[20] = True
+                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
+                # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                #     print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.RaceLaps))
+                #     self.db.LapLimit = True
+                #     self.db.RenderLabel[20] = True
 
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
@@ -809,6 +808,16 @@ class IDDUCalc(threading.Thread):
 
             f.close()
 
+        if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
+            # Logging track data
+            if not self.Logging:
+                self.logLap = self.db.Lap
+                self.Logging = True
+                self.timeLogingStart = self.db.SessionTime
+
+        if (self.BCreateTrack or self.BRecordtLap) and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
+            self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
+
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
@@ -818,8 +827,6 @@ class IDDUCalc(threading.Thread):
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
             self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
 
-        if (self.BCreateTrack or self.BRecordtLap) and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
-            self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
     def createTrackFile(self, BCreateTrack, BRecordtLap):
 
