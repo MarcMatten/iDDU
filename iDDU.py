@@ -115,7 +115,18 @@ iRData = {'LapBestLapTime': 0,
           'WindVel': 13.246,
           'RelativeHumidity': 50.2346,
           'dcHeadlightFlash': False,
-          'SessionState': 0
+          'SessionState': 0,
+          'PitSvFlags': None,
+          'PitSvLFP': None,
+          'PitSvRFP': None,
+          'PitSvLRP': None,
+          'PitSvRRP': None,
+          'PitSvFuel': None,
+          'PlayerCarInPitStall': None,
+          'PlayerCarPitSvStatus': None,
+          'PitRepairLeft': None,
+          'PitOptRepairLeft': None,
+          'PitstopActive': None
           }
 
 # calculated data
@@ -309,7 +320,13 @@ calcData = {'startUp': False,
             'BPitCommandUpdate': False,
             'PlayerTrackSurfaceOld': 0,
             'BEnteringPits': False,
-            'BPitCommandControl': False
+            'BPitCommandControl': False,
+            'sToPitStall': 0,
+            'PitSvFlagsEntry': 0,
+            'BFuelRequest': False,
+            'BFuelCompleted': False,
+            'BTyreChangeRequest': [False, False, False, False],
+            'BTyreChangeCompleted':  [False, False, False, False]
             }
 
 # Create RTDB and initialise with

@@ -34,7 +34,20 @@ class Logger(threading.Thread):
                    'BNewLap',
                    'PlayerTrackSurface',
                    'BWasOnPitRoad',
-                   'BEnteringPits'
+                   'BEnteringPits',
+                   'PitSvFlags',
+                   'PitSvLFP',
+                   'PitSvRFP',
+                   'PitSvLRP',
+                   'PitSvRRP',
+                   'PitSvFuel',
+                   'PlayerCarInPitStall',
+                   'PlayerCarPitSvStatus',
+                   'PitRepairLeft',
+                   'PitOptRepairLeft',
+                   'PitstopActive',
+                   'FuelLevel',
+                   'sToPitStall'
                    ]
 
         self.header = 'Time'

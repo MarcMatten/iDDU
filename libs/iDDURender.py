@@ -171,7 +171,7 @@ class RenderScreen(RenderMain):
                     self.db.NDDUPage = 1
 
         if ir.startup():
-            if self.db.NDDUPage == 1:
+            if self.db.NDDUPage == 1: # Page 1
 
                 if self.db.init:
                     self.frames[2].reinitFrame(ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'])
@@ -260,7 +260,7 @@ class RenderScreen(RenderMain):
                     self.frames[i].setTextColour(self.db.textColour)
                     self.frames[i].drawFrame()
 
-            elif self.db.NDDUPage == 2:
+            elif self.db.NDDUPage == 2:  # Page 2
                 RenderMain.screen.fill(self.db.backgroundColour)
 
                 # Wind arrow
@@ -291,15 +291,11 @@ class RenderScreen(RenderMain):
 
                 RenderMain.screen.blit(Label2, (5, 458))
 
-        else:
-            RenderMain.screen.fill(self.db.backgroundColour)
-            Label = fontMedium.render('Waiting for iRacing ...', True, self.db.textColour)
-            LabelSize = fontMedium.size('Waiting for iRacing ...')
-            Label2 = fontMedium.render(self.db.timeStr, True, self.db.textColour)
-            Label2Size = fontMedium.size(self.db.timeStr)
-            RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
-            RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
+            elif self.NDDUPage == 3:  # Page 3
+                self.page3()
 
+        else:  # Page 0
+            self.page0()
 
         if ir.startup() and ir['IsOnTrack']:
             EngineWarnings = ir['EngineWarnings']
@@ -357,6 +353,24 @@ class RenderScreen(RenderMain):
         clocker.tick(30)
 
         return self.done
+
+    def page0(self):
+            RenderMain.screen.fill(self.db.backgroundColour)
+            Label = fontMedium.render('Waiting for iRacing ...', True, self.db.textColour)
+            LabelSize = fontMedium.size('Waiting for iRacing ...')
+            Label2 = fontMedium.render(self.db.timeStr, True, self.db.textColour)
+            Label2Size = fontMedium.size(self.db.timeStr)
+            RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
+            RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
+
+    # def page3(self):
+        # Speed
+
+        # position to it stall
+
+        # tyres
+
+        # fuel
 
     def CarOnMap(self, Idx):
         CarIdxLapDistPct = ir['CarIdxLapDistPct']
