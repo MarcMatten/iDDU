@@ -164,13 +164,13 @@ class IDDUCalc(threading.Thread):
                         if self.db.SessionFlags & 0x10:  # red
                             self.db.backgroundColour = self.red
 
-                        self.db.oldSessionFlags = self.db.SessionFlags
-
                     elif self.db.SessionTime > (self.FlagCallTime + 3):
                         self.db.backgroundColour = self.black
                         self.db.textColour = self.white
                         self.db.FlagException = False
                         self.db.FlagExceptionVal = 0
+
+                self.db.oldSessionFlags = self.db.SessionFlags
 
                 if self.db.IsOnTrack:
                     # do if car is on track #############################################################################################
