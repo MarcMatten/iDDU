@@ -56,21 +56,22 @@ def convertTimeHHMMSS(sec):
 
         if m < 10:
             if s < 10:
-                return sign + str(int(h)) + ':' + '0' + str(int(m)) + ':' + '0' + str(np.round(s))
+                return sign + str(int(h)) + ':' + '0' + str(int(m)) + ':' + '0' + '{0:.0f}'.format(np.round(s, 0))
+
             else:
-                return sign + str(int(h)) + ':' + '0' + str(int(m)) + ':' + str(np.round(s))
+                return sign + str(int(h)) + ':' + '0' + str(int(m)) + ':' + '{0:.0f}'.format(np.round(s, 0))
         else:
             if s < 10:
-                return sign + str(int(h)) + ':' + str(int(m)) + ':' + '0' + str(np.round(s))
+                return sign + str(int(h)) + ':' + str(int(m)) + ':' + '0' + '{0:.0f}'.format(np.round(s, 0))
             else:
-                return sign + str(int(h)) + ':' + str(int(m)) + ':' + str(np.round(s))
+                return sign + str(int(h)) + ':' + str(int(m)) + ':' + '{0:.0f}'.format(np.round(s, 0))
     else:
         return '00:00:00'
 
 
 def roundedStr0(x):
     if type(x) is int or type(x) is float:
-        return str(np.round(x))
+        return '{0:.0f}'.format(np.round(x, 0))
     else:
         return "-"
 

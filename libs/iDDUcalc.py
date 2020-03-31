@@ -99,7 +99,9 @@ class IDDUCalc(threading.Thread):
                 else:
                     self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
 
-                if self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:
+                if self.db.PlayerTrackSurface == 3:
+                    self.db.BEnteringPits = False
+                elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:
                     self.db.BEnteringPits = True
 
                 self.db.PlayerTrackSurfaceOld = self.db.PlayerTrackSurface
@@ -217,29 +219,9 @@ class IDDUCalc(threading.Thread):
                         self.db.FuelConsumptionList = []
                         self.db.RunStartTime = self.db.SessionTime
                         self.db.Run = self.db.Run + 1
-                        self.setPitCommands()
-
-                        # if not self.db.BChangeTyres:
-                        #     self.ir.pit_command(7) # clear tires
+                        self.ir.pit_command(0)
 
                     if self.db.OnPitRoad:
-                        # if not self.db.BWasOnPitRoad:
-                        #     if not self.db.BChangeTyres:
-                        #         self.ir.pit_command(7) # clear tires
-                        #     else:
-                        #         self.ir.pit_command(3)
-                        #         self.ir.pit_command(4)
-                        #         self.ir.pit_command(5)
-                        #         self.ir.pit_command(6)
-                        #
-                        #     if not self.db.BBeginFueling:
-                        #         self.ir.pit_command(11) # Uncheck add fuel
-                        #     else:
-                        #         if self.db.NFuelSetMethod == 0:
-                        #             self.ir.pit_command(2, self.db.VUserFuelSet)
-                        #         elif self.db.NFuelSetMethod == 1:
-                        #             self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
-
                         self.db.BWasOnPitRoad = True
                         self.db.BEnteringPits = False
 
@@ -290,11 +272,11 @@ class IDDUCalc(threading.Thread):
                                                        'DriverCarMaxFuelPct'])
                             if self.db.VFuelAdd == 0:
                                 # self.ir.pit_command(2, 1) # Add fuel, optionally specify the amount to add in liters or pass '0' to use existing amount
-                                self.ir.pit_command(11) # Uncheck add fuel
+                                # self.ir.pit_command(11) # Uncheck add fuel
                                 self.db.BTextColourFuelAddOverride = False
                             else:
                                 if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
-                                    if self.db.NFuelSetMethod == 1 and self.db.BBeginFueling:
+                                    if self.db.NFuelSetMethod == 1 and self.db.BBeginFueling and self.db.BPitCommandControl:
                                         self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10)) # Add fuel
                                 if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
                                     self.db.textColourFuelAddOverride = self.green
@@ -917,20 +899,34 @@ class IDDUCalc(threading.Thread):
             self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
 
     def setPitCommands(self):
-        if not self.db.BChangeTyres:
-            self.ir.pit_command(7)  # clear tires
-        else:
-            self.ir.pit_command(3)
-            self.ir.pit_command(4)
-            self.ir.pit_command(5)
-            self.ir.pit_command(6)
+        # clear = 0  # Clear all pit checkboxes
+        # ws = 1  # Clean the windshield, using one tear off
+        # fuel = 2  # Add fuel, optionally specify the amount to add in liters or pass '0' to use existing amount
+        # lf = 3  # Change the left front tire, optionally specifying the pressure in KPa or pass '0' to use existing pressure
+        # rf = 4  # right front
+        # lr = 5  # left rear
+        # rr = 6  # right rear
+        # clear_tires = 7  # Clear tire pit checkboxes
+        # fr = 8  # Request a fast repair
+        # clear_ws = 9  # Uncheck Clean the winshield checkbox
+        # clear_fr = 10  # Uncheck request a fast repair
+        # clear_fuel = 11  # Uncheck add fuel
 
-        if not self.db.BBeginFueling:
-            self.ir.pit_command(11)  # Uncheck add fuel
-        else:
-            if self.db.NFuelSetMethod == 0:
-                self.ir.pit_command(2, self.db.VUserFuelSet)
-            elif self.db.NFuelSetMethod == 1:
-                self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
+        if self.db.BPitCommandControl:
+            if not self.db.BChangeTyres:
+                self.ir.pit_command(7)  # clear tires
+            else:
+                self.ir.pit_command(3)
+                self.ir.pit_command(4)
+                self.ir.pit_command(5)
+                self.ir.pit_command(6)
+
+            if not self.db.BBeginFueling:
+                self.ir.pit_command(11)  # Uncheck add fuel
+            else:
+                if self.db.NFuelSetMethod == 0:
+                    self.ir.pit_command(2, self.db.VUserFuelSet)
+                elif self.db.NFuelSetMethod == 1:
+                    self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
 
         self.db.BPitCommandUpdate = False

@@ -308,7 +308,8 @@ calcData = {'startUp': False,
             'NFuelSetMethod': 0, # 0 = User pre set; 1 = calculated
             'BPitCommandUpdate': False,
             'PlayerTrackSurfaceOld': 0,
-            'BEnteringPits': False
+            'BEnteringPits': False,
+            'BPitCommandControl': False
             }
 
 # Create RTDB and initialise with
