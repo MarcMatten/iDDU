@@ -326,7 +326,10 @@ calcData = {'startUp': False,
             'BFuelRequest': False,
             'BFuelCompleted': False,
             'BTyreChangeRequest': [False, False, False, False],
-            'BTyreChangeCompleted':  [False, False, False, False]
+            'BTyreChangeCompleted':  [False, False, False, False],
+            'VFuelPitStopStart': 0,
+            'BPitstop': False,
+            'BPitstopCompleted': False
             }
 
 # Create RTDB and initialise with

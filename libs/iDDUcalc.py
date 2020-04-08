@@ -103,28 +103,17 @@ class IDDUCalc(threading.Thread):
                     else:
                         self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
 
-                    if self.db.PlayerTrackSurface == 3:
+                    if self.db.PlayerTrackSurface == 3: # on track
                         self.db.BEnteringPits = False
-                    elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:
+                    elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2: # entering pit entry event
                         self.db.BEnteringPits = True
-                        self.db.BTyreChangeRequest = [False, False, False, False]
-                        if self.db.PitSvFlags & 0x01:
-                            self.db.BTyreChangeRequest[0] = True
-                        if self.db.PitSvFlags & 0x02:
-                            self.db.BTyreChangeRequest[1] = True
-                        if self.db.PitSvFlags & 0x04:
-                            self.db.BTyreChangeRequest[2] = True
-                        if self.db.PitSvFlags & 0x08:
-                            self.db.BTyreChangeRequest[3] = True
-                        self.db.BFuelRequest = False
-                        if self.db.PitSvFlags & 0x10:
-                            self.db.BFuelRequest = True
-
-                        self.db.PitSvFlagsEntry = self.db.PitSvFlags
 
                     self.db.PlayerTrackSurfaceOld = self.db.PlayerTrackSurface
 
-                    if self.db.OnPitRoad or self.db.BEnteringPits:
+                    if self.db.OnPitRoad and self.db.BEnteringPits and not self.db.PlayerCarPitSvStatus == 2: # from pit entry end of pit stop
+                        self.db.NDDUPage = 3
+
+                    if self.db.OnPitRoad or self.db.BEnteringPits: # do when in pit entry or in pit lane but not on track
                         pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                         deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
@@ -141,7 +130,31 @@ class IDDUCalc(threading.Thread):
                         self.db.backgroundColour = tuple([r, g, b])
                         self.db.textColour = self.white
                         self.distance2PitStall()
-                    else:
+
+                        if not self.db.PitstopActive: # during pitstop
+                            if self.db.PitSvFlags & 0x01:
+                                self.db.BTyreChangeRequest[0] = True
+                            else:
+                                self.db.BTyreChangeRequest[0] = False
+                            if self.db.PitSvFlags & 0x02:
+                                self.db.BTyreChangeRequest[1] = True
+                            else:
+                                self.db.BTyreChangeRequest[1] = False
+                            if self.db.PitSvFlags & 0x04:
+                                self.db.BTyreChangeRequest[2] = True
+                            else:
+                                self.db.BTyreChangeRequest[2] = False
+                            if self.db.PitSvFlags & 0x08:
+                                self.db.BTyreChangeRequest[3] = True
+                            else:
+                                self.db.BTyreChangeRequest[3] = False
+
+                            if self.db.PitSvFlags & 0x10:
+                                self.db.BFuelRequest = True
+                            else:
+                                self.db.BFuelRequest = False
+
+                    else: # do when on track but not when in pits
                         if not (self.db.SessionFlags == self.db.oldSessionFlags):
                             self.FlagCallTime = self.db.SessionTime
                             self.db.FlagExceptionVal = 0
@@ -234,22 +247,34 @@ class IDDUCalc(threading.Thread):
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime
                             self.db.Run = self.db.Run + 1
-                            self.ir.pit_command(0)
+							if self.db.BPitCommandControl:
+								self.ir.pit_command(0)
 
-                        if self.db.OnPitRoad:
+                        if self.db.OnPitRoad: # do when on pit road
                             self.db.BWasOnPitRoad = True
                             self.db.BEnteringPits = False
-                            if self.db.PitstopActive:
+                            if self.db.PitstopActive: # during pitstop
+                                if not self.db.BPitstop: # pit stop start event
+                                    self.db.PitSvFlagsEntry = self.db.PitSvFlags
+                                    self.db.VFuelPitStopStart = self.db.FuelLevel
+                                    self.db.BPitstop = True
                                 self.pitStop()
+                                if (not self.db.BPitstopCompleted) and self.db.PlayerCarPitSvStatus == 2: # pit stop completed event
+                                    self.db.BPitstopCompleted = True
+                                    self.db.NDDUPage = 2
 
-                        elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit
+
+                        elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit event
                             self.db.OutLap = True
                             self.db.FuelConsumptionList = []
                             self.db.FuelAvgConsumption = 0
                             self.db.sToPitStall = 0
                             self.db.PitSvFlagsEntry = 0
+                            self.db.NDDUPage = 1
+                            self.db.BPitstop = False
                             self.db.BFuelRequest = False
                             self.db.BFuelCompleted = False
+                            self.db.BPitstopCompleted = False
                             self.db.BTyreChangeRequest = [False, False, False, False]
                             self.db.BTyreChangeCompleted =  [False, False, False, False]
 
