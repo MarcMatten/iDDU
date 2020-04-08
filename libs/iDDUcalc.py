@@ -247,8 +247,8 @@ class IDDUCalc(threading.Thread):
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime
                             self.db.Run = self.db.Run + 1
-							if self.db.BPitCommandControl:
-								self.ir.pit_command(0)
+                            if self.db.BPitCommandControl:
+                                self.ir.pit_command(0)
 
                         if self.db.OnPitRoad: # do when on pit road
                             self.db.BWasOnPitRoad = True
