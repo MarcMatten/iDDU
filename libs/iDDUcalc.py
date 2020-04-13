@@ -277,6 +277,7 @@ class IDDUCalc(threading.Thread):
                             self.db.BPitstopCompleted = False
                             self.db.BTyreChangeRequest = [False, False, False, False]
                             self.db.BTyreChangeCompleted =  [False, False, False, False]
+                            self.db.BWasOnPitRoad  = False
 
                         # check if new lap
                         if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:
@@ -396,6 +397,7 @@ class IDDUCalc(threading.Thread):
                             print(self.db.timeStr + ':\tGetting out of car')
                             print(self.db.timeStr + ': Run: ' + str(self.db.Run))
                             print(self.db.timeStr + ':\tFuelAvgConsumption: ' + iDDUhelper.roundedStr2(self.db.FuelAvgConsumption))
+                            self.db.NDDUPage = 1
                             self.db.WasOnTrack = False
                             self.db.init = True
                         # do if car is not on track but don't do if car is on track ------------------------------------------------
@@ -862,8 +864,8 @@ class IDDUCalc(threading.Thread):
         self.db.StintLap = self.db.StintLap + 1
         self.db.oldLap = self.db.Lap
         self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
-        if not self.db.OnPitRoad:
-            self.db.BWasOnPitRoad = False
+        # if not self.db.OnPitRoad:
+        #     self.db.BWasOnPitRoad = False
 
         self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
             self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '

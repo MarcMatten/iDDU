@@ -126,7 +126,8 @@ iRData = {'LapBestLapTime': 0,
           'PlayerCarPitSvStatus': None,
           'PitRepairLeft': None,
           'PitOptRepairLeft': None,
-          'PitstopActive': None
+          'PitstopActive': None,
+          'CarIdxEstTime' : []
           }
 
 # calculated data
@@ -242,6 +243,9 @@ calcData = {'startUp': False,
                 True,  # 22 Gear
                 True,  # 23 Speed
                 True,  # 24 Position
+                True,  # 25 Distance to pit stall
+                True,  # 26 speed in pit lane
+                True,  # 27 Gear in pit lane
             ],
             'P2P': False,
             'DRS': False,
@@ -322,6 +326,7 @@ calcData = {'startUp': False,
             'BEnteringPits': False,
             'BPitCommandControl': False,
             'sToPitStall': 0,
+            'sToPitStallStr': '463',
             'PitSvFlagsEntry': 0,
             'BFuelRequest': False,
             'BFuelCompleted': False,

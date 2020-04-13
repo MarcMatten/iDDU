@@ -145,6 +145,15 @@ class RenderScreen(RenderMain):
         self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', fontSmall, fontLarge, self.db, 0, 0), 5) # 481
         self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', fontSmall, fontLarge, self.db, 0, 0), 4) # 644
 
+        self.frames3 = list()
+
+        self.frames3.append(Frame('Distance to Pit', 54, 110, 317, 155, self.db, True))
+        self.frames3.append(Frame('Gear', 54, 280, 114, 82, self.db, True))
+        self.frames3.append(Frame('Speed', 188, 280, 183, 82, self.db, True))
+        self.frames3[0].addLabel('sToPitStallStr', SimpleValue(141, 83, 155, '-', fontGear, self.db, 0, 0, 1), 25)
+        self.frames3[0].addLabel('GearStr', SimpleValue(51, 275, 114, '-', fontLarge, self.db, 0, 7, 1), 26)
+        self.frames3[0].addLabel('SpeedStr', SimpleValue(193, 275, 173, '-', fontLarge, self.db, 0, 0, 1), 27)
+
         # misc
         self.done = False
         self.db.NDDUPage = 1
@@ -175,6 +184,13 @@ class RenderScreen(RenderMain):
                     self.db.NDDUPage = 1
 
         if ir.startup():
+            if ir['Gear'] > 0:
+                self.db.GearStr = str(int(ir['Gear']))
+            elif ir['Gear'] == 0:
+                self.db.GearStr = 'N'
+            elif ir['Gear'] < 0:
+                self.db.GearStr = 'R'
+
             if self.db.NDDUPage == 1: # Page 1
 
                 if self.db.init:
@@ -194,17 +210,6 @@ class RenderScreen(RenderMain):
                         RenderMain.screen.blit(debry, [0, 0])
                     elif self.db.FlagExceptionVal == 6:
                         RenderMain.screen.blit(warning, [0, 0])
-
-                # Radar Incicators
-                CarLeftRight = ir['CarLeftRight']
-                if np.isin(CarLeftRight, [2, 4, 5]):
-                    pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft, 0)
-                    if CarLeftRight == 5:
-                        pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft2, 0)
-                if np.isin(CarLeftRight, [3, 4, 6]):
-                    pygame.draw.polygon(RenderMain.screen, orange, ArrowRight, 0)
-                    if CarLeftRight == 6:
-                        pygame.draw.polygon(RenderMain.screen, orange, ArrowRight2, 0)
 
                 # DRS
                 if self.db.DRS:
@@ -239,12 +244,6 @@ class RenderScreen(RenderMain):
                 self.db.FuelAddStr = iDDUhelper.roundedStr1(max(0, self.db.VFuelAdd), 3)
 
                 self.db.SpeedStr = iDDUhelper.roundedStr0(max(0.0, ir['Speed']*3.6))
-                if ir['Gear'] > 0:
-                    self.db.GearStr = str(int(ir['Gear']))
-                elif ir['Gear'] == 0:
-                    self.db.GearStr = 'N'
-                elif ir['Gear'] < 0:
-                    self.db.GearStr = 'R'
 
                 if self.db.LapLimit:
                     self.db.LapStr = str(max(0, ir['Lap'])) + '/' + str(self.db.RaceLaps)
@@ -254,6 +253,7 @@ class RenderScreen(RenderMain):
                     self.db.LapStr = str(max(0, ir['Lap']))
                     self.db.ToGoStr = '0'
                 self.db.ClockStr = self.db.timeStr
+
                 if self.db.RX:
                     self.db.JokerStr = self.db.JokerStr
                 self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(max(0, ir['SessionTime']))
@@ -303,6 +303,18 @@ class RenderScreen(RenderMain):
             # self.page3()
 
         if ir.startup() and ir['IsOnTrack']:
+
+            # Radar Incicators
+            CarLeftRight = ir['CarLeftRight']
+            if np.isin(CarLeftRight, [2, 4, 5]):
+                pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft, 0)
+                if CarLeftRight == 5:
+                    pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft2, 0)
+            if np.isin(CarLeftRight, [3, 4, 6]):
+                pygame.draw.polygon(RenderMain.screen, orange, ArrowRight, 0)
+                if CarLeftRight == 6:
+                    pygame.draw.polygon(RenderMain.screen, orange, ArrowRight2, 0)
+
             EngineWarnings = ir['EngineWarnings']
             # warning and alarm messages
             if EngineWarnings & 0x10:
@@ -353,6 +365,9 @@ class RenderScreen(RenderMain):
 
                     self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
 
+            if self.db.OnPitRoad and not self.db.EngineWarnings & 0x10:
+                    self.warningLabel('PIT LIMITER OFF', red, white)
+
         pygame.display.flip()
         self.db.tExecuteRender = (time.perf_counter() - t) * 1000
         clocker.tick(30)
@@ -378,66 +393,78 @@ class RenderScreen(RenderMain):
         # 'BTyreChangeCompleted': [False, False, False, False]
 
         RenderMain.screen.fill(self.db.backgroundColour)
-        self.db.SpeedStr = iDDUhelper.roundedStr0(max(0.0, ir['Speed'] * 3.6))
-        LabelSpeed = fontGear.render(self.db.SpeedStr, True, self.db.textColour)
-        if ir['Gear'] > 0:
-            self.db.GearStr = str(int(ir['Gear']))
-        elif ir['Gear'] == 0:
-            self.db.GearStr = 'N'
-        elif ir['Gear'] < 0:
-            self.db.GearStr = 'R'
-        LabelGear = fontGear.render(self.db.GearStr, True, self.db.textColour)
-        LabelsToPitStall = fontGear.render(iDDUhelper.roundedStr0(self.db.sToPitStall), True, self.db.textColour)
+        if not self.db.EngineWarnings & 0x10:
+            self.warningLabel('PIT LIMITER OFF', red, white)
+        # self.db.SpeedStr = iDDUhelper.roundedStr0(max(0.0, ir['Speed'] * 3.6))
+        self.db.SpeedStr = iDDUhelper.roundedStr1(max(0.0, ir['Speed'] * 3.6), 3)
+        # LabelSpeed = fontLarge.render(self.db.SpeedStr, True, self.db.textColour)
+        # if ir['Gear'] > 0:
+        #     self.db.GearStr = str(int(ir['Gear']))
+        # elif ir['Gear'] == 0:
+        #     self.db.GearStr = 'N'
+        # elif ir['Gear'] < 0:
+        #     self.db.GearStr = 'R'
+        # self.db.GearStr = 'R'
+        # LabelGear = fontLarge.render(self.db.GearStr, True, self.db.textColour)
+        self.db.sToPitStallStr = iDDUhelper.roundedStr0(self.db.sToPitStall)
+        # LabelsToPitStall = fontGear.render(iDDUhelper.roundedStr0(328), True, self.db.textColour)
 
-        RenderMain.screen.blit(LabelsToPitStall, (100, 47))
-        RenderMain.screen.blit(LabelSpeed, (100, 247))
-        RenderMain.screen.blit(LabelGear, (200, 247))
+        # RenderMain.screen.blit(LabelsToPitStall, (100, 47))
+        # RenderMain.screen.blit(LabelSpeed, (100, 247))
+        # RenderMain.screen.blit(LabelGear, (200, 247))
+
+        for i in range(0, len(self.frames3)):
+            self.frames3[i].setTextColour(self.db.textColour)
+            self.frames3[i].drawFrame()
 
         # tyres
         if self.db.BTyreChangeCompleted[0]:
-            pygame.draw.rect(RenderMain.screen, green, [419, 90, 38, 83], 0)
+            pygame.draw.rect(RenderMain.screen, green, [429, 155, 35, 76], 0)
         elif self.db.BTyreChangeRequest[0]:
-            pygame.draw.rect(RenderMain.screen, orange, [419, 90, 38, 83], 0)
+            pygame.draw.rect(RenderMain.screen, orange, [429, 155, 35, 76], 0)
 
         if self.db.BTyreChangeCompleted[1]:
-            pygame.draw.rect(RenderMain.screen, green, [607, 90, 38, 83], 0)
+            pygame.draw.rect(RenderMain.screen, green, [597, 155, 35, 76], 0)
         elif self.db.BTyreChangeRequest[1]:
-            pygame.draw.rect(RenderMain.screen, orange, [607, 90, 38, 83], 0)
+            pygame.draw.rect(RenderMain.screen, orange, [597, 155, 35, 76], 0)
 
         if self.db.BTyreChangeCompleted[2]:
-            pygame.draw.rect(RenderMain.screen, green, [419, 302, 38, 84], 0)
+            pygame.draw.rect(RenderMain.screen, green, [429, 345, 35, 76], 0)
         elif self.db.BTyreChangeRequest[2]:
-            pygame.draw.rect(RenderMain.screen, orange, [419, 302, 38, 84], 0)
+            pygame.draw.rect(RenderMain.screen, orange, [429, 345, 35, 76], 0)
 
         if self.db.BTyreChangeCompleted[3]:
-            pygame.draw.rect(RenderMain.screen, green, [607, 302, 38, 84], 0)
+            pygame.draw.rect(RenderMain.screen, green, [597, 345, 35, 76], 0)
         elif self.db.BTyreChangeRequest[3]:
-            pygame.draw.rect(RenderMain.screen, orange, [607, 302, 38, 84], 0)
+            pygame.draw.rect(RenderMain.screen, orange, [597, 345, 35, 76], 0)
 
-        RenderMain.screen.blit(car, [414, 50])
+        RenderMain.screen.blit(car, [425, 120])
 
         # fuel
         if self.db.BFuelCompleted:
-            RenderMain.screen.blit(gas_green, [700, 50])
+            RenderMain.screen.blit(gas_green, [696, 120])
         elif self.db.BFuelRequest:
-            RenderMain.screen.blit(gas_orange, [700, 50])
+            RenderMain.screen.blit(gas_orange, [696, 120])
         else:
-            RenderMain.screen.blit(gas_white, [700, 50])
+            RenderMain.screen.blit(gas_white, [696, 120])
 
         if not self.db.PitstopActive:
-            FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel, 3)
+            # FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel, 3)
+            FuelStr = iDDUhelper.roundedStr1(26.34, 3)
             FueledPct = 0
         else:
             FueledPct = (self.db.FuelLevel - self.db.VFuelPitStopStart) / self.db.PitSvFuel
-            FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel - (self.db.FuelLevel - self.db.VFuelPitStopStart), 3)
+            # FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel - (self.db.FuelLevel - self.db.VFuelPitStopStart), 3)
+            FuelStr = iDDUhelper.roundedStr1(26.34, 3)
 
-        LabelFuel = fontLarge.render(FuelStr, True, self.db.textColour)
-        RenderMain.screen.blit(LabelFuel, (700, 150))
+        LabelFuel = fontMedium.render(FuelStr, True, self.db.textColour)
+        LabelSize = fontMedium.size(FuelStr)
+        RenderMain.screen.blit(LabelFuel, (720-LabelSize[0]/2, 181))
 
         # pygame.draw.rect(RenderMain.screen, green, [700, 250, 50, 180], 0)
-        pygame.draw.rect(RenderMain.screen, green, [700, 250 + int(180*(1-FueledPct)), 50, int(180*FueledPct)], 0)
+        pygame.draw.rect(RenderMain.screen, green, [693, 241 + int(216*(1-FueledPct)), 50, int(216*FueledPct)], 0)
 
-        pygame.draw.lines(RenderMain.screen, white, True, [[700, 250],  [750, 250],  [750, 430],  [700, 430]], 5)
+        pygame.draw.lines(RenderMain.screen, white, True, [[693, 241],  [743, 241],  [743, 457],  [693, 457]], 5)
 
         # self.warningLabelwarningLabel('PIT LIMITER', blue, white)
 
