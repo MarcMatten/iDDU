@@ -155,6 +155,7 @@ class IDDUCalc(threading.Thread):
                                 self.db.BFuelRequest = False
 
                     else: # do when on track but not when in pits
+
                         if not (self.db.SessionFlags == self.db.oldSessionFlags):
                             self.FlagCallTime = self.db.SessionTime
                             self.db.FlagExceptionVal = 0
@@ -198,6 +199,9 @@ class IDDUCalc(threading.Thread):
 
                         elif self.db.SessionTime > (self.FlagCallTime + 3):
                             self.db.backgroundColour = self.black
+
+                            if len(self.db.NLappingCars) > 0 and self.db.PlayerTrackSurface == 3:
+                                self.db.backgroundColour = self.blue
                             self.db.textColour = self.white
                             self.db.FlagException = False
                             self.db.FlagExceptionVal = 0
@@ -212,6 +216,28 @@ class IDDUCalc(threading.Thread):
                             print(self.db.timeStr + ':\tIsOnTrack')
 
                         self.db.Alarm[0:6] = [0] * 6
+
+                        # my blue flag
+                        if self.db.WeekendInfo['NumCarClasses'] > 1:
+                            for i in range(0, len(self.db.CarIdxEstTime)):
+
+                                CarIdxEstTime = np.array(self.db.CarIdxEstTime)
+
+                                a = CarIdxEstTime < 0
+                                b = -5 <= CarIdxEstTime
+                                c = a * b
+
+                                k = [i for i,x in enumerate(c.tolist()) if x==True] # indices of cars fulfilling the condition
+
+                                CarClassList = []
+
+                                for j in range(0, len(k)):
+                                    if self.db.DriverInfo['Drivers'][k[j]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed:
+                                        if self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'] in CarClassList:
+                                            self.db.NLappingCars[CarClassList.index(self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'])]['NCars'] += 1
+                                        else:
+                                            self.db.NLappingCars.append({'Class': self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'], 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor'])})
+                                            CarClassList.append(self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'])
 
                         if self.db.RX:
                             self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
@@ -500,6 +526,7 @@ class IDDUCalc(threading.Thread):
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
         self.db.Alarm = [0]*10
+        self.db.PlayerCarClassRelSpeed = self.db.DriverInfo['Drivers'][self.db.DriverInfo['DriverCarIdx']]['CarClassRelSpeed']
 
         if self.db.startUp:
             self.db.StartDDU = True
@@ -995,3 +1022,8 @@ class IDDUCalc(threading.Thread):
                 self.db.sToPitStall = (1 - self.db.LapDistPct + self.db.DriverInfo['DriverPitTrkPct']) * self.db.TrackLength * 1000
             else:
                 self.db.sToPitStall = (self.db.DriverInfo['DriverPitTrkPct'] - self.db.LapDistPct) * self.db.TrackLength * 1000
+
+    @staticmethod
+    def bit2RBG(bitColor):
+        hexColor = format(bitColor, '06x')
+        return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)

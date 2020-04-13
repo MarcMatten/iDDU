@@ -334,7 +334,20 @@ calcData = {'startUp': False,
             'BTyreChangeCompleted':  [False, False, False, False],
             'VFuelPitStopStart': 0,
             'BPitstop': False,
-            'BPitstopCompleted': False
+            'BPitstopCompleted': False,
+            'NLappingCars': [
+                {
+                'Class': 'LMP1',
+                'NCars': 2,
+                'Color': (255, 218, 89)
+                },
+                {
+                'Class': 'HPD',
+                'NCars': 1,
+                'Color': (255, 218, 89)
+                }
+            ],
+            'PlayerCarClassRelSpeed': 0
             }
 
 # Create RTDB and initialise with

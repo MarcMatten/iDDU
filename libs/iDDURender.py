@@ -15,6 +15,10 @@ grey = (141, 141, 141)
 black = (0, 0, 0)
 cyan = (0, 255, 255)
 purple = (255, 0, 255)
+GTE = (255, 88, 136)
+LMP1 = (255, 218, 89)
+HPD = (51, 206, 255)
+
 
 ir = irsdk.IRSDK()
 
@@ -184,6 +188,8 @@ class RenderScreen(RenderMain):
                     self.db.NDDUPage = 1
 
         if ir.startup():
+            RenderMain.screen.fill(self.db.backgroundColour)
+
             if ir['Gear'] > 0:
                 self.db.GearStr = str(int(ir['Gear']))
             elif ir['Gear'] == 0:
@@ -191,12 +197,8 @@ class RenderScreen(RenderMain):
             elif ir['Gear'] < 0:
                 self.db.GearStr = 'R'
 
-            if self.db.NDDUPage == 1: # Page 1
+            if ir.startup() and ir['IsOnTrack']:
 
-                if self.db.init:
-                    self.frames[2].reinitFrame(ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'])
-
-                RenderMain.screen.fill(self.db.backgroundColour)
                 if self.db.FlagException:
                     if self.db.FlagExceptionVal == 1:
                         RenderMain.screen.blit(checkered, [0, 0])
@@ -210,6 +212,44 @@ class RenderScreen(RenderMain):
                         RenderMain.screen.blit(debry, [0, 0])
                     elif self.db.FlagExceptionVal == 6:
                         RenderMain.screen.blit(warning, [0, 0])
+
+
+            if ir.startup() and ir['IsOnTrack']:
+                # Radar Incicators
+                CarLeftRight = ir['CarLeftRight']
+                if np.isin(CarLeftRight, [2, 4, 5]):
+                    pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft, 0)
+                    if CarLeftRight == 5:
+                        pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft2, 0)
+                if np.isin(CarLeftRight, [3, 4, 6]):
+                    pygame.draw.polygon(RenderMain.screen, orange, ArrowRight, 0)
+                    if CarLeftRight == 6:
+                        pygame.draw.polygon(RenderMain.screen, orange, ArrowRight2, 0)
+
+                # my blue flag
+                if self.db.WeekendInfo['NumCarClasses'] > 1 and self.db.PlayerTrackSurface == 3 and not self.db.FlagException:
+                    if len(self.db.NLappingCars) == 1:
+                        text = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
+                        LabelSize = fontGear.size(text)
+                        Label = fontGear.render(text, True, self.db.NLappingCars[0]['Color'])
+                        RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 240 - LabelSize[1] / 2))
+                    elif len(self.db.NLappingCars) >= 1:
+                        text0 = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
+                        text1 = str(self.db.NLappingCars[1]['NCars']) + " x " + self.db.NLappingCars[1]['Class']
+                        LabelSize0 = fontGear.size(text0)
+                        Label0 = fontGear.render(text0, True, self.db.NLappingCars[0]['Color'])
+                        LabelSize1 = fontGear.size(text1)
+                        Label1 = fontGear.render(text1, True, self.db.NLappingCars[1]['Color'])
+
+                        gap = (480 - LabelSize0[1] - LabelSize1[1]) / 3
+
+                        RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
+                        RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
+
+            if self.db.NDDUPage == 1: # Page 1
+
+                if self.db.init:
+                    self.frames[2].reinitFrame(ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'])
 
                 # DRS
                 if self.db.DRS:
@@ -265,7 +305,7 @@ class RenderScreen(RenderMain):
                     self.frames[i].drawFrame()
 
             elif self.db.NDDUPage == 2:  # Page 2
-                RenderMain.screen.fill(self.db.backgroundColour)
+                # RenderMain.screen.fill(self.db.backgroundColour)
 
                 # Wind arrow
                 aWind = (-self.db.WindDir + self.db.track.aNorth - self.db.track.a)*180/np.pi-180
@@ -303,17 +343,6 @@ class RenderScreen(RenderMain):
             # self.page3()
 
         if ir.startup() and ir['IsOnTrack']:
-
-            # Radar Incicators
-            CarLeftRight = ir['CarLeftRight']
-            if np.isin(CarLeftRight, [2, 4, 5]):
-                pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft, 0)
-                if CarLeftRight == 5:
-                    pygame.draw.polygon(RenderMain.screen, orange, ArrowLeft2, 0)
-            if np.isin(CarLeftRight, [3, 4, 6]):
-                pygame.draw.polygon(RenderMain.screen, orange, ArrowRight, 0)
-                if CarLeftRight == 6:
-                    pygame.draw.polygon(RenderMain.screen, orange, ArrowRight2, 0)
 
             EngineWarnings = ir['EngineWarnings']
             # warning and alarm messages
@@ -375,13 +404,15 @@ class RenderScreen(RenderMain):
         return self.done
 
     def page0(self):
-            RenderMain.screen.fill(self.db.backgroundColour)
-            Label = fontMedium.render('Waiting for iRacing ...', True, self.db.textColour)
-            LabelSize = fontMedium.size('Waiting for iRacing ...')
-            Label2 = fontMedium.render(self.db.timeStr, True, self.db.textColour)
-            Label2Size = fontMedium.size(self.db.timeStr)
-            RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
-            RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
+
+        RenderMain.screen.fill(self.db.backgroundColour)
+
+        Label = fontMedium.render('Waiting for iRacing ...', True, self.db.textColour)
+        LabelSize = fontMedium.size('Waiting for iRacing ...')
+        Label2 = fontMedium.render(self.db.timeStr, True, self.db.textColour)
+        Label2Size = fontMedium.size(self.db.timeStr)
+        RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
+        RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
 
     def page3(self):
 
@@ -392,7 +423,8 @@ class RenderScreen(RenderMain):
         # 'BTyreChangeRequest': [False, False, False, False],
         # 'BTyreChangeCompleted': [False, False, False, False]
 
-        RenderMain.screen.fill(self.db.backgroundColour)
+        # RenderMain.screen.fill(self.db.backgroundColour)
+
         if not self.db.EngineWarnings & 0x10:
             self.warningLabel('PIT LIMITER OFF', red, white)
         # self.db.SpeedStr = iDDUhelper.roundedStr0(max(0.0, ir['Speed'] * 3.6))
