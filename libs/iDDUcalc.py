@@ -220,14 +220,16 @@ class IDDUCalc(threading.Thread):
 
                         # my blue flag
                         if self.db.WeekendInfo['NumCarClasses'] > 1:
+                            if self.db.LapDistPct < 0.1:
+                                CarIdxLapDistPct = np.array(self.db.CarIdxLapDistPct)
+                                CarIdxLapDistPct[(CarIdxLapDistPct < 0) & (CarIdxLapDistPct < 0.1)] = CarIdxLapDistPct[(CarIdxLapDistPct < 0) & (CarIdxLapDistPct < 0.1)] + 1
+                                CarIdxDistDiff = (CarIdxLapDistPct - (self.db.LapDistPct + 1)) * self.db.track.sTrack
+                            else:
+                                CarIdxDistDiff = (np.array(self.db.CarIdxLapDistPct) - self.db.LapDistPct) * self.db.track.sTrack
 
-                            CarIdxEstTime = np.array(self.db.CarIdxEstTime) - self.db.CarIdxEstTime[self.db.DriverCarIdx]
+                            BCarIdxInLappingRange = (-250 <= CarIdxDistDiff) & (CarIdxDistDiff < 0)
 
-                            a = CarIdxEstTime < 0
-                            b = -5 <= CarIdxEstTime
-                            c = a * b
-
-                            k = [i for i, x in enumerate(c.tolist()) if x==True] # indices of cars fulfilling the condition
+                            k = [i for i, x in enumerate(BCarIdxInLappingRange.tolist()) if x==True]
 
                             CarClassList = []
                             NLappingCars = []
