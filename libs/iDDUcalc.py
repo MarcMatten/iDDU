@@ -202,6 +202,7 @@ class IDDUCalc(threading.Thread):
 
                             if len(self.db.NLappingCars) > 0 and self.db.PlayerTrackSurface == 3:
                                 self.db.backgroundColour = self.blue
+                                
                             self.db.textColour = self.white
                             self.db.FlagException = False
                             self.db.FlagExceptionVal = 0
@@ -219,25 +220,28 @@ class IDDUCalc(threading.Thread):
 
                         # my blue flag
                         if self.db.WeekendInfo['NumCarClasses'] > 1:
-                            for i in range(0, len(self.db.CarIdxEstTime)):
 
-                                CarIdxEstTime = np.array(self.db.CarIdxEstTime)
+                            CarIdxEstTime = np.array(self.db.CarIdxEstTime) - self.db.CarIdxEstTime[self.db.DriverCarIdx]
 
-                                a = CarIdxEstTime < 0
-                                b = -5 <= CarIdxEstTime
-                                c = a * b
+                            a = CarIdxEstTime < 0
+                            b = -5 <= CarIdxEstTime
+                            c = a * b
 
-                                k = [i for i,x in enumerate(c.tolist()) if x==True] # indices of cars fulfilling the condition
+                            k = [i for i, x in enumerate(c.tolist()) if x==True] # indices of cars fulfilling the condition
 
-                                CarClassList = []
+                            CarClassList = []
+                            NLappingCars = []
 
-                                for j in range(0, len(k)):
-                                    if self.db.DriverInfo['Drivers'][k[j]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed:
-                                        if self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'] in CarClassList:
-                                            self.db.NLappingCars[CarClassList.index(self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'])]['NCars'] += 1
-                                        else:
-                                            self.db.NLappingCars.append({'Class': self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'], 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor'])})
-                                            CarClassList.append(self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'])
+                            for j in range(0, len(k)):
+                                if self.db.DriverInfo['Drivers'][k[j]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed:
+                                    name = self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'].split(' ')[0]
+                                    if name in CarClassList:
+                                        NLappingCars[CarClassList.index(name)]['NCars'] += 1
+                                    else:
+                                        NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor'])})
+                                        CarClassList.append(name)
+
+                                self.db.NLappingCars = NLappingCars
 
                         if self.db.RX:
                             self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
