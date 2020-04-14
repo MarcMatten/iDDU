@@ -340,15 +340,18 @@ calcData = {'startUp': False,
                 {
                 'Class': 'LMP1',
                 'NCars': 2,
-                'Color': (255, 218, 89)
+                'Color': (255, 218, 89),
+                'sDiff': -10
                 },
                 {
                 'Class': 'HPD',
                 'NCars': 1,
-                'Color': (255, 218, 89)
+                'Color': (255, 218, 89),
+                'sDiff': -50
                 }
             ],
-            'PlayerCarClassRelSpeed': 0
+            'PlayerCarClassRelSpeed': 0,
+            'Exception': None
             }
 
 # Create RTDB and initialise with

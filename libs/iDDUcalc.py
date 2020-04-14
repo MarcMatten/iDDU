@@ -227,7 +227,7 @@ class IDDUCalc(threading.Thread):
                             else:
                                 CarIdxDistDiff = (np.array(self.db.CarIdxLapDistPct) - self.db.LapDistPct) * self.db.track.sTrack
 
-                            BCarIdxInLappingRange = (-250 <= CarIdxDistDiff) & (CarIdxDistDiff < 0)
+                            BCarIdxInLappingRange = (-100 <= CarIdxDistDiff) & (CarIdxDistDiff < 0)
 
                             k = [i for i, x in enumerate(BCarIdxInLappingRange.tolist()) if x==True]
 
@@ -239,11 +239,12 @@ class IDDUCalc(threading.Thread):
                                     name = self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'].split(' ')[0]
                                     if name in CarClassList:
                                         NLappingCars[CarClassList.index(name)]['NCars'] += 1
+                                        NLappingCars[CarClassList.index(name)]['sDiff'] = max(NLappingCars[CarClassList.index(name)]['sDiff'], CarIdxDistDiff[k[j]])
                                     else:
-                                        NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor'])})
+                                        NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor']), 'sDiff': CarIdxDistDiff[k[j]]})
                                         CarClassList.append(name)
 
-                            self.db.NLappingCars = NLappingCars
+                            self.db.NLappingCars = sorted(NLappingCars, key=lambda x: x['sDiff'], reverse=True)
 
                         if self.db.RX:
                             self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
@@ -485,32 +486,38 @@ class IDDUCalc(threading.Thread):
                 time.sleep(self.rate)
 
             except ValueError:
-                print(self.db.timeStr + ':\tVALUE ERROR in raceLapsEstimation')
+                print(self.db.timeStr + ':\tVALUE ERROR in iDDUcalc')
+                self.db.Exception = 'VALUE ERROR in iDDUcalc'
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
             except NameError:
-                print(self.db.timeStr + ':\tNAME ERROR in raceLapsEstimation')
+                print(self.db.timeStr + ':\tNAME ERROR in iDDUcalc')
+                self.db.Exception = 'NAME ERROR in iDDUcalc'
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
             except TypeError:
-                print(self.db.timeStr + ':\tTYPE ERROR in raceLapsEstimation')
+                print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc')
+                self.db.Exception = 'TYPE ERROR in iDDUcalc'
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
             except KeyError:
-                print(self.db.timeStr + ':\tKEY ERROR in raceLapsEstimation')
+                print(self.db.timeStr + ':\tKEY ERROR in iDDUcalc')
+                self.db.Exception = 'KEY ERROR in iDDUcalc'
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
             except IndexError:
-                print(self.db.timeStr + ':\tINDEX ERROR in raceLapsEstimation')
+                print(self.db.timeStr + ':\tINDEX ERROR in iDDUcalc')
+                self.db.Exception = 'INDEX ERROR in iDDUcalc'
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
             except:
-                print(self.db.timeStr + ':\tUNEXPECTED ERROR in raceLapsEstimation')
+                print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc')
+                self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc'
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
