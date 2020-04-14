@@ -243,7 +243,7 @@ class IDDUCalc(threading.Thread):
                                         NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor'])})
                                         CarClassList.append(name)
 
-                                self.db.NLappingCars = NLappingCars
+                            self.db.NLappingCars = NLappingCars
 
                         if self.db.RX:
                             self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
