@@ -19,7 +19,7 @@ class Car:
         self.UserShiftFlag = 0
 
     def createCar(self, db):
-        self.name = db.DriverInfo['Drivers'][db.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
+        self.name = db.DriverInfo['Drivers'][db.DriverCarIdx]['CarScreenNameShort']
         self.iRShiftRPM = [db.DriverInfo['DriverCarSLFirstRPM'], db.DriverInfo['DriverCarSLShiftRPM'], db.DriverInfo['DriverCarSLLastRPM'], db.DriverInfo['DriverCarSLBlinkRPM']]
 
         DRSList = ['formularenault35',

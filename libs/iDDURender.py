@@ -324,7 +324,7 @@ class RenderScreen(RenderMain):
                 for n in range(1, len(ir['DriverInfo']['Drivers'])):
                     temp_CarIdx = ir['DriverInfo']['Drivers'][n]['CarIdx']
                     if not temp_CarIdx == self.db.DriverCarIdx:
-                       self.CarOnMap(n)
+                       self.CarOnMap(temp_CarIdx)
                 self.CarOnMap(self.db.DriverCarIdx)
                 self.CarOnMap(0)
 
@@ -481,13 +481,15 @@ class RenderScreen(RenderMain):
             RenderMain.screen.blit(gas_white, [696, 120])
 
         if not self.db.PitstopActive:
-            # FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel, 3)
-            FuelStr = iDDUhelper.roundedStr1(26.34, 3)
+            FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel, 3)
             FueledPct = 0
         else:
-            FueledPct = (self.db.FuelLevel - self.db.VFuelPitStopStart) / self.db.PitSvFuel
-            # FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel - (self.db.FuelLevel - self.db.VFuelPitStopStart), 3)
-            FuelStr = iDDUhelper.roundedStr1(26.34, 3)
+            if self.db.PitSvFuel > 0:
+                FueledPct = (self.db.FuelLevel - self.db.VFuelPitStopStart) / self.db.PitSvFuel
+            else:
+                FueledPct = 0
+
+            FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel - (self.db.FuelLevel - self.db.VFuelPitStopStart), 3)
 
         LabelFuel = fontMedium.render(FuelStr, True, self.db.textColour)
         LabelSize = fontMedium.size(FuelStr)
@@ -520,7 +522,7 @@ class RenderScreen(RenderMain):
                     dotColour = purple
                 else:
                     labelColour = purple  # class leaders
-                    dotColour = self.bit2RBG(ir['DriverInfo']['Drivers'][Idx]['CarClassColor'])
+                    dotColour = self.bit2RBG(ir['DriverInfo']['Drivers'][self.db.CarIdxMap[Idx]]['CarClassColor'])
             elif Idx == ir['DriverInfo']['PaceCarIdx']:  # PaceCar
                 labelColour = black
                 dotColour = orange
@@ -532,7 +534,7 @@ class RenderScreen(RenderMain):
                             return
             else:
                 labelColour = black
-                dotColour = self.bit2RBG(ir['DriverInfo']['Drivers'][Idx]['CarClassColor'])
+                dotColour = self.bit2RBG(ir['DriverInfo']['Drivers'][self.db.CarIdxMap[Idx]]['CarClassColor'])
 
             if not ir['CarIdxOnPitRoad'][Idx]:
                 if self.db.RX:
@@ -544,7 +546,7 @@ class RenderScreen(RenderMain):
                 return
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
-        Label = fontTiny.render(ir['DriverInfo']['Drivers'][Idx]['CarNumber'], True, labelColour)
+        Label = fontTiny.render(ir['DriverInfo']['Drivers'][self.db.CarIdxMap[Idx]]['CarNumber'], True, labelColour)
         if ir['CarIdxOnPitRoad'][Idx]:
             pygame.draw.circle(RenderMain.screen, yellow, [int(x), int(y)], 12, 0)
         elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired > 0 and ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'] == 'Race':

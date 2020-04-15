@@ -1,6 +1,6 @@
 # import all required packages
 import time
-
+import numpy as np
 from functionalities.RTDB import RTDB
 from functionalities.UpshiftTone import UpshiftTone
 from gui.iDDUgui import iDDUgui
@@ -351,7 +351,8 @@ calcData = {'startUp': False,
                 }
             ],
             'PlayerCarClassRelSpeed': 0,
-            'Exception': None
+            'Exception': None,
+            'CarIdxMap': np.linspace(0,63,64).astype(int).tolist()
             }
 
 # Create RTDB and initialise with

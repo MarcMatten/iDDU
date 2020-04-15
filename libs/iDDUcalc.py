@@ -200,7 +200,7 @@ class IDDUCalc(threading.Thread):
                         elif self.db.SessionTime > (self.FlagCallTime + 3):
                             self.db.backgroundColour = self.black
 
-                            if len(self.db.NLappingCars) > 0 and self.db.PlayerTrackSurface == 3:
+                            if len(self.db.NLappingCars) > 0 and (self.db.PlayerTrackSurface == 1 or self.db.PlayerTrackSurface == 3):
                                 self.db.backgroundColour = self.blue
                                 
                             self.db.textColour = self.white
@@ -235,16 +235,19 @@ class IDDUCalc(threading.Thread):
                             NLappingCars = []
 
                             for j in range(0, len(k)):
-                                if self.db.DriverInfo['Drivers'][k[j]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed:
-                                    name = self.db.DriverInfo['Drivers'][k[j]]['CarClassShortName'].split(' ')[0]
+                                if self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed:
+                                    name = self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassShortName'].split(' ')[0]
                                     if name in CarClassList:
                                         NLappingCars[CarClassList.index(name)]['NCars'] += 1
                                         NLappingCars[CarClassList.index(name)]['sDiff'] = max(NLappingCars[CarClassList.index(name)]['sDiff'], CarIdxDistDiff[k[j]])
                                     else:
-                                        NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][k[j]]['CarClassColor']), 'sDiff': CarIdxDistDiff[k[j]]})
+                                        NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassColor']), 'sDiff': CarIdxDistDiff[k[j]]})
                                         CarClassList.append(name)
 
                             self.db.NLappingCars = sorted(NLappingCars, key=lambda x: x['sDiff'], reverse=True)
+
+                        else:
+                            self.db.NLappingCars = []
 
                         if self.db.RX:
                             self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
@@ -539,7 +542,7 @@ class IDDUCalc(threading.Thread):
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
         self.db.Alarm = [0]*10
-        self.db.PlayerCarClassRelSpeed = self.db.DriverInfo['Drivers'][self.db.DriverInfo['DriverCarIdx']]['CarClassRelSpeed']
+        self.db.PlayerCarClassRelSpeed = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassRelSpeed']
 
         if self.db.startUp:
             self.db.StartDDU = True
@@ -559,7 +562,7 @@ class IDDUCalc(threading.Thread):
                 print(self.db.timeStr + ':\tCreating Track')
 
             # car
-            carName = self.db.DriverInfo['Drivers'][self.db.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
+            carName = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']
             if carName + '.json' in self.carList:
                 self.loadCar(carName)
                 if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
