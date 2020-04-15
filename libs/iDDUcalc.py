@@ -664,7 +664,7 @@ class IDDUCalc(threading.Thread):
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                         'SessionTime'])
 
-            if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and not self.db.LapLimit and self.db.TimeLimit:
+            if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and (not self.db.LapLimit) and self.db.TimeLimit:
                 self.db.BEnableRaceLapEstimation = True
             else:
                 self.db.BEnableRaceLapEstimation = False
@@ -891,6 +891,8 @@ class IDDUCalc(threading.Thread):
             f.write('PaceCarIdx = ' + repr(self.db.DriverInfo['PaceCarIdx']) + '\n')
             f.write('FuelLevel = ' + repr(self.db.FuelLevel) + '\n')
             f.write('SessionFlags = ' + repr(self.db.SessionFlags) + '\n')
+            f.write('BEnableRaceLapEstimation = ' + repr(self.db.BEnableRaceLapEstimation) + '\n')
+
 
             f.close()
 
