@@ -67,6 +67,8 @@ gas_orange = pygame.image.load("files/gas_orange.gif")
 
 screen = None
 
+BError =False
+
 class RenderMain:
     __slots__ = 'joystick'
     BDisplayCreated = False
@@ -321,8 +323,8 @@ class RenderScreen(RenderMain):
 
                 pygame.draw.lines(RenderMain.screen, self.db.textColour, True, self.db.track.map, 5)
 
-                for n in range(1, len(ir['DriverInfo']['Drivers'])):
-                    temp_CarIdx = ir['DriverInfo']['Drivers'][n]['CarIdx']
+                for n in range(1, len(self.db.DriverInfo['Drivers'])):
+                    temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
                     if not temp_CarIdx == self.db.DriverCarIdx:
                        self.CarOnMap(temp_CarIdx)
                 self.CarOnMap(self.db.DriverCarIdx)
@@ -516,25 +518,28 @@ class RenderScreen(RenderMain):
                     self.drawCar(Idx, x, y, green, black)
             self.drawCar(Idx, x, y, red, white)
         else:  # other cars
-            if ir['CarIdxClassPosition'][Idx] == 1:
-                if ir['CarIdxPosition'][Idx] == 1:  # overall leader
-                    labelColour = white
-                    dotColour = purple
-                else:
-                    labelColour = purple  # class leaders
-                    dotColour = self.bit2RBG(ir['DriverInfo']['Drivers'][self.db.CarIdxMap[Idx]]['CarClassColor'])
-            elif Idx == ir['DriverInfo']['PaceCarIdx']:  # PaceCar
-                labelColour = black
-                dotColour = orange
-                if not ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'] == 'Race':
-                    return
-                else:
-                    if ir['SessionState'] > 3:
-                        if not ir['SessionFlags'] & 0x4000 or not ir['SessionFlags'] & 0x8000:
-                            return
+            if self.db.CarIdxMap[Idx] is None:
+                return
             else:
-                labelColour = black
-                dotColour = self.bit2RBG(ir['DriverInfo']['Drivers'][self.db.CarIdxMap[Idx]]['CarClassColor'])
+                if ir['CarIdxClassPosition'][Idx] == 1:
+                    if ir['CarIdxPosition'][Idx] == 1:  # overall leader
+                        labelColour = white
+                        dotColour = purple
+                    else:
+                        labelColour = purple  # class leaders
+                        dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[Idx]]['CarClassColor'])
+                elif Idx == ir['DriverInfo']['PaceCarIdx']:  # PaceCar
+                    labelColour = black
+                    dotColour = orange
+                    if not ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'] == 'Race':
+                        return
+                    else:
+                        if ir['SessionState'] > 3:
+                            if not ir['SessionFlags'] & 0x4000 or not ir['SessionFlags'] & 0x8000:
+                                return
+                else:
+                    labelColour = black
+                    dotColour = self.bit2RBG(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[Idx]]['CarClassColor'])
 
             if not ir['CarIdxOnPitRoad'][Idx]:
                 if self.db.RX:
@@ -546,13 +551,16 @@ class RenderScreen(RenderMain):
                 return
 
     def drawCar(self, Idx, x, y, dotColour, labelColour):
-        Label = fontTiny.render(ir['DriverInfo']['Drivers'][self.db.CarIdxMap[Idx]]['CarNumber'], True, labelColour)
-        if ir['CarIdxOnPitRoad'][Idx]:
-            pygame.draw.circle(RenderMain.screen, yellow, [int(x), int(y)], 12, 0)
-        elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired > 0 and ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'] == 'Race':
-            pygame.draw.circle(RenderMain.screen, green, [int(x), int(y)], 12, 0)
-        pygame.draw.circle(RenderMain.screen, dotColour, [int(x), int(y)], 10, 0)
-        RenderMain.screen.blit(Label, (int(x) - 6, int(y) - 7))
+        if self.db.CarIdxMap[Idx] is None:
+            return
+        else:
+            Label = fontTiny.render(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[Idx]]['CarNumber'], True, labelColour)
+            if ir['CarIdxOnPitRoad'][Idx]:
+                pygame.draw.circle(RenderMain.screen, yellow, [int(x), int(y)], 12, 0)
+            elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired > 0 and ir['SessionInfo']['Sessions'][ir['SessionNum']]['SessionType'] == 'Race':
+                pygame.draw.circle(RenderMain.screen, green, [int(x), int(y)], 12, 0)
+            pygame.draw.circle(RenderMain.screen, dotColour, [int(x), int(y)], 10, 0)
+            RenderMain.screen.blit(Label, (int(x) - 6, int(y) - 7))
 
     @staticmethod
     def bit2RBG(bitColor):
