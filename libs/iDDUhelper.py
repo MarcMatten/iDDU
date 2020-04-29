@@ -77,7 +77,7 @@ def roundedStr0(x):
 
 
 def roundedStr1(x, n):
-    if type(x) is int or type(x) is float:
+    if type(x) is int or type(x) is float or type(x).__module__ == np.__name__:
         if n <= 2:
             if np.round(x) >= 10:
                 return '{0:.0f}'.format(np.round(x, 1))
