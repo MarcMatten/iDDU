@@ -1102,7 +1102,7 @@ class IDDUCalc(threading.Thread):
     def LiftTone(self):
 
         # check if LapDistPct is greater then this points
-        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 100:
+        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1:
             if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint] - 100:
                 self.db.BLiftToneRequest = True
                 self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
@@ -1118,6 +1118,7 @@ class IDDUCalc(threading.Thread):
         # check which lift point is next
         d = self.db.LapDistPctLift - self.db.LapDistPct
         d[d < 0] = np.nan
+        d[d > 1] = d[d > 1] - 1
         if np.all(np.isnan(d)):
             self.db.NNextLiftPoint = 0
         else:
