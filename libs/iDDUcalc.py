@@ -8,6 +8,7 @@ from datetime import datetime
 import winsound
 import time
 import threading
+import json
 
 nan = float('nan')
 
@@ -67,6 +68,9 @@ class IDDUCalc(threading.Thread):
 
         self.getCarFiles()
         self.loadCar('default')
+
+        self.loadJson('track/FuelTGTLiftPoints.json')
+        self.setFuelTgt(self.db.VFuelTgt, self.db.VFuelTgtOffset)
 
     def run(self):
         while 1:
@@ -442,6 +446,10 @@ class IDDUCalc(threading.Thread):
                         # alarm
                         if self.db.dcTractionControlToggle:
                             self.db.Alarm[1] = 3
+
+                        # Lift beeps
+                        if self.db.BEnableLiftTones:
+                            self.LiftTone()
 
                         if type(self.db.FuelLevel) is float:
                             if self.db.FuelLevel <= 5:
@@ -859,6 +867,7 @@ class IDDUCalc(threading.Thread):
         # Lap Counting
         winsound.Beep(200, 200)
         self.db.newLapTime = self.db.SessionTime
+        self.db.BLiftBeepPlayed = [False] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
 
         if self.db.BPitCommandUpdate:
             self.setPitCommands()
@@ -1089,3 +1098,47 @@ class IDDUCalc(threading.Thread):
     def bit2RBG(bitColor):
         hexColor = format(bitColor, '06x')
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
+
+    def LiftTone(self):
+
+        # check if LapDistPct is greater then this points
+        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 100:
+            if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint] - 100:
+                self.db.BLiftToneRequest = True
+                self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+        # elif self.db.LapDistPctLift[self.db.NNextLiftPoint] < 5:
+        #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
+        #         self.db.BLiftToneRequest = True
+        #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+        else:
+            if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
+                self.db.BLiftToneRequest = True
+                self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+
+        # check which lift point is next
+        d = self.db.LapDistPctLift - self.db.LapDistPct
+        d[d < 0] = np.nan
+        if np.all(np.isnan(d)):
+            self.db.NNextLiftPoint = 0
+        else:
+            self.db.NNextLiftPoint = np.nanargmin(d)
+
+
+    def loadJson(self, path):
+        with open(path) as jsonFile:
+            data = json.loads(jsonFile.read())
+
+        temp = list(data.items())
+        for i in range(0, len(data)):
+            self.db.FuelTGTLiftPoints.__setitem__(temp[i][0], temp[i][1])
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImported ' + path)
+
+    def setFuelTgt(self, tgt, offset):
+        for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):
+            xp = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+            x = self.db.FuelTGTLiftPoints['VFuelTGT']
+            y = self.db.FuelTGTLiftPoints['LapDistPct'][i]
+            self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(xp, x, y) / 100)
+
+        self.db.BLiftBeepPlayed = [False] * len(self.db.FuelTGTLiftPoints['LapDistPct'])

@@ -352,7 +352,15 @@ calcData = {'startUp': False,
             ],
             'PlayerCarClassRelSpeed': 0,
             'Exception': None,
-            'CarIdxMap': np.linspace(0,63,64).astype(int).tolist()
+            'CarIdxMap': np.linspace(0,63,64).astype(int).tolist(),
+            'BLiftToneRequest': False,
+            'FuelTGTLiftPoints': {},
+            'LapDistPctLift': np.array([]),
+            'VFuelTgt': 100,
+            'VFuelTgtOffset': 0,
+            'BLiftBeepPlayed': [],
+            'NNextLiftPoint': 0,
+            'BEnableLiftTones': True
             }
 
 # Create RTDB and initialise with
