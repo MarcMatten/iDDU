@@ -11,7 +11,7 @@ import threading
 import json
 
 nan = float('nan')
-
+tLiftTones = [1, 0.5, 0]
 
 class IDDUCalc(threading.Thread):
     white = (255, 255, 255)
@@ -867,7 +867,7 @@ class IDDUCalc(threading.Thread):
         # Lap Counting
         winsound.Beep(200, 200)
         self.db.newLapTime = self.db.SessionTime
-        self.db.BLiftBeepPlayed = [False] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
+        # self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
 
         if self.db.BPitCommandUpdate:
             self.setPitCommands()
@@ -920,8 +920,10 @@ class IDDUCalc(threading.Thread):
             f.write('FuelLevel = ' + repr(self.db.FuelLevel) + '\n')
             f.write('SessionFlags = ' + repr(self.db.SessionFlags) + '\n')
             f.write('BEnableRaceLapEstimation = ' + repr(self.db.BEnableRaceLapEstimation) + '\n')
-
-
+            f.write('tNextLiftPoint = ' + repr(self.db.tNextLiftPoint) + '\n')
+            f.write('LapDistPct = ' + repr(self.db.LapDistPct) + '\n')
+            f.write('BLiftToneRequest = ' + repr(self.db.BLiftToneRequest) + '\n')
+            f.write('BLiftBeepPlayed = ' + repr(self.db.BLiftBeepPlayed) + '\n')
             f.close()
 
         self.db.StintLap = self.db.StintLap + 1
@@ -1102,27 +1104,40 @@ class IDDUCalc(threading.Thread):
     def LiftTone(self):
 
         # check if LapDistPct is greater then this points
-        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1:
-            if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint] - 100:
-                self.db.BLiftToneRequest = True
-                self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
-        # elif self.db.LapDistPctLift[self.db.NNextLiftPoint] < 5:
+        # if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1:
+        #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint] - 100:
+        #         self.db.BLiftToneRequest = True
+        #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+        # # elif self.db.LapDistPctLift[self.db.NNextLiftPoint] < 5:
+        # #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
+        # #         self.db.BLiftToneRequest = True
+        # #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+        # else:
         #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
         #         self.db.BLiftToneRequest = True
         #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+
+        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.05:
+            self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1 - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
         else:
-            if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
-                self.db.BLiftToneRequest = True
-                self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+            self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
+
+        if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] and self.db.Speed > 10:
+            self.db.BLiftToneRequest = True
+            self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
 
         # check which lift point is next
         d = self.db.LapDistPctLift - self.db.LapDistPct
         d[d < 0] = np.nan
         d[d > 1] = d[d > 1] - 1
+        NNextLiftPointOld = self.db.NNextLiftPoint
         if np.all(np.isnan(d)):
             self.db.NNextLiftPoint = 0
         else:
             self.db.NNextLiftPoint = np.nanargmin(d)
+
+        if not self.db.NNextLiftPoint == NNextLiftPointOld:
+            self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
 
     def loadJson(self, path):
@@ -1142,4 +1157,4 @@ class IDDUCalc(threading.Thread):
             y = self.db.FuelTGTLiftPoints['LapDistPct'][i]
             self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(xp, x, y) / 100)
 
-        self.db.BLiftBeepPlayed = [False] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
+        self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])

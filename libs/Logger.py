@@ -47,7 +47,11 @@ class Logger(threading.Thread):
                    'PitOptRepairLeft',
                    'PitstopActive',
                    'FuelLevel',
-                   'sToPitStall'
+                   'sToPitStall',
+                   'tNextLiftPoint',
+                   'LapDistPct',
+                   'BLiftToneRequest',
+                   'BLiftBeepPlayed'
                    ]
 
         self.header = 'Time'

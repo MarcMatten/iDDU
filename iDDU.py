@@ -309,7 +309,7 @@ calcData = {'startUp': False,
             'dc': {},
             'dcOld': {},
             'dcChangedItems': {},
-            'BLoggerActive': False,
+            'BLoggerActive': True,
             'tExecuteRTDB': 0,
             'tExecuteUpshiftTone': 0,
             'tExecuteRaceLapsEstimation': 0,
@@ -360,7 +360,8 @@ calcData = {'startUp': False,
             'VFuelTgtOffset': 0,
             'BLiftBeepPlayed': [],
             'NNextLiftPoint': 0,
-            'BEnableLiftTones': True
+            'BEnableLiftTones': True,
+            'tNextLiftPoint': 0
             }
 
 # Create RTDB and initialise with
