@@ -1117,7 +1117,7 @@ class IDDUCalc(threading.Thread):
         #         self.db.BLiftToneRequest = True
         #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
 
-        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.05:
+        if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.4:
             self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1 - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
         else:
             self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
