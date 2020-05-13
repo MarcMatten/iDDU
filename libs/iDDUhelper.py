@@ -95,14 +95,14 @@ def roundedStr1(x, n):
 
 
 def roundedStr2(x):
-    if type(x) is int or type(x) is float:
+    if type(x) is int or type(x) is float or type(x).__module__ == np.__name__:
         return '{0:.2f}'.format(np.round(x, 2))
     else:
         return "-"
 
 
 def roundedStr3(x):
-    if type(x) is int or type(x) is float:
+    if type(x) is int or type(x) is float or type(x).__module__ == np.__name__:
         return '{0:.3f}'.format(np.round(x, 3))
     else:
         return '-'

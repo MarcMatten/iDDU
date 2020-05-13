@@ -70,7 +70,7 @@ class IDDUCalc(threading.Thread):
         self.loadCar('default')
 
         self.loadJson('track/FuelTGTLiftPoints.json')
-        self.setFuelTgt(self.db.VFuelTgt, self.db.VFuelTgtOffset)
+        self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
 
     def run(self):
         while 1:
@@ -483,11 +483,18 @@ class IDDUCalc(threading.Thread):
                     for i in range(0, len(self.db.car.dcList)):
                         self.db.dc[list(self.db.car.dcList.keys())[i]] = self.db.get(list(self.db.car.dcList.keys())[i])
 
+                    for i in range(0, len(self.db.DDUControlList)):
+                        self.db.dc[list(self.db.DDUControlList.keys())[i]] = self.db.get(list(self.db.DDUControlList.keys())[i])
+
                     if self.db.SessionTime > self.db.RunStartTime + 3:
                         if not self.db.dc == self.db.dcOld:
                             temp = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
                             self.db.dcChangedItems = list(temp.keys())
                             self.db.dcChangeTime = self.db.SessionTime
+                            if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
+                                if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
+                                    self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
+                                self.setFuelTgt(self.db.VFuelTgt, self.db.VFuelTgtOffset)
 
                     self.db.dcOld = self.db.dc.copy()
 
@@ -1103,6 +1110,9 @@ class IDDUCalc(threading.Thread):
 
     def LiftTone(self):
 
+        if len(self.db.LapDistPctLift) == 0:
+            return
+
         # check if LapDistPct is greater then this points
         # if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1:
         #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint] - 100:
@@ -1151,10 +1161,19 @@ class IDDUCalc(threading.Thread):
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImported ' + path)
 
     def setFuelTgt(self, tgt, offset):
+        self.db.LapDistPctLift = np.array([])
+        temp = np.array([])
+        rLift = np.array([])
+        self.db.VFuelTgt = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+        self.db.VFuelTgtOffset = np.min([1, np.max([offset, -1])])
+        self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+
         for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):
-            xp = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
             x = self.db.FuelTGTLiftPoints['VFuelTGT']
             y = self.db.FuelTGTLiftPoints['LapDistPct'][i]
-            self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(xp, x, y) / 100)
+            self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(self.db.VFuelTgtEffective, x, y) / 100)
+            rLift = np.append(rLift, np.interp(self.db.VFuelTgtEffective, x, self.db.FuelTGTLiftPoints['LiftPoints'][i]))
+
+        self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
 
         self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])

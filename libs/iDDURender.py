@@ -104,7 +104,10 @@ class RenderScreen(RenderMain):
         RenderMain.__init__(self, db)
 
         # initialize joystick
-        self.initJoystick('FANATEC ClubSport Wheel Base')
+        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+            self.initJoystick('vJoy Device')
+        else:
+            self.initJoystick('FANATEC ClubSport Wheel Base')
 
         # frames
         self.frames = list()
@@ -188,6 +191,16 @@ class RenderScreen(RenderMain):
                     self.db.NDDUPage = 2
                 else:
                     self.db.NDDUPage = 1
+
+            if event.type == pygame.JOYBUTTONDOWN:
+                if  event.button == 0:
+                    self.db.VFuelTgt = self.db.VFuelTgt - 0.01
+                if event.button == 1:
+                    self.db.VFuelTgt = self.db.VFuelTgt + 0.01
+                if event.button == 2:
+                    self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
+                if event.button == 3:
+                    self.db.VFuelTgtOffset = self.db.VFuelTgtOffset + 0.01
 
         if ir.startup():
             RenderMain.screen.fill(self.db.backgroundColour)
@@ -386,15 +399,33 @@ class RenderScreen(RenderMain):
 
             # driver control change
             if ir['SessionTime'] < self.db.dcChangeTime + 0.75:
-                if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
-                    if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
-                        valueStr = iDDUhelper.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
-                    elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 1:
-                        valueStr = iDDUhelper.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
-                    else:
-                        valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-
+                if self.db.dcChangedItems[0] in self.db.car.dcList:
+                    if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
+                        if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
+                            valueStr = iDDUhelper.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                        elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 1:
+                            valueStr = iDDUhelper.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
+                        elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 2:
+                            valueStr = iDDUhelper.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
+                        else:
+                            valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                     self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
+                else:
+                    if self.db.dcChangedItems[0] == 'Push':
+                        self.changeLabel('VFuelTgt', 'Push')
+                    else:
+                        if self.db.DDUControlList[self.db.dcChangedItems[0]][1]:
+                            if self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 0:
+                                valueStr = iDDUhelper.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                            elif self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 1:
+                                valueStr = iDDUhelper.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
+                            elif self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 2:
+                                valueStr = iDDUhelper.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
+                            else:
+                                valueStr = str(self.db.get(self.db.dcChangedItems[0]))
+                        self.changeLabel(self.db.DDUControlList[self.db.dcChangedItems[0]][0], valueStr)
+
+
 
             if self.db.OnPitRoad and not self.db.EngineWarnings & 0x10:
                     self.warningLabel('PIT LIMITER OFF', red, white)
