@@ -358,11 +358,17 @@ calcData = {'startUp': False,
             'FuelTGTLiftPoints': {},
             'LapDistPctLift': np.array([]),
             'VFuelTgt': 3.05,
+            'VFuelTgtEffective': 3.05,
             'VFuelTgtOffset': 0,
             'BLiftBeepPlayed': [],
             'NNextLiftPoint': 0,
             'BEnableLiftTones': True,
-            'tNextLiftPoint': 0
+            'tNextLiftPoint': 0,
+            'DDUControlList':
+                {
+                'VFuelTgt': ['VFuelTgt', True, 2],
+                'VFuelTgtOffset': ['VFuelTgtOffset', True, 2]
+                }
             }
 
 # Create RTDB and initialise with
