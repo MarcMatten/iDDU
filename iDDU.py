@@ -362,13 +362,17 @@ calcData = {'startUp': False,
             'VFuelTgtOffset': 0,
             'BLiftBeepPlayed': [],
             'NNextLiftPoint': 0,
-            'BEnableLiftTones': True,
+            'BEnableLiftTones': False,
             'tNextLiftPoint': 0,
             'DDUControlList':
                 {
                 'VFuelTgt': ['VFuelTgt', True, 2],
                 'VFuelTgtOffset': ['VFuelTgtOffset', True, 2]
-                }
+                },
+            'fFuelBeep': 300,
+            'tFuelBeep': 150,
+            'fShiftBeep': 500,
+            'tShiftBeep': 150
             }
 
 # Create RTDB and initialise with
