@@ -197,9 +197,9 @@ class RenderScreen(RenderMain):
                     self.db.VFuelTgt = self.db.VFuelTgt - 0.01
                 if event.button == 2:
                     self.db.VFuelTgt = self.db.VFuelTgt + 0.01
-                if event.button == 1:
-                    self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
                 if event.button == 10:
+                    self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
+                if event.button == 1:
                     self.db.VFuelTgtOffset = self.db.VFuelTgtOffset + 0.01
 
         if ir.startup():
