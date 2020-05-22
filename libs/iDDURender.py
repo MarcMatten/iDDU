@@ -410,7 +410,7 @@ class RenderScreen(RenderMain):
                             valueStr = iDDUhelper.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                         else:
                             valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                    self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
+                        self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
                 else:
                     if self.db.dcChangedItems[0] == 'Push':
                         self.changeLabel('VFuelTgt', 'Push')
@@ -424,7 +424,7 @@ class RenderScreen(RenderMain):
                                 valueStr = iDDUhelper.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                        self.changeLabel(self.db.DDUControlList[self.db.dcChangedItems[0]][0], valueStr)
+                            self.changeLabel(self.db.DDUControlList[self.db.dcChangedItems[0]][0], valueStr)
 
 
 
