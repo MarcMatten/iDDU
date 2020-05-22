@@ -518,6 +518,8 @@ class Gui(object):
         self.checkBox_EnableFuelManagement.stateChanged.connect(self.enableFuelManagement)
         self.openButton_2.clicked.connect(self.loadFuelManagementSettings)
         self.pushButton_testShiftTone.clicked.connect(self.testShiftTone)
+        self.spinBox_ShiftToneFrequency.valueChanged.connect(self.ShiftBeep)
+        self.spinBox_ShiftToneDuration.valueChanged.connect(self.ShiftBeep)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -811,6 +813,11 @@ class Gui(object):
     def FuelBeep(self):
         self.db.tFuelBeep = self.spinBox_FuelToneDuration.value()
         self.db.fFuelBeep = self.spinBox_FuelToneFrequency.value()
+        self.retranslateUi(self.iDDU)
+
+    def ShiftBeep(self):
+        self.db.tShiftBeep = self.spinBox_ShiftToneDuration.value()
+        self.db.fShiftBeep = self.spinBox_ShiftToneFrequency.value()
         self.retranslateUi(self.iDDU)
 
     def testFuelTone(self):

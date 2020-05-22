@@ -402,16 +402,15 @@ thread5.start()
 time.sleep(0.1)
 
 # loop to run programme
-iRRender = None
 while not myRTDB.done:
-    if myRTDB.StartDDU:
-        print(myRTDB.timeStr + ': Starting DDU')
-        iRRender = iDDURender.RenderScreen(myRTDB)
-        myRTDB.DDUrunning = True
-    elif myRTDB.DDUrunning:
+    if myRTDB.DDUrunning:
         myRTDB.done = iRRender.render()
         if myRTDB.StartDDU:
             myRTDB.StartDDU = False
+    elif myRTDB.StartDDU:
+        print(myRTDB.timeStr + ': Starting DDU')
+        iRRender = iDDURender.RenderScreen(myRTDB)
+        myRTDB.DDUrunning = True
 
     if myRTDB.StopDDU:
         print(myRTDB.timeStr + ': Stopping DDU')
