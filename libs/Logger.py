@@ -1,7 +1,6 @@
 import os, threading
 import time
 from datetime import datetime
-# import irsdk
 
 
 class Logger(threading.Thread):
@@ -17,13 +16,8 @@ class Logger(threading.Thread):
                    'Speed',
                    'RPM',
                    'Gear',
-                   'Alarm',
-                   'OnPitRoad',
-                   'OutLap',
                    'StintLap',
                    'Lap',
-                   'WasOnTrack',
-                   'Run',
                    'tExecuteRTDB',
                    'tExecuteUpshiftTone',
                    'tExecuteRaceLapsEstimation',
@@ -31,15 +25,7 @@ class Logger(threading.Thread):
                    'tExecuteRender',
                    'tExecuteCalc',
                    'tShiftReaction',
-                   'BNewLap',
-                   'PlayerTrackSurface',
-                   'BWasOnPitRoad',
-                   'BEnteringPits',
                    'PitSvFlags',
-                   'PitSvLFP',
-                   'PitSvRFP',
-                   'PitSvLRP',
-                   'PitSvRRP',
                    'PitSvFuel',
                    'PlayerCarInPitStall',
                    'PlayerCarPitSvStatus',
@@ -47,7 +33,6 @@ class Logger(threading.Thread):
                    'PitOptRepairLeft',
                    'PitstopActive',
                    'FuelLevel',
-                   'sToPitStall',
                    'tNextLiftPoint',
                    'LapDistPct',
                    'BLiftToneRequest',
@@ -75,8 +60,6 @@ class Logger(threading.Thread):
                 if self.logging:
                     if self.db.IsOnTrack:
                         # normal logging
-                        #now = datetime.now()
-                        #self.file.write(now.strftime("%H:%M:%S.%f") + "," + str(self.db.SessionTime) + "," + str(self.db.RPM) + "," + str(self.db.Gear) + "," + str(self.db.Alarm[7]) + "," + str(self.db.OnPitRoad) + "," + str(self.db.OutLap) + "," + str(self.db.StintLap) + "," + str(self.db.Lap) + "," + str(self.db.WasOnTrack) + "," + str(self.db.Run) + "\n")
                         self.file.write(self.getDataStr())
                         self.file.flush()
                     else:
@@ -103,9 +86,6 @@ class Logger(threading.Thread):
                             self.file.write(self.header)
 
                         # log first line
-
-                        # if self.ir.startup():
-                        # self.file.write(now.strftime("%H:%M:%S.%f") + "," + str(self.db.SessionTime) + "," + str(self.db.RPM) + "," + str(self.db.Gear) + "," + str(self.db.Alarm[7]) + "," + str(self.db.OnPitRoad) + "," + str(self.db.OutLap) + "," + str(self.db.StintLap) + "," + str(self.db.Lap) + "," + str(self.db.WasOnTrack) + "," + str(self.db.Run) + "\n")
                         self.file.write(self.getDataStr())
                         self.logging = True
 

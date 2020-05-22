@@ -872,7 +872,6 @@ class IDDUCalc(threading.Thread):
 
     def newLap(self):
         # Lap Counting
-        winsound.Beep(200, 200)
         self.db.newLapTime = self.db.SessionTime
         # self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
 
@@ -1162,7 +1161,6 @@ class IDDUCalc(threading.Thread):
 
     def setFuelTgt(self, tgt, offset):
         self.db.LapDistPctLift = np.array([])
-        temp = np.array([])
         rLift = np.array([])
         self.db.VFuelTgt = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
         self.db.VFuelTgtOffset = np.min([1, np.max([offset, -1])])

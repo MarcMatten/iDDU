@@ -159,7 +159,6 @@ class raceLapsEstimation(threading.Thread):
                         self.db.snapshot()
                     self.BError = True
 
-
             self.db.tExecuteRaceLapsEstimation = (time.time() - t) * 1000
 
             time.sleep(self.rate)

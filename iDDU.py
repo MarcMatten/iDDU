@@ -396,21 +396,18 @@ time.sleep(0.1)
 thread5.start()
 time.sleep(0.1)
 
-# create objects for rendering
-# iDDUcalc = iDDUcalc.IDDUCalc(myRTDB)
-
 # loop to run programme
+iRRender = None
 while not myRTDB.done:
-    # iDDUcalc.calc()
-    if myRTDB.DDUrunning:
+    if myRTDB.StartDDU:
+        print(myRTDB.timeStr + ': Starting DDU')
+        iRRender = iDDURender.RenderScreen(myRTDB)
+        myRTDB.DDUrunning = True
+    elif myRTDB.DDUrunning:
         myRTDB.done = iRRender.render()
         if myRTDB.StartDDU:
             myRTDB.StartDDU = False
-    elif myRTDB.StartDDU:
-        print(myRTDB.timeStr + ': Starting DDU')
-        iRRender = iDDURender.RenderScreen(myRTDB)
-        # myRTDB.StartDDU = False
-        myRTDB.DDUrunning = True
+
     if myRTDB.StopDDU:
         print(myRTDB.timeStr + ': Stopping DDU')
         iRRender.stopRendering()
@@ -418,14 +415,3 @@ while not myRTDB.done:
         myRTDB.DDUrunning = False
 
     time.sleep(0.001)
-
-# iRRender.pygame.quit()
-# del iRRender
-# del iDDUcalc
-# del thread0
-# del thread1
-# del thread2
-# del thread3
-# del thread4
-# del thread5
-# exit()

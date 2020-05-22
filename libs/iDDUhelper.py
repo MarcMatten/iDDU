@@ -205,6 +205,3 @@ def angleVertical(dx, dy):
             a = np.pi * 1.5
 
     return a
-
-
-
