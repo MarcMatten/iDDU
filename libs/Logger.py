@@ -36,8 +36,8 @@ class Logger(threading.Thread):
                    'tNextLiftPoint',
                    'LapDistPct',
                    'BLiftToneRequest',
-                   'BLiftBeepPlayed'
-                   ]
+                   'BLiftBeepPlayed',
+                   'ThrottleRaw']
 
         self.header = 'Time'
 

@@ -193,13 +193,13 @@ class RenderScreen(RenderMain):
                     self.db.NDDUPage = 1
 
             if event.type == pygame.JOYBUTTONDOWN:
-                if  event.button == 0:
+                if  event.button == 11:
                     self.db.VFuelTgt = self.db.VFuelTgt - 0.01
-                if event.button == 1:
-                    self.db.VFuelTgt = self.db.VFuelTgt + 0.01
                 if event.button == 2:
+                    self.db.VFuelTgt = self.db.VFuelTgt + 0.01
+                if event.button == 1:
                     self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
-                if event.button == 3:
+                if event.button == 10:
                     self.db.VFuelTgtOffset = self.db.VFuelTgtOffset + 0.01
 
         if ir.startup():
@@ -398,6 +398,7 @@ class RenderScreen(RenderMain):
             #     self.warningLabel('REPAIR', self.white, self.black)
 
             # driver control change
+            valueStr = 'None'
             if ir['SessionTime'] < self.db.dcChangeTime + 0.75:
                 if self.db.dcChangedItems[0] in self.db.car.dcList:
                     if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
