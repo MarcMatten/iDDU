@@ -193,7 +193,7 @@ class RenderScreen(RenderMain):
                     self.db.NDDUPage = 1
 
             if event.type == pygame.JOYBUTTONDOWN:
-                if  event.button == 11:
+                if event.button == 11:
                     self.db.VFuelTgt = self.db.VFuelTgt - 0.01
                 if event.button == 2:
                     self.db.VFuelTgt = self.db.VFuelTgt + 0.01

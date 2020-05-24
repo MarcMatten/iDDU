@@ -1121,27 +1121,15 @@ class IDDUCalc(threading.Thread):
 
     def LiftTone(self):
 
-        if len(self.db.LapDistPctLift) > 0 and len(self.db.LapDistPctLift) >= self.db.NNextLiftPoint - 1:
-            # return
-
-            # check if LapDistPct is greater then this points
-            # if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1:
-            #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint] - 100:
-            #         self.db.BLiftToneRequest = True
-            #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
-            # # elif self.db.LapDistPctLift[self.db.NNextLiftPoint] < 5:
-            # #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
-            # #         self.db.BLiftToneRequest = True
-            # #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
-            # else:
-            #     if (not self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]) and self.db.LapDistPct >= self.db.LapDistPctLift[self.db.NNextLiftPoint]:
-            #         self.db.BLiftToneRequestdat = True
-            #         self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = True
+        if len(self.db.LapDistPctLift) > 0 and (len(self.db.LapDistPctLift) > self.db.NNextLiftPoint):
 
             if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.4:
                 self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1 - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
             else:
-                self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
+                if self.db.LapDistPct > (self.db.LapDistPctLift[self.db.NNextLiftPoint] + (75 / self.db.track.sTrack)):
+                    self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] + 1 - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
+                else:
+                    self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
 
             if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] and self.db.Speed > 10:
                 self.db.BLiftToneRequest = True
@@ -1175,7 +1163,7 @@ class IDDUCalc(threading.Thread):
         self.db.LapDistPctLift = np.array([])
         rLift = np.array([])
         self.db.VFuelTgt = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
-        self.db.VFuelTgtOffset = np.min([1, np.max([offset, -1])])
+        self.db.VFuelTgtOffset = np.min([1, np.max([offset, -1])]).astype(float)
         self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
 
         for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):
