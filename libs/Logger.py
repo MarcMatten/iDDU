@@ -14,6 +14,8 @@ class Logger(threading.Thread):
         self.rate = rate
         self.keys=['SessionTime',
                    'Speed',
+                   'ThrottleRaw',
+                   'LongAccel',
                    'RPM',
                    'Gear',
                    'StintLap',
@@ -36,8 +38,7 @@ class Logger(threading.Thread):
                    'tNextLiftPoint',
                    'LapDistPct',
                    'BLiftToneRequest',
-                   'BLiftBeepPlayed',
-                   'ThrottleRaw']
+                   'BLiftBeepPlayed']
 
         self.header = 'Time'
 

@@ -1124,12 +1124,19 @@ class IDDUCalc(threading.Thread):
         if len(self.db.LapDistPctLift) > 0 and (len(self.db.LapDistPctLift) > self.db.NNextLiftPoint):
 
             if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.4:
-                self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1 - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
+                ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint] + 1) * self.db.track.sTrack
             else:
                 if self.db.LapDistPct > (self.db.LapDistPctLift[self.db.NNextLiftPoint] + (75 / self.db.track.sTrack)):
-                    self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] + 1 - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
+                    ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1) * self.db.track.sTrack
                 else:
-                    self.db.tNextLiftPoint = (self.db.LapDistPctLift[self.db.NNextLiftPoint] - self.db.LapDistPct) * self.db.track.sTrack / self.db.Speed
+                    ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint]) * self.db.track.sTrack
+
+            LongAccel = self.db.LongAccel
+            Speed = self.db.Speed
+            if LongAccel == 0:
+                self.db.tNextLiftPoint = - ds / Speed
+            else:
+                self.db.tNextLiftPoint = - Speed / LongAccel + np.sqrt(np.square(Speed / LongAccel) - (2 * ds) / LongAccel)
 
             if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] and self.db.Speed > 10:
                 self.db.BLiftToneRequest = True

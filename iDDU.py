@@ -129,7 +129,8 @@ iRData = {'LapBestLapTime': 0,
           'PitOptRepairLeft': None,
           'PitstopActive': None,
           'CarIdxEstTime': [],
-          'DriverCarEstLapTime': 0
+          'DriverCarEstLapTime': 0,
+          'LongAccel': 0
           }
 
 # calculated data
