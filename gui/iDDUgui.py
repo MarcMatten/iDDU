@@ -831,15 +831,7 @@ class Gui(object):
 
     def loadFuelManagementSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './track', 'JSON(*.json)')
-
-        with open(OpenFileName) as jsonFile:
-            data = json.loads(jsonFile.read())
-
-        temp = list(data.items())
-        for i in range(0, len(data)):
-            self.db.FuelTGTLiftPoints.__setitem__(temp[i][0], temp[i][1])
-
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImported ' + OpenFileName)
+        self.db.loadFuelTgt(OpenFileName[0])
 
     def __del__(self):
         sys.stdout = sys.__stdout__

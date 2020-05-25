@@ -69,7 +69,7 @@ class IDDUCalc(threading.Thread):
         self.getCarFiles()
         self.loadCar('default')
 
-        self.loadJson('track/FuelTGTLiftPoints.json')
+        self.db.loadFuelTgt('track/FuelTGTLiftPoints.json')
         self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
 
     def run(self):
@@ -1154,17 +1154,6 @@ class IDDUCalc(threading.Thread):
 
             if not self.db.NNextLiftPoint == NNextLiftPointOld:
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
-
-
-    def loadJson(self, path):
-        with open(path) as jsonFile:
-            data = json.loads(jsonFile.read())
-
-        temp = list(data.items())
-        for i in range(0, len(data)):
-            self.db.FuelTGTLiftPoints.__setitem__(temp[i][0], temp[i][1])
-
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImported ' + path)
 
     def setFuelTgt(self, tgt, offset):
         self.db.LapDistPctLift = np.array([])
