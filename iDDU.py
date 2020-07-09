@@ -2,9 +2,8 @@
 import time
 import numpy as np
 from functionalities.RTDB import RTDB
-from functionalities.UpshiftTone import UpshiftTone
 from gui.iDDUgui import iDDUgui
-from libs import iDDURender, iDDUcalc, raceLapsEstimation, Logger
+from libs import iDDURender, iDDUcalc, raceLapsEstimation, Logger, UpshiftTone
 import os
 
 nan = float('nan')

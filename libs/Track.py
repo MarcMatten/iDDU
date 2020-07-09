@@ -1,5 +1,5 @@
 import csv
-from libs import iDDUhelper
+from functionalities.libs import maths
 import matplotlib.pyplot as plt
 import json
 import numpy as np
@@ -25,7 +25,7 @@ class Track:
         self.dist = dist
         self.sTrack = sTrack
         self.aNorth = aNorth
-        self.a = iDDUhelper.angleVertical(self.x[3] - self.x[0], self.y[3] - self.y[0])
+        self.a = maths.angleVertical(self.x[3] - self.x[0], self.y[3] - self.y[0])
 
         self.scale()
         self.sample()
@@ -73,7 +73,7 @@ class Track:
         self.x = np.array(x)
         self.y = np.array(y)
         self.dist = np.array(dist)
-        self.a = iDDUhelper.angleVertical(self.x[3] - self.x[0], self.y[3] - self.y[0])
+        self.a = maths.angleVertical(self.x[3] - self.x[0], self.y[3] - self.y[0])
         self.sTrack = len(self.dist)*self.ds
 
         self.sample()

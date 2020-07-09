@@ -1,14 +1,15 @@
-import irsdk
-from libs import iDDUhelper, Track, Car
 import csv
-import numpy as np
-import os
 import glob
-from datetime import datetime
-import winsound
-import time
+import os
 import threading
-import json
+import time
+from datetime import datetime
+
+import irsdk
+import numpy as np
+
+from functionalities.libs import maths, convertString
+from libs import Track, Car
 
 nan = float('nan')
 tLiftTones = [1, 0.5, 0]
@@ -364,7 +365,7 @@ class IDDUCalc(threading.Thread):
 
                         # fuel consumption -----------------------------------------------------------------------------------------
                         if len(self.db.FuelConsumptionList) >= 1:
-                            self.db.FuelAvgConsumption = iDDUhelper.meanTol(self.db.FuelConsumptionList, 0.2)
+                            self.db.FuelAvgConsumption = maths.meanTol(self.db.FuelConsumptionList, 0.2)
                             self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
                             if self.db.NLapRemaining < 3:
                                 self.db.Alarm[3] = 2
@@ -470,7 +471,7 @@ class IDDUCalc(threading.Thread):
                         if self.db.WasOnTrack:
                             print(self.db.timeStr + ':\tGetting out of car')
                             print(self.db.timeStr + ': Run: ' + str(self.db.Run))
-                            print(self.db.timeStr + ':\tFuelAvgConsumption: ' + iDDUhelper.roundedStr2(self.db.FuelAvgConsumption))
+                            print(self.db.timeStr + ':\tFuelAvgConsumption: ' + convertString.roundedStr2(self.db.FuelAvgConsumption))
                             self.db.NDDUPage = 1
                             self.db.WasOnTrack = False
                             self.db.init = True
@@ -577,7 +578,9 @@ class IDDUCalc(threading.Thread):
         self.getTrackFiles2()
         self.db.init = True
         self.db.BResults = False
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(self.db.AirPressure * 0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
+        self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
+            self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
+            self.db.AirDensity) + ' kg/m³     vWind: '
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.newLapTime = 0
@@ -823,7 +826,7 @@ class IDDUCalc(threading.Thread):
 
                 self.db.map.append([float(line[1]), float(line[2])])
 
-        self.db.aOffsetTrack = iDDUhelper.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
+        self.db.aOffsetTrack = maths.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
     def loadTrack2(self, name):
@@ -961,8 +964,9 @@ class IDDUCalc(threading.Thread):
         # if not self.db.OnPitRoad:
         #     self.db.BWasOnPitRoad = False
 
-        self.db.weatherStr = 'TAir: ' + iDDUhelper.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + iDDUhelper.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + iDDUhelper.roundedStr2(
-            self.db.AirPressure*0.0338639*1.02) + ' bar    rHum: ' + iDDUhelper.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + iDDUhelper.roundedStr2(self.db.AirDensity) + ' kg/m³     vWind: '
+        self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
+            self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
+            self.db.AirDensity) + ' kg/m³     vWind: '
 
 
     def createTrackFile(self, BCreateTrack, BRecordtLap):
@@ -1039,13 +1043,13 @@ class IDDUCalc(threading.Thread):
 
     def SOFstring(self):
         if self.db.NClasses > 1:
-            temp = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOFMyClass) + '('
+            temp = 'SOF: ' + convertString.roundedStr0(self.db.SOFMyClass) + '('
             keys = self.db.classStruct.keys()
             for i in range(0, self.db.NClasses):
-                temp = temp + self.db.classStruct[keys[i]] + ': ' + iDDUhelper.roundedStr0(self.db.classStruct[keys[i]]['SOF'])
+                temp = temp + self.db.classStruct[keys[i]] + ': ' + convertString.roundedStr0(self.db.classStruct[keys[i]]['SOF'])
             self.db.SOFstr = temp + ')'
         else:
-            self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
+            self.db.SOFstr = 'SOF: ' + convertString.roundedStr0(self.db.SOF)
 
     def setPitCommands(self):
         # clear = 0  # Clear all pit checkboxes

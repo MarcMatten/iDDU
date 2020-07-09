@@ -1,9 +1,11 @@
 import os
 import time
+
+import irsdk
 import numpy as np
 import pygame
-from libs import iDDUhelper
-import irsdk
+
+from functionalities.libs import convertString
 
 white = (255, 255, 255)
 red = (255, 0, 0)
@@ -281,28 +283,28 @@ class RenderScreen(RenderMain):
                         self.db.P2PStr = str(int(P2PRemaining))
 
                 # LabelStrings
-                self.db.BestLapStr = iDDUhelper.convertTimeMMSSsss(max(0, ir['LapBestLapTime']))
-                self.db.LastLapStr = iDDUhelper.convertTimeMMSSsss(max(0, ir['LapLastLapTime']))
-                self.db.DeltaBestStr = iDDUhelper.convertDelta(ir['LapDeltaToSessionBestLap'])
+                self.db.BestLapStr = convertString.convertTimeMMSSsss(max(0, ir['LapBestLapTime']))
+                self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, ir['LapLastLapTime']))
+                self.db.DeltaBestStr = convertString.convertDelta(ir['LapDeltaToSessionBestLap'])
 
-                self.db.dcTractionControlStr = iDDUhelper.roundedStr0(ir['dcTractionControl'])
-                self.db.dcTractionControl2Str = iDDUhelper.roundedStr0(ir['dcTractionControl2'])
-                self.db.dcBrakeBiasStr = iDDUhelper.roundedStr1(ir['dcBrakeBias'], 3)
-                self.db.dcFuelMixtureStr = iDDUhelper.roundedStr0(ir['dcFuelMixture'])
-                self.db.dcThrottleShapeStr = iDDUhelper.roundedStr0(ir['dcThrottleShape'])
-                self.db.dcABSStr = iDDUhelper.roundedStr0(ir['dcABS'])
+                self.db.dcTractionControlStr = convertString.roundedStr0(ir['dcTractionControl'])
+                self.db.dcTractionControl2Str = convertString.roundedStr0(ir['dcTractionControl2'])
+                self.db.dcBrakeBiasStr = convertString.roundedStr1(ir['dcBrakeBias'], 3)
+                self.db.dcFuelMixtureStr = convertString.roundedStr0(ir['dcFuelMixture'])
+                self.db.dcThrottleShapeStr = convertString.roundedStr0(ir['dcThrottleShape'])
+                self.db.dcABSStr = convertString.roundedStr0(ir['dcABS'])
 
-                self.db.FuelLevelStr = iDDUhelper.roundedStr1(ir['FuelLevel'], 3)
-                self.db.FuelAvgConsStr = iDDUhelper.roundedStr2(max(0, self.db.FuelAvgConsumption))
-                self.db.FuelLastConsStr = iDDUhelper.roundedStr2(max(0, self.db.FuelLastCons))
-                self.db.FuelLapsStr = iDDUhelper.roundedStr1(self.db.NLapRemaining, 3)
-                self.db.FuelAddStr = iDDUhelper.roundedStr1(max(0, self.db.VFuelAdd), 3)
+                self.db.FuelLevelStr = convertString.roundedStr1(ir['FuelLevel'], 3)
+                self.db.FuelAvgConsStr = convertString.roundedStr2(max(0, self.db.FuelAvgConsumption))
+                self.db.FuelLastConsStr = convertString.roundedStr2(max(0, self.db.FuelLastCons))
+                self.db.FuelLapsStr = convertString.roundedStr1(self.db.NLapRemaining, 3)
+                self.db.FuelAddStr = convertString.roundedStr1(max(0, self.db.VFuelAdd), 3)
 
-                self.db.SpeedStr = iDDUhelper.roundedStr0(max(0.0, ir['Speed']*3.6))
+                self.db.SpeedStr = convertString.roundedStr0(max(0.0, ir['Speed'] * 3.6))
 
                 if self.db.LapLimit:
                     self.db.LapStr = str(max(0, ir['Lap'])) + '/' + str(self.db.RaceLaps)
-                    self.db.ToGoStr = iDDUhelper.roundedStr1(max(0, self.db.RaceLaps - ir['Lap'] + 1 - ir['LapDistPct']), 3)
+                    self.db.ToGoStr = convertString.roundedStr1(max(0, self.db.RaceLaps - ir['Lap'] + 1 - ir['LapDistPct']), 3)
 
                 else:
                     self.db.LapStr = str(max(0, ir['Lap']))
@@ -311,9 +313,9 @@ class RenderScreen(RenderMain):
 
                 if self.db.RX:
                     self.db.JokerStr = self.db.JokerStr
-                self.db.ElapsedStr = iDDUhelper.convertTimeHHMMSS(max(0, ir['SessionTime']))
-                self.db.RemainingStr = iDDUhelper.convertTimeHHMMSS(max(0, ir['SessionTimeRemain']))
-                self.db.EstStr = iDDUhelper.roundedStr1(self.db.NLapDriver, 3)
+                self.db.ElapsedStr = convertString.convertTimeHHMMSS(max(0, ir['SessionTime']))
+                self.db.RemainingStr = convertString.convertTimeHHMMSS(max(0, ir['SessionTimeRemain']))
+                self.db.EstStr = convertString.roundedStr1(self.db.NLapDriver, 3)
 
                 for i in range(0, len(self.frames)):
                     self.frames[i].setTextColour(self.db.textColour)
@@ -343,7 +345,7 @@ class RenderScreen(RenderMain):
                 self.CarOnMap(self.db.DriverCarIdx)
                 self.CarOnMap(0)
 
-                Label = fontTiny2.render(self.db.weatherStr + iDDUhelper.roundedStr0(self.db.WindVel*3.6) + ' km/h', True, self.db.textColour)
+                Label = fontTiny2.render(self.db.weatherStr + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
                 RenderMain.screen.blit(Label, (5, 1))
 
                 Label2 = fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
@@ -403,11 +405,11 @@ class RenderScreen(RenderMain):
                 if self.db.dcChangedItems[0] in self.db.car.dcList:
                     if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
                         if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
-                            valueStr = iDDUhelper.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                            valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
                         elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 1:
-                            valueStr = iDDUhelper.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
+                            valueStr = convertString.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
                         elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 2:
-                            valueStr = iDDUhelper.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
+                            valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                         else:
                             valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                         self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
@@ -417,11 +419,11 @@ class RenderScreen(RenderMain):
                     else:
                         if self.db.DDUControlList[self.db.dcChangedItems[0]][1]:
                             if self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 0:
-                                valueStr = iDDUhelper.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                                valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
                             elif self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 1:
-                                valueStr = iDDUhelper.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
+                                valueStr = convertString.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
                             elif self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 2:
-                                valueStr = iDDUhelper.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
+                                valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                             self.changeLabel(self.db.DDUControlList[self.db.dcChangedItems[0]][0], valueStr)
@@ -461,8 +463,8 @@ class RenderScreen(RenderMain):
 
         if not self.db.EngineWarnings & 0x10:
             self.warningLabel('PIT LIMITER OFF', red, white)
-        # self.db.SpeedStr = iDDUhelper.roundedStr0(max(0.0, ir['Speed'] * 3.6))
-        self.db.SpeedStr = iDDUhelper.roundedStr1(max(0.0, ir['Speed'] * 3.6), 3)
+        # self.db.SpeedStr = convertString.roundedStr0(max(0.0, ir['Speed'] * 3.6))
+        self.db.SpeedStr = convertString.roundedStr1(max(0.0, ir['Speed'] * 3.6), 3)
         # LabelSpeed = fontLarge.render(self.db.SpeedStr, True, self.db.textColour)
         # if ir['Gear'] > 0:
         #     self.db.GearStr = str(int(ir['Gear']))
@@ -472,8 +474,8 @@ class RenderScreen(RenderMain):
         #     self.db.GearStr = 'R'
         # self.db.GearStr = 'R'
         # LabelGear = fontLarge.render(self.db.GearStr, True, self.db.textColour)
-        self.db.sToPitStallStr = iDDUhelper.roundedStr0(self.db.sToPitStall)
-        # LabelsToPitStall = fontGear.render(iDDUhelper.roundedStr0(328), True, self.db.textColour)
+        self.db.sToPitStallStr = convertString.roundedStr0(self.db.sToPitStall)
+        # LabelsToPitStall = fontGear.render(convertString.roundedStr0(328), True, self.db.textColour)
 
         # RenderMain.screen.blit(LabelsToPitStall, (100, 47))
         # RenderMain.screen.blit(LabelSpeed, (100, 247))
@@ -515,7 +517,7 @@ class RenderScreen(RenderMain):
             RenderMain.screen.blit(gas_white, [696, 120])
 
         if not self.db.PitstopActive:
-            FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel, 3)
+            FuelStr = convertString.roundedStr1(self.db.PitSvFuel, 3)
             FueledPct = 0
         else:
             if self.db.PitSvFuel > 0:
@@ -523,7 +525,7 @@ class RenderScreen(RenderMain):
             else:
                 FueledPct = 0
 
-            FuelStr = iDDUhelper.roundedStr1(self.db.PitSvFuel - (self.db.FuelLevel - self.db.VFuelPitStopStart), 3)
+            FuelStr = convertString.roundedStr1(self.db.PitSvFuel - (self.db.FuelLevel - self.db.VFuelPitStopStart), 3)
 
         LabelFuel = fontMedium.render(FuelStr, True, self.db.textColour)
         LabelSize = fontMedium.size(FuelStr)

@@ -7,7 +7,7 @@ import csv
 import os
 import winsound
 from libs import Track
-from functionalities.UpshiftTone import getShiftRPM
+from SimRacingTools import getShiftRPM
 from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
 
 

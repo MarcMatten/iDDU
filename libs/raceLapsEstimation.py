@@ -2,7 +2,7 @@
 import threading
 import time
 import numpy as np
-from libs import iDDUhelper
+from functionalities.libs import maths, convertString
 
 
 class raceLapsEstimation(threading.Thread):
@@ -39,13 +39,13 @@ class raceLapsEstimation(threading.Thread):
                             CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
 
                             # use this to find winner
-                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(
+                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (maths.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / maths.meanTol(
                                 self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed - self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Lap']  # use this to find winner
 
                             # if my value lower than the winners, then + 1 lap
                             self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
-                                self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * iDDUhelper.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.05) + CarIdxtLapSum + (
-                                                                        iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)
+                                self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * maths.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.05) + CarIdxtLapSum + (
+                                                                        maths.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)
 
                         self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
@@ -56,7 +56,7 @@ class raceLapsEstimation(threading.Thread):
                         NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[self.db.DriverCarIdx]))
 
                         self.db.NLapWinnerRaceTime = (self.db.TFinishPredicted[self.db.WinnerCarIdx] - CarIdxtLapSum - (
-                            iDDUhelper.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / iDDUhelper.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
+                            maths.maxList(temp_pitstopsremain, 0) * self.db.PitStopDelta)) / maths.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
                                                                                                                      0.05) + NLapTimed  # use this to find winner
 
                         if self.db.WinnerCarIdx == self.db.DriverCarIdx:
@@ -70,15 +70,15 @@ class raceLapsEstimation(threading.Thread):
                             self.db.RaceLaps = self.db.UserRaceLaps
 
                     if self.db.NClasses > 1:
-                        temp = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF) + ' ('
+                        temp = 'SOF: ' + convertString.roundedStr0(self.db.SOF) + ' ('
                         keys = list(self.db.classStruct.keys())
                         for i in range(0, self.db.NClasses):
-                            temp = temp + keys[i] + ': ' + iDDUhelper.roundedStr0(self.db.classStruct[keys[i]]['SOF'])
+                            temp = temp + keys[i] + ': ' + convertString.roundedStr0(self.db.classStruct[keys[i]]['SOF'])
                             if i < self.db.NClasses - 1:
                                 temp = temp + ', '
                         self.db.SOFstr = temp + ')'
                     else:
-                        self.db.SOFstr = 'SOF: ' + iDDUhelper.roundedStr0(self.db.SOF)
+                        self.db.SOFstr = 'SOF: ' + convertString.roundedStr0(self.db.SOF)
 
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']:
                         self.db.classStruct = {}
