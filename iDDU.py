@@ -14,7 +14,7 @@ CarIdxtLap_temp = [[] * LapNumber] * CarNumber
 for x in range(0, CarNumber):
     CarIdxtLap_temp[x] = [nan] * LapNumber
 
-# data for initialisation of RTDB
+# data for initialisation of RTDB TODO: read these in from a file
 # helper variables
 helpData = {'done': False,
             'timeStr': time.strftime("%H:%M:%S", time.localtime()),

@@ -6,10 +6,9 @@ import threading
 import csv
 import os
 import winsound
-import json
-from libs import Track, Car
+from libs import Track
 from functionalities.UpshiftTone import getShiftRPM
-from SimRacingTools.FuelSavingOptimiser import FODS, rollOut
+from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
 
 
 class iDDUgui(threading.Thread):
@@ -853,7 +852,7 @@ class Gui(object):
         getShiftRPM.getShiftRPM(self.db.dir)
 
     def calcFuelSaving(self):
-        FODS.calc(self.db.dir)
+        fuelSavingOptimiser.optimise(self.db.dir)
 
     def calcRollOut(self):
         rollOut.getRollOutCurve(self.db.dir)
@@ -861,7 +860,7 @@ class Gui(object):
     def __del__(self):
         sys.stdout = sys.__stdout__
 
-    def closeEvent(self):
+    def closeEvent(self):  # TODO not working
         print("CloseEvent")
         time.sleep(10)
         sys.exit()
