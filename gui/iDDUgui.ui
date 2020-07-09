@@ -33,7 +33,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="tabGeneral">
     <attribute name="title">
@@ -1142,7 +1142,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="maxVisibleItems">
        <number>5</number>
@@ -1172,6 +1172,24 @@
         <string>User defined</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>from Car properties</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="pushButton_calcUpshiftRPM">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>100</y>
+        <width>201</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Calculate Upshift RPM from data</string>
+      </property>
      </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_10">
@@ -1281,7 +1299,7 @@
        <x>10</x>
        <y>10</y>
        <width>231</width>
-       <height>101</height>
+       <height>231</height>
       </rect>
      </property>
      <property name="title">
@@ -1308,7 +1326,7 @@
        <rect>
         <x>20</x>
         <y>60</y>
-        <width>141</width>
+        <width>191</width>
         <height>23</height>
        </rect>
       </property>
@@ -1316,12 +1334,38 @@
        <string>Load Configuration</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="calcFuelSavingButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>160</y>
+        <width>191</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Calculate fuel saving from data</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="calcRollOutButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>191</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Calculate roll-out curves</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>130</y>
+       <y>260</y>
        <width>221</width>
        <height>121</height>
       </rect>

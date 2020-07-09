@@ -1,3 +1,6 @@
 [submodule "functionalities"]
 	path = functionalities
 	url = https://github.com/MarcMatten/functionalities.git
+[submodule "SimRacingTools"]
+	path = SimRacingTools
+	url = https://github.com/MarcMatten/SimRacingTools.git

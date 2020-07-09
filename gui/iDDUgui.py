@@ -8,6 +8,8 @@ import os
 import winsound
 import json
 from libs import Track, Car
+from functionalities.UpshiftTone import getShiftRPM
+from SimRacingTools.FuelSavingOptimiser import FODS, rollOut
 
 
 class iDDUgui(threading.Thread):
@@ -372,8 +374,9 @@ class Gui(object):
         self.comboBox.addItem("")
         self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
         self.comboBox_FuelMethod.setCurrentIndex(self.db.NFuelSetMethod)
-
-
+        self.pushButton_calcUpshiftRPM = QtWidgets.QPushButton(self.groupBox_6)
+        self.pushButton_calcUpshiftRPM.setGeometry(QtCore.QRect(180, 100, 201, 23))
+        self.pushButton_calcUpshiftRPM.setObjectName("pushButton_calcUpshiftRPM")
         self.groupBox_10 = QtWidgets.QGroupBox(self.tabUpshiftTone)
         self.groupBox_10.setGeometry(QtCore.QRect(340, 150, 401, 91))
         self.groupBox_10.setObjectName("groupBox_10")
@@ -404,17 +407,23 @@ class Gui(object):
         self.tabFuelManagement = QtWidgets.QWidget()
         self.tabFuelManagement.setObjectName("tabFuelManagement")
         self.groupBox_9 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 101))
+        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 231))
         self.groupBox_9.setObjectName("groupBox_9")
         self.checkBox_EnableFuelManagement = QtWidgets.QCheckBox(self.groupBox_9)
         self.checkBox_EnableFuelManagement.setGeometry(QtCore.QRect(20, 30, 161, 17))
         self.checkBox_EnableFuelManagement.setChecked(self.db.BEnableLiftTones)
         self.checkBox_EnableFuelManagement.setObjectName("checkBox_EnableFuelManagement")
         self.openButton_2 = QtWidgets.QPushButton(self.groupBox_9)
-        self.openButton_2.setGeometry(QtCore.QRect(20, 60, 141, 23))
+        self.openButton_2.setGeometry(QtCore.QRect(20, 60, 191, 23))
         self.openButton_2.setObjectName("openButton_2")
+        self.calcFuelSavingButton = QtWidgets.QPushButton(self.groupBox_9)
+        self.calcFuelSavingButton.setGeometry(QtCore.QRect(20, 160, 191, 23))
+        self.calcFuelSavingButton.setObjectName("calcFuelSavingButton")
+        self.calcRollOutButton = QtWidgets.QPushButton(self.groupBox_9)
+        self.calcRollOutButton.setGeometry(QtCore.QRect(20, 110, 191, 23))
+        self.calcRollOutButton.setObjectName("calcRollOutButton")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_4.setGeometry(QtCore.QRect(10, 130, 221, 121))
+        self.groupBox_4.setGeometry(QtCore.QRect(10, 260, 221, 121))
         self.groupBox_4.setObjectName("groupBox_4")
         self.pushButton_testFuelTone = QtWidgets.QPushButton(self.groupBox_4)
         self.pushButton_testFuelTone.setGeometry(QtCore.QRect(60, 90, 91, 23))
@@ -520,6 +529,9 @@ class Gui(object):
         self.pushButton_testShiftTone.clicked.connect(self.testShiftTone)
         self.spinBox_ShiftToneFrequency.valueChanged.connect(self.ShiftBeep)
         self.spinBox_ShiftToneDuration.valueChanged.connect(self.ShiftBeep)
+        self.calcFuelSavingButton.clicked.connect(self.calcFuelSaving)
+        self.pushButton_calcUpshiftRPM.clicked.connect(self.calcUpshiftRPM)
+        self.calcRollOutButton.clicked.connect(self.calcRollOut)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -598,6 +610,8 @@ class Gui(object):
         self.comboBox.setItemText(2, _translate("iDDU", "iRacing Last RPM"))
         self.comboBox.setItemText(3, _translate("iDDU", "iRacing Blink RPM"))
         self.comboBox.setItemText(4, _translate("iDDU", "User defined"))
+        self.comboBox.setItemText(5, _translate("iDDU", "from Car properties"))
+        self.pushButton_calcUpshiftRPM.setText(_translate("iDDU", "Calculate Upshift RPM from data"))
         self.groupBox_10.setTitle(_translate("iDDU", "Audio Settings"))
         self.pushButton_testShiftTone.setText(_translate("iDDU", "Play Test Tone"))
         self.label_20.setText(_translate("iDDU", "Tone Frequency"))
@@ -606,6 +620,8 @@ class Gui(object):
         self.groupBox_9.setTitle(_translate("iDDU", "Configuration"))
         self.checkBox_EnableFuelManagement.setText(_translate("iDDU", "activate Fuel Management"))
         self.openButton_2.setText(_translate("iDDU", "Load Configuration"))
+        self.calcFuelSavingButton.setText(_translate("iDDU", "Calculate fuel saving from data"))
+        self.calcRollOutButton.setText(_translate("iDDU", "Calculate roll-out curves"))
         self.groupBox_4.setTitle(_translate("iDDU", "Audio Settings"))
         self.pushButton_testFuelTone.setText(_translate("iDDU", "Play Test Tone"))
         self.label_18.setText(_translate("iDDU", "Tone Frequency"))
@@ -832,6 +848,15 @@ class Gui(object):
     def loadFuelManagementSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './track', 'JSON(*.json)')
         self.db.loadFuelTgt(OpenFileName[0])
+
+    def calcUpshiftRPM(self):
+        getShiftRPM.getShiftRPM(self.db.dir)
+
+    def calcFuelSaving(self):
+        FODS.calc(self.db.dir)
+
+    def calcRollOut(self):
+        rollOut.getRollOutCurve(self.db.dir)
 
     def __del__(self):
         sys.stdout = sys.__stdout__
