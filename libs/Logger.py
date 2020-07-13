@@ -47,8 +47,8 @@ class Logger(threading.Thread):
 
         self.header = self.header + '\n'
 
-        if not os.path.exists("laplog/"):
-            os.mkdir("laplog/")
+        if not os.path.exists("data/laplog/"):
+            os.mkdir("data/laplog/")
 
     def run(self):
         while 1:
@@ -79,7 +79,7 @@ class Logger(threading.Thread):
                         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
                         fileName = date_time + '_Run_'"{:02d}".format(self.db.Run) + '.csv'
-                        path = self.db.dir + '/laplog/' + fileName
+                        path = self.db.dir + '/data/laplog/' + fileName
 
                         self.file = open(path, "a")
                         # write header

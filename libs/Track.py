@@ -33,7 +33,7 @@ class Track:
 
     def saveJson(self, *args):
         if len(args) == 1:
-            filepath = args[0] + '/track/' + self.name + '.json'
+            filepath = args[0] + '/data/track/' + self.name + '.json'
         elif len(args) == 2:
             filepath = args[0] + '/' + args[1] + '.json'
         else:

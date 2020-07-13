@@ -121,7 +121,7 @@ class Car:
             if args[0].endswith('.json'):
                 filepath = args[0]
             elif '/' in args[0]:
-                filepath = args[0] + '/car/' + self.name + '.json'
+                filepath = args[0] + '/data/car/' + self.name + '.json'
             else:
                 print('I dont know how to save the car as: ', args[0])
         elif len(args) == 2:

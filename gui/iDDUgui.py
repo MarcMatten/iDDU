@@ -41,7 +41,7 @@ class Gui(object):
             iDDU.move(0, 1080)
 
         self.setupUi(iDDU, db)
-        sys.stdout = Stream(newText=self.onUpdateText)
+        # change console output to iDDU print window
         sys.stderr = Stream(newText=self.onUpdateText)
         iDDU.show()
         sys.exit(app.exec_())
@@ -54,7 +54,7 @@ class Gui(object):
         self.iDDU.setObjectName("iDDU")
         self.iDDU.resize(784, 441)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(self.db.dir + "/gui/iRacing_Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(self.db.dir + "/files/gui/iRacing_Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iDDU.setWindowIcon(icon)
 
         self.tabWidget = QtWidgets.QTabWidget(iDDU)
@@ -709,7 +709,7 @@ class Gui(object):
 
     def saveShiftToneSettings(self):
 
-        SaveFileName = QFileDialog.getSaveFileName(self.iDDU, 'Save Shift Tone File', './shiftTone', 'CSV(*.csv)')
+        SaveFileName = QFileDialog.getSaveFileName(self.iDDU, 'Save Shift Tone File', './data/shiftTone', 'CSV(*.csv)')
 
         with open(SaveFileName[0], 'w', newline='') as f:
             thewriter = csv.writer(f)
@@ -719,7 +719,7 @@ class Gui(object):
         print(self.db.timeStr + ': Saved Shift Tone settings to: ' + SaveFileName[0])
 
     def loadShiftToneSettings(self):
-        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Shift Tone File', './shiftTone', 'CSV(*.csv)')
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Shift Tone File', './data/shiftTone', 'CSV(*.csv)')
         i = 0
         UserShiftRPM = [0, 0, 0, 0, 0, 0, 0]
         UserShiftFlag = [0, 0, 0, 0, 0, 0, 0]
@@ -759,7 +759,7 @@ class Gui(object):
         print(self.db.timeStr + ': Loaded Shift Tone settings from: ' + OpenFileName[0])
 
     def loadRTDBSnapshot(self):
-        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './snapshots', 'JSON(*.json)')
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/snapshots', 'JSON(*.json)')
         OpenFileName = OpenFileName[0].split('/')
         OpenFileName = OpenFileName[-1]
         OpenFileName = OpenFileName.split('.')
@@ -786,7 +786,7 @@ class Gui(object):
         self.retranslateUi(self.iDDU)
 
     def loadTrack(self):
-        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './track', 'JSON(*.json)')
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/track', 'JSON(*.json)')
         NDDUPageTemp = self.db.NDDUPage
         BResetScreen = False
         if self.db.NDDUPage == 2:
@@ -845,7 +845,7 @@ class Gui(object):
         self.db.BEnableLiftTones = self.checkBox_EnableFuelManagement.isChecked()
 
     def loadFuelManagementSettings(self):
-        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './track', 'JSON(*.json)')
+        OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './data/fuelSaving', 'JSON(*.json)')
         self.db.loadFuelTgt(OpenFileName[0])
 
     def calcUpshiftRPM(self):

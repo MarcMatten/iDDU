@@ -70,7 +70,7 @@ class IDDUCalc(threading.Thread):
         self.getCarFiles()
         self.loadCar('default')
 
-        self.db.loadFuelTgt('track/FuelTGTLiftPoints.json')
+        self.db.loadFuelTgt('data/fuelSaving/default.json')
         self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
 
     def run(self):
@@ -833,7 +833,7 @@ class IDDUCalc(threading.Thread):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')
 
         self.db.track = Track.Track(name)
-        self.db.track.loadJson("track/" + name + '.json')
+        self.db.track.loadJson("data/track/" + name + '.json')
 
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
@@ -841,7 +841,7 @@ class IDDUCalc(threading.Thread):
         print(self.db.timeStr + ':\tLoading car: ' + r"car/" + name + '.json')
 
         self.db.car = Car.Car(name)
-        self.db.car.loadJson("car/" + name + '.json')
+        self.db.car.loadJson("data/car/" + name + '.json')
 
         self.db.queryData.extend(list(self.db.car.dcList.keys()))
 
@@ -852,7 +852,7 @@ class IDDUCalc(threading.Thread):
     def getTrackFiles(self):
         print(self.db.timeStr + ':\tCollecting Track files...')
         self.dir = os.getcwd()
-        self.trackdir = self.dir + r"\track"
+        self.trackdir = self.dir + r"\data\track"
         self.trackList = []
 
         # get list of trackfiles
@@ -864,7 +864,7 @@ class IDDUCalc(threading.Thread):
     def getTrackFiles2(self):
         print(self.db.timeStr + ':\tCollecting Track files...')
         self.dir = os.getcwd()
-        self.trackdir = self.dir + r"\track"
+        self.trackdir = self.dir + r"\data\track"
         self.trackList = []
 
         # get list of trackfiles
@@ -876,7 +876,7 @@ class IDDUCalc(threading.Thread):
     def getCarFiles(self):
         print(self.db.timeStr + ':\tCollecting Car files...')
         self.dir = os.getcwd()
-        self.carDir = self.dir + r"\car"
+        self.carDir = self.dir + r"\data\car"
         self.carList = []
 
         # get list of trackfiles
@@ -907,7 +907,7 @@ class IDDUCalc(threading.Thread):
             date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
             LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
-            f = open('laplog/' + LapStr, 'x')
+            f = open('data/laplog/' + LapStr, 'x')
             f.write('Lap = ' + repr(self.db.Lap) + '\n')
             f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
             f.write('RaceLaps = ' + repr(self.db.RaceLaps) + '\n')
@@ -1027,7 +1027,7 @@ class IDDUCalc(threading.Thread):
             self.db.dist = self.db.track.dist
 
             print(self.db.timeStr + ':\tTrack has been successfully created')
-            print(self.db.timeStr + ':\tSaved track as: ' + r"track/" + self.db.track.name + ".json")
+            print(self.db.timeStr + ':\tSaved track as: ' + r"data/track/" + self.db.track.name + ".json")
 
         if BRecordtLap:
             self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.dist, self.db.track.dist)
@@ -1035,7 +1035,7 @@ class IDDUCalc(threading.Thread):
             self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 
             print(self.db.timeStr + ':\tLap time has been recorded successfully!')
-            print(self.db.timeStr + ':\tSaved car as: ' + r"car/" + self.db.car.name + ".json")
+            print(self.db.timeStr + ':\tSaved car as: ' + r"data/car/" + self.db.car.name + ".json")
 
         self.BCreateTrack = False
         self.BRecordtLap = False

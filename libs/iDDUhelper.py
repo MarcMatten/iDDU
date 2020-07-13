@@ -1,4 +1,4 @@
-def getData(ir, L):
+def getData(ir, L):  # TODO: is this used anywhere?
     data = {}
 
     for i in range(0, len(L)):
