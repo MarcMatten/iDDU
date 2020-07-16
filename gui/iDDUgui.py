@@ -775,7 +775,7 @@ class Gui(object):
         self.db.track.rotate(5/180*3.142)
 
     def saveTrack(self):
-        self.db.track.saveJson(self.db.dir)
+        self.db.track.save(self.db.dir)
 
     def enableLogger(self):
         self.db.BLoggerActive = self.checkBox_BEnableLogger.isChecked()
@@ -795,7 +795,7 @@ class Gui(object):
             time.sleep(0.2)
 
         self.db.track = Track.Track('default')
-        self.db.track.loadJson(OpenFileName[0])
+        self.db.track.load(OpenFileName[0])
 
         if BResetScreen:
             self.db.NDDUPage = NDDUPageTemp

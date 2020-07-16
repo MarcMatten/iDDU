@@ -1,19 +1,7 @@
-import json
 import numpy as np
 import time
 import irsdk
-
-
-class NumpyArrayEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        else:
-            return super(NumpyArrayEncoder, self).default(obj)
+from functionalities.libs import importExport
 
 
 class Car:
@@ -116,7 +104,10 @@ class Car:
     def addLapTime(self, trackName, tLap, dist, distTrack):
         self.tLap[trackName] = np.interp(distTrack, dist, tLap).tolist()
 
-    def saveJson(self, *args):
+    def save(self, *args):
+
+        filepath = ''
+
         if len(args) == 1:
             if args[0].endswith('.json'):
                 filepath = args[0]
@@ -130,20 +121,21 @@ class Car:
             print('Invalid number if arguments. Max 2 arguments accepted!')
             return
 
+        # get list of track object properties
         variables = list(self.__dict__.keys())
+
+        # create dict of track object properties
         data = {}
 
         for i in range(0, len(variables)):
             data[variables[i]] = self.__dict__[variables[i]]
 
-        with open(filepath, 'w') as outfile:
-            json.dump(data, outfile, indent=4, sort_keys=True, cls=NumpyArrayEncoder)
+        importExport.saveJson(data, filepath)
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved car ' + filepath)
 
-    def loadJson(self, path):
-        with open(path) as jsonFile:
-            data = json.loads(jsonFile.read())
+    def load(self, path):
+        data = importExport.loadJson(path)
 
         temp = list(data.items())
         for i in range(0, len(data)):

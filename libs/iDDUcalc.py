@@ -14,7 +14,11 @@ from libs import Track, Car
 nan = float('nan')
 tLiftTones = [1, 0.5, 0]
 
+
+# TODO: add more comments
+# TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
 class IDDUCalc(threading.Thread):
+    # TODO: can this move on level up?
     white = (255, 255, 255)
     red = (255, 0, 0)
     green = (0, 255, 0)
@@ -51,8 +55,8 @@ class IDDUCalc(threading.Thread):
 
         self.ir = irsdk.IRSDK()
 
-        self.DRSList = ['formularenault35', 'mclarenmp430']
-        self.P2PList = ['dallaradw12', 'dallarair18']
+        self.DRSList = ['formularenault35', 'mclarenmp430']  # TODO: still required?
+        self.P2PList = ['dallaradw12', 'dallarair18']  # TODO: still required?
 
         self.dir = None
         self.trackdir = None
@@ -564,7 +568,7 @@ class IDDUCalc(threading.Thread):
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
-            except:
+            except:  # TODO: find a way to handle this
                 print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc')
                 self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc'
                 if not self.BError:
@@ -807,7 +811,7 @@ class IDDUCalc(threading.Thread):
 
         self.db.SubSessionIDOld = self.db.WeekendInfo['SubSessionID']
 
-    def loadTrack(self, name):
+    def loadTrack(self, name):  # TODO: which one is used?
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.csv')
 
         self.db.__setattr__('map', [])
@@ -833,7 +837,7 @@ class IDDUCalc(threading.Thread):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')
 
         self.db.track = Track.Track(name)
-        self.db.track.loadJson("data/track/" + name + '.json')
+        self.db.track.load("data/track/" + name + '.json')
 
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
@@ -841,7 +845,7 @@ class IDDUCalc(threading.Thread):
         print(self.db.timeStr + ':\tLoading car: ' + r"car/" + name + '.json')
 
         self.db.car = Car.Car(name)
-        self.db.car.loadJson("data/car/" + name + '.json')
+        self.db.car.load("data/car/" + name + '.json')
 
         self.db.queryData.extend(list(self.db.car.dcList.keys()))
 
@@ -855,7 +859,7 @@ class IDDUCalc(threading.Thread):
         self.trackdir = self.dir + r"\data\track"
         self.trackList = []
 
-        # get list of trackfiles
+        # get list of trackfiles  # TODO: make this a helper functions, used in various places
         os.chdir(self.trackdir)
         for file in glob.glob("*.csv"):
             self.trackList.append(file)
@@ -867,7 +871,7 @@ class IDDUCalc(threading.Thread):
         self.trackdir = self.dir + r"\data\track"
         self.trackList = []
 
-        # get list of trackfiles
+        # get list of trackfiles  # TODO: make this a helper functions, used in various places
         os.chdir(self.trackdir)
         for file in glob.glob("*.json"):
             self.trackList.append(file)
@@ -879,7 +883,7 @@ class IDDUCalc(threading.Thread):
         self.carDir = self.dir + r"\data\car"
         self.carList = []
 
-        # get list of trackfiles
+        # get list of trackfiles  # TODO: make this a helper functions, used in various places
         os.chdir(self.carDir)
         for file in glob.glob("*.json"):
             self.carList.append(file)
@@ -902,12 +906,12 @@ class IDDUCalc(threading.Thread):
 
         self.db.LastFuelLevel = self.db.FuelLevel
 
-        if self.db.BEnableLapLogging:
+        if self.db.BEnableLapLogging:  # TODO: still required?
             now = datetime.now()
             date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
             LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
-            f = open('data/laplog/' + LapStr, 'x')
+            f = open('data/laplog/' + LapStr, 'x')  # TODO: better sturcture of this
             f.write('Lap = ' + repr(self.db.Lap) + '\n')
             f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
             f.write('RaceLaps = ' + repr(self.db.RaceLaps) + '\n')
@@ -985,7 +989,7 @@ class IDDUCalc(threading.Thread):
         # self.time = np.append(self.time, self.db.LapLastLapTime)
         # self.dist = np.append(self.dist, [100])
 
-        if BCreateTrack:
+        if BCreateTrack:  # TODO: same code as in fuelSaving Optimiser?
             self.dt = np.diff(self.time)
             self.time = self.time - self.time[0]
             self.time[-1] = self.db.LapLastLapTime

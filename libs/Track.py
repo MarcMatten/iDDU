@@ -1,7 +1,6 @@
 import csv
-from functionalities.libs import maths
+from functionalities.libs import maths, importExport
 import matplotlib.pyplot as plt
-import json
 import numpy as np
 import time
 
@@ -31,7 +30,7 @@ class Track:
         self.sample()
         self.createMap()
 
-    def saveJson(self, *args):
+    def save(self, *args):
         if len(args) == 1:
             filepath = args[0] + '/data/track/' + self.name + '.json'
         elif len(args) == 2:
@@ -40,9 +39,11 @@ class Track:
             print('Invalid number if arguments. Max 2 arguments accepted!')
             return
 
+        # get list of track object properties
         variables = list(self.__dict__.keys())
         variables.remove('map')
 
+        # create dict of track object properties
         data = {}
 
         for i in range(0, len(variables)):
@@ -51,13 +52,12 @@ class Track:
             else:
                 data[variables[i]] = self.__dict__[variables[i]]
 
-        with open(filepath, 'w') as outfile:
-            json.dump(data, outfile, indent=4, sort_keys=True)
+        importExport.saveJson(data, filepath)
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved track ' + filepath)
 
 
-    def loadFromCSV(self, path):
+    def loadFromCSV(self, path):  # TODO: no longer used, put this in a library
 
         x = []
         y = []
@@ -123,9 +123,8 @@ class Track:
         self.dist = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.dist, self.dist)
         self.createMap()
 
-    def loadJson(self, path):
-        with open(path) as jsonFile:
-            data = json.loads(jsonFile.read())
+    def load(self, path):
+        data = importExport.loadJson(path)
 
         temp = list(data.items())
         for i in range(0, len(data)):
