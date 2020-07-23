@@ -711,6 +711,10 @@ class Gui(object):
 
         SaveFileName = QFileDialog.getSaveFileName(self.iDDU, 'Save Shift Tone File', './data/shiftTone', 'CSV(*.csv)')
 
+        if SaveFileName == ('', ''):
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to CSV file provided...aborting!')
+            return
+
         with open(SaveFileName[0], 'w', newline='') as f:
             thewriter = csv.writer(f)
             for l in range(0, 7):
@@ -720,6 +724,11 @@ class Gui(object):
 
     def loadShiftToneSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Shift Tone File', './data/shiftTone', 'CSV(*.csv)')
+
+        if OpenFileName == ('', ''):
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to CSV file provided...aborting!')
+            return
+
         i = 0
         UserShiftRPM = [0, 0, 0, 0, 0, 0, 0]
         UserShiftFlag = [0, 0, 0, 0, 0, 0, 0]
@@ -760,6 +769,11 @@ class Gui(object):
 
     def loadRTDBSnapshot(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/snapshots', 'JSON(*.json)')
+
+        if not OpenFileName:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to RTDB snapshot file provided...aborting!')
+            return
+
         OpenFileName = OpenFileName[0].split('/')
         OpenFileName = OpenFileName[-1]
         OpenFileName = OpenFileName.split('.')
@@ -787,6 +801,11 @@ class Gui(object):
 
     def loadTrack(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/track', 'JSON(*.json)')
+
+        if not OpenFileName:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to track file provided...aborting!')
+            return
+
         NDDUPageTemp = self.db.NDDUPage
         BResetScreen = False
         if self.db.NDDUPage == 2:
@@ -846,6 +865,11 @@ class Gui(object):
 
     def loadFuelManagementSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './data/fuelSaving', 'JSON(*.json)')
+
+        if not OpenFileName:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to fuel saving file provided...aborting!')
+            return
+
         self.db.loadFuelTgt(OpenFileName[0])
 
     def calcUpshiftRPM(self):
