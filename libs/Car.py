@@ -24,19 +24,24 @@ class Car:
             'vCarShiftOptimal': [99999]*7,
             'vCarShiftTarget': [99999]*7,
             'BShiftTone': [False]*7,
-            'NGear': [1, 2, 3, 4, 5, 6, 7]
+            'NGear': [1, 2, 3, 4, 5, 6, 7],
+            'SetupName': 'SetupName',
+            'CarSetup': {}
         }
         self.Coasting = {
             'gLongCoastPolyFit': [],
             'QFuelCoastPolyFit':  [],
-            'NGear': []
+            'NGear': [],
+            'SetupName': 'SetupName',
+            'CarSetup': {}
         }
 
-    def createCar(self, db):
-        self.name = db.DriverInfo['Drivers'][db.DriverCarIdx]['CarScreenNameShort']
+    def createCar(self, db, var_headers_names=None):
+        DriverCarIdx = db.DriverInfo['DriverCarIdx']
+        self.name = db.DriverInfo['Drivers'][DriverCarIdx]['CarScreenNameShort']
         self.iRShiftRPM = [db.DriverInfo['DriverCarSLFirstRPM'], db.DriverInfo['DriverCarSLShiftRPM'], db.DriverInfo['DriverCarSLLastRPM'], db.DriverInfo['DriverCarSLBlinkRPM']]
 
-        DRSList = ['formularenault35',
+        DRSList = ['formularenault35',  # TODO: shouldn't be here
                    'mclarenmp430']
 
         if any(self.name in s for s in DRSList):
@@ -44,7 +49,7 @@ class Car:
         else:
             self.BDRS = False
 
-        P2PList = ['dallaradw12',
+        P2PList = ['dallaradw12',  # TODO: shouldn't be here
                    'dallarair18']
 
         if any(self.name in s for s in P2PList):
@@ -52,32 +57,38 @@ class Car:
         else:
             self.BP2P = False
 
-        ir = irsdk.IRSDK()
-
-        dcIgnoreList =['dcHeadlightFlash',
+        dcIgnoreList =['dcHeadlightFlash',  # TODO: shouldn't be here
                        'dcPitSpeedLimiterToggle',
                        'dcStarter']
 
 
-        dcNotInt =['dcBrakeBias']
+        dcNotInt =['dcBrakeBias']  # TODO: shouldn't be here
 
-        if ir.startup():
-            keys = ir.var_headers_names
+        keys = []
+        if var_headers_names is None:
 
-            for i in range(0, len(keys)):
-                temp = keys[i]
-                if temp.startswith('dc'):
-                    if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
-                        if not keys[i] is None:
-                            if any(keys[i] in s for s in dcIgnoreList):
-                                self.dcList[keys[i]] = (keys[i].split('dc')[1], False, 0)
+            ir = irsdk.IRSDK()
+
+            if ir.startup():
+                keys = ir.var_headers_names
+
+            ir.shutdown()
+
+        else:
+            keys = var_headers_names
+
+        for i in range(0, len(keys)):
+            temp = keys[i]
+            if temp.startswith('dc'):
+                if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
+                    if not keys[i] is None:
+                        if any(keys[i] in s for s in dcIgnoreList):
+                            self.dcList[keys[i]] = (keys[i].split('dc')[1], False, 0)
+                        else:
+                            if any(keys[i] in s for s in dcNotInt):
+                                self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 1)
                             else:
-                                if any(keys[i] in s for s in dcNotInt):
-                                    self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 1)
-                                else:
-                                    self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 0)
-
-        ir.shutdown()
+                                self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 0)
 
         self.setUserShiftRPM(db)
 
@@ -88,7 +99,7 @@ class Car:
         self.UpshiftStrategy = db.UpshiftStrategy
         self.UserShiftFlag = db.UserShiftFlag
 
-    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear):
+    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup):
         for i in range(0, len(NGear)):
             self.UpshiftSettings['nMotorShiftOptimal'][i] = nMotorShiftOptimal[i]
             self.UpshiftSettings['vCarShiftOptimal'][i] = vCarShiftOptimal[i]
@@ -96,10 +107,15 @@ class Car:
             self.UpshiftSettings['vCarShiftTarget'][i] = vCarShiftTarget[i]
             self.UpshiftSettings['BShiftTone'][i] = True
 
-    def setCoastingData(self, gLongPolyFit, QFuelPolyFit, NGear):
+        self.UpshiftSettings['SetupName'] = SetupName
+        self.UpshiftSettings['CarSetup'] = CarSetup
+
+    def setCoastingData(self, gLongPolyFit, QFuelPolyFit, NGear, SetupName, CarSetup):
         self.Coasting['gLongCoastPolyFit'] = gLongPolyFit
         self.Coasting['QFuelCoastPolyFit'] = QFuelPolyFit
         self.Coasting['NGear'] = NGear
+        self.Coasting['SetupName'] = SetupName
+        self.Coasting['CarSetup'] = CarSetup
 
     def addLapTime(self, trackName, tLap, dist, distTrack):
         self.tLap[trackName] = np.interp(distTrack, dist, tLap).tolist()

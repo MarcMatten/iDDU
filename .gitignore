@@ -12,3 +12,6 @@
 /track/writeTest-2019-03-27_19-53-06-949
 /build
 /dist
+/libs/__pycache__/*.pyc
+/data/fuelSaving/Monza Full - Ford GT GTE
+/gui/__pycache__/*.pyc
