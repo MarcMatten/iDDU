@@ -1,5 +1,3 @@
-import csv
-import glob
 import os
 import threading
 import time
@@ -8,7 +6,7 @@ from datetime import datetime
 import irsdk
 import numpy as np
 
-from functionalities.libs import maths, convertString
+from functionalities.libs import maths, convertString, importExport
 from libs import Track, Car
 
 nan = float('nan')
@@ -58,20 +56,15 @@ class IDDUCalc(threading.Thread):
         self.DRSList = ['formularenault35', 'mclarenmp430']  # TODO: still required?
         self.P2PList = ['dallaradw12', 'dallarair18']  # TODO: still required?
 
-        self.dir = None
-        self.trackdir = None
-        self.trackList = None
-        self.carDir = None
-        self.carList = None
+        self.dir = os.getcwd()
+        self.trackList = importExport.getFiles(self.dir + '/data/track', 'json')
+        self.carList = importExport.getFiles(self.dir + '/data/car', 'json')
 
         self.x = None
         self.y = None
         self.snapshot = False
 
-        self.getTrackFiles2()
-        self.loadTrack2('default')
-
-        self.getCarFiles()
+        self.loadTrack('default')
         self.loadCar('default')
 
         self.db.loadFuelTgt('data/fuelSaving/default.json')
@@ -579,7 +572,8 @@ class IDDUCalc(threading.Thread):
         print(self.db.timeStr + ': Initialising Session ==========================')
         time.sleep(3)
         print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
-        self.getTrackFiles2()
+        self.trackList = importExport.getFiles(self.dir + '/data/track', 'json')
+        self.carList = importExport.getFiles(self.dir + '/data/car', 'json')
         self.db.init = True
         self.db.BResults = False
         self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
@@ -606,10 +600,10 @@ class IDDUCalc(threading.Thread):
 
             # track
             if self.db.WeekendInfo['TrackName'] + '.json' in self.trackList:
-                self.loadTrack2(self.db.WeekendInfo['TrackName'])
+                self.loadTrack(self.db.WeekendInfo['TrackName'])
                 self.BCreateTrack = False
             else:
-                self.loadTrack2('default')
+                self.loadTrack('default')
                 self.BCreateTrack = True
                 self.BRecordtLap = True
                 print(self.db.timeStr + ':\tCreating Track')
@@ -627,7 +621,7 @@ class IDDUCalc(threading.Thread):
                 self.loadCar('default')
                 self.db.car = Car.Car(carName)
                 self.db.car.createCar(self.db)
-                self.db.car.saveJson(self.db.dir)
+                self.db.car.save(self.db.dir)
                 self.BRecordtLap = True
 
                 self.db.queryData.extend(list(self.db.car.dcList.keys()))
@@ -811,29 +805,7 @@ class IDDUCalc(threading.Thread):
 
         self.db.SubSessionIDOld = self.db.WeekendInfo['SubSessionID']
 
-    def loadTrack(self, name):  # TODO: which one is used?
-        print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.csv')
-
-        self.db.__setattr__('map', [])
-        self.db.__setattr__('x', [])
-        self.db.__setattr__('y', [])
-        self.db.__setattr__('dist', [])
-        self.db.__setattr__('time', [])
-
-        with open(r"track/" + name + '.csv') as csv_file:
-            csv_reader = csv.reader(csv_file)
-            for line in csv_reader:
-                self.db.dist.append(float(line[0]))
-                self.db.x.append(float(line[1]))
-                self.db.y.append(float(line[2]))
-                self.db.time.append(float(line[3]))
-
-                self.db.map.append([float(line[1]), float(line[2])])
-
-        self.db.aOffsetTrack = maths.angleVertical(self.db.x[5] - self.db.x[0], self.db.y[5] - self.db.y[0])
-        print(self.db.timeStr + ':\tTrack has been loaded successfully.')
-
-    def loadTrack2(self, name):
+    def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')
 
         self.db.track = Track.Track(name)
@@ -852,42 +824,6 @@ class IDDUCalc(threading.Thread):
         time.sleep(0.2)
 
         print(self.db.timeStr + ':\tCar has been loaded successfully.')
-
-    def getTrackFiles(self):
-        print(self.db.timeStr + ':\tCollecting Track files...')
-        self.dir = os.getcwd()
-        self.trackdir = self.dir + r"\data\track"
-        self.trackList = []
-
-        # get list of trackfiles  # TODO: make this a helper functions, used in various places
-        os.chdir(self.trackdir)
-        for file in glob.glob("*.csv"):
-            self.trackList.append(file)
-        os.chdir(self.dir)
-
-    def getTrackFiles2(self):
-        print(self.db.timeStr + ':\tCollecting Track files...')
-        self.dir = os.getcwd()
-        self.trackdir = self.dir + r"\data\track"
-        self.trackList = []
-
-        # get list of trackfiles  # TODO: make this a helper functions, used in various places
-        os.chdir(self.trackdir)
-        for file in glob.glob("*.json"):
-            self.trackList.append(file)
-        os.chdir(self.dir)
-
-    def getCarFiles(self):
-        print(self.db.timeStr + ':\tCollecting Car files...')
-        self.dir = os.getcwd()
-        self.carDir = self.dir + r"\data\car"
-        self.carList = []
-
-        # get list of trackfiles  # TODO: make this a helper functions, used in various places
-        os.chdir(self.carDir)
-        for file in glob.glob("*.json"):
-            self.carList.append(file)
-        os.chdir(self.dir)
 
     def newLap(self):
         # Lap Counting
@@ -1026,7 +962,7 @@ class IDDUCalc(threading.Thread):
             aNorth = self.YawNorth[0]
 
             self.db.track.createTrack(self.x, self.y, self.dist, aNorth, self.db.TrackLength*1000)
-            self.db.track.saveJson(self.db.dir)
+            self.db.track.save(self.db.dir)
 
             self.db.dist = self.db.track.dist
 
