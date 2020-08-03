@@ -42,6 +42,7 @@ class Gui(object):
 
         self.setupUi(iDDU, db)
         # change console output to iDDU print window
+        sys.stdout = Stream(newText=self.onUpdateText)
         sys.stderr = Stream(newText=self.onUpdateText)
         iDDU.show()
         sys.exit(app.exec_())
