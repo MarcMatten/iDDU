@@ -39,11 +39,11 @@ class Gui(object):
             iDDU.move(-1920, 0)
         else:
             iDDU.move(0, 1080)
+            # change console output to iDDU print window
+            sys.stdout = Stream(newText=self.onUpdateText)
+            sys.stderr = Stream(newText=self.onUpdateText)
 
         self.setupUi(iDDU, db)
-        # change console output to iDDU print window
-        sys.stdout = Stream(newText=self.onUpdateText)
-        sys.stderr = Stream(newText=self.onUpdateText)
         iDDU.show()
         sys.exit(app.exec_())
 
