@@ -1,6 +1,8 @@
 import threading
 import irsdk
 import pygame
+import pyvjoy
+import time
 
 class IDDUItem:
     db = 0
@@ -25,6 +27,8 @@ class IDDUItem:
     LMP2 = (51, 206, 255)
 
     ir = irsdk.IRSDK()
+
+    vjoy = pyvjoy.VJoyDevice(1)
 
     def __init__(self):
         pass
@@ -52,6 +56,11 @@ class IDDUItem:
             print(self.db.timeStr + ':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
         else:
             print(self.db.timeStr + ':\tFANATEC ClubSport Wheel Base not found!')
+
+    def pressButton(self, ID, t):
+        self.vjoy.set_button(ID, 1)
+        time.sleep(t)
+        self.vjoy.set_button(ID, 0)
 
 class IDDUThread(IDDUItem, threading.Thread):
     def __init__(self, rate):

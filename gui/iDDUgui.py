@@ -8,17 +8,16 @@ import winsound
 from libs import Track
 from SimRacingTools import getShiftRPM
 from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
-from libs.IDDU import IDDUThread
+from libs.IDDU import IDDUThread, IDDUItem
 
 
 class iDDUGUIThread(IDDUThread):
+
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
 
     def run(self):
-        while 1:
-            myGui = Gui(self.db)
-            myGui.start(self.db)
+        Gui()
 
 
 class Stream(QtCore.QObject):
@@ -28,8 +27,9 @@ class Stream(QtCore.QObject):
         self.newText.emit(str(text))
 
 
-class Gui(object):
-    def __init__(self, db):
+class Gui(IDDUItem):
+    def __init__(self):
+        IDDUItem.__init__(self)
         import sys
         app = QtWidgets.QApplication(sys.argv)
         iDDU = QtWidgets.QWidget()
@@ -42,12 +42,11 @@ class Gui(object):
             sys.stdout = Stream(newText=self.onUpdateText)
             sys.stderr = Stream(newText=self.onUpdateText)
 
-        self.setupUi(iDDU, db)
+        self.setupUi(iDDU)
         iDDU.show()
         sys.exit(app.exec_())
 
-    def setupUi(self, iDDU, db):
-        self.db = db
+    def setupUi(self, iDDU):
         self.iDDU = iDDU
         # iDDU.setObjectName("iDDU")
         # iDDU.resize(784, 441)
