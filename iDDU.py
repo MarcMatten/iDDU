@@ -404,6 +404,8 @@ time.sleep(0.1)
 loggerThread.start()
 time.sleep(0.1)
 
+iRRender = None
+
 # loop to run programme
 while not myRTDB.done:
     if myRTDB.DDUrunning:
@@ -412,7 +414,7 @@ while not myRTDB.done:
             myRTDB.StartDDU = False
     elif myRTDB.StartDDU:
         print(myRTDB.timeStr + ': Starting DDU')
-        iRRender = iDDURender.RenderScreen(myRTDB)
+        iRRender = iDDURender.RenderScreen()
         myRTDB.DDUrunning = True
 
     if myRTDB.StopDDU:
