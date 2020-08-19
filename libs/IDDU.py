@@ -1,7 +1,20 @@
 import threading
+import irsdk
 
 class IDDUItem:
     db = 0
+
+    white = (255, 255, 255)
+    red = (255, 0, 0)
+    green = (0, 255, 0)
+    blue = (0, 0, 255)
+    yellow = (255, 255, 0)
+    orange = (255, 133, 13)
+    grey = (141, 141, 141)
+    black = (0, 0, 0)
+    cyan = (0, 255, 255)
+
+    ir = irsdk.IRSDK()
 
     def __init__(self):
         pass
@@ -15,16 +28,3 @@ class IDDUThread(IDDUItem, threading.Thread):
         IDDUItem.__init__(self)
         threading.Thread.__init__(self)
         self.rate = rate
-
-
-# class IDDU(IDDUThread):
-#     mapDDU = {}
-#     mapIR = {}
-#     NCurrentMapDDU = 0
-#     NCurrentMapIR = 0
-#     NMultiState = 0
-#     tMultiChange = 0
-#
-#     def __init__(self, RTDB, rate):
-#         IDDUThread.__init__(self, rate)
-#         IDDUItem.setDB(RTDB)

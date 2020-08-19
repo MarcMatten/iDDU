@@ -1,5 +1,4 @@
 # import all required packages
-import threading
 import time
 import numpy as np
 from functionalities.libs import maths, convertString

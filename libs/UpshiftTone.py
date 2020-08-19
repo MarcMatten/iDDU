@@ -1,7 +1,5 @@
-import threading
 import time
 import winsound
-import irsdk
 from libs.IDDU import IDDUThread
 
 
@@ -18,7 +16,6 @@ class ShiftToneThread(IDDUThread):
         self.tBeep = 0
         self.BShiftTone = False
         self.oldGear = 0
-        self.ir = irsdk.IRSDK()
 
     def run(self):
         while 1:

@@ -1,4 +1,4 @@
-import os, threading
+import os
 import time
 from datetime import datetime
 from libs.IDDU import IDDUThread
