@@ -3,13 +3,12 @@ import threading
 import time
 import numpy as np
 from functionalities.libs import maths, convertString
+from libs.IDDU import IDDUThread
 
 
-class raceLapsEstimation(threading.Thread):
-    def __init__(self, RTDB, rate):
-        threading.Thread.__init__(self)
-        self.rate = rate
-        self.db = RTDB
+class RaceLapsEstimationThread(IDDUThread):
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
         self.snapshot = False
         self.BError = False
         print(self.db.timeStr + ': Starting raceLapsEstimation')

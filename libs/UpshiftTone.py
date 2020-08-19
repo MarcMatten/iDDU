@@ -2,13 +2,12 @@ import threading
 import time
 import winsound
 import irsdk
+from libs.IDDU import IDDUThread
 
 
-class UpShiftTone(threading.Thread):
-    def __init__(self, RTDB, rate):
-        threading.Thread.__init__(self)
-        self.rate = rate
-        self.db = RTDB
+class ShiftToneThread(IDDUThread):
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
         self.FirstRPM = 20000
         self.ShiftRPM = 20000
         self.LastRPM = 20000

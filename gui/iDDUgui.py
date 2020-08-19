@@ -9,12 +9,12 @@ import winsound
 from libs import Track
 from SimRacingTools import getShiftRPM
 from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
+from libs.IDDU import IDDUThread
 
 
-class iDDUgui(threading.Thread):
-    def __init__(self, RTDB):
-        threading.Thread.__init__(self)
-        self.db = RTDB
+class iDDUGUIThread(IDDUThread):
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
 
     def run(self):
         while 1:

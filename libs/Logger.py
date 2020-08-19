@@ -1,15 +1,15 @@
 import os, threading
 import time
 from datetime import datetime
+from libs.IDDU import IDDUThread
 
 
-class Logger(threading.Thread):
+class LoggerThread(IDDUThread):
     logging = False
     init = False
 
-    def __init__(self, db, rate):
-        threading.Thread.__init__(self)
-        self.db = db
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
         self.file = []
         self.rate = rate
         self.keys=['SessionTime',

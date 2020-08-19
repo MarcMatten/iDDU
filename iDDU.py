@@ -2,9 +2,10 @@
 import time
 import numpy as np
 from functionalities.RTDB import RTDB
-from gui.iDDUgui import iDDUgui
-from libs import iDDURender, iDDUcalc, raceLapsEstimation, Logger, UpshiftTone
+from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger
+from gui import iDDUgui
 import os
+
 
 nan = float('nan')
 CarNumber = 64
@@ -382,23 +383,25 @@ myRTDB.initialise(iRData, True)
 myRTDB.initialise(calcData, False)
 
 # initialise and start thread
-thread0 = iDDUcalc.IDDUCalc(myRTDB, 0.005)
-thread1 = RTDB.iRThread(myRTDB, 0.01)
-thread2 = UpshiftTone.UpShiftTone(myRTDB, 0.01)
-thread3 = iDDUgui(myRTDB)
-thread4 = raceLapsEstimation.raceLapsEstimation(myRTDB, 15)
-thread5 = Logger.Logger(myRTDB, 0.01)
-thread0.start()
+rtdbThread = RTDB.RTDBThread(0.01)
+rtdbThread.setDB(myRTDB)
+calcThread = iDDUcalc.IDDUCalcThread(0.005)
+shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
+guiThread = iDDUgui.iDDUGUIThread(0.01)
+raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
+loggerThread = Logger.LoggerThread(0.01)
+
+calcThread.start()
 time.sleep(0.1)
-thread1.start()
+rtdbThread.start()
 time.sleep(0.1)
-thread3.start()
+guiThread.start()
 time.sleep(0.1)
-thread2.start()
+shiftToneThread.start()
 time.sleep(0.1)
-thread4.start()
+raceLapsEstimationThread.start()
 time.sleep(0.1)
-thread5.start()
+loggerThread.start()
 time.sleep(0.1)
 
 # loop to run programme

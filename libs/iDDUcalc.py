@@ -8,6 +8,7 @@ import numpy as np
 
 from functionalities.libs import maths, convertString, importExport
 from libs import Track, Car
+from libs.IDDU import IDDUThread
 
 nan = float('nan')
 tLiftTones = [1, 0.5, 0]
@@ -15,7 +16,7 @@ tLiftTones = [1, 0.5, 0]
 
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
-class IDDUCalc(threading.Thread):
+class IDDUCalcThread(IDDUThread):
     # TODO: can this move on level up?
     white = (255, 255, 255)
     red = (255, 0, 0)
@@ -28,10 +29,8 @@ class IDDUCalc(threading.Thread):
     cyan = (0, 255, 255)
     BError = False
 
-    def __init__(self, db, rate):
-        threading.Thread.__init__(self)
-        self.db = db
-        self.rate = rate
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
 
         self.FlagCallTime = 0
         self.init = False
@@ -971,7 +970,7 @@ class IDDUCalc(threading.Thread):
 
         if BRecordtLap:
             self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.dist, self.db.track.dist)
-            self.db.car.saveJson(self.db.dir)
+            self.db.car.save(self.db.dir)
             self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 
             print(self.db.timeStr + ':\tLap time has been recorded successfully!')
