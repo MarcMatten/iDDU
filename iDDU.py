@@ -5,6 +5,7 @@ from functionalities.RTDB import RTDB
 from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger
 from gui import iDDUgui
 import os
+from functionalities.MultiSwitch import MultiSwitch
 
 
 nan = float('nan')
@@ -273,6 +274,7 @@ calcData = {'startUp': False,
             'dcTractionControlToggleChange': False,
             'dcABSChange': False,
             'dcBrakeBiasChange': False,
+            'dcTearOffVisor': 0,
             'BUpshiftToneInitRequest': False,
             'BNewLap': False,
             'CarIdxtLap_temp': CarIdxtLap_temp,
@@ -365,22 +367,48 @@ calcData = {'startUp': False,
             'NNextLiftPoint': 0,
             'BEnableLiftTones': False,
             'tNextLiftPoint': 0,
-            'DDUControlList':
-                {
-                'VFuelTgt': ['VFuelTgt', True, 2],
-                'VFuelTgtOffset': ['VFuelTgtOffset', True, 2]
-                },
+            # 'DDUControlList': # DisplayName, show, decimals, initial value, min value, max valuem steps
+            #     {
+            #     'VFuelTgt': ['VFuelTgt', True, 2],
+            #     'VFuelTgtOffset': ['VFuelTgtOffset', True, 2]
+            #     },
             'fFuelBeep': 300,
             'tFuelBeep': 150,
             'fShiftBeep': 500,
-            'tShiftBeep': 150
+            'tShiftBeep': 150,
+            'BMultiInitRequest': False
             }
+
+iDDUControls = {# DisplayName, show, decimals, initial value, min value, max valuem steps
+    'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True],
+    'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True],
+    'BPitCommandControl': ['Enable Pit Control', True, 0, True],
+    'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
+    'VFuelTgtOffset': ['VFuelTgtOffset', True, 2, 0, -5, 5, 0.01],
+    'BEnableLiftTones': ['Enable Lift Tones', True, 0, True]
+}
+
+iDDUControlsNameInit = {}
+
+iDDUControlsName = list(iDDUControls.keys())
+for i in range(0, len(iDDUControlsName)):
+    if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
+        iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]]
+    else:
+        iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]][0]
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
 myRTDB.initialise(helpData, False)
 myRTDB.initialise(iRData, True)
 myRTDB.initialise(calcData, False)
+# myRTDB.initialise(iDDUControlsNameInit, False)
+myRTDB.initialise({'iDDUControls':iDDUControls}, False)
+
+# myRTDB.car.load('C:/Users/Marc/Documents/Projekte/iDDU/data/car/default.json')
+# myRTDB.car.load('C:/Users/Marc/Documents/Projekte/iDDU/data/car/Ferrari 488 GTE.json')
+
+dcList = list(myRTDB.car.dcList.keys())
 
 # initialise and start thread
 rtdbThread = RTDB.RTDBThread(0.01)
@@ -390,6 +418,15 @@ shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
 guiThread = iDDUgui.iDDUGUIThread(0.01)
 raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
 loggerThread = Logger.LoggerThread(0.01)
+ms = MultiSwitch.MultiSwitch(0.01)
+
+for i in range(0, len(iDDUControlsName)):
+    if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
+        ms.addMapping(iDDUControlsName[i])
+    else:
+        ms.addMapping(iDDUControlsName[i], minValue=iDDUControls[iDDUControlsName[i]][4], maxValue=iDDUControls[iDDUControlsName[i]][5], step=iDDUControls[iDDUControlsName[i]][6])
+
+ms.initCar()
 
 calcThread.start()
 time.sleep(0.1)
@@ -402,6 +439,8 @@ time.sleep(0.1)
 raceLapsEstimationThread.start()
 time.sleep(0.1)
 loggerThread.start()
+time.sleep(0.1)
+ms.start()
 time.sleep(0.1)
 
 iRRender = None

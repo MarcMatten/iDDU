@@ -50,8 +50,8 @@ class IDDUCalcThread(IDDUThread):
         self.y = None
         self.snapshot = False
 
-        self.loadTrack('default')
-        self.loadCar('default')
+        # self.loadTrack('default')
+        # self.loadCar('default')
 
         self.db.loadFuelTgt('data/fuelSaving/default.json')
         self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
@@ -443,7 +443,7 @@ class IDDUCalcThread(IDDUThread):
                             if not self.db.dc == self.db.dcOld:
                                 temp = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
                                 self.db.dcChangedItems = list(temp.keys())
-                                self.db.dcChangeTime = self.db.SessionTime
+                                self.db.dcChangeTime = time.time()
                                 if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
                                     if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
@@ -479,8 +479,8 @@ class IDDUCalcThread(IDDUThread):
                     for i in range(0, len(self.db.car.dcList)):
                         self.db.dc[list(self.db.car.dcList.keys())[i]] = self.db.get(list(self.db.car.dcList.keys())[i])
 
-                    for i in range(0, len(self.db.DDUControlList)):
-                        self.db.dc[list(self.db.DDUControlList.keys())[i]] = self.db.get(list(self.db.DDUControlList.keys())[i])
+                    for i in range(0, len(self.db.iDDUControls)):
+                        self.db.dc[list(self.db.iDDUControls.keys())[i]] = self.db.get(list(self.db.iDDUControls.keys())[i])
 
                     # if self.db.SessionTime > self.db.RunStartTime + 3:
                     #     if not self.db.dc == self.db.dcOld:
@@ -574,6 +574,7 @@ class IDDUCalcThread(IDDUThread):
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
         self.db.Alarm = [0]*10
+        self.db.BMultiInitRequest = True
 
 
         if self.db.startUp:

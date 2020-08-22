@@ -61,7 +61,8 @@ class RenderScreen(RenderMain):
 
         # initialize joystick
         if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            self.initJoystick('vJoy Device')
+            # self.initJoystick('vJoy Device')
+            self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
         else:
             self.initJoystick('FANATEC ClubSport Wheel Base')
 
@@ -148,15 +149,15 @@ class RenderScreen(RenderMain):
                 else:
                     self.db.NDDUPage = 1
 
-            if event.type == pygame.JOYBUTTONDOWN:
-                if event.button == 11:
-                    self.db.VFuelTgt = self.db.VFuelTgt - 0.01
-                if event.button == 2:
-                    self.db.VFuelTgt = self.db.VFuelTgt + 0.01
-                if event.button == 10:
-                    self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
-                if event.button == 1:
-                    self.db.VFuelTgtOffset = self.db.VFuelTgtOffset + 0.01
+            # if event.type == pygame.JOYBUTTONDOWN:
+            #     if event.button == 11:
+            #         self.db.VFuelTgt = self.db.VFuelTgt - 0.01
+            #     if event.button == 2:
+            #         self.db.VFuelTgt = self.db.VFuelTgt + 0.01
+            #     if event.button == 10:
+            #         self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
+            #     if event.button == 1:
+            #         self.db.VFuelTgtOffset = self.db.VFuelTgtOffset + 0.01
 
         if self.ir.startup():
             RenderMain.screen.fill(self.db.backgroundColour)
@@ -355,7 +356,7 @@ class RenderScreen(RenderMain):
 
             # driver control change
             # valueStr = 'None'
-            if self.ir['SessionTime'] < self.db.dcChangeTime + 0.75:
+            if time.time() < self.db.dcChangeTime + 1:
                 if self.db.dcChangedItems[0] in self.db.car.dcList:
                     if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
                         if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
@@ -371,16 +372,16 @@ class RenderScreen(RenderMain):
                     if self.db.dcChangedItems[0] == 'Push':
                         self.changeLabel('VFuelTgt', 'Push')
                     else:
-                        if self.db.DDUControlList[self.db.dcChangedItems[0]][1]:
-                            if self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 0:
+                        if self.db.iDDUControls[self.db.dcChangedItems[0]][1]:
+                            if self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 0:
                                 valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
-                            elif self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 1:
+                            elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 1:
                                 valueStr = convertString.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
-                            elif self.db.DDUControlList[self.db.dcChangedItems[0]][2] == 2:
+                            elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 2:
                                 valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                            self.changeLabel(self.db.DDUControlList[self.db.dcChangedItems[0]][0], valueStr)
+                            self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
 
 
 
