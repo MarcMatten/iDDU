@@ -143,7 +143,7 @@ class RenderScreen(RenderMain):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 self.db.StopDDU = True
 
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == pygame.JOYBUTTONDOWN and event.button == 25:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.db.NDDUPage == 1:
                     self.db.NDDUPage = 2
                 else:

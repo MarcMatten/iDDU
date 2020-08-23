@@ -548,7 +548,8 @@ class Gui(IDDUItem):
 
         self.pushButton_MSMapDecrease.clicked.connect(self.MSMapDecrease)
         self.pushButton_MSMapIncrease.clicked.connect(self.MSMapIncrease)
-
+        # self.comboBox_MultiSwitch.clicked.connect(self.retranslateUi)
+        self.comboBox_MultiSwitch.activated.connect(self.retranslateUi)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -656,12 +657,13 @@ class Gui(IDDUItem):
         k = 0
 
         for i in range(0, len(dcList)):
-            if self.db.car.dcList[dcList[i]][1]:
+            if self.db.car.dcList[dcList[i]][1]:                
+                # self.comboBox_MultiSwitch.addItem(dcList[i])
                 self.comboBox_MultiSwitch.setItemText(k, _translate("iDDU", dcList[i]))
                 k += 1
 
         self.comboBox_MultiSwitch.setMaxVisibleItems(k+1)
-        self.comboBox_MultiSwitch.setCurrentIndex(0)
+        # self.comboBox_MultiSwitch.setCurrentIndex(0)
 
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
@@ -914,12 +916,14 @@ class Gui(IDDUItem):
         rollOut.getRollOutCurve(self.db.dir)
 
     def MSMapDecrease(self):
-        mapName = list(self.db.car.dcList.keys())[self.comboBox_MultiSwitch.currentIndex()]
+        mapName = self.comboBox_MultiSwitch.currentText()
         self.pressButton(self.dcConfig[mapName][0]+1, 0.2)
+        self.retranslateUi(self.iDDU)
 
     def MSMapIncrease(self):
-        mapName = list(self.db.car.dcList.keys())[self.comboBox_MultiSwitch.currentIndex()]
+        mapName = self.comboBox_MultiSwitch.currentText()
         self.pressButton(self.dcConfig[mapName][1]+1, 0.2)
+        self.retranslateUi(self.iDDU)
 
     def __del__(self):
         sys.stdout = sys.__stdout__

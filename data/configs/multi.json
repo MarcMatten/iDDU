@@ -3,6 +3,14 @@
         0,
         1
     ],
+    "dcAntiRollFront": [
+        12,
+        13
+    ],
+    "dcAntiRollRear": [
+        14,
+        15
+    ],
     "dcBrakeBias": [
         2,
         3
@@ -26,5 +34,9 @@
     "dcTractionControl2": [
         10,
         11
+    ],
+    "dcWeightJackerRight": [
+        16,
+        17
     ]
 }
