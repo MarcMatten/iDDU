@@ -2,26 +2,350 @@
     "BDRS": false,
     "BP2P": false,
     "Coasting": {
-        "CarSetup": {},
-        "NGear": [],
-        "QFuelCoastPolyFit": [],
-        "SetupName": "SetupName",
-        "gLongCoastPolyFit": []
+        "CarSetup": {
+            "Chassis": {
+                "Front": {
+                    "ArbBlades": "Thin",
+                    "ArbSetting": "4-3",
+                    "BrakePads": "Low friction",
+                    "CrossWeight": "50.0%",
+                    "FuelLevel": "99.0 L",
+                    "ToeIn": "-1.0 mm"
+                },
+                "InCarDials": {
+                    "BrakePressureBias": "56.5%",
+                    "DisplayPage": "Race",
+                    "EngineMapSetting": "0 (MAP)",
+                    "FuelUseTargetSetting": "3.18 L",
+                    "NightLedStrips": "Blue",
+                    "TractionControlSetting1": "6 (TC-CON)",
+                    "TractionControlSetting2": "6 (TCR)"
+                },
+                "LeftFront": {
+                    "Camber": "-5.0 deg",
+                    "Caster": "+9.6 deg",
+                    "CornerWeight": "3441 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "55.4 mm",
+                    "SpringPerchOffset": "45.5 mm",
+                    "SpringRate": "180 N/mm"
+                },
+                "LeftRear": {
+                    "Camber": "-4.4 deg",
+                    "CornerWeight": "3377 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "76.1 mm",
+                    "SpringPerchOffset": "45.0 mm",
+                    "SpringRate": "180 N/mm",
+                    "ToeIn": "+1.4 mm"
+                },
+                "Rear": {
+                    "ArbBlades": "Thin",
+                    "ArbSetting": "1-1",
+                    "WingGurneyFlap": "20 mm",
+                    "WingSetting": "8 degrees"
+                },
+                "RightFront": {
+                    "Camber": "-5.0 deg",
+                    "Caster": "+9.6 deg",
+                    "CornerWeight": "3441 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "55.4 mm",
+                    "SpringPerchOffset": "45.5 mm",
+                    "SpringRate": "180 N/mm"
+                },
+                "RightRear": {
+                    "Camber": "-4.4 deg",
+                    "CornerWeight": "3377 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "76.1 mm",
+                    "SpringPerchOffset": "45.0 mm",
+                    "SpringRate": "180 N/mm",
+                    "ToeIn": "+1.4 mm"
+                }
+            },
+            "Drivetrain": {
+                "Diff": {
+                    "DiffClutchFrictionFaces": 8,
+                    "DiffCoastRampAngle": "50 deg",
+                    "DiffDriveRampAngle": "80 deg",
+                    "DiffPreload": "185 Nm"
+                },
+                "Drivetrain": {
+                    "FifthGear": "1.350, 263.1 Km/h",
+                    "FinalDrive": 3.556,
+                    "FirstGear": "2.857, 124.3 Km/h",
+                    "FourthGear": "1.556, 228.3 Km/h",
+                    "SecondGear": "2.188, 162.3 Km/h",
+                    "SixthGear": "1.217, 291.9 Km/h",
+                    "ThirdGear": "1.789, 198.6 Km/h"
+                }
+            },
+            "Tires": {
+                "LeftFront": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "LeftRear": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightFront": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightRear": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                }
+            },
+            "UpdateCount": 2
+        },
+        "NGear": [
+            0.0,
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0
+        ],
+        "QFuelCoastPolyFit": [
+            [
+                0,
+                0,
+                0
+            ],
+            [
+                0.017124386303595855,
+                0.04116492250453968,
+                -0.00047909793834490145
+            ],
+            [
+                0.007657733323640463,
+                0.03226907124941529,
+                -0.00029255225000382413
+            ],
+            [
+                0.00443420739849922,
+                0.026566810556935636,
+                -0.00019751130806840953
+            ],
+            [
+                0.0031896662145437333,
+                0.02317507295613997,
+                -0.00015002860311440688
+            ],
+            [
+                0.004192767067003246,
+                0.020084225447957103,
+                -0.00011267584522032688
+            ],
+            [
+                0.0008078024042931329,
+                0.018233033122225215,
+                -9.256885971448553e-05
+            ]
+        ],
+        "SetupName": "Sebring\\20S2\\20S2_porsche991rsr_Sebring12h_R_PDS_legal.sto",
+        "gLongCoastPolyFit": [
+            [
+                0,
+                0,
+                0
+            ],
+            [
+                -0.7254059084119197,
+                0.004750602554764048,
+                -0.0030703110333207334
+            ],
+            [
+                -0.7296215580662129,
+                0.007745329400908854,
+                -0.0017353116558620411
+            ],
+            [
+                -0.884115516681768,
+                0.01729242562321195,
+                -0.0013371467806726667
+            ],
+            [
+                -0.38443278606725173,
+                -0.007303859301153419,
+                -0.0008230476035613875
+            ],
+            [
+                -0.9284961670452836,
+                0.015263720221959098,
+                -0.0008914344334246608
+            ],
+            [
+                -0.2910800523138959,
+                -0.0074530861830453205,
+                -0.0006223860938253545
+            ]
+        ]
     },
     "NABSDisabled": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
     "UpshiftSettings": {
         "BShiftTone": [
-            false,
-            false,
-            false,
-            false,
-            false,
+            true,
+            true,
+            true,
+            true,
+            true,
             false,
             false
         ],
-        "CarSetup": {},
+        "CarSetup": {
+            "Chassis": {
+                "Front": {
+                    "ArbBlades": "Thin",
+                    "ArbSetting": "4-3",
+                    "BrakePads": "Low friction",
+                    "CrossWeight": "50.0%",
+                    "FuelLevel": "99.0 L",
+                    "ToeIn": "-1.0 mm"
+                },
+                "InCarDials": {
+                    "BrakePressureBias": "56.5%",
+                    "DisplayPage": "Race",
+                    "EngineMapSetting": "0 (MAP)",
+                    "FuelUseTargetSetting": "3.18 L",
+                    "NightLedStrips": "Blue",
+                    "TractionControlSetting1": "6 (TC-CON)",
+                    "TractionControlSetting2": "6 (TCR)"
+                },
+                "LeftFront": {
+                    "Camber": "-5.0 deg",
+                    "Caster": "+9.6 deg",
+                    "CornerWeight": "3441 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "55.4 mm",
+                    "SpringPerchOffset": "45.5 mm",
+                    "SpringRate": "180 N/mm"
+                },
+                "LeftRear": {
+                    "Camber": "-4.4 deg",
+                    "CornerWeight": "3377 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "76.1 mm",
+                    "SpringPerchOffset": "45.0 mm",
+                    "SpringRate": "180 N/mm",
+                    "ToeIn": "+1.4 mm"
+                },
+                "Rear": {
+                    "ArbBlades": "Thin",
+                    "ArbSetting": "1-1",
+                    "WingGurneyFlap": "20 mm",
+                    "WingSetting": "8 degrees"
+                },
+                "RightFront": {
+                    "Camber": "-5.0 deg",
+                    "Caster": "+9.6 deg",
+                    "CornerWeight": "3441 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "55.4 mm",
+                    "SpringPerchOffset": "45.5 mm",
+                    "SpringRate": "180 N/mm"
+                },
+                "RightRear": {
+                    "Camber": "-4.4 deg",
+                    "CornerWeight": "3377 N",
+                    "HsCompDampSlope": "5 clicks",
+                    "HsCompDamping": "5 clicks",
+                    "HsRbdDamping": "5 clicks",
+                    "LsCompDamping": "5 clicks",
+                    "LsRbdDamping": "5 clicks",
+                    "RideHeight": "76.1 mm",
+                    "SpringPerchOffset": "45.0 mm",
+                    "SpringRate": "180 N/mm",
+                    "ToeIn": "+1.4 mm"
+                }
+            },
+            "Drivetrain": {
+                "Diff": {
+                    "DiffClutchFrictionFaces": 8,
+                    "DiffCoastRampAngle": "50 deg",
+                    "DiffDriveRampAngle": "80 deg",
+                    "DiffPreload": "185 Nm"
+                },
+                "Drivetrain": {
+                    "FifthGear": "1.350, 263.1 Km/h",
+                    "FinalDrive": 3.556,
+                    "FirstGear": "2.857, 124.3 Km/h",
+                    "FourthGear": "1.556, 228.3 Km/h",
+                    "SecondGear": "2.188, 162.3 Km/h",
+                    "SixthGear": "1.217, 291.9 Km/h",
+                    "ThirdGear": "1.789, 198.6 Km/h"
+                }
+            },
+            "Tires": {
+                "LeftFront": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "LeftRear": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightFront": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightRear": {
+                    "LastHotPressure": "141 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
+                    "StartingPressure": "141 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                }
+            },
+            "UpdateCount": 2
+        },
         "NGear": [
             1,
             2,
@@ -31,40 +355,40 @@
             6,
             7
         ],
-        "SetupName": "SetupName",
+        "SetupName": "Sebring\\20S2\\20S2_porsche991rsr_Sebring12h_R_PDS_legal.sto",
         "nMotorShiftOptimal": [
-            99999,
-            99999,
-            99999,
-            99999,
-            99999,
+            9428.681980331636,
+            9253.0286821892,
+            8986.140668258558,
+            9160.702006179881,
+            8701.762830281756,
             99999,
             99999
         ],
         "nMotorShiftTarget": [
-            99999,
-            99999,
-            99999,
-            99999,
-            99999,
+            9006.686953337932,
+            9021.987640225281,
+            8844.581212251573,
+            9081.272879149028,
+            8654.308252570554,
             99999,
             99999
         ],
         "vCarShiftOptimal": [
-            99999,
-            99999,
-            99999,
-            99999,
-            99999,
+            32.920997159057016,
+            42.502215485467175,
+            50.61347203663352,
+            59.41090950642448,
+            65.02776269030933,
             99999,
             99999
         ],
         "vCarShiftTarget": [
-            99999,
-            99999,
-            99999,
-            99999,
-            99999,
+            31.414465082615333,
+            41.40438031077633,
+            49.79869036190352,
+            58.8869939610455,
+            64.6702874294624,
             99999,
             99999
         ]

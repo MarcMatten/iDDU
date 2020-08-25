@@ -385,6 +385,7 @@ class Gui(IDDUItem):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
         self.comboBox_FuelMethod.setCurrentIndex(self.db.NFuelSetMethod)
         self.pushButton_calcUpshiftRPM = QtWidgets.QPushButton(self.groupBox_6)
