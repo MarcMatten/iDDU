@@ -99,6 +99,87 @@
             false,
             false
         ],
+        "CarSetup": {
+            "Chassis": {
+                "Front": {
+                    "ArbSetting": 2,
+                    "CrossWeight": "50.0%",
+                    "ToeIn": "-1.5 mm"
+                },
+                "InCarDials": {
+                    "AbsTcEscSetting": 7,
+                    "BrakePressureBias": "49.0%"
+                },
+                "LeftFront": {
+                    "BumpStiffness": "+5 clicks",
+                    "Camber": "-4.8 deg",
+                    "CornerWeight": "2791 N",
+                    "ReboundStiffness": "+0 clicks",
+                    "RideHeight": "101.5 mm",
+                    "SpringPerchOffset": "87.5 mm"
+                },
+                "LeftRear": {
+                    "BumpStiffness": "+5 clicks",
+                    "Camber": "-4.1 deg",
+                    "CornerWeight": "4198 N",
+                    "ReboundStiffness": "+0 clicks",
+                    "RideHeight": "103.1 mm",
+                    "SpringPerchOffset": "109.0 mm",
+                    "SpringRate": "150 N/mm",
+                    "ToeIn": "+0.3 mm"
+                },
+                "Rear": {
+                    "ArbBlades": 5,
+                    "FuelLevel": "45.0 L",
+                    "WingSetting": 5
+                },
+                "RightFront": {
+                    "BumpStiffness": "+5 clicks",
+                    "Camber": "-4.8 deg",
+                    "CornerWeight": "2791 N",
+                    "ReboundStiffness": "+0 clicks",
+                    "RideHeight": "101.5 mm",
+                    "SpringPerchOffset": "87.5 mm"
+                },
+                "RightRear": {
+                    "BumpStiffness": "+5 clicks",
+                    "Camber": "-4.1 deg",
+                    "CornerWeight": "4198 N",
+                    "ReboundStiffness": "+0 clicks",
+                    "RideHeight": "103.1 mm",
+                    "SpringPerchOffset": "109.0 mm",
+                    "SpringRate": "150 N/mm",
+                    "ToeIn": "+0.3 mm"
+                }
+            },
+            "Tires": {
+                "LeftFront": {
+                    "LastHotPressure": "142 kPa",
+                    "LastTempsOMI": "48C, 48C, 48C",
+                    "StartingPressure": "138 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "LeftRear": {
+                    "LastHotPressure": "143 kPa",
+                    "LastTempsOMI": "48C, 50C, 51C",
+                    "StartingPressure": "138 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightFront": {
+                    "LastHotPressure": "142 kPa",
+                    "LastTempsIMO": "50C, 49C, 49C",
+                    "StartingPressure": "138 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightRear": {
+                    "LastHotPressure": "144 kPa",
+                    "LastTempsIMO": "53C, 52C, 50C",
+                    "StartingPressure": "138 kPa",
+                    "TreadRemaining": "100%, 100%, 100%"
+                }
+            },
+            "UpdateCount": 6
+        },
         "NGear": [
             1,
             2,
@@ -108,39 +189,40 @@
             6,
             7
         ],
+        "SetupName": "PDS_PorscheGT4_Montreal_20S3_W12_R_Pro.sto",
         "nMotorShiftOptimal": [
-            7365.920010322872,
-            7724.3980469768985,
-            7747.939227438067,
-            7794.3445727301205,
-            7784.797352039543,
+            7778.029568393033,
+            7842.659080903297,
+            7755.627242948721,
+            7782.279157543378,
+            7785.5844293956425,
             99999,
             99999
         ],
         "nMotorShiftTarget": [
-            6793.082938658965,
-            7409.639647673443,
-            7598.481923196943,
-            7716.431199055045,
-            7749.18475788457,
+            6563.917996171543,
+            7502.2954840534685,
+            7567.632988317097,
+            7685.474725373404,
+            7742.0901675122,
             99999,
             99999
         ],
         "vCarShiftOptimal": [
-            16.72987206121716,
-            30.149751663208008,
-            42.03076171875,
-            53.67436599731445,
-            64.70886993408203,
+            17.475292205810547,
+            30.656009674072266,
+            41.929725646972656,
+            53.43409729003906,
+            64.44802856445312,
             99999,
             99999
         ],
         "vCarShiftTarget": [
-            14.694185086367082,
-            28.900937185485837,
-            41.21376514697127,
-            53.1420795468259,
-            64.41154040643441,
+            14.89010505337954,
+            29.27595228543862,
+            40.912438489027515,
+            52.77222328857092,
+            64.08996879873862,
             99999,
             99999
         ]
@@ -166,22 +248,22 @@
     ],
     "dcList": {
         "dcABS": [
-            "ABS",
+            "ESC",
             true,
             0
         ],
         "dcBrakeBias": [
-            "BrakeBias",
+            "Brake Bias",
             true,
             1
         ],
         "dcHeadlightFlash": [
-            "HeadlightFlash",
+            "Headlight Flash",
             false,
             0
         ],
         "dcPitSpeedLimiterToggle": [
-            "PitSpeedLimiterToggle",
+            "Pit Speed Limiter Toggle",
             false,
             0
         ],
@@ -191,7 +273,7 @@
             0
         ],
         "dcTractionControlToggle": [
-            "TractionControlToggle",
+            "Traction Control Toggle",
             true,
             0
         ]

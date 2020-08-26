@@ -30,7 +30,9 @@ class ShiftToneThread(IDDUThread):
 
                     if self.db.BEnableLiftTones:
                         if self.db.BLiftToneRequest:
+                            self.vjoy.set_button(63, 1)
                             winsound.Beep(self.db.fFuelBeep, self.db.tFuelBeep)
+                            self.vjoy.set_button(63, 0)
                             self.db.BLiftToneRequest = False
                             continue  # no shift beep when lift beep
                         if self.db.tNextLiftPoint < 2 and len(self.db.LapDistPctLift) > 0:
@@ -42,17 +44,23 @@ class ShiftToneThread(IDDUThread):
                         if self.db.UpshiftStrategy < 4:  # iRacing shift rpm
                             if self.ir['RPM'] >= self.db.iRShiftRPM[self.db.UpshiftStrategy] and self.db.UserShiftFlag[self.ir['Gear'] - 1]:
                                 self.beep()
+                            else:
+                                self.db.Alarm[7] = 0
                         elif self.db.UpshiftStrategy == 4:  # user shift rpm
                             if self.ir['RPM'] >= self.db.UserShiftRPM[self.ir['Gear'] - 1] and self.db.UserShiftFlag[self.ir['Gear'] - 1]:
                                 self.beep()
+                            else:
+                                self.db.Alarm[7] = 0
                         elif self.db.UpshiftStrategy == 5:  # optimised shift rpm from car file
                             if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and self.ir['RPM'] >=  self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
                                 self.beep()
+                            else:
+                                self.db.Alarm[7] = 0
                     else:
                         self.db.Alarm[7] = 0
                     
                     if (not self.oldGear == self.ir['Gear']) and self.BShiftTone:
-                        tShiftReaction = max(time.time() - self.tBeep, 0)
+                        tShiftReaction = max(time.time() - self.tBeep + self.db.tShiftBeep / 1000, 0)
                         if tShiftReaction > 1:
                             self.db.tShiftReaction = float('nan')
                         else:
@@ -76,8 +84,10 @@ class ShiftToneThread(IDDUThread):
     def beep(self):
         self.db.Alarm[7] = 3
         if time.time() > (self.tBeep + 0.75):
+            self.vjoy.set_button(63, 1)
             winsound.Beep(self.db.fShiftBeep, self.db.tShiftBeep)
             self.tBeep = time.time()
+            self.vjoy.set_button(63, 0)
 
             if (not self.BShiftTone) and self.oldGear == self.ir['Gear']:
                 self.BShiftTone = True
