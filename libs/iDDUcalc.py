@@ -876,7 +876,7 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.StintLap = self.db.StintLap + 1
 
-        if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
+        if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 1:
             # Logging track data
             if not self.Logging:
                 self.logLap = self.db.Lap
