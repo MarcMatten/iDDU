@@ -421,7 +421,7 @@ shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
 guiThread = iDDUgui.iDDUGUIThread(0.01)
 raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
 loggerThread = Logger.LoggerThread(0.01)
-ms = MultiSwitch.MultiSwitch(0.01)
+ms = MultiSwitch.MultiSwitch(0.005)
 
 for i in range(0, len(iDDUControlsName)):
     if type(iDDUControls[iDDUControlsName[i]][3]) is bool:

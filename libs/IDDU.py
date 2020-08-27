@@ -50,9 +50,9 @@ class IDDUItem:
 
         if not desiredJoystick == 9999:
             print(self.db.timeStr + ':\tConnecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
-            myJoystick = pygame.joystick.Joystick(desiredJoystick)
-            myJoystick.get_name()
-            myJoystick.init()
+            IDDUItem.myJoystick = pygame.joystick.Joystick(desiredJoystick)
+            IDDUItem.myJoystick.get_name()
+            IDDUItem.myJoystick.init()
             print(self.db.timeStr + ':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
         else:
             print(self.db.timeStr + ':\tFANATEC ClubSport Wheel Base not found!')
