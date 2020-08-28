@@ -59,13 +59,6 @@ class RenderScreen(RenderMain):
 
         RenderMain.__init__(self)
 
-        # initialize joystick
-        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            # self.initJoystick('vJoy Device')
-            self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
-        else:
-            self.initJoystick('FANATEC ClubSport Wheel Base')
-
         # frames
         self.frames = list()
 
@@ -149,16 +142,6 @@ class RenderScreen(RenderMain):
                 else:
                     self.db.NDDUPage = 1
 
-            # if event.type == pygame.JOYBUTTONDOWN:
-            #     if event.button == 11:
-            #         self.db.VFuelTgt = self.db.VFuelTgt - 0.01
-            #     if event.button == 2:
-            #         self.db.VFuelTgt = self.db.VFuelTgt + 0.01
-            #     if event.button == 10:
-            #         self.db.VFuelTgtOffset = self.db.VFuelTgtOffset - 0.01
-            #     if event.button == 1:
-            #         self.db.VFuelTgtOffset = self.db.VFuelTgtOffset + 0.01
-
         if self.ir.startup():
             RenderMain.screen.fill(self.db.backgroundColour)
 
@@ -219,106 +202,20 @@ class RenderScreen(RenderMain):
                         RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
 
             if self.db.NDDUPage == 1: # Page 1
-
-                if self.db.init:
-                    self.frames[2].reinitFrame(self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'])
-
-                # DRS
-                if self.db.DRS:
-                    if self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'] == 'Race':
-                        self.db.DRSStr = str(int(self.db.DRSRemaining))
-                    else:
-                        self.db.DRSStr = str(int(self.db.DRSCounter))
-                # P2P
-                if self.db.P2P:
-                    P2PRemaining = (self.db.P2PActivations - self.db.P2PCounter)
-                    if self.db.P2PActivations > 100:
-                        self.db.P2PStr = str(int(self.db.P2PCounter))
-                    else:
-                        self.db.P2PStr = str(int(P2PRemaining))
-
-                # LabelStrings
-                self.db.BestLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapBestLapTime']))
-                self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapLastLapTime']))
-                self.db.DeltaBestStr = convertString.convertDelta(self.ir['LapDeltaToSessionBestLap'])
-
-                self.db.dcTractionControlStr = convertString.roundedStr0(self.ir['dcTractionControl'])
-                self.db.dcTractionControl2Str = convertString.roundedStr0(self.ir['dcTractionControl2'])
-                self.db.dcBrakeBiasStr = convertString.roundedStr1(self.ir['dcBrakeBias'], 3)
-                self.db.dcFuelMixtureStr = convertString.roundedStr0(self.ir['dcFuelMixture'])
-                self.db.dcThrottleShapeStr = convertString.roundedStr0(self.ir['dcThrottleShape'])
-                self.db.dcABSStr = convertString.roundedStr0(self.ir['dcABS'])
-
-                self.db.FuelLevelStr = convertString.roundedStr1(self.ir['FuelLevel'], 3)
-                self.db.FuelAvgConsStr = convertString.roundedStr2(max(0, self.db.FuelAvgConsumption))
-                self.db.FuelLastConsStr = convertString.roundedStr2(max(0, self.db.FuelLastCons))
-                self.db.FuelLapsStr = convertString.roundedStr1(self.db.NLapRemaining, 3)
-                self.db.FuelAddStr = convertString.roundedStr1(max(0, self.db.VFuelAdd), 3)
-
-                self.db.SpeedStr = convertString.roundedStr0(max(0.0, self.ir['Speed'] * 3.6))
-
-                if self.db.LapLimit:
-                    self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(self.db.RaceLaps)
-                    self.db.ToGoStr = convertString.roundedStr1(max(0, self.db.RaceLaps - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
-
-                else:
-                    self.db.LapStr = str(max(0, self.ir['Lap']))
-                    self.db.ToGoStr = '0'
-                self.db.ClockStr = self.db.timeStr
-
-                if self.db.RX:
-                    self.db.JokerStr = self.db.JokerStr
-                self.db.ElapsedStr = convertString.convertTimeHHMMSS(max(0, self.ir['SessionTime']))
-                self.db.RemainingStr = convertString.convertTimeHHMMSS(max(0, self.ir['SessionTimeRemain']))
-                self.db.EstStr = convertString.roundedStr1(self.db.NLapDriver, 3)
-
-                for i in range(0, len(self.frames)):
-                    self.frames[i].setTextColour(self.db.textColour)
-                    self.frames[i].drawFrame()
-
+                self.page1()
             elif self.db.NDDUPage == 2:  # Page 2
-                # RenderMain.screen.fill(self.db.backgroundColour)
-
-                # Wind arrow
-                aWind = (-self.db.WindDir + self.db.track.aNorth - self.db.track.a)*180/np.pi-180
-                dx = abs(82.8427 * np.cos(2 * (45/180*np.pi + aWind/180*np.pi)))
-                RenderMain.screen.blit(pygame.transform.rotate(self.arrow, int(aWind)), [200-dx, 40-dx])
-
-                if self.db.MapHighlight:
-                    self.highlightSection(5, self.green)
-                    self.highlightSection(1, self.red)
-
-                # SFLine
-                pygame.draw.polygon(RenderMain.screen, self.db.textColour, self.db.track.SFLine, 0)
-
-                pygame.draw.lines(RenderMain.screen, self.db.textColour, True, self.db.track.map, 5)
-
-                for n in range(1, len(self.db.DriverInfo['Drivers'])):
-                    temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
-                    if not temp_CarIdx == self.db.DriverCarIdx:
-                       self.CarOnMap(temp_CarIdx)
-                self.CarOnMap(self.db.DriverCarIdx)
-                self.CarOnMap(0)
-
-                Label = self.fontTiny2.render(self.db.weatherStr + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
-                RenderMain.screen.blit(Label, (5, 1))
-
-                Label2 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
-
-                RenderMain.screen.blit(Label2, (5, 458))
-
+                self.page2()
             elif self.db.NDDUPage == 3:  # Page 3
                 self.page3()
 
         else:  # Page 0
             self.page0()
-            # self.page3()
 
         if self.ir.startup() and self.ir['IsOnTrack']:
 
             EngineWarnings = self.ir['EngineWarnings']
             # warning and alarm messages
-            if EngineWarnings & 0x10:
+            if EngineWarnings & 0x10 and self.db.Speed > 10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
                 self.warningLabel('PIT LIMITER', self.blue, self.white)
             if EngineWarnings & 0x1:
                 self.warningLabel('WATER TEMP HIGH', self.red, self.white)
@@ -339,8 +236,8 @@ class RenderScreen(RenderMain):
                 self.warningLabel('CROSSED', self.white, self.black)
             # if SessionFlags & 0x100: # normal yellow
             #     self.warningLabel('YELLOW WAVING', self.white, self.black)
-            if SessionFlags & 0x400:
-                self.warningLabel('GREEN HELD', self.white, self.black)
+            # if SessionFlags & 0x400:
+            #     self.warningLabel('GREEN HELD', self.white, self.black)
             if SessionFlags & 0x2000:
                 self.warningLabel('RANDOM WAVING', self.white, self.black)
             # if SessionFlags & 0x8000:
@@ -354,8 +251,11 @@ class RenderScreen(RenderMain):
             # if SessionFlags & 0x100000:
             #     self.warningLabel('REPAIR', self.white, self.black)
 
+
+            if self.db.OnPitRoad and self.db.Speed > 10 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
+                    self.warningLabel('PIT LIMITER OFF', self.red, self.white)
+
             # driver control change
-            # valueStr = 'None'
             if time.time() < self.db.dcChangeTime + 1:
                 if self.db.dcChangedItems[0] in self.db.car.dcList:
                     if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
@@ -383,11 +283,6 @@ class RenderScreen(RenderMain):
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                             self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
 
-
-
-            if self.db.OnPitRoad and not self.db.EngineWarnings & 0x10:
-                    self.warningLabel('PIT LIMITER OFF', self.red, self.white)
-
         pygame.display.flip()
         self.db.tExecuteRender = (time.perf_counter() - t) * 1000
         self.clocker.tick(30)
@@ -405,36 +300,101 @@ class RenderScreen(RenderMain):
         RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
         RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
 
+    def page1(self):
+
+        if self.db.init:
+            self.frames[2].reinitFrame(self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'])
+
+        # DRS
+        if self.db.DRS:
+            if self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'] == 'Race':
+                self.db.DRSStr = str(int(self.db.DRSRemaining))
+            else:
+                self.db.DRSStr = str(int(self.db.DRSCounter))
+        # P2P
+        if self.db.P2P:
+            P2PRemaining = (self.db.P2PActivations - self.db.P2PCounter)
+            if self.db.P2PActivations > 100:
+                self.db.P2PStr = str(int(self.db.P2PCounter))
+            else:
+                self.db.P2PStr = str(int(P2PRemaining))
+
+        # LabelStrings
+        self.db.BestLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapBestLapTime']))
+        self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapLastLapTime']))
+        self.db.DeltaBestStr = convertString.convertDelta(self.ir['LapDeltaToSessionBestLap'])
+
+        self.db.dcTractionControlStr = convertString.roundedStr0(self.ir['dcTractionControl'])
+        self.db.dcTractionControl2Str = convertString.roundedStr0(self.ir['dcTractionControl2'])
+        self.db.dcBrakeBiasStr = convertString.roundedStr1(self.ir['dcBrakeBias'], 3)
+        self.db.dcFuelMixtureStr = convertString.roundedStr0(self.ir['dcFuelMixture'])
+        self.db.dcThrottleShapeStr = convertString.roundedStr0(self.ir['dcThrottleShape'])
+        self.db.dcABSStr = convertString.roundedStr0(self.ir['dcABS'])
+
+        self.db.FuelLevelStr = convertString.roundedStr1(self.ir['FuelLevel'], 3)
+        self.db.FuelAvgConsStr = convertString.roundedStr2(max(0, self.db.FuelAvgConsumption))
+        self.db.FuelLastConsStr = convertString.roundedStr2(max(0, self.db.FuelLastCons))
+        self.db.FuelLapsStr = convertString.roundedStr1(self.db.NLapRemaining, 3)
+        self.db.FuelAddStr = convertString.roundedStr1(max(0, self.db.VFuelAdd), 3)
+
+        self.db.SpeedStr = convertString.roundedStr0(max(0.0, self.ir['Speed'] * 3.6))
+
+        if self.db.LapLimit:
+            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(self.db.RaceLaps)
+            self.db.ToGoStr = convertString.roundedStr1(max(0, self.db.RaceLaps - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
+
+        else:
+            self.db.LapStr = str(max(0, self.ir['Lap']))
+            self.db.ToGoStr = '0'
+        self.db.ClockStr = self.db.timeStr
+
+        if self.db.RX:
+            self.db.JokerStr = self.db.JokerStr
+        self.db.ElapsedStr = convertString.convertTimeHHMMSS(max(0, self.ir['SessionTime']))
+        self.db.RemainingStr = convertString.convertTimeHHMMSS(max(0, self.ir['SessionTimeRemain']))
+        self.db.EstStr = convertString.roundedStr1(self.db.NLapDriver, 3)
+
+        for i in range(0, len(self.frames)):
+            self.frames[i].setTextColour(self.db.textColour)
+            self.frames[i].drawFrame()
+
+    def page2(self):
+
+        # Wind arrow
+        aWind = (-self.db.WindDir + self.db.track.aNorth - self.db.track.a) * 180 / np.pi - 180
+        dx = abs(82.8427 * np.cos(2 * (45 / 180 * np.pi + aWind / 180 * np.pi)))
+        RenderMain.screen.blit(pygame.transform.rotate(self.arrow, int(aWind)), [200 - dx, 40 - dx])
+
+        if self.db.MapHighlight:
+            self.highlightSection(5, self.green)
+            self.highlightSection(1, self.red)
+
+        # SFLine
+        pygame.draw.polygon(RenderMain.screen, self.db.textColour, self.db.track.SFLine, 0)
+
+        pygame.draw.lines(RenderMain.screen, self.db.textColour, True, self.db.track.map, 5)
+
+        for n in range(1, len(self.db.DriverInfo['Drivers'])):
+            temp_CarIdx = self.db.DriverInfo['Drivers'][n]['CarIdx']
+            if not temp_CarIdx == self.db.DriverCarIdx:
+                self.CarOnMap(temp_CarIdx)
+        self.CarOnMap(self.db.DriverCarIdx)
+        self.CarOnMap(0)
+
+        Label = self.fontTiny2.render(self.db.weatherStr + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
+        RenderMain.screen.blit(Label, (5, 1))
+
+        Label2 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
+
+        RenderMain.screen.blit(Label2, (5, 458))
+
     def page3(self):
-
-        # 'sToPitStall': 0,
-        # 'PitSvFlagsEntry': 0,
-        # 'BFuelRequest': False,
-        # 'BFuelCompleted': False,
-        # 'BTyreChangeRequest': [False, False, False, False],
-        # 'BTyreChangeCompleted': [False, False, False, False]
-
-        # RenderMain.screen.fill(self.db.backgroundColour)
 
         if not self.db.EngineWarnings & 0x10:
             self.warningLabel('PIT LIMITER OFF', self.red, self.white)
-        # self.db.SpeedStr = convertString.roundedStr0(max(0.0, self.ir['Speed'] * 3.6))
-        self.db.SpeedStr = convertString.roundedStr1(max(0.0, self.ir['Speed'] * 3.6), 3)
-        # LabelSpeed = self.fontLarge.render(self.db.SpeedStr, True, self.db.textColour)
-        # if self.ir['Gear'] > 0:
-        #     self.db.GearStr = str(int(self.ir['Gear']))
-        # elif self.ir['Gear'] == 0:
-        #     self.db.GearStr = 'N'
-        # elif self.ir['Gear'] < 0:
-        #     self.db.GearStr = 'R'
-        # self.db.GearStr = 'R'
-        # LabelGear = self.fontLarge.render(self.db.GearStr, True, self.db.textColour)
-        self.db.sToPitStallStr = convertString.roundedStr0(self.db.sToPitStall)
-        # LabelsToPitStall = self.fontGear.render(convertString.roundedStr0(328), True, self.db.textColour)
 
-        # RenderMain.screen.blit(LabelsToPitStall, (100, 47))
-        # RenderMain.screen.blit(LabelSpeed, (100, 247))
-        # RenderMain.screen.blit(LabelGear, (200, 247))
+        self.db.SpeedStr = convertString.roundedStr1(max(0.0, self.ir['Speed'] * 3.6), 3)
+        self.db.sToPitStallStr = convertString.roundedStr0(self.db.sToPitStall)
 
         for i in range(0, len(self.frames3)):
             self.frames3[i].setTextColour(self.db.textColour)
@@ -486,12 +446,10 @@ class RenderScreen(RenderMain):
         LabelSize = self.fontMedium.size(FuelStr)
         RenderMain.screen.blit(LabelFuel, (720-LabelSize[0]/2, 181))
 
-        # pygame.draw.rect(RenderMain.screen, green, [700, 250, 50, 180], 0)
         pygame.draw.rect(RenderMain.screen, self.green, [693, 241 + int(216*(1-FueledPct)), 50, int(216*FueledPct)], 0)
 
         pygame.draw.lines(RenderMain.screen, self.white, True, [[693, 241],  [743, 241],  [743, 457],  [693, 457]], 5)
 
-        # self.warningLabelwarningLabel('PIT LIMITER', blue, self.white)
 
     def CarOnMap(self, Idx):
         CarIdxLapDistPct = self.ir['CarIdxLapDistPct']
@@ -576,27 +534,20 @@ class RenderScreen(RenderMain):
             timeStampStart = timeStamp1
             timeStampEnd = timeStamp2
 
-            # try:
             if timeStamp2 > timeStamp1:
                 tempMap = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if ((tLap[t] < timeStampEnd) and (tLap[t] > timeStampStart))]
                 if len(tempMap) < 2:
                     return
 
                 pygame.draw.lines(RenderMain.screen, colour, False, tempMap, 20)
+
             else:
-
-                # map1 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
-                #         (tLap[t] <= max(timeStampEnd, tLap[1]))]
-                # map2 = [self.db.track.map[t] for t in range(0, len(self.db.track.map)) if
-                #         (tLap[t] >= min(timeStampStart, tLap[-1]))]
-
                 indices1 = np.argwhere(np.array(tLap) <= max(timeStampEnd, tLap[1]))
                 if len(indices1) == 1:
                     indices1 = np.append(indices1, indices1[0]+1)
 
                 ind1 = []
                 for i in range(0,len(indices1)):
-                    # ind1.append(indices1[i][0])
                     ind1.append(int(indices1[i]))
 
                 map1 = np.array(self.db.track.map)[ind1].tolist()
@@ -607,7 +558,6 @@ class RenderScreen(RenderMain):
 
                 ind2 = []
                 for i in range(0,len(indices2)):
-                    # ind2.append(indices2[i][0])
                     ind2.append(int(indices2[i]))
 
                 map2 = np.array(self.db.track.map)[ind2].tolist()
@@ -688,7 +638,6 @@ class LabeledValue(RenderMain):
         self.valFont = valFont
         self.labFont = labFont
         self.colourTag = colourTag
-        # self.ID = ID
         if self.colourTag == 1:
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
@@ -758,7 +707,6 @@ class LabeledValue2(RenderMain):
         self.ValSize = self.valFont.size(self.value)
 
     def drawLabel(self, value):
-        # if self.db.RenderLabel[self.ID]:
         self.value = value
         if self.colourTag == 1:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)

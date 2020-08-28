@@ -28,6 +28,11 @@
             "BrakeBias",
             true,
             1
+        ],
+        "dcPitSpeedLimiterToggle": [
+            "PitSpeedLimiterToggle",
+            false,
+            0
         ]
     },
     "iRShiftRPM": [
