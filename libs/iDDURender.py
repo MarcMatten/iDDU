@@ -59,6 +59,13 @@ class RenderScreen(RenderMain):
 
         RenderMain.__init__(self)
 
+        # initialize joystick
+        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+            # self.initJoystick('vJoy Device')
+            self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
+        else:
+            self.initJoystick('FANATEC ClubSport Wheel Base')
+
         # frames
         self.frames = list()
 
