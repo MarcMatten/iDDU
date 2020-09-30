@@ -2,24 +2,22 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import sys
 import time
-import threading
 import csv
 import os
 import winsound
 from libs import Track
 from SimRacingTools import getShiftRPM
 from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
+from libs.IDDU import IDDUThread, IDDUItem
 
 
-class iDDUgui(threading.Thread):
-    def __init__(self, RTDB):
-        threading.Thread.__init__(self)
-        self.db = RTDB
+class iDDUGUIThread(IDDUThread):
+
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
 
     def run(self):
-        while 1:
-            myGui = Gui(self.db)
-            myGui.start(self.db)
+        Gui()
 
 
 class Stream(QtCore.QObject):
@@ -29,8 +27,9 @@ class Stream(QtCore.QObject):
         self.newText.emit(str(text))
 
 
-class Gui(object):
-    def __init__(self, db):
+class Gui(IDDUItem):
+    def __init__(self):
+        IDDUItem.__init__(self)
         import sys
         app = QtWidgets.QApplication(sys.argv)
         iDDU = QtWidgets.QWidget()
@@ -43,12 +42,11 @@ class Gui(object):
             sys.stdout = Stream(newText=self.onUpdateText)
             sys.stderr = Stream(newText=self.onUpdateText)
 
-        self.setupUi(iDDU, db)
+        self.setupUi(iDDU)
         iDDU.show()
         sys.exit(app.exec_())
 
-    def setupUi(self, iDDU, db):
-        self.db = db
+    def setupUi(self, iDDU):
         self.iDDU = iDDU
         # iDDU.setObjectName("iDDU")
         # iDDU.resize(784, 441)
@@ -170,6 +168,21 @@ class Gui(object):
         self.checkBox_BEnableLapLogging.setGeometry(QtCore.QRect(10, 50, 161, 17))
         self.checkBox_BEnableLapLogging.setObjectName("checkBox_BEnableLapLogging")
         self.checkBox_BEnableLapLogging.setChecked(self.db.BEnableLapLogging)
+        self.groupBox_11 = QtWidgets.QGroupBox(self.tabGeneral)
+        self.groupBox_11.setGeometry(QtCore.QRect(310, 210, 261, 101))
+        self.groupBox_11.setObjectName("groupBox_11")
+        self.pushButton_MSMapDecrease = QtWidgets.QPushButton(self.groupBox_11)
+        self.pushButton_MSMapDecrease.setGeometry(QtCore.QRect(20, 60, 91, 23))
+        self.pushButton_MSMapDecrease.setObjectName("pushButton_MSMapDecrease")
+        self.pushButton_MSMapIncrease = QtWidgets.QPushButton(self.groupBox_11)
+        self.pushButton_MSMapIncrease.setGeometry(QtCore.QRect(134, 60, 101, 23))
+        self.pushButton_MSMapIncrease.setObjectName("pushButton_MSMapIncrease")
+        self.comboBox_MultiSwitch = QtWidgets.QComboBox(self.groupBox_11)
+        self.comboBox_MultiSwitch.setGeometry(QtCore.QRect(20, 20, 211, 22))
+        self.comboBox_MultiSwitch.setObjectName("comboBox_MultiSwitch")
+        for i in range(0,30):
+            self.comboBox_MultiSwitch.addItem("")
+        self.comboBox_MultiSwitch.setCurrentIndex(0)
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabPitStops = QtWidgets.QWidget()
         self.tabPitStops.setObjectName("tabPitStops")
@@ -372,6 +385,7 @@ class Gui(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
         self.comboBox_FuelMethod.setCurrentIndex(self.db.NFuelSetMethod)
         self.pushButton_calcUpshiftRPM = QtWidgets.QPushButton(self.groupBox_6)
@@ -533,6 +547,11 @@ class Gui(object):
         self.pushButton_calcUpshiftRPM.clicked.connect(self.calcUpshiftRPM)
         self.calcRollOutButton.clicked.connect(self.calcRollOut)
 
+        self.pushButton_MSMapDecrease.clicked.connect(self.MSMapDecrease)
+        self.pushButton_MSMapIncrease.clicked.connect(self.MSMapIncrease)
+        # self.comboBox_MultiSwitch.clicked.connect(self.retranslateUi)
+        self.comboBox_MultiSwitch.activated.connect(self.retranslateUi)
+
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
         # app.aboutToQuit.connect(self.closeEvent)
@@ -567,6 +586,9 @@ class Gui(object):
         self.groupBox_8.setTitle(_translate("iDDU", "Logging"))
         self.checkBox_BEnableLogger.setText(_translate("iDDU", "enable Logger"))
         self.checkBox_BEnableLapLogging.setText(_translate("iDDU", "enable  end of lap logging"))
+        self.groupBox_11.setTitle(_translate("iDDU", "Multi Switch"))
+        self.pushButton_MSMapDecrease.setText(_translate("iDDU", "Map Decrease"))
+        self.pushButton_MSMapIncrease.setText(_translate("iDDU", "Map Increase"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("iDDU", "General"))
         self.label_10.setText(_translate("iDDU", "Pit Stop Delta"))
         self.checkBox_ChangeTyres.setText(_translate("iDDU", "Change Tyres"))
@@ -631,6 +653,18 @@ class Gui(object):
         self.pushButtonSaveSnapshot.setText(_translate("iDDU", "RTDB Snapshot"))
         self.pushButtonLoadSnapshot.setText(_translate("iDDU", "Load Snapshot"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("iDDU", "Debug"))
+
+        dcList = list(self.db.car.dcList.keys())
+        k = 0
+
+        for i in range(0, len(dcList)):
+            if self.db.car.dcList[dcList[i]][1]:                
+                # self.comboBox_MultiSwitch.addItem(dcList[i])
+                self.comboBox_MultiSwitch.setItemText(k, _translate("iDDU", dcList[i]))
+                k += 1
+
+        self.comboBox_MultiSwitch.setMaxVisibleItems(k+1)
+        # self.comboBox_MultiSwitch.setCurrentIndex(0)
 
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
@@ -881,6 +915,16 @@ class Gui(object):
 
     def calcRollOut(self):
         rollOut.getRollOutCurve(self.db.dir)
+
+    def MSMapDecrease(self):
+        mapName = self.comboBox_MultiSwitch.currentText()
+        self.pressButton(self.dcConfig[mapName][0]+1, 0.2)
+        self.retranslateUi(self.iDDU)
+
+    def MSMapIncrease(self):
+        mapName = self.comboBox_MultiSwitch.currentText()
+        self.pressButton(self.dcConfig[mapName][1]+1, 0.2)
+        self.retranslateUi(self.iDDU)
 
     def __del__(self):
         sys.stdout = sys.__stdout__

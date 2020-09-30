@@ -1,13 +1,11 @@
 import os
-import threading
 import time
 from datetime import datetime
-
-import irsdk
 import numpy as np
 
 from functionalities.libs import maths, convertString, importExport
 from libs import Track, Car
+from libs.IDDU import IDDUThread
 
 nan = float('nan')
 tLiftTones = [1, 0.5, 0]
@@ -15,23 +13,11 @@ tLiftTones = [1, 0.5, 0]
 
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
-class IDDUCalc(threading.Thread):
-    # TODO: can this move on level up?
-    white = (255, 255, 255)
-    red = (255, 0, 0)
-    green = (0, 255, 0)
-    blue = (0, 0, 255)
-    yellow = (255, 255, 0)
-    orange = (255, 133, 13)
-    grey = (141, 141, 141)
-    black = (0, 0, 0)
-    cyan = (0, 255, 255)
+class IDDUCalcThread(IDDUThread):
     BError = False
 
-    def __init__(self, db, rate):
-        threading.Thread.__init__(self)
-        self.db = db
-        self.rate = rate
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
 
         self.FlagCallTime = 0
         self.init = False
@@ -51,7 +37,7 @@ class IDDUCalc(threading.Thread):
         self.BCreateTrack = False
         self.BRecordtLap = False
 
-        self.ir = irsdk.IRSDK()
+        # self.ir = irsdk.IRSDK()
 
         self.DRSList = ['formularenault35', 'mclarenmp430']  # TODO: still required?
         self.P2PList = ['dallaradw12', 'dallarair18']  # TODO: still required?
@@ -64,8 +50,8 @@ class IDDUCalc(threading.Thread):
         self.y = None
         self.snapshot = False
 
-        self.loadTrack('default')
-        self.loadCar('default')
+        # self.loadTrack('default')
+        # self.loadCar('default')
 
         self.db.loadFuelTgt('data/fuelSaving/default.json')
         self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
@@ -457,7 +443,7 @@ class IDDUCalc(threading.Thread):
                             if not self.db.dc == self.db.dcOld:
                                 temp = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
                                 self.db.dcChangedItems = list(temp.keys())
-                                self.db.dcChangeTime = self.db.SessionTime
+                                self.db.dcChangeTime = time.time()
                                 if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
                                     if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
@@ -493,8 +479,8 @@ class IDDUCalc(threading.Thread):
                     for i in range(0, len(self.db.car.dcList)):
                         self.db.dc[list(self.db.car.dcList.keys())[i]] = self.db.get(list(self.db.car.dcList.keys())[i])
 
-                    for i in range(0, len(self.db.DDUControlList)):
-                        self.db.dc[list(self.db.DDUControlList.keys())[i]] = self.db.get(list(self.db.DDUControlList.keys())[i])
+                    for i in range(0, len(self.db.iDDUControls)):
+                        self.db.dc[list(self.db.iDDUControls.keys())[i]] = self.db.get(list(self.db.iDDUControls.keys())[i])
 
                     # if self.db.SessionTime > self.db.RunStartTime + 3:
                     #     if not self.db.dc == self.db.dcOld:
@@ -588,10 +574,11 @@ class IDDUCalc(threading.Thread):
         self.db.PitStopsRequired = 0
         self.db.MapHighlight = False
         self.db.Alarm = [0]*10
+        self.db.BMultiInitRequest = True
 
 
         if self.db.startUp:
-            self.db.StartDDU = True
+            # self.db.StartDDU = True
             self.db.oldSessionNum = self.db.SessionNum
             self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
                 'DriverCarMaxFuelPct']
@@ -889,7 +876,7 @@ class IDDUCalc(threading.Thread):
 
         self.db.StintLap = self.db.StintLap + 1
 
-        if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
+        if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 1:
             # Logging track data
             if not self.Logging:
                 self.logLap = self.db.Lap
@@ -971,7 +958,7 @@ class IDDUCalc(threading.Thread):
 
         if BRecordtLap:
             self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.dist, self.db.track.dist)
-            self.db.car.saveJson(self.db.dir)
+            self.db.car.save(self.db.dir)
             self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 
             print(self.db.timeStr + ':\tLap time has been recorded successfully!')

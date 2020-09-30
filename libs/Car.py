@@ -57,10 +57,7 @@ class Car:
         else:
             self.BP2P = False
 
-        dcIgnoreList =['dcHeadlightFlash',  # TODO: shouldn't be here
-                       'dcPitSpeedLimiterToggle',
-                       'dcStarter']
-
+        dcIgnoreList =['dcHeadlightFlash', 'dcPitSpeedLimiterToggle', 'dcStarter', 'dcTractionControlToggle', 'dcTearOffVisor', 'dcPushToPass', 'dcDashPage']  # TODO: shouldn't be here
 
         dcNotInt =['dcBrakeBias']  # TODO: shouldn't be here
 
@@ -127,7 +124,7 @@ class Car:
         if len(args) == 1:
             if args[0].endswith('.json'):
                 filepath = args[0]
-            elif '/' in args[0]:
+            elif '/' in args[0] or "\\" in args[0]:
                 filepath = args[0] + '/data/car/' + self.name + '.json'
             else:
                 print('I dont know how to save the car as: ', args[0])

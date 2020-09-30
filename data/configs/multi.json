@@ -1,0 +1,42 @@
+{
+    "dcABS": [
+        0,
+        1
+    ],
+    "dcAntiRollFront": [
+        12,
+        13
+    ],
+    "dcAntiRollRear": [
+        14,
+        15
+    ],
+    "dcBrakeBias": [
+        2,
+        3
+    ],
+    "dcFuelMixture": [
+        4,
+        5
+    ],
+    "dcTearOffVisor": [
+        12,
+        13
+    ],
+    "dcThrottleShape": [
+        6,
+        7
+    ],
+    "dcTractionControl": [
+        8,
+        9
+    ],
+    "dcTractionControl2": [
+        10,
+        11
+    ],
+    "dcWeightJackerRight": [
+        16,
+        17
+    ]
+}
