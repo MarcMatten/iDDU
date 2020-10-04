@@ -1,7 +1,8 @@
 import numpy as np
 import time
 import irsdk
-from functionalities.libs import importExport
+from libs import Track
+from functionalities.libs import importExport, importIBT, maths
 
 
 class Car:
@@ -155,3 +156,35 @@ class Car:
             self.__setattr__(temp[i][0], temp[i][1])
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded car ' + path)
+
+    # def setReferenceLap(self, dirPath, ibtPath):
+    #     d, _ = importIBT.importIBT(ibtPath,
+    #                                lap='f',
+    #                                channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'YawNorth'],
+    #                                channelMapPath=dirPath + '/functionalities/libs/iRacingChannelMap.csv')
+    #
+    #     d['dt'] = np.diff(d['SessionTime'])
+    #     d['tLap'] = np.append(0, np.cumsum([d['dt']]))
+    #     d['LapDistPct'][0] = 0
+    #     d['LapDistPct'][-1] = 1
+    #     d['x'], d['y'] = maths.createTrack(d)
+    #
+    #     # check if track available
+    #     trackList = importExport.getFiles(dirPath + '/data/track', 'json')
+    #
+    #     if d['WeekendInfo']['TrackName'] + '.json' in trackList:
+    #         print('a')
+    #     else:
+    #         track = Track.Track(d['WeekendInfo']['TrackName'])
+    #
+    #         aNorth = d['YawNorth'][0]
+    #
+    #         track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
+    #
+    #         track.save(dirPath)
+    #
+    #         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
+    #
+    #     self.addLapTime(d['WeekendInfo']['TrackName'], d['tLap'], d['LapDistPct'], float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
+    #
+    #     self.save(dirPath)

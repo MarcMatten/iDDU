@@ -2,13 +2,16 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import sys
 import time
+import numpy as np
 import csv
 import os
 import winsound
-from libs import Track
+from libs import Track, Car
 from SimRacingTools import getShiftRPM
 from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
 from libs.IDDU import IDDUThread, IDDUItem
+from functionalities.libs import importExport, importIBT, maths
+from functionalities.RTDB import RTDB
 
 
 class iDDUGUIThread(IDDUThread):
@@ -67,7 +70,7 @@ class Gui(IDDUItem):
         self.tabGeneral = QtWidgets.QWidget()
         self.tabGeneral.setObjectName("tabGeneral")
         self.groupBox_2 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_2.setGeometry(QtCore.QRect(20, 320, 291, 51))
+        self.groupBox_2.setGeometry(QtCore.QRect(20, 330, 291, 51))
         self.groupBox_2.setObjectName("groupBox_2")
         self.pushButton_StartDDU = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_StartDDU.setGeometry(QtCore.QRect(40, 20, 75, 23))
@@ -144,7 +147,7 @@ class Gui(IDDUItem):
         self.doubleSpinBox_JokerLapsRequired.setProperty("value", self.db.JokerLaps)
         self.doubleSpinBox_JokerLapsRequired.setObjectName("doubleSpinBox_JokerLapsRequired")
         self.groupBox_7 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_7.setGeometry(QtCore.QRect(10, 190, 291, 121))
+        self.groupBox_7.setGeometry(QtCore.QRect(10, 190, 291, 131))
         self.groupBox_7.setObjectName("groupBox_7")
         self.pushButtonTrackRotateLeft = QtWidgets.QPushButton(self.groupBox_7)
         self.pushButtonTrackRotateLeft.setGeometry(QtCore.QRect(40, 20, 75, 21))
@@ -153,11 +156,14 @@ class Gui(IDDUItem):
         self.pushButtonTrackRotateRight.setGeometry(QtCore.QRect(160, 20, 75, 23))
         self.pushButtonTrackRotateRight.setObjectName("pushButtonTrackRotateRight")
         self.pushButtonLoadTrack = QtWidgets.QPushButton(self.groupBox_7)
-        self.pushButtonLoadTrack.setGeometry(QtCore.QRect(40, 70, 75, 21))
+        self.pushButtonLoadTrack.setGeometry(QtCore.QRect(40, 60, 75, 21))
         self.pushButtonLoadTrack.setObjectName("pushButtonLoadTrack")
         self.pushButtonSaveTrack = QtWidgets.QPushButton(self.groupBox_7)
-        self.pushButtonSaveTrack.setGeometry(QtCore.QRect(160, 70, 75, 23))
+        self.pushButtonSaveTrack.setGeometry(QtCore.QRect(160, 60, 75, 23))
         self.pushButtonSaveTrack.setObjectName("pushButtonSaveTrack")
+        self.pushButtonLoadReferenceLap = QtWidgets.QPushButton(self.groupBox_7)
+        self.pushButtonLoadReferenceLap.setGeometry(QtCore.QRect(40, 100, 191, 21))
+        self.pushButtonLoadReferenceLap.setObjectName("pushButtonLoadReferenceLap")
         self.groupBox_8 = QtWidgets.QGroupBox(self.tabGeneral)
         self.groupBox_8.setGeometry(QtCore.QRect(310, 120, 261, 80))
         self.groupBox_8.setObjectName("groupBox_8")
@@ -519,6 +525,7 @@ class Gui(IDDUItem):
         self.pushButtonTrackRotateRight.clicked.connect(self.rotateTrackRight)
         self.pushButtonLoadTrack.clicked.connect(self.loadTrack)
         self.pushButtonSaveTrack.clicked.connect(self.saveTrack)
+        self.pushButtonLoadReferenceLap.clicked.connect(self.loadReferenceLap)
 
         self.doubleSpinBox_DRSActivations.valueChanged.connect(self.assignDRS)
         self.doubleSpinBox_JokerLapDelta.valueChanged.connect(self.assignJokerDelta)
@@ -583,6 +590,7 @@ class Gui(IDDUItem):
         self.pushButtonTrackRotateRight.setText(_translate("iDDU", "Rotate Right"))
         self.pushButtonLoadTrack.setText(_translate("iDDU", "Load"))
         self.pushButtonSaveTrack.setText(_translate("iDDU", "Save"))
+        self.pushButtonLoadReferenceLap.setText(_translate("iDDU", "Load Reference Lap"))
         self.groupBox_8.setTitle(_translate("iDDU", "Logging"))
         self.checkBox_BEnableLogger.setText(_translate("iDDU", "enable Logger"))
         self.checkBox_BEnableLapLogging.setText(_translate("iDDU", "enable  end of lap logging"))
@@ -853,6 +861,54 @@ class Gui(IDDUItem):
 
         if BResetScreen:
             self.db.NDDUPage = NDDUPageTemp
+
+    def loadReferenceLap(self):
+        ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', './', 'IBT(*.ibt)')
+
+        d, _ = importIBT.importIBT(ibtPath[0],
+                                   lap='f',
+                                   channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'YawNorth'],
+                                   channelMapPath=self.db.dir + '/functionalities/libs/iRacingChannelMap.csv')
+
+        d['dt'] = np.diff(d['SessionTime'])
+        d['tLap'] = np.append(0, np.cumsum([d['dt']]))
+        d['LapDistPct'][0] = 0
+        d['LapDistPct'][-1] = 1
+        d['x'], d['y'] = maths.createTrack(d)
+
+        dTemp = self.db
+        dTemp.initialise(d, None)
+
+        # check if car available
+        carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
+        carName = d['DriverInfo']['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']
+        if carName + '.json' in carList:
+            self.db.car.load("data/car/" + carName + '.json')
+        else:
+            self.db.car = Car.Car(carName)
+            self.db.car.createCar(dTemp)
+            self.db.car.save(self.db.dir)
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCar has been successfully created')
+
+        # check if track available
+        trackList = importExport.getFiles(self.db.dir + '/data/track', 'json')
+        TrackName = d['WeekendInfo']['TrackName']
+        if TrackName + '.json' in trackList:
+            self.db.track.load("data/track/" + TrackName + '.json')
+        else:
+            track = Track.Track(TrackName)
+            aNorth = d['YawNorth'][0]
+            track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
+            track.save(self.db.dir)
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
+
+        self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, self.db.track.dist)
+
+        self.db.car.save(self.db.dir)
+
+        # self.save(self.db.dir)
+        #
+        # self.db.car.setReferenceLap(self.db.dir, ibtPath[0])
 
     def setUserFuelPreset(self):
         self.db.VUserFuelSet = self.spinBox_FuelSetting.value()
