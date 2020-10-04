@@ -885,39 +885,32 @@ class Gui(IDDUItem):
         d['LapDistPct'][-1] = 1
         d['x'], d['y'] = maths.createTrack(d)
 
-        dTemp = self.db
-        dTemp.initialise(d, None)
+        tempDB = RTDB.RTDB()
+        tempDB.initialise(d, False)
 
         # check if car available
         carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
-        carName = d['DriverInfo']['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']
+        carName = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
+
         if carName + '.json' in carList:
             self.db.car.load("data/car/" + carName + '.json')
         else:
             self.db.car = Car.Car(carName)
-            self.db.car.createCar(dTemp)
+            self.db.car.createCar(tempDB)
             self.db.car.save(self.db.dir)
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCar has been successfully created')
 
-        # check if track available
-        trackList = importExport.getFiles(self.db.dir + '/data/track', 'json')
+        # create track
         TrackName = d['WeekendInfo']['TrackName']
-        if TrackName + '.json' in trackList:
-            self.db.track.load("data/track/" + TrackName + '.json')
-        else:
-            track = Track.Track(TrackName)
-            aNorth = d['YawNorth'][0]
-            track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
-            track.save(self.db.dir)
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
+        track = Track.Track(TrackName)
+        aNorth = d['YawNorth'][0]
+        track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
+        track.save(self.db.dir)
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
 
         self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, self.db.track.LapDistPct)
 
         self.db.car.save(self.db.dir)
-
-        # self.save(self.db.dir)
-        #
-        # self.db.car.setReferenceLap(self.db.dir, ibtPath[0])
 
     def setUserFuelPreset(self):
         self.db.VUserFuelSet = self.spinBox_FuelSetting.value()
