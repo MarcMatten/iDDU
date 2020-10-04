@@ -25,7 +25,7 @@ class ShiftToneThread(IDDUThread):
                     self.initialise()
 
                 # execute this loop while player is on track
-                while self.ir['IsOnTrack'] and self.db.ShiftToneEnabled:
+                while self.ir['IsOnTrack'] and (self.db.ShiftToneEnabled or self.db.BEnableLiftTones):
                     t = time.perf_counter()
 
                     if self.db.BEnableLiftTones:
@@ -39,25 +39,25 @@ class ShiftToneThread(IDDUThread):
                             time.sleep(self.rate)
                             continue  # no shift beep when close to lift beep
 
-
-                    if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20:
-                        if self.db.UpshiftStrategy < 4:  # iRacing shift rpm
-                            if self.ir['RPM'] >= self.db.iRShiftRPM[self.db.UpshiftStrategy] and self.db.UserShiftFlag[self.ir['Gear'] - 1]:
-                                self.beep()
-                            else:
-                                self.db.Alarm[7] = 0
-                        elif self.db.UpshiftStrategy == 4:  # user shift rpm
-                            if self.ir['RPM'] >= self.db.UserShiftRPM[self.ir['Gear'] - 1] and self.db.UserShiftFlag[self.ir['Gear'] - 1]:
-                                self.beep()
-                            else:
-                                self.db.Alarm[7] = 0
-                        elif self.db.UpshiftStrategy == 5:  # optimised shift rpm from car file
-                            if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and self.ir['RPM'] >=  self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
-                                self.beep()
-                            else:
-                                self.db.Alarm[7] = 0
-                    else:
-                        self.db.Alarm[7] = 0
+                    if self.db.ShiftToneEnabled:
+                        if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20:
+                            if self.db.UpshiftStrategy < 4:  # iRacing shift rpm
+                                if self.ir['RPM'] >= self.db.iRShiftRPM[self.db.UpshiftStrategy] and self.db.UserShiftFlag[self.ir['Gear'] - 1]:
+                                    self.beep()
+                                else:
+                                    self.db.Alarm[7] = 0
+                            elif self.db.UpshiftStrategy == 4:  # user shift rpm
+                                if self.ir['RPM'] >= self.db.UserShiftRPM[self.ir['Gear'] - 1] and self.db.UserShiftFlag[self.ir['Gear'] - 1]:
+                                    self.beep()
+                                else:
+                                    self.db.Alarm[7] = 0
+                            elif self.db.UpshiftStrategy == 5:  # optimised shift rpm from car file
+                                if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and self.ir['RPM'] >=  self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
+                                    self.beep()
+                                else:
+                                    self.db.Alarm[7] = 0
+                        else:
+                            self.db.Alarm[7] = 0
                     
                     if (not self.oldGear == self.ir['Gear']) and self.BShiftTone:
                         tShiftReaction = max(time.time() - self.tBeep + self.db.tShiftBeep / 1000, 0)

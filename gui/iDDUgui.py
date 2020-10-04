@@ -186,8 +186,10 @@ class Gui(IDDUItem):
         self.comboBox_MultiSwitch = QtWidgets.QComboBox(self.groupBox_11)
         self.comboBox_MultiSwitch.setGeometry(QtCore.QRect(20, 20, 211, 22))
         self.comboBox_MultiSwitch.setObjectName("comboBox_MultiSwitch")
-        for i in range(0,30):
-            self.comboBox_MultiSwitch.addItem("")
+        tempDcList = list(dict(self.dcConfig))
+        for i in range(0, len(tempDcList)):
+            self.comboBox_MultiSwitch.addItem(tempDcList[i])
+        self.comboBox_MultiSwitch.setMaxVisibleItems(len(tempDcList))
         self.comboBox_MultiSwitch.setCurrentIndex(0)
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabPitStops = QtWidgets.QWidget()
@@ -386,12 +388,13 @@ class Gui(IDDUItem):
         self.comboBox.setGeometry(QtCore.QRect(150, 60, 131, 22))
         self.comboBox.setMaxVisibleItems(5)
         self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
+        self.comboBox.addItem("iRacing First RPM")
+        self.comboBox.addItem("iRacing Shift RPM")
+        self.comboBox.addItem("iRacing Last RPM")
+        self.comboBox.addItem("iRacing Blink RPM")
+        self.comboBox.addItem("User defined")
+        self.comboBox.addItem("from Car properties")
+        self.comboBox.setMaxVisibleItems(6)
         self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
         self.comboBox_FuelMethod.setCurrentIndex(self.db.NFuelSetMethod)
         self.pushButton_calcUpshiftRPM = QtWidgets.QPushButton(self.groupBox_6)
@@ -557,7 +560,7 @@ class Gui(IDDUItem):
         self.pushButton_MSMapDecrease.clicked.connect(self.MSMapDecrease)
         self.pushButton_MSMapIncrease.clicked.connect(self.MSMapIncrease)
         # self.comboBox_MultiSwitch.clicked.connect(self.retranslateUi)
-        self.comboBox_MultiSwitch.activated.connect(self.retranslateUi)
+        # self.comboBox_MultiSwitch.activated.connect(self.retranslateUi)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -641,6 +644,8 @@ class Gui(IDDUItem):
         self.comboBox.setItemText(3, _translate("iDDU", "iRacing Blink RPM"))
         self.comboBox.setItemText(4, _translate("iDDU", "User defined"))
         self.comboBox.setItemText(5, _translate("iDDU", "from Car properties"))
+        self.comboBox_MultiSwitch.setMaxVisibleItems(6)
+        self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
         self.pushButton_calcUpshiftRPM.setText(_translate("iDDU", "Calculate Upshift RPM from data"))
         self.groupBox_10.setTitle(_translate("iDDU", "Audio Settings"))
         self.pushButton_testShiftTone.setText(_translate("iDDU", "Play Test Tone"))
@@ -661,6 +666,8 @@ class Gui(IDDUItem):
         self.pushButtonSaveSnapshot.setText(_translate("iDDU", "RTDB Snapshot"))
         self.pushButtonLoadSnapshot.setText(_translate("iDDU", "Load Snapshot"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("iDDU", "Debug"))
+        self.checkBox_MapHighlight.setChecked(self.db.MapHighlight)
+        self.checkBox_EnableFuelManagement.setChecked(self.db.BEnableLiftTones)
 
         dcList = list(self.db.car.dcList.keys())
         k = 0
@@ -671,7 +678,7 @@ class Gui(IDDUItem):
                 self.comboBox_MultiSwitch.setItemText(k, _translate("iDDU", dcList[i]))
                 k += 1
 
-        self.comboBox_MultiSwitch.setMaxVisibleItems(k+1)
+        self.comboBox_MultiSwitch.setMaxVisibleItems(len(list(dict(self.dcConfig))))
         # self.comboBox_MultiSwitch.setCurrentIndex(0)
 
     def assignRaceLaps(self):
@@ -809,6 +816,8 @@ class Gui(IDDUItem):
         self.db.UpshiftStrategy = UpshiftStrategy
 
         print(self.db.timeStr + ': Loaded Shift Tone settings from: ' + OpenFileName[0])
+
+        self.retranslateUi(self.iDDU)
 
     def loadRTDBSnapshot(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/snapshots', 'JSON(*.json)')
@@ -953,6 +962,7 @@ class Gui(IDDUItem):
 
     def enableFuelManagement(self):
         self.db.BEnableLiftTones = self.checkBox_EnableFuelManagement.isChecked()
+        self.retranslateUi(self.iDDU)
 
     def loadFuelManagementSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './data/fuelSaving', 'JSON(*.json)')
@@ -963,14 +973,21 @@ class Gui(IDDUItem):
 
         self.db.loadFuelTgt(OpenFileName[0])
 
+        self.db.BEnableLiftTones = True
+
+        self.retranslateUi(self.iDDU)
+
     def calcUpshiftRPM(self):
         getShiftRPM.getShiftRPM(self.db.dir)
+        self.retranslateUi(self.iDDU)
 
     def calcFuelSaving(self):
         fuelSavingOptimiser.optimise(self.db.dir)
+        self.retranslateUi(self.iDDU)
 
     def calcRollOut(self):
         rollOut.getRollOutCurve(self.db.dir)
+        self.retranslateUi(self.iDDU)
 
     def MSMapDecrease(self):
         mapName = self.comboBox_MultiSwitch.currentText()

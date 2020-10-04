@@ -225,9 +225,10 @@
             64.08996879873862,
             99999,
             99999
-        ]
+        ],
+		"BValid": true
     },
-    "UpshiftStrategy": 1,
+    "UpshiftStrategy": 5,
     "UserShiftFlag": [
         true,
         true,

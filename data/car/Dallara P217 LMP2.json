@@ -254,6 +254,7 @@
             false,
             false
         ],
+        "BValid": true,
         "CarSetup": {
             "BrakesDriveUnit": {
                 "BrakeSpec": {
@@ -455,7 +456,7 @@
             99999
         ]
     },
-    "UpshiftStrategy": 0,
+    "UpshiftStrategy": 5,
     "UserShiftFlag": [
         true,
         true,

@@ -26,7 +26,8 @@ class Car:
             'BShiftTone': [False]*7,
             'NGear': [1, 2, 3, 4, 5, 6, 7],
             'SetupName': 'SetupName',
-            'CarSetup': {}
+            'CarSetup': {},
+            'BValid': False
         }
         self.Coasting = {
             'gLongCoastPolyFit': [],
@@ -106,6 +107,8 @@ class Car:
 
         self.UpshiftSettings['SetupName'] = SetupName
         self.UpshiftSettings['CarSetup'] = CarSetup
+        self.UpshiftStrategy = 5
+        self.UpshiftSettings['BValid'] = True
 
     def setCoastingData(self, gLongPolyFit, QFuelPolyFit, NGear, SetupName, CarSetup):
         self.Coasting['gLongCoastPolyFit'] = gLongPolyFit

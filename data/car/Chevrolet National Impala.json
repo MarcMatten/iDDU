@@ -67,7 +67,8 @@
             99999,
             99999,
             99999
-        ]
+        ],
+		"BValid": false
     },
     "UpshiftStrategy": 4,
     "UserShiftFlag": [

@@ -8,8 +8,8 @@
         13
     ],
     "dcAntiRollRear": [
-        14,
-        15
+        12,
+        13
     ],
     "dcBrakeBias": [
         2,
@@ -18,10 +18,6 @@
     "dcFuelMixture": [
         4,
         5
-    ],
-    "dcTearOffVisor": [
-        12,
-        13
     ],
     "dcThrottleShape": [
         6,
@@ -36,7 +32,7 @@
         11
     ],
     "dcWeightJackerRight": [
-        16,
-        17
+        14,
+        15
     ]
 }

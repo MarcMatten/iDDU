@@ -808,8 +808,14 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.queryData.extend(list(self.db.car.dcList.keys()))
 
+        if self.db.car.UpshiftSettings['BValid']:
+            self.db.UpshiftStrategy = 5
+        else:
+            self.db.UpshiftStrategy = self.db.car.UpshiftStrategy
+
         time.sleep(0.2)
 
+        print(self.db.timeStr + ':\tUpshift strategy: ' + str(self.db.UpshiftStrategy))
         print(self.db.timeStr + ':\tCar has been loaded successfully.')
 
     def newLap(self):
