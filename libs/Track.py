@@ -11,17 +11,17 @@ class Track:
         self.sTrack = 0
         self.x = []
         self.y = []
-        self.dist = []
+        self.LapDistPct = []
         self.a = 0
         self.aNorth = 0
         self.ds = 10
         self.map = []
         self.SFLine = [[0, 0], [0, 0], [0, 0]]
 
-    def createTrack(self, x, y, dist, aNorth, sTrack):
+    def createTrack(self, x, y, LapDistPct, aNorth, sTrack):
         self.x = x
         self.y = -y
-        self.dist = dist
+        self.LapDistPct = LapDistPct
         self.sTrack = sTrack
         self.aNorth = aNorth
         self.a = maths.angleVertical(self.x[3] - self.x[0], self.y[3] - self.y[0])
@@ -61,20 +61,20 @@ class Track:
 
         x = []
         y = []
-        dist = []
+        LapDistPct = []
 
         with open(path, mode='r') as csv_file:
             csv_reader = csv.reader(csv_file)
             for line in csv_reader:
-                dist.append(float(line[0]))
+                LapDistPct.append(float(line[0]))
                 x.append(float(line[1]))
                 y.append(float(line[2]))
 
         self.x = np.array(x)
         self.y = np.array(y)
-        self.dist = np.array(dist)
+        self.LapDistPct = np.array(LapDistPct)
         self.a = maths.angleVertical(self.x[3] - self.x[0], self.y[3] - self.y[0])
-        self.sTrack = len(self.dist)*self.ds
+        self.sTrack = len(self.LapDistPct)*self.ds
 
         self.sample()
         self.scale()
@@ -117,10 +117,10 @@ class Track:
         plt.show()
 
     def sample(self):
-        self.dist[0] = 0
-        self.x = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.dist, self.x)
-        self.y = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.dist, self.y)
-        self.dist = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.dist, self.dist)
+        self.LapDistPct[0] = 0
+        self.x = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.LapDistPct, self.x)
+        self.y = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.LapDistPct, self.y)
+        self.LapDistPct = np.interp(np.linspace(0, 100, int(self.sTrack / self.ds) + 1), self.LapDistPct, self.LapDistPct)
         self.createMap()
 
     def load(self, path):

@@ -463,8 +463,8 @@ class RenderScreen(RenderMain):
         if CarIdxLapDistPct[Idx] == -1.0:
             return
 
-        x = np.interp([float(CarIdxLapDistPct[Idx]) * 100], self.db.track.dist, self.db.track.x).tolist()[0]
-        y = np.interp([float(CarIdxLapDistPct[Idx]) * 100], self.db.track.dist, self.db.track.y).tolist()[0]
+        x = np.interp([float(CarIdxLapDistPct[Idx]) * 100], self.db.track.LapDistPct, self.db.track.x).tolist()[0]
+        y = np.interp([float(CarIdxLapDistPct[Idx]) * 100], self.db.track.LapDistPct, self.db.track.y).tolist()[0]
 
         if self.ir['DriverInfo']['DriverCarIdx'] == Idx:  # if player's car
             if self.db.RX:
@@ -524,7 +524,7 @@ class RenderScreen(RenderMain):
     def highlightSection(self, width: int, colour: tuple):
         if self.db.WeekendInfo['TrackName'] in  self.db.car.tLap:
             tLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
-            timeStamp = np.interp([float(self.ir['CarIdxLapDistPct'][self.ir['DriverInfo']['DriverCarIdx']]) * 100], self.db.track.dist, tLap).tolist()[0]
+            timeStamp = np.interp([float(self.ir['CarIdxLapDistPct'][self.ir['DriverInfo']['DriverCarIdx']]) * 100], self.db.track.LapDistPct, tLap).tolist()[0]
             timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
             while timeStamp1 < 0:
                 timeStamp1 = timeStamp1 + tLap[-1]

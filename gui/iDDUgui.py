@@ -902,7 +902,7 @@ class Gui(IDDUItem):
             track.save(self.db.dir)
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
 
-        self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, self.db.track.dist)
+        self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, self.db.track.LapDistPct)
 
         self.db.car.save(self.db.dir)
 

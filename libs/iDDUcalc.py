@@ -26,7 +26,7 @@ class IDDUCalcThread(IDDUThread):
         self.YawNorth = []
         self.VelocityX = []
         self.VelocityY = []
-        self.dist = np.array([])
+        self.LapDistPct = np.array([])
         self.time = np.array([])
         self.dx = np.array(0)
         self.dy = np.array(0)
@@ -327,14 +327,14 @@ class IDDUCalcThread(IDDUThread):
                                     self.YawNorth.append(self.db.YawNorth)
                                     self.VelocityX.append(self.db.VelocityX)
                                     self.VelocityY.append(self.db.VelocityY)
-                                    self.dist = np.append(self.dist, self.db.LapDistPct * 100)
+                                    self.LapDistPct = np.append(self.LapDistPct, self.db.LapDistPct * 100)
                                     self.time = np.append(self.time, self.db.SessionTime)
                             else:
                                 self.Yaw.append(self.db.Yaw)
                                 self.YawNorth.append(self.db.YawNorth)
                                 self.VelocityX.append(self.db.VelocityX)
                                 self.VelocityY.append(self.db.VelocityY)
-                                self.dist = np.append(self.dist, self.db.LapDistPct * 100)
+                                self.LapDistPct = np.append(self.LapDistPct, self.db.LapDistPct * 100)
                                 self.time = np.append(self.time, self.db.SessionTime)
 
                             # self.time = np.append(self.time, [self.db.SessionTime - self.timeLogingStart])
@@ -902,7 +902,7 @@ class IDDUCalcThread(IDDUThread):
 
         index = np.unique(self.time, return_index=True)[1]
         self.time = np.array(self.time)[index]
-        self.dist = np.array(self.dist)[index]
+        self.LapDistPct = np.array(self.LapDistPct)[index]
         self.YawNorth = np.array(self.YawNorth)[index]
         self.Yaw = np.array(self.Yaw)[index]
         self.VelocityX = np.array(self.VelocityX)[index]
@@ -910,15 +910,15 @@ class IDDUCalcThread(IDDUThread):
 
 
         # self.time = np.append(self.time, self.db.LapLastLapTime)
-        # self.dist = np.append(self.dist, [100])
+        # self.LapDistPct = np.append(self.LapDistPct, [100])
 
         if BCreateTrack:  # TODO: same code as in fuelSaving Optimiser?
             self.dt = np.diff(self.time)
             self.time = self.time - self.time[0]
             self.time[-1] = self.db.LapLastLapTime
 
-            self.dist[0] = 0
-            self.dist[-1] = 100
+            self.LapDistPct[0] = 0
+            self.LapDistPct[-1] = 100
 
             self.dx = np.append(self.dx, np.cos(self.Yaw[0:-1]) * self.VelocityX[0:-1] * self.dt - np.sin(self.Yaw[0:-1]) * self.VelocityY[0:-1] * self.dt)
             self.dy = np.append(self.dy, np.cos(self.Yaw[0:-1]) * self.VelocityY[0:-1] * self.dt + np.sin(self.Yaw[0:-1]) * self.VelocityX[0:-1] * self.dt)
@@ -948,16 +948,16 @@ class IDDUCalcThread(IDDUThread):
 
             aNorth = self.YawNorth[0]
 
-            self.db.track.createTrack(self.x, self.y, self.dist, aNorth, self.db.TrackLength*1000)
+            self.db.track.createTrack(self.x, self.y, self.LapDistPct, aNorth, self.db.TrackLength*1000)
             self.db.track.save(self.db.dir)
 
-            self.db.dist = self.db.track.dist
+            self.db.LapDistPct = self.db.track.LapDistPct
 
             print(self.db.timeStr + ':\tTrack has been successfully created')
             print(self.db.timeStr + ':\tSaved track as: ' + r"data/track/" + self.db.track.name + ".json")
 
         if BRecordtLap:
-            self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.dist, self.db.track.dist)
+            self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct)
             self.db.car.save(self.db.dir)
             self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 
