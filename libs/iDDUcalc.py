@@ -8,7 +8,7 @@ from libs import Track, Car
 from libs.IDDU import IDDUThread
 
 nan = float('nan')
-tLiftTones = [1, 0.5, 0]
+tLiftTones = [1, 0.5, 0] # TODO: add to settings
 
 
 # TODO: add more comments
@@ -53,8 +53,8 @@ class IDDUCalcThread(IDDUThread):
         # self.loadTrack('default')
         # self.loadCar('default')
 
-        self.db.loadFuelTgt('data/fuelSaving/default.json')
-        self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
+        # self.db.loadFuelTgt('data/fuelSaving/default.json')
+        # self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
 
     def run(self):
         while 1:
@@ -277,6 +277,13 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.BPitCommandControl:
                                 self.ir.pit_command(0)
 
+                            if self.db.FuelTGTLiftPoints['SFuelConfigCarName'] == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'] \
+                                    and self.db.FuelTGTLiftPoints['SFuelConfigTrackName'] == self.db.WeekendInfo['TrackDisplayShortName']:
+                                self.db.BFuelSavingConfigLoaded = True
+                            else:
+                                self.db.BFuelSavingConfigLoaded = False
+                                print(self.db.timeStr + ':\tFuel Saving congig loaded ({}, {}) does not match curretn session ({}, {})'.format(self.db.FuelTGTLiftPoints['SFuelConfigCarName'], self.db.FuelTGTLiftPoints['SFuelConfigTrackName'], self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'], self.db.WeekendInfo['TrackDisplayShortName']))
+
                         if self.db.OnPitRoad: # do when on pit road
                             self.db.BWasOnPitRoad = True
                             self.db.BEnteringPits = False
@@ -355,6 +362,7 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.NLapRemaining < 1:
                                 self.db.Alarm[3] = 3
                             if self.db.BNewLap and not self.db.OnPitRoad:
+                                # TODO: switch between user race laps and estimation --> see LapsToGo
                                 fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.5)
                                 self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
                                 if self.db.VFuelAdd == 0:
@@ -432,7 +440,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.Alarm[1] = 3
 
                         # Lift beeps
-                        if self.db.BEnableLiftTones:
+                        if self.db.BEnableLiftTones and self.db.BFuelSavingConfigLoaded:
                             self.LiftTone()
 
                         if type(self.db.FuelLevel) is float:
@@ -893,7 +901,7 @@ class IDDUCalcThread(IDDUThread):
             self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
         self.db.oldLap = self.db.Lap
-        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1
+        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1 # TODO: switch between user race laps and estimation --> see fuel estimation
         # if not self.db.OnPitRoad:
         #     self.db.BWasOnPitRoad = False
 

@@ -361,7 +361,15 @@ calcData = {'startUp': False,
             'Exception': None,
             'CarIdxMap': np.linspace(0,63,64).astype(int).tolist(),
             'BLiftToneRequest': False,
-            'FuelTGTLiftPoints': {},
+            'FuelTGTLiftPoints': {
+                'SFuelConfigCarName': None,
+                'SFuelConfigTrackName': None,
+                'VFuelTGT': None,
+                'CarSetup': None,
+                'LapDistPct': None,
+                'SetupName': None,
+                'ibtFileName': None
+            },
             'LapDistPctLift': np.array([]),
             'VFuelTgt': 3.05,
             'VFuelTgtEffective': 3.05,
@@ -370,11 +378,8 @@ calcData = {'startUp': False,
             'NNextLiftPoint': 0,
             'BEnableLiftTones': False,
             'tNextLiftPoint': 0,
-            # 'DDUControlList': # DisplayName, show, decimals, initial value, min value, max valuem steps
-            #     {
-            #     'VFuelTgt': ['VFuelTgt', True, 2],
-            #     'VFuelTgtOffset': ['VFuelTgtOffset', True, 2]
-            #     },
+            'BMultiInitRequest': False,
+            'BFuelSavingConfigLoaded': False,
             'fFuelBeep': 300,
             'tFuelBeep': 150,
             'fShiftBeep': 500,
@@ -391,6 +396,68 @@ iDDUControls = {# DisplayName, show, decimals, initial value, min value, max val
     'BEnableLiftTones': ['Enable Lift Tones', True, 0, True]
 }
 
+##config = {
+##    'BEnableLiftTones': False,
+##    'fFuelBeep': 300,
+##    'tFuelBeep': 150,
+##    'fShiftBeep': 500,
+##    'tShiftBeep': 150,
+##    'BPitCommandControl': False,
+##    'BEnableLapLogging': False,
+##    'BChangeTyres': False,
+##    'BBeginFueling': False,
+##    'VUserFuelSet': 0,
+##    'NFuelSetMethod': 0, # 0 = User pre set; 1 = calculated
+##    'BLoggerActive': False,
+##    'BEnableRaceLapEstimation': False,
+##    'RenderLabel': [
+##        True,  # 0 Best
+##        True,  # 1 Last
+##        True,  # 2 Delta
+##        True,  # 3 FuelLevel
+##        True,  # 4 FuelCons
+##        True,  # 5 FuelLastCons
+##        True,  # 6 FuelLaps
+##        True,  # 7 FuelAdd
+##        True,  # 8 ABS
+##        True,  # 9 BBias
+##        True,  # 10 Mix
+##        True,  # 11 TC1
+##        True,  # 12 TC2
+##        True,  # 13Lap
+##        True,  # 14 Clock
+##        True,  # 15 Remain
+##        False,  # 16 Elapsed
+##        True,  # 17 Joker
+##        False,  # 18 DRS
+##        False,  # 19 P2P
+##        True,  # 20 ToGo
+##        True,  # 21 Est
+##        True,  # 22 Gear
+##        True,  # 23 Speed
+##        True,  # 24 Position
+##        True,  # 25 Distance to pit stall
+##        True,  # 26 speed in pit lane
+##        True,  # 27 Gear in pit lane
+##    ],
+##    'DRSActivations': 8,
+##    'P2PActivations': 12,
+##    'DRSActivationsGUI': 8,
+##    'P2PActivationsGUI': 12,
+##    'JokerLapDelta': 2,
+##    'JokerLaps': 1,
+##    'MapHighlight': False,
+##    'ShiftToneEnabled': True,
+##    'UserRaceLaps': 0,
+##    'PitStopsRequired': 0,
+##    'RaceLaps': 37,
+##    'Logging': False,
+##    'PitStopDelta': 61,
+##    'UpshiftStrategy': 0,
+##    'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
+##    'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1]
+##}
+
 iDDUControlsNameInit = {}
 
 iDDUControlsName = list(iDDUControls.keys())
@@ -405,11 +472,8 @@ myRTDB = RTDB.RTDB()
 myRTDB.initialise(helpData, False)
 myRTDB.initialise(iRData, True)
 myRTDB.initialise(calcData, False)
-# myRTDB.initialise(iDDUControlsNameInit, False)
 myRTDB.initialise({'iDDUControls':iDDUControls}, False)
-
-# myRTDB.car.load('C:/Users/Marc/Documents/Projekte/iDDU/data/car/default.json')
-# myRTDB.car.load('C:/Users/Marc/Documents/Projekte/iDDU/data/car/Ferrari 488 GTE.json')
+# myRTDB.initialise(config, False)
 
 dcList = list(myRTDB.car.dcList.keys())
 
