@@ -37,8 +37,6 @@ class IDDUCalcThread(IDDUThread):
         self.BCreateTrack = False
         self.BRecordtLap = False
 
-        # self.ir = irsdk.IRSDK()
-
         self.DRSList = ['formularenault35', 'mclarenmp430']  # TODO: still required?
         self.P2PList = ['dallaradw12', 'dallarair18']  # TODO: still required?
 
@@ -49,12 +47,6 @@ class IDDUCalcThread(IDDUThread):
         self.x = None
         self.y = None
         self.snapshot = False
-
-        # self.loadTrack('default')
-        # self.loadCar('default')
-
-        # self.db.loadFuelTgt('data/fuelSaving/default.json')
-        # self.setFuelTgt(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), 0)
 
     def run(self):
         while 1:
@@ -322,11 +314,6 @@ class IDDUCalcThread(IDDUThread):
 
                         # Create Track Map
                         if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
-                            # Logging track data
-                            #if not self.Logging:
-                            #    self.logLap = self.db.Lap
-                            #    self.Logging = True
-                            #    self.timeLogingStart = self.db.SessionTime
 
                             if len(self.time) > 0:
                                 if not self.time[-1] == self.db.SessionTime:
@@ -343,15 +330,6 @@ class IDDUCalcThread(IDDUThread):
                                 self.VelocityY.append(self.db.VelocityY)
                                 self.LapDistPct = np.append(self.LapDistPct, self.db.LapDistPct * 100)
                                 self.time = np.append(self.time, self.db.SessionTime)
-
-                            # self.time = np.append(self.time, [self.db.SessionTime - self.timeLogingStart])
-                            # if len(self.time) == 1:
-                            #     self.dt = self.time[0]
-                            # else:
-                            #     self.dt = self.time[-1] - self.time[-2]
-                            #
-                            # self.dx.append(math.cos(self.db.Yaw) * self.db.VelocityX * self.dt - math.sin(self.db.Yaw) * self.db.VelocityY * self.dt)
-                            # self.dy.append(math.cos(self.db.Yaw) * self.db.VelocityY * self.dt + math.sin(self.db.Yaw) * self.db.VelocityX * self.dt)
 
                         # fuel consumption -----------------------------------------------------------------------------------------
                         if len(self.db.FuelConsumptionList) >= 1:
@@ -489,18 +467,6 @@ class IDDUCalcThread(IDDUThread):
 
                     for i in range(0, len(self.db.iDDUControls)):
                         self.db.dc[list(self.db.iDDUControls.keys())[i]] = self.db.get(list(self.db.iDDUControls.keys())[i])
-
-                    # if self.db.SessionTime > self.db.RunStartTime + 3:
-                    #     if not self.db.dc == self.db.dcOld:
-                    #         temp = {k: self.db.dc[k] for k in self.db.dc if k in self.db.dcOld and not self.db.dc[k] == self.db.dcOld[k]}
-                    #         self.db.dcChangedItems = list(temp.keys())
-                    #         self.db.dcChangeTime = self.db.SessionTime
-                    #         if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
-                    #             if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
-                    #                 self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
-                    #             self.setFuelTgt(self.db.VFuelTgt, self.db.VFuelTgtOffset)
-                    #
-                    # self.db.dcOld = self.db.dc.copy()
 
                     if self.db.SessionTime > self.db.RunStartTime + 3:
                         if not self.db.dcHeadlightFlash == self.db.dcHeadlightFlashOld and self.db.dcHeadlightFlash is not None:

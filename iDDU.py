@@ -384,16 +384,18 @@ calcData = {'startUp': False,
             'tFuelBeep': 150,
             'fShiftBeep': 500,
             'tShiftBeep': 150,
-            'BMultiInitRequest': False
+            'BMultiInitRequest': False,
+            'NRaceLapsSource': 0
             }
 
-iDDUControls = {# DisplayName, show, decimals, initial value, min value, max valuem steps
+iDDUControls = {# DisplayName, show, decimals, initial value, min value, max value, steps
     'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True],
     'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True],
     'BPitCommandControl': ['Enable Pit Control', True, 0, True],
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
     'VFuelTgtOffset': ['VFuelTgtOffset', True, 2, 0, -5, 5, 0.01],
-    'BEnableLiftTones': ['Enable Lift Tones', True, 0, True]
+    'BEnableLiftTones': ['Enable Lift Tones', True, 0, True],
+    'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1]
 }
 
 ##config = {
