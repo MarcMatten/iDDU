@@ -5,6 +5,7 @@ import pygame
 from functionalities.libs import convertString
 from libs.IDDU import IDDUItem
 
+
 class RenderMain(IDDUItem):
     __slots__ = 'joystick'
     BDisplayCreated = False
@@ -15,14 +16,14 @@ class RenderMain(IDDUItem):
     ArrowLeft2 = [[120, 240], [200, 20], [200, 460]]
     ArrowRight2 = [[680, 240], [600, 20], [600, 460]]
 
-    fontTiny = pygame.font.Font("files\KhmerUI.ttf", 12)  # Khmer UI Calibri
-    fontTiny2 = pygame.font.Font("files\KhmerUI.ttf", 18)
-    fontSmall = pygame.font.Font("files\KhmerUI.ttf", 20)
-    fontMedium = pygame.font.Font("files\KhmerUI.ttf", 40)
-    fontLarge = pygame.font.Font("files\KhmerUI.ttf", 60)
-    fontGear = pygame.font.Font("files\KhmerUI.ttf", 163)
-    fontReallyLarge = pygame.font.Font("files\KhmerUI.ttf", 350)
-    fontHuge = pygame.font.Font("files\KhmerUI.ttf", 480)
+    fontTiny = pygame.font.Font("files/KhmerUI.ttf", 12)  # Khmer UI Calibri
+    fontTiny2 = pygame.font.Font("files/KhmerUI.ttf", 18)
+    fontSmall = pygame.font.Font("files/KhmerUI.ttf", 20)
+    fontMedium = pygame.font.Font("files/KhmerUI.ttf", 40)
+    fontLarge = pygame.font.Font("files/KhmerUI.ttf", 60)
+    fontGear = pygame.font.Font("files/KhmerUI.ttf", 163)
+    fontReallyLarge = pygame.font.Font("files/KhmerUI.ttf", 350)
+    fontHuge = pygame.font.Font("files/KhmerUI.ttf", 480)
     SCLabel = fontHuge.render('SC', True, IDDUItem.black)
 
     # display
@@ -53,6 +54,7 @@ class RenderMain(IDDUItem):
 
     def __init__(self):
         IDDUItem.__init__(self)
+
 
 class RenderScreen(RenderMain):
     def __init__(self):
@@ -105,11 +107,11 @@ class RenderScreen(RenderMain):
         self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 3, 4), 19)
 
         self.frames[5].addLabel('FuelLevelStr', LabeledValue2('Remaining', 318, 303, 125, '-', self.fontSmall, self.fontLarge, 0, 2), 3)
-        self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 481, 303, 125, '-', self.fontSmall, self.fontLarge, 1, 0), 7) # 515
-        self.frames[5].addLabel('FuelLapsStr', LabeledValue2('Laps', 644, 303, 135, '-', self.fontSmall, self.fontLarge, 0, 3), 6) # 318
-        self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 318, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 10) # 712
-        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 5) # 481
-        self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 4) # 644
+        self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 481, 303, 125, '-', self.fontSmall, self.fontLarge, 1, 0), 7)
+        self.frames[5].addLabel('FuelLapsStr', LabeledValue2('Laps', 644, 303, 135, '-', self.fontSmall, self.fontLarge, 0, 3), 6)
+        self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 318, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 10)
+        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 5)
+        self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 4)
 
         self.frames3 = list()
 
@@ -175,7 +177,6 @@ class RenderScreen(RenderMain):
                     elif self.db.FlagExceptionVal == 6:
                         RenderMain.screen.blit(self.warning, [0, 0])
 
-
             if self.ir.startup() and self.ir['IsOnTrack']:
                 # Radar Incicators
                 CarLeftRight = self.ir['CarLeftRight']
@@ -208,14 +209,14 @@ class RenderScreen(RenderMain):
                         RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
                         RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
 
-            if self.db.NDDUPage == 1: # Page 1
+            if self.db.NDDUPage == 1:
                 self.page1()
-            elif self.db.NDDUPage == 2:  # Page 2
+            elif self.db.NDDUPage == 2:
                 self.page2()
-            elif self.db.NDDUPage == 3:  # Page 3
+            elif self.db.NDDUPage == 3:
                 self.page3()
 
-        else:  # Page 0
+        else:
             self.page0()
 
         if self.ir.startup() and self.ir['IsOnTrack']:
@@ -258,9 +259,8 @@ class RenderScreen(RenderMain):
             # if SessionFlags & 0x100000:
             #     self.warningLabel('REPAIR', self.white, self.black)
 
-
             if self.db.OnPitRoad and self.db.Speed > 10 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                    self.warningLabel('PIT LIMITER OFF', self.red, self.white)
+                self.warningLabel('PIT LIMITER OFF', self.red, self.white)
 
             # driver control change
             if time.time() < self.db.dcChangeTime + 1:
@@ -457,7 +457,6 @@ class RenderScreen(RenderMain):
 
         pygame.draw.lines(RenderMain.screen, self.white, True, [[693, 241],  [743, 241],  [743, 457],  [693, 457]], 5)
 
-
     def CarOnMap(self, Idx):
         CarIdxLapDistPct = self.ir['CarIdxLapDistPct']
         if CarIdxLapDistPct[Idx] == -1.0:
@@ -522,7 +521,7 @@ class RenderScreen(RenderMain):
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
 
     def highlightSection(self, width: int, colour: tuple):
-        if self.db.WeekendInfo['TrackName'] in  self.db.car.tLap:
+        if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
             tLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
             timeStamp = np.interp([float(self.ir['CarIdxLapDistPct'][self.ir['DriverInfo']['DriverCarIdx']]) * 100], self.db.track.LapDistPct, tLap).tolist()[0]
             timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
@@ -554,7 +553,7 @@ class RenderScreen(RenderMain):
                     indices1 = np.append(indices1, indices1[0]+1)
 
                 ind1 = []
-                for i in range(0,len(indices1)):
+                for i in range(0, len(indices1)):
                     ind1.append(int(indices1[i]))
 
                 map1 = np.array(self.db.track.map)[ind1].tolist()
@@ -564,7 +563,7 @@ class RenderScreen(RenderMain):
                     indices2 = np.append(indices2, indices2[0]-1)
 
                 ind2 = []
-                for i in range(0,len(indices2)):
+                for i in range(0, len(indices2)):
                     ind2.append(int(indices2[i]))
 
                 map2 = np.array(self.db.track.map)[ind2].tolist()
@@ -589,6 +588,7 @@ class RenderScreen(RenderMain):
         Value = self.fontReallyLarge.render(value, True, self.white)
         RenderMain.screen.blit(Value, (400 - ValueSize[0] / 2, 270 - ValueSize[1] / 2))
 
+
 class Frame(RenderMain):
     def __init__(self, title, x1, y1, dx, dy, center):
         RenderMain.__init__(self)
@@ -607,14 +607,12 @@ class Frame(RenderMain):
 
     def drawFrame(self):
         if self.center:
-            pygame.draw.lines(RenderMain.screen, self.db.textColour, False,
-                                   [[self.x1 + self.dx/2 - self.textSize[0]/2 - 5, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
-                                    [self.x2, self.y1], [self.x1 + self.dx/2 + self.textSize[0]/2 + 5, self.y1]], 1)
-            RenderMain.screen.blit(self.Title, (self.x1 + self.dx/2 - self.textSize[0]/2 , self.y1 - 10))
+            pygame.draw.lines(RenderMain.screen, self.db.textColour, False, [[self.x1 + self.dx/2 - self.textSize[0]/2 - 5, self.y1], [self.x1, self.y1], [self.x1, self.y2],
+                                                                             [self.x2, self.y2], [self.x2, self.y1], [self.x1 + self.dx/2 + self.textSize[0]/2 + 5, self.y1]], 1)
+            RenderMain.screen.blit(self.Title, (self.x1 + self.dx/2 - self.textSize[0]/2, self.y1 - 10))
         else:
-            pygame.draw.lines(RenderMain.screen, self.db.textColour, False,
-                                   [[self.x1 + 25, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2],
-                                    [self.x2, self.y1], [self.x1 + 35 + self.textSize[0], self.y1]], 1)
+            pygame.draw.lines(RenderMain.screen, self.db.textColour, False, [[self.x1 + 25, self.y1], [self.x1, self.y1], [self.x1, self.y2], [self.x2, self.y2], [self.x2, self.y1],
+                                                                             [self.x1 + 35 + self.textSize[0], self.y1]], 1)
             RenderMain.screen.blit(self.Title, (self.x1 + 30, self.y1 - 10))
 
         for i in range(0, len(self.Labels)):
@@ -781,7 +779,6 @@ class SimpleValue(RenderMain):
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
         self.ValSize = self.valFont.size(self.value)
 
-
         if not self.alarmTag == 0:
             if self.db.Alarm[self.alarmTag] == 1:
                 pygame.draw.rect(RenderMain.screen, self.green, [self.x - 3, self.y + 41, self.width + 6, 135], 0)
@@ -793,4 +790,3 @@ class SimpleValue(RenderMain):
             RenderMain.screen.blit(self.ValLabel, (self.x + self.width/2 - self.ValSize[0]/2, self.y + 15))
         else:
             RenderMain.screen.blit(self.ValLabel, (self.x + self.width - self.ValSize[0], self.y + 15))
-

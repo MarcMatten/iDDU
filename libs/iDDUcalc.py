@@ -8,7 +8,7 @@ from libs import Track, Car
 from libs.IDDU import IDDUThread
 
 nan = float('nan')
-tLiftTones = [1, 0.5, 0] # TODO: add to settings
+tLiftTones = [1, 0.5, 0]  # TODO: add to settings
 
 
 # TODO: add more comments
@@ -83,17 +83,17 @@ class IDDUCalcThread(IDDUThread):
                     else:
                         self.db.PosStr = '-/' + str(self.db.NDriversMyClass)
 
-                    if self.db.PlayerTrackSurface == 3: # on track
+                    if self.db.PlayerTrackSurface == 3:  # on track
                         self.db.BEnteringPits = False
-                    elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2: # entering pit entry event
+                    elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:  # entering pit entry event
                         self.db.BEnteringPits = True
 
                     self.db.PlayerTrackSurfaceOld = self.db.PlayerTrackSurface
 
-                    if self.db.OnPitRoad and self.db.BEnteringPits and not self.db.PlayerCarPitSvStatus == 2: # from pit entry end of pit stop
+                    if self.db.OnPitRoad and self.db.BEnteringPits and not self.db.PlayerCarPitSvStatus == 2:  # from pit entry end of pit stop
                         self.db.NDDUPage = 3
 
-                    if self.db.OnPitRoad or self.db.BEnteringPits: # do when in pit entry or in pit lane but not on track
+                    if self.db.OnPitRoad or self.db.BEnteringPits:  # do when in pit entry or in pit lane but not on track
                         pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                         deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
@@ -111,7 +111,7 @@ class IDDUCalcThread(IDDUThread):
                         self.db.textColour = self.white
                         self.distance2PitStall()
 
-                        if not self.db.PitstopActive: # during pitstop
+                        if not self.db.PitstopActive:  # during pitstop
                             if self.db.PitSvFlags & 0x01:
                                 self.db.BTyreChangeRequest[0] = True
                             else:
@@ -134,7 +134,7 @@ class IDDUCalcThread(IDDUThread):
                             else:
                                 self.db.BFuelRequest = False
 
-                    else: # do when on track but not when in pits
+                    else:  # do when on track but not when in pits
 
                         if not (self.db.SessionFlags == self.db.oldSessionFlags):
                             self.FlagCallTime = self.db.SessionTime
@@ -180,7 +180,7 @@ class IDDUCalcThread(IDDUThread):
                         elif self.db.SessionTime > (self.FlagCallTime + 3):
                             self.db.backgroundColour = self.black
 
-                            if len(self.db.NLappingCars) > 0 and (self.db.PlayerTrackSurface == 1 or self.db.PlayerTrackSurface == 3):
+                            if len(self.db.NLappingCars) > 0 and (self.db.PlayerTrackSurface == 1 or self.db.PlayerTrackSurface == 3) and self.db.IsOnTrack:
                                 self.db.backgroundColour = self.blue
 
                             self.db.textColour = self.white
@@ -209,7 +209,7 @@ class IDDUCalcThread(IDDUThread):
 
                             BCarIdxInLappingRange = (-100 <= CarIdxDistDiff) & (CarIdxDistDiff < 0)
 
-                            k = [i for i, x in enumerate(BCarIdxInLappingRange.tolist()) if x==True]
+                            k = [i for i, x in enumerate(BCarIdxInLappingRange.tolist()) if x]
 
                             CarClassList = []
                             NLappingCars = []
@@ -224,7 +224,8 @@ class IDDUCalcThread(IDDUThread):
                                             NLappingCars[CarClassList.index(name)]['NCars'] += 1
                                             NLappingCars[CarClassList.index(name)]['sDiff'] = max(NLappingCars[CarClassList.index(name)]['sDiff'], CarIdxDistDiff[k[j]])
                                         else:
-                                            NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassColor']), 'sDiff': CarIdxDistDiff[k[j]]})
+                                            NLappingCars.append({'Class': name, 'NCars': 1, 'Color': self.bit2RBG(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassColor']),
+                                                                 'sDiff': CarIdxDistDiff[k[j]]})
                                             CarClassList.append(name)
 
                             self.db.NLappingCars = sorted(NLappingCars, key=lambda x: x['sDiff'], reverse=True)
@@ -242,7 +243,8 @@ class IDDUCalcThread(IDDUThread):
                             self.db.JokerLaps = [0] * NumDrivers
                             self.db.textColourJoker = self.db.textColour
                             for n in range(0, NumResults):
-                                self.db.JokerLaps[self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
+                                self.db.JokerLaps[self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['CarIdx']] = \
+                                    self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][n]['JokerLapsComplete']
 
                             if not self.db.JokerLapsRequired == 0:
                                 self.db.JokerStr = str(self.db.JokerLaps[self.db.DriverCarIdx]) + '/' + str(self.db.JokerLapsRequired)
@@ -274,21 +276,24 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.BFuelSavingConfigLoaded = True
                             else:
                                 self.db.BFuelSavingConfigLoaded = False
-                                print(self.db.timeStr + ':\tFuel Saving congig loaded ({}, {}) does not match curretn session ({}, {})'.format(self.db.FuelTGTLiftPoints['SFuelConfigCarName'], self.db.FuelTGTLiftPoints['SFuelConfigTrackName'], self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'], self.db.WeekendInfo['TrackDisplayShortName']))
+                                print(self.db.timeStr +
+                                      ':\tFuel Saving congig loaded ({}, {}) does not match curretn session ({}, {})'.format(self.db.FuelTGTLiftPoints['SFuelConfigCarName'],
+                                                                                                                             self.db.FuelTGTLiftPoints['SFuelConfigTrackName'],
+                                                                                                                             self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'],
+                                                                                                                             self.db.WeekendInfo['TrackDisplayShortName']))
 
-                        if self.db.OnPitRoad: # do when on pit road
+                        if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
                             self.db.BEnteringPits = False
-                            if self.db.PitstopActive: # during pitstop
-                                if not self.db.BPitstop: # pit stop start event
+                            if self.db.PitstopActive:  # during pitstop
+                                if not self.db.BPitstop:  # pit stop start event
                                     self.db.PitSvFlagsEntry = self.db.PitSvFlags
                                     self.db.VFuelPitStopStart = self.db.FuelLevel
                                     self.db.BPitstop = True
                                 self.pitStop()
-                                if (not self.db.BPitstopCompleted) and self.db.PlayerCarPitSvStatus == 2: # pit stop completed event
+                                if (not self.db.BPitstopCompleted) and self.db.PlayerCarPitSvStatus == 2:  # pit stop completed event
                                     self.db.BPitstopCompleted = True
                                     self.db.NDDUPage = 2
-
 
                         elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit event
                             self.db.OutLap = True
@@ -302,8 +307,8 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BFuelCompleted = False
                             self.db.BPitstopCompleted = False
                             self.db.BTyreChangeRequest = [False, False, False, False]
-                            self.db.BTyreChangeCompleted =  [False, False, False, False]
-                            self.db.BWasOnPitRoad  = False
+                            self.db.BTyreChangeCompleted = [False, False, False, False]
+                            self.db.BWasOnPitRoad = False
 
                         # check if new lap
                         if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:
@@ -342,7 +347,8 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.BNewLap and not self.db.OnPitRoad:
                                 # TODO: switch between user race laps and estimation --> see LapsToGo
                                 fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.5)
-                                self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0), self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
+                                self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
+                                                       self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
                                 if self.db.VFuelAdd == 0:
                                     # self.ir.pit_command(2, 1) # Add fuel, optionally specify the amount to add in liters or pass '0' to use existing amount
                                     # self.ir.pit_command(11) # Uncheck add fuel
@@ -350,7 +356,7 @@ class IDDUCalcThread(IDDUThread):
                                 else:
                                     if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
                                         if self.db.NFuelSetMethod == 1 and self.db.BBeginFueling and self.db.BPitCommandControl:
-                                            self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10)) # Add fuel
+                                            self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))  # Add fuel
                                     if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
                                         self.db.textColourFuelAddOverride = self.green
                                         self.db.BTextColourFuelAddOverride = True
@@ -418,7 +424,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.Alarm[1] = 3
 
                         # Lift beeps
-                        if self.db.BEnableLiftTones and self.db.BFuelSavingConfigLoaded:
+                        if self.db.BEnableLiftTones and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
                             self.LiftTone()
 
                         if type(self.db.FuelLevel) is float:
@@ -449,7 +455,8 @@ class IDDUCalcThread(IDDUThread):
 
                     # do if sim is running after updating data ---------------------------------------------------------------------
                     if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
-                        self.db.RemLapValue = max(min(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] - self.db.Lap + 1, self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']), 0)
+                        self.db.RemLapValue = max(min(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] - self.db.Lap + 1,
+                                                      self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps']), 0)
                         self.db.RemLapValueStr = str(self.db.RemLapValue)
                     else:
                         self.db.RemLapValue = 0
@@ -550,7 +557,6 @@ class IDDUCalcThread(IDDUThread):
         self.db.Alarm = [0]*10
         self.db.BMultiInitRequest = True
 
-
         if self.db.startUp:
             # self.db.StartDDU = True
             self.db.oldSessionNum = self.db.SessionNum
@@ -604,7 +610,6 @@ class IDDUCalcThread(IDDUThread):
                 self.db.__setattr__('RX', False)
                 self.db.RenderLabel[17] = False
                 print(self.db.timeStr + ':\tRoad Racing')
-
 
             # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
@@ -731,18 +736,21 @@ class IDDUCalcThread(IDDUThread):
             for i in range(0, len(self.db.DriverInfo['Drivers'])):
                 if not str(self.db.DriverInfo['Drivers'][i]['UserName']) == 'Pace Car':
                     if i == 0:
-                        self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'], 'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
-                                                                                           'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
-                                                                                           'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
+                        self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'],
+                                                                                                           'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
+                                                                                                           'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
+                                                                                                           'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'],
+                                                                                                                        'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
                     else:
                         if str(self.db.DriverInfo['Drivers'][i]['CarClassShortName']) in self.db.classStruct:
                             self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])]['Drivers'].append({'Name': self.db.DriverInfo['Drivers'][i]['UserName'],
-                                                                                                                           'IRating': self.db.DriverInfo['Drivers'][i]['IRating']})
+                                                                                                                               'IRating': self.db.DriverInfo['Drivers'][i]['IRating']})
                         else:
-                            self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'], 'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
-                                                                                               'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
-                                                                                               'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'], 'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
-
+                            self.db.classStruct[str(self.db.DriverInfo['Drivers'][i]['CarClassShortName'])] = {'ID': self.db.DriverInfo['Drivers'][i]['CarClassID'],
+                                                                                                               'CarClassRelSpeed': self.db.DriverInfo['Drivers'][i]['CarClassRelSpeed'],
+                                                                                                               'CarClassColor': self.db.DriverInfo['Drivers'][i]['CarClassColor'],
+                                                                                                               'Drivers': [{'Name': self.db.DriverInfo['Drivers'][i]['UserName'],
+                                                                                                                            'IRating': self.db.DriverInfo['Drivers'][i]['IRating']}]}
 
             self.db.NClasses = len(self.db.classStruct)
             classNames = list(self.db.classStruct.keys())
@@ -867,14 +875,13 @@ class IDDUCalcThread(IDDUThread):
             self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
         self.db.oldLap = self.db.Lap
-        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1 # TODO: switch between user race laps and estimation --> see fuel estimation
+        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1  # TODO: switch between user race laps and estimation --> see fuel estimation
         # if not self.db.OnPitRoad:
         #     self.db.BWasOnPitRoad = False
 
         self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
             self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
             self.db.AirDensity) + ' kg/m³     vWind: '
-
 
     def createTrackFile(self, BCreateTrack, BRecordtLap):
 
@@ -887,7 +894,6 @@ class IDDUCalcThread(IDDUThread):
         self.Yaw = np.array(self.Yaw)[index]
         self.VelocityX = np.array(self.VelocityX)[index]
         self.VelocityY = np.array(self.VelocityY)[index]
-
 
         # self.time = np.append(self.time, self.db.LapLastLapTime)
         # self.LapDistPct = np.append(self.LapDistPct, [100])
@@ -1049,7 +1055,7 @@ class IDDUCalcThread(IDDUThread):
             else:
                 self.db.tNextLiftPoint = - Speed / LongAccel + np.sqrt(np.square(Speed / LongAccel) - (2 * ds) / LongAccel)
 
-            if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] and self.db.Speed > 10:
+            if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]]:
                 self.db.BLiftToneRequest = True
                 self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
 
