@@ -868,7 +868,7 @@ class Gui(IDDUItem):
     def loadRTDBSnapshot(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/snapshots', 'JSON(*.json)')
 
-        if not OpenFileName:
+        if OpenFileName == ('', ''):
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to RTDB snapshot file provided...aborting!')
             return
 
@@ -900,7 +900,7 @@ class Gui(IDDUItem):
     def loadTrack(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Track JSON file', './data/track', 'JSON(*.json)')
 
-        if not OpenFileName:
+        if OpenFileName == ('', ''):
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to track file provided...aborting!')
             return
 
@@ -920,7 +920,7 @@ class Gui(IDDUItem):
     def loadReferenceLap(self):
         ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', self.db.config['TelemPath'], 'IBT(*.ibt)')
 
-        if not ibtPath:
+        if ibtPath == ('', ''):
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to ibt file provided...aborting!')
             return
 
@@ -1010,7 +1010,7 @@ class Gui(IDDUItem):
     def loadFuelManagementSettings(self):
         OpenFileName = QFileDialog.getOpenFileName(self.iDDU, 'Load Fuel Management Configuration', './data/fuelSaving', 'JSON(*.json)')
 
-        if not OpenFileName:
+        if OpenFileName == ('', ''):
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to fuel saving file provided...aborting!')
             return
 
@@ -1021,15 +1021,15 @@ class Gui(IDDUItem):
         self.retranslateUi(self.iDDU)
 
     def calcUpshiftRPM(self):
-        getShiftRPM.getShiftRPM(self.db.config['TelemPath'])
+        getShiftRPM.getShiftRPM(self.db.dir, self.db.config['TelemPath'])
         self.retranslateUi(self.iDDU)
 
     def calcFuelSaving(self):
-        fuelSavingOptimiser.optimise(self.db.config['TelemPath'])
+        fuelSavingOptimiser.optimise(self.db.dir, self.db.config['TelemPath'])
         self.retranslateUi(self.iDDU)
 
     def calcRollOut(self):
-        rollOut.getRollOutCurve(self.db.config['TelemPath'])
+        rollOut.getRollOutCurve(self.db.dir, self.db.config['TelemPath'])
         self.retranslateUi(self.iDDU)
 
     def MSMapDecrease(self):
@@ -1054,7 +1054,7 @@ class Gui(IDDUItem):
     def SetiRPath(self):
         dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select iRacing Directory', './')
 
-        if not dirPath:
+        if dirPath == '':
             return
 
         self.db.config['iRPath'] = dirPath
@@ -1063,7 +1063,7 @@ class Gui(IDDUItem):
     def SetTelemPath(self):
         dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select Telemetry Data Directory', './')
 
-        if not dirPath:
+        if dirPath == '':
             return
 
         self.db.config['TelemPath'] = dirPath
