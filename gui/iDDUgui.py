@@ -38,7 +38,7 @@ class Gui(IDDUItem):
         iDDU = QtWidgets.QWidget()
         iDDU.setFixedSize(784, 441)
         if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            iDDU.move(-1920, 0)
+            iDDU.move(self.db.config['rGUI'][0], self.db.config['rGUI'][1])
         else:
             iDDU.move(0, 1080)
             # change console output to iDDU print window
@@ -54,13 +54,13 @@ class Gui(IDDUItem):
         # iDDU.setObjectName("iDDU")
         # iDDU.resize(784, 441)
         self.iDDU.setObjectName("iDDU")
-        self.iDDU.resize(784, 441)
+        self.iDDU.resize(800, 480)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(self.db.dir + "/files/gui/iRacing_Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iDDU.setWindowIcon(icon)
 
         self.tabWidget = QtWidgets.QTabWidget(iDDU)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 764, 424))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 781, 461))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -100,7 +100,7 @@ class Gui(IDDUItem):
         self.doubleSpinBox_P2PActivations.setDecimals(0)
         self.doubleSpinBox_P2PActivations.setMaximum(1000.0)
         self.doubleSpinBox_P2PActivations.setSingleStep(1.0)
-        self.doubleSpinBox_P2PActivations.setProperty("value", self.db.P2PActivationsGUI)
+        self.doubleSpinBox_P2PActivations.setProperty("value", self.db.config['P2PActivationsGUI'])
         self.doubleSpinBox_P2PActivations.setObjectName("doubleSpinBox_P2PActivations")
         self.doubleSpinBox_DRSActivations = QtWidgets.QDoubleSpinBox(self.groupBox_3)
         self.doubleSpinBox_DRSActivations.setGeometry(QtCore.QRect(140, 60, 101, 22))
@@ -109,12 +109,12 @@ class Gui(IDDUItem):
         self.doubleSpinBox_DRSActivations.setDecimals(0)
         self.doubleSpinBox_DRSActivations.setMaximum(1000.0)
         self.doubleSpinBox_DRSActivations.setSingleStep(1.0)
-        self.doubleSpinBox_DRSActivations.setProperty("value", self.db.DRSActivationsGUI)
+        self.doubleSpinBox_DRSActivations.setProperty("value", self.db.config['DRSActivationsGUI'])
         self.doubleSpinBox_DRSActivations.setObjectName("doubleSpinBox_DRSActivations")
         self.checkBox_MapHighlight = QtWidgets.QCheckBox(self.groupBox_3)
         self.checkBox_MapHighlight.setEnabled(True)
         self.checkBox_MapHighlight.setGeometry(QtCore.QRect(20, 140, 251, 17))
-        self.checkBox_MapHighlight.setChecked(self.db.MapHighlight)
+        self.checkBox_MapHighlight.setChecked(self.db.config['MapHighlight'])
         self.checkBox_MapHighlight.setObjectName("checkBox_MapHighlight")
         self.label_15 = QtWidgets.QLabel(self.groupBox_3)
         self.label_15.setGeometry(QtCore.QRect(20, 100, 101, 16))
@@ -135,7 +135,7 @@ class Gui(IDDUItem):
         self.doubleSpinBox_JokerLapDelta.setDecimals(0)
         self.doubleSpinBox_JokerLapDelta.setMaximum(1000.0)
         self.doubleSpinBox_JokerLapDelta.setSingleStep(0.1)
-        self.doubleSpinBox_JokerLapDelta.setProperty("value", self.db.JokerLapDelta)
+        self.doubleSpinBox_JokerLapDelta.setProperty("value", self.db.config['JokerLapDelta'])
         self.doubleSpinBox_JokerLapDelta.setObjectName("doubleSpinBox_JokerLapDelta")
         self.doubleSpinBox_JokerLapsRequired = QtWidgets.QDoubleSpinBox(self.groupBox_5)
         self.doubleSpinBox_JokerLapsRequired.setGeometry(QtCore.QRect(140, 60, 101, 22))
@@ -144,7 +144,7 @@ class Gui(IDDUItem):
         self.doubleSpinBox_JokerLapsRequired.setDecimals(0)
         self.doubleSpinBox_JokerLapsRequired.setMaximum(1000.0)
         self.doubleSpinBox_JokerLapsRequired.setSingleStep(1.0)
-        self.doubleSpinBox_JokerLapsRequired.setProperty("value", self.db.JokerLaps)
+        self.doubleSpinBox_JokerLapsRequired.setProperty("value", self.db.config['JokerLaps'])
         self.doubleSpinBox_JokerLapsRequired.setObjectName("doubleSpinBox_JokerLapsRequired")
         self.groupBox_7 = QtWidgets.QGroupBox(self.tabGeneral)
         self.groupBox_7.setGeometry(QtCore.QRect(10, 190, 291, 131))
@@ -173,7 +173,7 @@ class Gui(IDDUItem):
         self.checkBox_BEnableLapLogging = QtWidgets.QCheckBox(self.groupBox_8)
         self.checkBox_BEnableLapLogging.setGeometry(QtCore.QRect(10, 50, 161, 17))
         self.checkBox_BEnableLapLogging.setObjectName("checkBox_BEnableLapLogging")
-        self.checkBox_BEnableLapLogging.setChecked(self.db.BEnableLapLogging)
+        self.checkBox_BEnableLapLogging.setChecked(self.db.config['BEnableLapLogging'])
         self.groupBox_11 = QtWidgets.QGroupBox(self.tabGeneral)
         self.groupBox_11.setGeometry(QtCore.QRect(310, 210, 261, 101))
         self.groupBox_11.setObjectName("groupBox_11")
@@ -210,13 +210,13 @@ class Gui(IDDUItem):
         self.spinBox_FuelSetting.setGeometry(QtCore.QRect(140, 200, 101, 22))
         self.spinBox_FuelSetting.setMaximum(200)
         self.spinBox_FuelSetting.setObjectName("spinBox_FuelSetting")
-        self.spinBox_FuelSetting.setValue(self.db.VUserFuelSet)
+        self.spinBox_FuelSetting.setValue(self.db.config['VUserFuelSet'])
         self.checkBox_ChangeTyres = QtWidgets.QCheckBox(self.tabPitStops)
         self.checkBox_ChangeTyres.setEnabled(True)
         self.checkBox_ChangeTyres.setGeometry(QtCore.QRect(20, 130, 121, 17))
         self.checkBox_ChangeTyres.setAcceptDrops(False)
         self.checkBox_ChangeTyres.setObjectName("checkBox_ChangeTyres")
-        self.checkBox_ChangeTyres.setChecked(self.db.BChangeTyres)
+        self.checkBox_ChangeTyres.setChecked(self.db.config['BChangeTyres'])
         self.label_17 = QtWidgets.QLabel(self.tabPitStops)
         self.label_17.setGeometry(QtCore.QRect(20, 200, 101, 21))
         self.label_17.setObjectName("label_17")
@@ -235,7 +235,7 @@ class Gui(IDDUItem):
         self.checkBox_FuelUp = QtWidgets.QCheckBox(self.tabPitStops)
         self.checkBox_FuelUp.setGeometry(QtCore.QRect(150, 130, 81, 17))
         self.checkBox_FuelUp.setObjectName("checkBox_FuelUp")
-        self.checkBox_FuelUp.setChecked(self.db.BBeginFueling)
+        self.checkBox_FuelUp.setChecked(self.db.config['BBeginFueling'])
         self.label_11 = QtWidgets.QLabel(self.tabPitStops)
         self.label_11.setGeometry(QtCore.QRect(20, 90, 101, 16))
         self.label_11.setObjectName("label_11")
@@ -249,7 +249,7 @@ class Gui(IDDUItem):
         self.checkBox_PitCommandControl.setGeometry(QtCore.QRect(20, 20, 221, 17))
         self.checkBox_PitCommandControl.setAcceptDrops(False)
         self.checkBox_PitCommandControl.setObjectName("checkBox_PitCommandControl")
-        self.checkBox_PitCommandControl.setChecked(self.db.BPitCommandControl)
+        self.checkBox_PitCommandControl.setChecked(self.db.config['BPitCommandControl'])
         self.tabWidget.addTab(self.tabPitStops, "")
         self.tabUpshiftTone = QtWidgets.QWidget()
         self.tabUpshiftTone.setObjectName("tabUpshiftTone")
@@ -379,7 +379,7 @@ class Gui(IDDUItem):
         self.label_9.setObjectName("label_9")
         self.checkBox_UpshiftTone = QtWidgets.QCheckBox(self.groupBox_6)
         self.checkBox_UpshiftTone.setGeometry(QtCore.QRect(20, 30, 251, 17))
-        self.checkBox_UpshiftTone.setChecked(self.db.ShiftToneEnabled)
+        self.checkBox_UpshiftTone.setChecked(self.db.config['ShiftToneEnabled'])
         self.checkBox_UpshiftTone.setObjectName("checkBox_UpshiftTone")
         self.openButton = QtWidgets.QPushButton(self.groupBox_6)
         self.openButton.setGeometry(QtCore.QRect(20, 100, 41, 23))
@@ -395,8 +395,8 @@ class Gui(IDDUItem):
         self.comboBox.addItem("User defined")
         self.comboBox.addItem("from Car properties")
         self.comboBox.setMaxVisibleItems(6)
-        self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
-        self.comboBox_FuelMethod.setCurrentIndex(self.db.NFuelSetMethod)
+        self.comboBox.setCurrentIndex(self.db.config['UpshiftStrategy'])
+        self.comboBox_FuelMethod.setCurrentIndex(self.db.config['NFuelSetMethod'])
         self.pushButton_calcUpshiftRPM = QtWidgets.QPushButton(self.groupBox_6)
         self.pushButton_calcUpshiftRPM.setGeometry(QtCore.QRect(180, 100, 201, 23))
         self.pushButton_calcUpshiftRPM.setObjectName("pushButton_calcUpshiftRPM")
@@ -414,14 +414,14 @@ class Gui(IDDUItem):
         self.spinBox_ShiftToneFrequency.setMinimum(0)
         self.spinBox_ShiftToneFrequency.setMaximum(2000)
         self.spinBox_ShiftToneFrequency.setSingleStep(10)
-        self.spinBox_ShiftToneFrequency.setProperty("value", self.db.fShiftBeep)
+        self.spinBox_ShiftToneFrequency.setProperty("value", self.db.config['fShiftBeep'])
         self.spinBox_ShiftToneFrequency.setObjectName("spinBox_ShiftToneFrequency")
         self.spinBox_ShiftToneDuration = QtWidgets.QSpinBox(self.groupBox_10)
         self.spinBox_ShiftToneDuration.setGeometry(QtCore.QRect(130, 60, 71, 22))
         self.spinBox_ShiftToneDuration.setMinimum(0)
         self.spinBox_ShiftToneDuration.setMaximum(1000)
         self.spinBox_ShiftToneDuration.setSingleStep(10)
-        self.spinBox_ShiftToneDuration.setProperty("value", self.db.tShiftBeep)
+        self.spinBox_ShiftToneDuration.setProperty("value", self.db.config['tShiftBeep'])
         self.spinBox_ShiftToneDuration.setObjectName("spinBox_ShiftToneDuration")
         self.label_21 = QtWidgets.QLabel(self.groupBox_10)
         self.label_21.setGeometry(QtCore.QRect(10, 60, 101, 22))
@@ -434,7 +434,7 @@ class Gui(IDDUItem):
         self.groupBox_9.setObjectName("groupBox_9")
         self.checkBox_EnableFuelManagement = QtWidgets.QCheckBox(self.groupBox_9)
         self.checkBox_EnableFuelManagement.setGeometry(QtCore.QRect(20, 30, 161, 17))
-        self.checkBox_EnableFuelManagement.setChecked(self.db.BEnableLiftTones)
+        self.checkBox_EnableFuelManagement.setChecked(self.db.config['BEnableLiftTones'])
         self.checkBox_EnableFuelManagement.setObjectName("checkBox_EnableFuelManagement")
         self.openButton_2 = QtWidgets.QPushButton(self.groupBox_9)
         self.openButton_2.setGeometry(QtCore.QRect(20, 60, 191, 23))
@@ -459,14 +459,14 @@ class Gui(IDDUItem):
         self.spinBox_FuelToneFrequency.setMinimum(0)
         self.spinBox_FuelToneFrequency.setMaximum(2000)
         self.spinBox_FuelToneFrequency.setSingleStep(10)
-        self.spinBox_FuelToneFrequency.setProperty("value", self.db.fFuelBeep)
+        self.spinBox_FuelToneFrequency.setProperty("value", self.db.config['fFuelBeep'])
         self.spinBox_FuelToneFrequency.setObjectName("spinBox_FuelToneFrequency")
         self.spinBox_FuelToneDuration = QtWidgets.QSpinBox(self.groupBox_4)
         self.spinBox_FuelToneDuration.setGeometry(QtCore.QRect(130, 60, 71, 22))
         self.spinBox_FuelToneDuration.setMinimum(0)
         self.spinBox_FuelToneDuration.setMaximum(1000)
         self.spinBox_FuelToneDuration.setSingleStep(10)
-        self.spinBox_FuelToneDuration.setProperty("value", self.db.tFuelBeep)
+        self.spinBox_FuelToneDuration.setProperty("value", self.db.config['tFuelBeep'])
         self.spinBox_FuelToneDuration.setObjectName("spinBox_FuelToneDuration")
         self.label_19 = QtWidgets.QLabel(self.groupBox_4)
         self.label_19.setGeometry(QtCore.QRect(10, 60, 101, 22))
@@ -490,11 +490,42 @@ class Gui(IDDUItem):
         self.pushButtonLoadSnapshot.setGeometry(QtCore.QRect(120, 10, 101, 23))
         self.pushButtonLoadSnapshot.setObjectName("pushButtonLoadSnapshot")
         self.tabWidget.addTab(self.tabDebug, "")
-        self.checkBox_BEnableLogger.setChecked(self.db.BLoggerActive)
 
-        self.spinBoxRaceLaps.setValue(self.db.RaceLaps)
-        self.doubleSpinBox_PitStopDelta.setValue(self.db.PitStopDelta)
-        self.doubleSpinBox_PitStopsRequired.setValue(self.db.PitStopsRequired)
+
+        self.tabSettings = QtWidgets.QWidget()
+        self.tabSettings.setObjectName("tabSettings")
+        self.pushButtonSaveConfig = QtWidgets.QPushButton(self.tabSettings)
+        self.pushButtonSaveConfig.setGeometry(QtCore.QRect(10, 10, 75, 23))
+        self.pushButtonSaveConfig.setObjectName("pushButtonSaveConfig")
+        self.pushButtonLoadConfig = QtWidgets.QPushButton(self.tabSettings)
+        self.pushButtonLoadConfig.setGeometry(QtCore.QRect(100, 10, 75, 23))
+        self.pushButtonLoadConfig.setObjectName("pushButtonLoadConfig")
+        self.label_22 = QtWidgets.QLabel(self.tabSettings)
+        self.label_22.setGeometry(QtCore.QRect(20, 50, 91, 16))
+        self.label_22.setObjectName("label_22")
+        self.label_23 = QtWidgets.QLabel(self.tabSettings)
+        self.label_23.setGeometry(QtCore.QRect(20, 90, 91, 16))
+        self.label_23.setObjectName("label_23")
+        self.lineEditiRPath = QtWidgets.QLineEdit(self.tabSettings)
+        self.lineEditiRPath.setGeometry(QtCore.QRect(110, 50, 551, 20))
+        self.lineEditiRPath.setObjectName("lineEditiRPath")
+        self.lineEditTelemPath = QtWidgets.QLineEdit(self.tabSettings)
+        self.lineEditTelemPath.setGeometry(QtCore.QRect(110, 90, 551, 20))
+        self.lineEditTelemPath.setObjectName("lineEditTelemPath")
+        self.pushButtonSetiRPath = QtWidgets.QPushButton(self.tabSettings)
+        self.pushButtonSetiRPath.setGeometry(QtCore.QRect(670, 50, 101, 23))
+        self.pushButtonSetiRPath.setObjectName("pushButtonSetiRPath")
+        self.pushButtonSetTelemPath = QtWidgets.QPushButton(self.tabSettings)
+        self.pushButtonSetTelemPath.setGeometry(QtCore.QRect(670, 90, 101, 23))
+        self.pushButtonSetTelemPath.setObjectName("pushButtonSetTelemPath")
+        self.tabWidget.addTab(self.tabSettings, "")
+
+
+        self.checkBox_BEnableLogger.setChecked(self.db.config['BLoggerActive'])
+
+        self.spinBoxRaceLaps.setValue(self.db.config['RaceLaps'])
+        self.doubleSpinBox_PitStopDelta.setValue(self.db.config['PitStopDelta'])
+        self.doubleSpinBox_PitStopsRequired.setValue(self.db.config['PitStopsRequired'])
 
         self.spinBoxRaceLaps.valueChanged.connect(self.assignRaceLaps)
         self.doubleSpinBox_PitStopDelta.valueChanged.connect(self.assignPitStopDelta)
@@ -561,6 +592,11 @@ class Gui(IDDUItem):
         self.pushButton_MSMapIncrease.clicked.connect(self.MSMapIncrease)
         # self.comboBox_MultiSwitch.clicked.connect(self.retranslateUi)
         # self.comboBox_MultiSwitch.activated.connect(self.retranslateUi)
+        
+        self.pushButtonLoadConfig.clicked.connect(self.LoadConfig)
+        self.pushButtonSaveConfig.clicked.connect(self.SaveConfig)
+        self.pushButtonSetiRPath.clicked.connect(self.SetiRPath)
+        self.pushButtonSetTelemPath.clicked.connect(self.SetTelemPath)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -645,7 +681,7 @@ class Gui(IDDUItem):
         self.comboBox.setItemText(4, _translate("iDDU", "User defined"))
         self.comboBox.setItemText(5, _translate("iDDU", "from Car properties"))
         self.comboBox_MultiSwitch.setMaxVisibleItems(6)
-        self.comboBox.setCurrentIndex(self.db.UpshiftStrategy)
+        self.comboBox.setCurrentIndex(self.db.config['UpshiftStrategy'])
         self.pushButton_calcUpshiftRPM.setText(_translate("iDDU", "Calculate Upshift RPM from data"))
         self.groupBox_10.setTitle(_translate("iDDU", "Audio Settings"))
         self.pushButton_testShiftTone.setText(_translate("iDDU", "Play Test Tone"))
@@ -666,8 +702,18 @@ class Gui(IDDUItem):
         self.pushButtonSaveSnapshot.setText(_translate("iDDU", "RTDB Snapshot"))
         self.pushButtonLoadSnapshot.setText(_translate("iDDU", "Load Snapshot"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDebug), _translate("iDDU", "Debug"))
-        self.checkBox_MapHighlight.setChecked(self.db.MapHighlight)
-        self.checkBox_EnableFuelManagement.setChecked(self.db.BEnableLiftTones)
+        self.checkBox_MapHighlight.setChecked(self.db.config['MapHighlight'])
+        self.checkBox_EnableFuelManagement.setChecked(self.db.config['BEnableLiftTones'])
+        self.pushButtonSaveConfig.setText(_translate("iDDU", "Save Settings"))
+        self.pushButtonLoadConfig.setText(_translate("iDDU", "Load Settings"))
+        self.label_22.setText(_translate("iDDU", "iRacing Path:"))
+        self.label_23.setText(_translate("iDDU", "Telemetry Path:"))
+        self.lineEditiRPath.setText(_translate("iDDU", self.db.config['iRPath']))
+        self.lineEditTelemPath.setText(_translate("iDDU", self.db.config['TelemPath']))
+        self.pushButtonSetiRPath.setText(_translate("iDDU", "Set iRacing Path"))
+        self.pushButtonSetTelemPath.setText(_translate("iDDU", "Set Telemetry Path"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSettings), _translate("iDDU", "Settings"))
+
 
         dcList = list(self.db.car.dcList.keys())
         k = 0
@@ -683,52 +729,52 @@ class Gui(IDDUItem):
 
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
-        self.db.UserRaceLaps = self.spinBoxRaceLaps.value()
-        self.db.RaceLaps = self.spinBoxRaceLaps.value()
+        self.db.config['UserRaceLaps'] = self.spinBoxRaceLaps.value()
+        self.db.config['RaceLaps'] = self.spinBoxRaceLaps.value()
         self.retranslateUi(self.iDDU)
 
     def assignDRS(self):
         if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-            self.db.DRSActivations = self.doubleSpinBox_DRSActivations.value()
-        self.db.DRSActivationsGUI = self.doubleSpinBox_DRSActivations.value()
+            self.db.config['DRSActivations'] = self.doubleSpinBox_DRSActivations.value()
+        self.db.config['DRSActivationsGUI'] = self.doubleSpinBox_DRSActivations.value()
         self.retranslateUi(self.iDDU)
 
     def assignJokerDelta(self):
-        self.db.JokerLapDelta = self.doubleSpinBox_JokerLapDelta.value()
+        self.db.config['JokerLapDelta'] = self.doubleSpinBox_JokerLapDelta.value()
         self.retranslateUi(self.iDDU)
 
     def MapHighlight(self):
-        self.db.MapHighlight = self.checkBox_MapHighlight.isChecked()
+        self.db.config['MapHighlight'] = self.checkBox_MapHighlight.isChecked()
         self.retranslateUi(self.iDDU)
 
     def assignJokerLaps(self):
-        self.db.JokerLaps = self.doubleSpinBox_JokerLapsRequired.value()
+        self.db.config['JokerLaps'] = self.doubleSpinBox_JokerLapsRequired.value()
         self.retranslateUi(self.iDDU)
 
     def assignP2P(self):
         if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-            self.db.P2PActivations = self.doubleSpinBox_P2PActivations.value()
-        self.db.P2PActivationsGUI = self.doubleSpinBox_P2PActivations.value()
+            self.db.config['P2PActivations'] = self.doubleSpinBox_P2PActivations.value()
+        self.db.config['P2PActivationsGUI'] = self.doubleSpinBox_P2PActivations.value()
         self.retranslateUi(self.iDDU)
 
     def assignPitStopDelta(self):
-        self.db.PitStopDelta = self.doubleSpinBox_PitStopDelta.value()
+        self.db.config['PitStopDelta'] = self.doubleSpinBox_PitStopDelta.value()
         self.retranslateUi(self.iDDU)
 
     def assignPitStopsRequired(self):
-        self.db.PitStopsRequired = self.doubleSpinBox_PitStopsRequired.value()
+        self.db.config['PitStopsRequired'] = self.doubleSpinBox_PitStopsRequired.value()
         self.retranslateUi(self.iDDU)
 
     def UpshiftStrategy(self):
-        self.db.UpshiftStrategy = self.comboBox.currentIndex()
-        self.db.UserShiftRPM = [self.spinBox_Gear1.value(), self.spinBox_Gear2.value(), self.spinBox_Gear3.value(), self.spinBox_Gear4.value(), self.spinBox_Gear5.value(), self.spinBox_Gear6.value(),
+        self.db.config['UpshiftStrategy'] = self.comboBox.currentIndex()
+        self.db.config['UserShiftRPM'] = [self.spinBox_Gear1.value(), self.spinBox_Gear2.value(), self.spinBox_Gear3.value(), self.spinBox_Gear4.value(), self.spinBox_Gear5.value(), self.spinBox_Gear6.value(),
                                 self.spinBox_Gear7.value()]
-        self.db.UserShiftFlag = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(),
+        self.db.config['UserShiftFlag'] = [self.checkBox_Gear1.isChecked(), self.checkBox_Gear2.isChecked(), self.checkBox_Gear3.isChecked(), self.checkBox_Gear4.isChecked(), self.checkBox_Gear5.isChecked(),
                                  self.checkBox_Gear6.isChecked(), self.checkBox_Gear7.isChecked()]
         self.retranslateUi(self.iDDU)
 
     def EnableShiftTone(self):
-        self.db.ShiftToneEnabled = self.checkBox_UpshiftTone.isChecked()
+        self.db.config['ShiftToneEnabled'] = self.checkBox_UpshiftTone.isChecked()
         self.retranslateUi(self.iDDU)
 
     def InvokeUserCommand(self):
@@ -768,7 +814,7 @@ class Gui(IDDUItem):
         with open(SaveFileName[0], 'w', newline='') as f:
             thewriter = csv.writer(f)
             for l in range(0, 7):
-                thewriter.writerow([self.db.UserShiftRPM[l], self.db.UserShiftFlag[l], self.db.UpshiftStrategy])
+                thewriter.writerow([self.db.config['UserShiftRPM'][l], self.db.config['UserShiftFlag'][l], self.db.config['UpshiftStrategy']])
 
         print(self.db.timeStr + ': Saved Shift Tone settings to: ' + SaveFileName[0])
 
@@ -811,9 +857,9 @@ class Gui(IDDUItem):
 
         self.comboBox.setCurrentIndex(UpshiftStrategy)
 
-        self.db.UserShiftFlag = UserShiftFlag
-        self.db.UserShiftRPM = UserShiftRPM
-        self.db.UpshiftStrategy = UpshiftStrategy
+        self.db.config['UserShiftFlag'] = UserShiftFlag
+        self.db.config['UserShiftRPM'] = UserShiftRPM
+        self.db.config['UpshiftStrategy'] = UpshiftStrategy
 
         print(self.db.timeStr + ': Loaded Shift Tone settings from: ' + OpenFileName[0])
 
@@ -844,11 +890,11 @@ class Gui(IDDUItem):
         self.db.track.save(self.db.dir)
 
     def enableLogger(self):
-        self.db.BLoggerActive = self.checkBox_BEnableLogger.isChecked()
+        self.db.config['BLoggerActive'] = self.checkBox_BEnableLogger.isChecked()
         self.retranslateUi(self.iDDU)
 
     def enableLapLogging(self):
-        self.db.BEnableLapLogging = self.checkBox_BEnableLapLogging.isChecked()
+        self.db.config['BEnableLapLogging'] = self.checkBox_BEnableLapLogging.isChecked()
         self.retranslateUi(self.iDDU)
 
     def loadTrack(self):
@@ -872,7 +918,11 @@ class Gui(IDDUItem):
             self.db.NDDUPage = NDDUPageTemp
 
     def loadReferenceLap(self):
-        ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', './', 'IBT(*.ibt)')
+        ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', self.db.config['TelemPath'], 'IBT(*.ibt)')
+
+        if not ibtPath:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to ibt file provided...aborting!')
+            return
 
         d, _ = importIBT.importIBT(ibtPath[0],
                                    lap='f',
@@ -913,48 +963,48 @@ class Gui(IDDUItem):
         self.db.car.save(self.db.dir)
 
     def setUserFuelPreset(self):
-        self.db.VUserFuelSet = self.spinBox_FuelSetting.value()
+        self.db.config['VUserFuelSet'] = self.spinBox_FuelSetting.value()
         self.db.BPitCommandUpdate = True
         self.retranslateUi(self.iDDU)
 
     def enableFuelUp(self):
-        self.db.BBeginFueling = self.checkBox_FuelUp.isChecked()
+        self.db.config['BBeginFueling'] = self.checkBox_FuelUp.isChecked()
         self.db.BPitCommandUpdate = True
         self.retranslateUi(self.iDDU)
 
     def setPitCommandControl(self):
-        self.db.BPitCommandControl = self.checkBox_PitCommandControl.isChecked()
+        self.db.config['BPitCommandControl'] = self.checkBox_PitCommandControl.isChecked()
         self.db.BPitCommandUpdate = True
         self.retranslateUi(self.iDDU)
 
     def enableTyreChange(self):
-        self.db.BChangeTyres = self.checkBox_ChangeTyres.isChecked()
+        self.db.config['BChangeTyres'] = self.checkBox_ChangeTyres.isChecked()
         self.db.BPitCommandUpdate = True
         self.retranslateUi(self.iDDU)
 
     def setFuelSetMethod(self):
-        self.db.NFuelSetMethod = self.comboBox_FuelMethod.currentIndex()
+        self.db.config['NFuelSetMethod'] = self.comboBox_FuelMethod.currentIndex()
         self.db.BPitCommandUpdate = True
         self.retranslateUi(self.iDDU)
 
     def FuelBeep(self):
-        self.db.tFuelBeep = self.spinBox_FuelToneDuration.value()
-        self.db.fFuelBeep = self.spinBox_FuelToneFrequency.value()
+        self.db.config['tFuelBeep'] = self.spinBox_FuelToneDuration.value()
+        self.db.config['fFuelBeep'] = self.spinBox_FuelToneFrequency.value()
         self.retranslateUi(self.iDDU)
 
     def ShiftBeep(self):
-        self.db.tShiftBeep = self.spinBox_ShiftToneDuration.value()
-        self.db.fShiftBeep = self.spinBox_ShiftToneFrequency.value()
+        self.db.config['tShiftBeep'] = self.spinBox_ShiftToneDuration.value()
+        self.db.config['fShiftBeep'] = self.spinBox_ShiftToneFrequency.value()
         self.retranslateUi(self.iDDU)
 
     def testFuelTone(self):
-        winsound.Beep(self.db.fFuelBeep, self.db.tFuelBeep)
+        winsound.Beep(self.db.config['fFuelBeep'], self.db.config['tFuelBeep'])
 
     def testShiftTone(self):
-        winsound.Beep(self.db.fShiftBeep, self.db.tShiftBeep)
+        winsound.Beep(self.db.config['fShiftBeep'], self.db.config['tShiftBeep'])
 
     def enableFuelManagement(self):
-        self.db.BEnableLiftTones = self.checkBox_EnableFuelManagement.isChecked()
+        self.db.config['BEnableLiftTones'] = self.checkBox_EnableFuelManagement.isChecked()
         self.retranslateUi(self.iDDU)
 
     def loadFuelManagementSettings(self):
@@ -966,20 +1016,20 @@ class Gui(IDDUItem):
 
         self.db.loadFuelTgt(OpenFileName[0])
 
-        self.db.BEnableLiftTones = True
+        self.db.config['BEnableLiftTones'] = True
 
         self.retranslateUi(self.iDDU)
 
     def calcUpshiftRPM(self):
-        getShiftRPM.getShiftRPM(self.db.dir)
+        getShiftRPM.getShiftRPM(self.db.config['TelemPath'])
         self.retranslateUi(self.iDDU)
 
     def calcFuelSaving(self):
-        fuelSavingOptimiser.optimise(self.db.dir)
+        fuelSavingOptimiser.optimise(self.db.config['TelemPath'])
         self.retranslateUi(self.iDDU)
 
     def calcRollOut(self):
-        rollOut.getRollOutCurve(self.db.dir)
+        rollOut.getRollOutCurve(self.db.config['TelemPath'])
         self.retranslateUi(self.iDDU)
 
     def MSMapDecrease(self):
@@ -991,6 +1041,33 @@ class Gui(IDDUItem):
         mapName = self.comboBox_MultiSwitch.currentText()
         self.pressButton(self.dcConfig[mapName][1]+1, 0.2)
         self.retranslateUi(self.iDDU)
+
+    def LoadConfig(self):
+        config = importExport.loadJson(self.db.dir + '/config.json')
+        self.db.initialise({'config': config}, False)
+        self.retranslateUi(self.iDDU)
+
+    def SaveConfig(self):
+        importExport.saveJson(self.db.config, self.db.dir + '/config.json')
+        self.retranslateUi(self.iDDU)
+
+    def SetiRPath(self):
+        dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select iRacing Directory', './')
+
+        if not dirPath:
+            return
+
+        self.db.config['iRPath'] = dirPath
+        self.SaveConfig()
+
+    def SetTelemPath(self):
+        dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select Telemetry Data Directory', './')
+
+        if not dirPath:
+            return
+
+        self.db.config['TelemPath'] = dirPath
+        self.SaveConfig()
 
     def __del__(self):
         sys.stdout = sys.__stdout__

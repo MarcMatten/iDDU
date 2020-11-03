@@ -6,6 +6,7 @@ from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger
 from gui import iDDUgui
 import os
 from functionalities.MultiSwitch import MultiSwitch
+from functionalities.libs import importExport
 
 
 nan = float('nan')
@@ -171,7 +172,6 @@ calcData = {'startUp': False,
             'VFuelAddOld': 1,
             'GreenTime': 0,
             'RemTimeValue': 0,
-            'RaceLaps': 37,
             'JokerStr': '2/2',
             'LapDistPct': [],
             'x': [],
@@ -182,7 +182,6 @@ calcData = {'startUp': False,
             'dx': [],
             'dy': [],
             'logLap': 0,
-            'Logging': False,
             'tempdist': -1,
             'StartUp': False,
             'oldSessionFlags': 0,
@@ -193,29 +192,15 @@ calcData = {'startUp': False,
             'textColour': (255, 255, 255),
             'FuelLaps': 1,
             'FuelAdd': 1,
-            'PitStopDelta': 61,
             'time': [],
-            'UpshiftStrategy': 0,
-            'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
-            'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1],
             'iRShiftRPM': [100000, 100000, 100000, 100000],
-            'ShiftToneEnabled': True,
             'StartDDU': False,
             'StopDDU': False,
             'DDUrunning': False,
-            'UserRaceLaps': 0,
             'SessionLength': 86400,
             'CarIdxPitStops': [0] * 64,
             'CarIdxOnPitRoadOld': [True] * 64,
-            'PitStopsRequired': 0,
             'old_DRS_Status': 0,
-            'DRSActivations': 8,
-            'P2PActivations': 12,
-            'DRSActivationsGUI': 8,
-            'P2PActivationsGUI': 12,
-            'JokerLapDelta': 2,
-            'JokerLaps': 1,
-            'MapHighlight': False,
             'old_PushToPass': False,
             'textColourDRS': (255, 255, 255),
             'textColourP2P': (255, 255, 255),
@@ -307,7 +292,6 @@ calcData = {'startUp': False,
             'tdcHeadlightFlash': 0,
             'dcHeadlightFlashOld': False,
             'newLapTime': 0,
-            'BEnableRaceLapEstimation': False,
             'dir': os.getcwd(),
             'track': None,
             'car': None,
@@ -316,7 +300,6 @@ calcData = {'startUp': False,
             'dc': {},
             'dcOld': {},
             'dcChangedItems': {},
-            'BLoggerActive': False,
             'tExecuteRTDB': 0,
             'tExecuteUpshiftTone': 0,
             'tExecuteRaceLapsEstimation': 0,
@@ -324,15 +307,9 @@ calcData = {'startUp': False,
             'tExecuteRender': 0,
             'tExecuteCalc': 0,
             'tShiftReaction': float('nan'),
-            'BEnableLapLogging': False,
-            'BChangeTyres': False,
-            'BBeginFueling': False,
-            'VUserFuelSet': 0,
-            'NFuelSetMethod': 0, # 0 = User pre set; 1 = calculated
             'BPitCommandUpdate': False,
             'PlayerTrackSurfaceOld': 0,
             'BEnteringPits': False,
-            'BPitCommandControl': False,
             'sToPitStall': 0,
             'sToPitStallStr': '463',
             'PitSvFlagsEntry': 0,
@@ -371,21 +348,13 @@ calcData = {'startUp': False,
                 'ibtFileName': None
             },
             'LapDistPctLift': np.array([]),
-            'VFuelTgt': 3.05,
             'VFuelTgtEffective': 3.05,
-            'VFuelTgtOffset': 0,
             'BLiftBeepPlayed': [],
             'NNextLiftPoint': 0,
-            'BEnableLiftTones': False,
             'tNextLiftPoint': 0,
             'BMultiInitRequest': False,
             'BFuelSavingConfigLoaded': False,
-            'fFuelBeep': 300,
-            'tFuelBeep': 150,
-            'fShiftBeep': 500,
-            'tShiftBeep': 150,
-            'BMultiInitRequest': False,
-            'NRaceLapsSource': 0
+            'BMultiInitRequest': False
             }
 
 iDDUControls = {# DisplayName, show, decimals, initial value, min value, max value, steps
@@ -398,67 +367,7 @@ iDDUControls = {# DisplayName, show, decimals, initial value, min value, max val
     'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1]
 }
 
-##config = {
-##    'BEnableLiftTones': False,
-##    'fFuelBeep': 300,
-##    'tFuelBeep': 150,
-##    'fShiftBeep': 500,
-##    'tShiftBeep': 150,
-##    'BPitCommandControl': False,
-##    'BEnableLapLogging': False,
-##    'BChangeTyres': False,
-##    'BBeginFueling': False,
-##    'VUserFuelSet': 0,
-##    'NFuelSetMethod': 0, # 0 = User pre set; 1 = calculated
-##    'BLoggerActive': False,
-##    'BEnableRaceLapEstimation': False,
-##    'RenderLabel': [
-##        True,  # 0 Best
-##        True,  # 1 Last
-##        True,  # 2 Delta
-##        True,  # 3 FuelLevel
-##        True,  # 4 FuelCons
-##        True,  # 5 FuelLastCons
-##        True,  # 6 FuelLaps
-##        True,  # 7 FuelAdd
-##        True,  # 8 ABS
-##        True,  # 9 BBias
-##        True,  # 10 Mix
-##        True,  # 11 TC1
-##        True,  # 12 TC2
-##        True,  # 13Lap
-##        True,  # 14 Clock
-##        True,  # 15 Remain
-##        False,  # 16 Elapsed
-##        True,  # 17 Joker
-##        False,  # 18 DRS
-##        False,  # 19 P2P
-##        True,  # 20 ToGo
-##        True,  # 21 Est
-##        True,  # 22 Gear
-##        True,  # 23 Speed
-##        True,  # 24 Position
-##        True,  # 25 Distance to pit stall
-##        True,  # 26 speed in pit lane
-##        True,  # 27 Gear in pit lane
-##    ],
-##    'DRSActivations': 8,
-##    'P2PActivations': 12,
-##    'DRSActivationsGUI': 8,
-##    'P2PActivationsGUI': 12,
-##    'JokerLapDelta': 2,
-##    'JokerLaps': 1,
-##    'MapHighlight': False,
-##    'ShiftToneEnabled': True,
-##    'UserRaceLaps': 0,
-##    'PitStopsRequired': 0,
-##    'RaceLaps': 37,
-##    'Logging': False,
-##    'PitStopDelta': 61,
-##    'UpshiftStrategy': 0,
-##    'UserShiftRPM': [100000, 100000, 100000, 100000, 100000, 100000, 100000],
-##    'UserShiftFlag': [1, 1, 1, 1, 1, 1, 1]
-##}
+config = importExport.loadJson(calcData['dir'] + '/config.json')
 
 iDDUControlsNameInit = {}
 
@@ -474,8 +383,8 @@ myRTDB = RTDB.RTDB()
 myRTDB.initialise(helpData, False)
 myRTDB.initialise(iRData, True)
 myRTDB.initialise(calcData, False)
-myRTDB.initialise({'iDDUControls':iDDUControls}, False)
-# myRTDB.initialise(config, False)
+myRTDB.initialise({'iDDUControls': iDDUControls}, False)
+myRTDB.initialise({'config': config}, False)
 
 dcList = list(myRTDB.car.dcList.keys())
 

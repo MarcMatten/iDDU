@@ -52,7 +52,7 @@ class LoggerThread(IDDUThread):
 
     def run(self):
         while 1:
-            while self.db.BLoggerActive:
+            while self.db.config['BLoggerActive']:
                 t = time.perf_counter()
                 if not self.init:
                     self.init = True
@@ -94,7 +94,7 @@ class LoggerThread(IDDUThread):
 
                 time.sleep(self.rate)
 
-            if self.init and not self.db.BLoggerActive:
+            if self.init and not self.db.config['BLoggerActive']:
                 self.init = False
                 print('Logger inactive')
 

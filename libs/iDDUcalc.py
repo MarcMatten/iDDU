@@ -268,7 +268,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime
                             self.db.Run = self.db.Run + 1
-                            if self.db.BPitCommandControl:
+                            if self.db.config['BPitCommandControl']:
                                 self.ir.pit_command(0)
 
                             if self.db.FuelTGTLiftPoints['SFuelConfigCarName'] == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'] \
@@ -355,7 +355,7 @@ class IDDUCalcThread(IDDUThread):
                                     self.db.BTextColourFuelAddOverride = False
                                 else:
                                     if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
-                                        if self.db.NFuelSetMethod == 1 and self.db.BBeginFueling and self.db.BPitCommandControl:
+                                        if self.db.config['NFuelSetMethod'] == 1 and self.db.config['BBeginFueling'] and self.db.config['BPitCommandControl']:
                                             self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))  # Add fuel
                                     if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
                                         self.db.textColourFuelAddOverride = self.green
@@ -381,7 +381,7 @@ class IDDUCalcThread(IDDUThread):
 
                         # DRS
                         if self.db.DRS:
-                            if self.db.DRSCounter >= self.db.DRSActivations > 0:
+                            if self.db.DRSCounter >= self.db.config['DRSActivations'] > 0:
                                 self.db.textColourDRS = self.red
                             else:
                                 if not self.db.DRS_Status == self.db.old_DRS_Status:
@@ -392,7 +392,7 @@ class IDDUCalcThread(IDDUThread):
                                 if self.db.DRS_Status == 1:
                                     self.db.textColourDRS = self.green
 
-                            self.db.DRSRemaining = (self.db.DRSActivations - self.db.DRSCounter)
+                            self.db.DRSRemaining = (self.db.config['DRSActivations'] - self.db.DRSCounter)
                             if self.db.DRSRemaining == 1 and not self.db.DRS_Status == 2:
                                 self.db.Alarm[5] = 2
                             if self.db.DRS_Status == 2:
@@ -402,9 +402,9 @@ class IDDUCalcThread(IDDUThread):
 
                         # P2P
                         if self.db.P2P:
-                            if self.db.P2PCounter >= self.db.P2PActivations > 0:
+                            if self.db.P2PCounter >= self.db.config['P2PActivations'] > 0:
                                 self.db.textColourP2P = self.red
-                            elif (self.db.P2PCounter + 1) == self.db.P2PActivations:
+                            elif (self.db.P2PCounter + 1) == self.db.config['P2PActivations']:
                                 self.db.textColourP2P = self.orange
                             else:
                                 self.db.textColourP2P = self.db.textColour
@@ -439,7 +439,7 @@ class IDDUCalcThread(IDDUThread):
                                 if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
                                     if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
-                                    self.setFuelTgt(self.db.VFuelTgt, self.db.VFuelTgtOffset)
+                                    self.setFuelTgt(self.db.VFuelTgt, self.db.config['VFuelTgtOffset'])
 
                         self.db.dcOld = self.db.dc.copy()
                     else:
@@ -552,8 +552,8 @@ class IDDUCalcThread(IDDUThread):
         self.db.oldLap = self.db.Lap
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
         self.db.JokerLapsRequired = 0
-        self.db.PitStopsRequired = 0
-        self.db.MapHighlight = False
+        self.db.config['PitStopDelta'] = 0
+        self.db.config['MapHighlight'] = False
         self.db.Alarm = [0]*10
         self.db.BMultiInitRequest = True
 
@@ -603,7 +603,7 @@ class IDDUCalcThread(IDDUThread):
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
                 self.db.__setattr__('RX', True)
                 self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
-                self.db.MapHighlight = True
+                self.db.config['MapHighlight'] = True
                 self.db.RenderLabel[17] = True
                 print(self.db.timeStr + ':\tDirt Racing')
             else:
@@ -613,13 +613,13 @@ class IDDUCalcThread(IDDUThread):
 
             # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
-                self.db.RaceLaps = self.db.UserRaceLaps
+                self.db.config['RaceLaps'] = self.db.config['UserRaceLaps']
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
                 self.db.RenderLabel[21] = False
                 print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                #     print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.RaceLaps))
+                #     print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.config['RaceLaps']))
                 #     self.db.LapLimit = True
                 #     self.db.RenderLabel[20] = True
 
@@ -641,8 +641,8 @@ class IDDUCalcThread(IDDUThread):
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         if self.db.SessionLength > 2100:
-                            self.db.PitStopsRequired = 1
-                            self.db.MapHighlight = True
+                            self.db.config['PitStopDelta'] = 1
+                            self.db.config['MapHighlight'] = True
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
                         'SessionTime'])
@@ -651,14 +651,14 @@ class IDDUCalcThread(IDDUThread):
                     else:
                         self.db.RenderLabel[21] = False
             else:  # limited laps
-                self.db.RaceLaps = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
+                self.db.config['RaceLaps'] = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LapLimit = True
                 self.db.RenderLabel[20] = True
                 self.db.RenderLabel[21] = False
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                    if (self.db.TrackLength*self.db.RaceLaps) > 145:
-                        self.db.PitStopsRequired = 1
-                        self.db.MapHighlight = True
+                    if (self.db.TrackLength*self.db.config['RaceLaps']) > 145:
+                        self.db.config['PitStopDelta'] = 1
+                        self.db.config['MapHighlight'] = True
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
@@ -678,9 +678,9 @@ class IDDUCalcThread(IDDUThread):
                         'SessionTime'])
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and (not self.db.LapLimit) and self.db.TimeLimit:
-                self.db.BEnableRaceLapEstimation = True
+                self.db.config['BEnableRaceLapEstimation'] = True
             else:
-                self.db.BEnableRaceLapEstimation = False
+                self.db.config['BEnableRaceLapEstimation'] = False
 
             CarNumber = len(self.db.DriverInfo['Drivers']) + 2
             if not self.db.LapLimit:
@@ -699,7 +699,7 @@ class IDDUCalcThread(IDDUThread):
 
             self.db.BUpshiftToneInitRequest = True
 
-            print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.RaceLaps))
+            print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.config['RaceLaps']))
             print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))
 
             # DRS
@@ -709,9 +709,9 @@ class IDDUCalcThread(IDDUThread):
                     self.db.RenderLabel[18] = True
                 self.db.DRSCounter = 0
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                    self.db.DRSActivations = 1000
+                    self.db.config['DRSActivations'] = 1000
                 else:
-                    self.db.DRSActivations = self.db.DRSActivationsGUI
+                    self.db.config['DRSActivations'] = self.db.config['DRSActivationsGUI']
             else:
                 self.db.DRS = False
                 self.db.RenderLabel[18] = False
@@ -723,9 +723,9 @@ class IDDUCalcThread(IDDUThread):
                 if not self.db.WeekendInfo['Category'] == 'Oval':
                     self.db.RenderLabel[19] = True
                 if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                    self.db.P2PActivations = 1000
+                    self.db.config['P2PActivations'] = 1000
                 else:
-                    self.db.P2PActivations = self.db.P2PActivationsGUI
+                    self.db.config['P2PActivations'] = self.db.config['P2PActivationsGUI']
             else:
                 self.db.P2P = False
                 self.db.RenderLabel[19] = False
@@ -791,13 +791,13 @@ class IDDUCalcThread(IDDUThread):
         self.db.queryData.extend(list(self.db.car.dcList.keys()))
 
         if self.db.car.UpshiftSettings['BValid']:
-            self.db.UpshiftStrategy = 5
+            self.db.config['UpshiftStrategy'] = 5
         else:
-            self.db.UpshiftStrategy = self.db.car.UpshiftStrategy
+            self.db.config['UpshiftStrategy'] = self.db.car.UpshiftStrategy
 
         time.sleep(0.2)
 
-        print(self.db.timeStr + ':\tUpshift strategy: ' + str(self.db.UpshiftStrategy))
+        print(self.db.timeStr + ':\tUpshift strategy: ' + str(self.db.config['UpshiftStrategy']))
         print(self.db.timeStr + ':\tCar has been loaded successfully.')
 
     def newLap(self):
@@ -817,7 +817,7 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.LastFuelLevel = self.db.FuelLevel
 
-        if self.db.BEnableLapLogging:  # TODO: still required?
+        if self.db.self.db.config['BEnableLapLogging']:  # TODO: still required?
             now = datetime.now()
             date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -825,7 +825,7 @@ class IDDUCalcThread(IDDUThread):
             f = open('data/laplog/' + LapStr, 'x')  # TODO: better sturcture of this
             f.write('Lap = ' + repr(self.db.Lap) + '\n')
             f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
-            f.write('RaceLaps = ' + repr(self.db.RaceLaps) + '\n')
+            f.write('RaceLaps = ' + repr(self.db.config['RaceLaps']) + '\n')
             f.write('FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
             f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
             f.write('SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
@@ -835,7 +835,7 @@ class IDDUCalcThread(IDDUThread):
             f.write('DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
             f.write('CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
             f.write('LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
-            f.write('PitStopsRequired = ' + repr(self.db.PitStopsRequired) + '\n')
+            f.write('PitStopsRequired = ' + repr(self.db.config['PitStopDelta']) + '\n')
             f.write('CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
             f.write('SessionNum = ' + repr(self.db.SessionNum) + '\n')
             f.write('ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
@@ -849,13 +849,13 @@ class IDDUCalcThread(IDDUThread):
             f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
             f.write('LapLimit = ' + repr(self.db.LapLimit) + '\n')
             f.write('SessionLength = ' + repr(self.db.SessionLength) + '\n')
-            f.write('PitStopDelta = ' + repr(self.db.PitStopDelta) + '\n')
+            f.write('PitStopDelta = ' + repr(self.db.config['PitStopDelta']) + '\n')
             f.write('CarIdxOnPitRoad = ' + repr(self.db.CarIdxOnPitRoad) + '\n')
             f.write('CarIdxLapDistPct = ' + repr(self.db.CarIdxLapDistPct) + '\n')
             f.write('PaceCarIdx = ' + repr(self.db.DriverInfo['PaceCarIdx']) + '\n')
             f.write('FuelLevel = ' + repr(self.db.FuelLevel) + '\n')
             f.write('SessionFlags = ' + repr(self.db.SessionFlags) + '\n')
-            f.write('BEnableRaceLapEstimation = ' + repr(self.db.BEnableRaceLapEstimation) + '\n')
+            f.write('BEnableRaceLapEstimation = ' + repr(self.db.config['BEnableRaceLapEstimation']) + '\n')
             f.write('tNextLiftPoint = ' + repr(self.db.tNextLiftPoint) + '\n')
             f.write('LapDistPct = ' + repr(self.db.LapDistPct) + '\n')
             f.write('BLiftToneRequest = ' + repr(self.db.BLiftToneRequest) + '\n')
@@ -875,7 +875,7 @@ class IDDUCalcThread(IDDUThread):
             self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
         self.db.oldLap = self.db.Lap
-        self.db.LapsToGo = self.db.RaceLaps - self.db.Lap + 1  # TODO: switch between user race laps and estimation --> see fuel estimation
+        self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1  # TODO: switch between user race laps and estimation --> see fuel estimation
         # if not self.db.OnPitRoad:
         #     self.db.BWasOnPitRoad = False
 
@@ -978,8 +978,8 @@ class IDDUCalcThread(IDDUThread):
         # clear_fr = 10  # Uncheck request a fast repair
         # clear_fuel = 11  # Uncheck add fuel
 
-        if self.db.BPitCommandControl:
-            if not self.db.BChangeTyres:
+        if self.db.config['BPitCommandControl']:
+            if not self.db.config['BChangeTyres']:
                 self.ir.pit_command(7)  # clear tires
             else:
                 self.ir.pit_command(3)
@@ -987,12 +987,12 @@ class IDDUCalcThread(IDDUThread):
                 self.ir.pit_command(5)
                 self.ir.pit_command(6)
 
-            if not self.db.BBeginFueling:
+            if not self.db.config['BBeginFueling']:
                 self.ir.pit_command(11)  # Uncheck add fuel
             else:
-                if self.db.NFuelSetMethod == 0:
-                    self.ir.pit_command(2, self.db.VUserFuelSet)
-                elif self.db.NFuelSetMethod == 1:
+                if self.db.config['NFuelSetMethod'] == 0:
+                    self.ir.pit_command(2, self.db.config['VUserFuelSet'])
+                elif self.db.config['NFuelSetMethod'] == 1:
                     self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))
 
         self.db.BPitCommandUpdate = False
@@ -1075,8 +1075,8 @@ class IDDUCalcThread(IDDUThread):
     def setFuelTgt(self, tgt, offset):
         self.db.LapDistPctLift = np.array([])
         rLift = np.array([])
-        self.db.VFuelTgt = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
-        self.db.VFuelTgtOffset = np.min([1, np.max([offset, -1])]).astype(float)
+        self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+        self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
         self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
 
         for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):

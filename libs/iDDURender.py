@@ -26,12 +26,12 @@ class RenderMain(IDDUItem):
     fontHuge = pygame.font.Font("files/KhmerUI.ttf", 480)
     SCLabel = fontHuge.render('SC', True, IDDUItem.black)
 
-    # display
+    # # display
     resolution = (800, 480)
-    if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
-    else:
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+    # if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+    #     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+    # else:
+    #     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
 
     fullscreen = True
     pygame.display.set_caption('iDDU')
@@ -54,6 +54,12 @@ class RenderMain(IDDUItem):
 
     def __init__(self):
         IDDUItem.__init__(self)
+
+        # display
+        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+            os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (self.db.config['rDDU'][0], self.db.config['rDDU'][1])
+        else:
+            os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
 
 
 class RenderScreen(RenderMain):
@@ -320,8 +326,8 @@ class RenderScreen(RenderMain):
                 self.db.DRSStr = str(int(self.db.DRSCounter))
         # P2P
         if self.db.P2P:
-            P2PRemaining = (self.db.P2PActivations - self.db.P2PCounter)
-            if self.db.P2PActivations > 100:
+            P2PRemaining = (self.db.config['P2PActivations'] - self.db.P2PCounter)
+            if self.db.config['P2PActivations'] > 100:
                 self.db.P2PStr = str(int(self.db.P2PCounter))
             else:
                 self.db.P2PStr = str(int(P2PRemaining))
@@ -347,8 +353,8 @@ class RenderScreen(RenderMain):
         self.db.SpeedStr = convertString.roundedStr0(max(0.0, self.ir['Speed'] * 3.6))
 
         if self.db.LapLimit:
-            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(self.db.RaceLaps)
-            self.db.ToGoStr = convertString.roundedStr1(max(0, self.db.RaceLaps - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
+            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(self.db.config['RaceLaps'])
+            self.db.ToGoStr = convertString.roundedStr1(max(0, self.db.config['RaceLaps'] - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
 
         else:
             self.db.LapStr = str(max(0, self.ir['Lap']))
@@ -467,7 +473,7 @@ class RenderScreen(RenderMain):
 
         if self.ir['DriverInfo']['DriverCarIdx'] == Idx:  # if player's car
             if self.db.RX:
-                if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
+                if self.db.self.db.config['JokerLaps'][Idx] == self.db.JokerLapsRequired:
                     self.drawCar(Idx, x, y, self.green, self.black)
             self.drawCar(Idx, x, y, self.red, self.white)
         else:  # other cars
@@ -496,7 +502,7 @@ class RenderScreen(RenderMain):
 
             if not self.ir['CarIdxOnPitRoad'][Idx]:
                 if self.db.RX:
-                    if self.db.JokerLapsRequired > 0 and (self.db.JokerLaps[Idx] == self.db.JokerLapsRequired):
+                    if self.db.self.db.config['JokerLaps'][Idx] == self.db.JokerLapsRequired:
                         self.drawCar(Idx, x, y, self.green, labelColour)
                 else:
                     self.drawCar(Idx, x, y, dotColour, labelColour)
@@ -510,7 +516,7 @@ class RenderScreen(RenderMain):
             Label = self.fontTiny.render(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[Idx]]['CarNumber'], True, labelColour)
             if self.ir['CarIdxOnPitRoad'][Idx]:
                 pygame.draw.circle(RenderMain.screen, self.yellow, [int(x), int(y)], 12, 0)
-            elif self.db.CarIdxPitStops[Idx] >= self.db.PitStopsRequired > 0 and self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'] == 'Race':
+            elif self.db.CarIdxPitStops[Idx] >= self.db.config['PitStopsRequired'] > 0 and self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'] == 'Race':
                 pygame.draw.circle(RenderMain.screen, self.green, [int(x), int(y)], 12, 0)
             pygame.draw.circle(RenderMain.screen, dotColour, [int(x), int(y)], 10, 0)
             RenderMain.screen.blit(Label, (int(x) - 6, int(y) - 7))
@@ -524,13 +530,13 @@ class RenderScreen(RenderMain):
         if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
             tLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
             timeStamp = np.interp([float(self.ir['CarIdxLapDistPct'][self.ir['DriverInfo']['DriverCarIdx']]) * 100], self.db.track.LapDistPct, tLap).tolist()[0]
-            timeStamp1 = timeStamp - self.db.PitStopDelta - width / 2
+            timeStamp1 = timeStamp - self.db.config['PitStopDelta'] - width / 2
             while timeStamp1 < 0:
                 timeStamp1 = timeStamp1 + tLap[-1]
             while timeStamp1 > tLap[-1]:
                 timeStamp1 = timeStamp1 - tLap[-1]
 
-            timeStamp2 = timeStamp - self.db.PitStopDelta + width / 2
+            timeStamp2 = timeStamp - self.db.config['PitStopDelta'] + width / 2
 
             while timeStamp2 < 0:
                 timeStamp2 = timeStamp2 + tLap[-1]
