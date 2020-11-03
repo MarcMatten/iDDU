@@ -7,6 +7,7 @@ from gui import iDDUgui
 import os
 from functionalities.MultiSwitch import MultiSwitch
 from functionalities.libs import importExport
+from shutil import copyfile
 
 
 nan = float('nan')
@@ -366,6 +367,11 @@ iDDUControls = {# DisplayName, show, decimals, initial value, min value, max val
     'BEnableLiftTones': ['Enable Lift Tones', True, 0, True],
     'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1]
 }
+
+if not os.path.exists(calcData['dir'] + '/config.json'):
+    copyfile(calcData['dir'] + '/config_default.json', calcData['dir'] + '/config.json')
+    print('No config.json found. Created new default config.json from config_default.json')
+
 
 config = importExport.loadJson(calcData['dir'] + '/config.json')
 

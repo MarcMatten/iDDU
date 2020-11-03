@@ -1,0 +1,59 @@
+{
+    "BBeginFueling": false,
+    "BChangeTyres": false,
+    "BEnableLapLogging": false,
+    "BEnableLiftTones": false,
+    "BEnableRaceLapEstimation": false,
+    "BLoggerActive": false,
+    "BPitCommandControl": false,
+    "DRSActivations": 8,
+    "DRSActivationsGUI": 8,
+    "JokerLapDelta": 2,
+    "JokerLaps": 1,
+    "MapHighlight": false,
+    "NFuelSetMethod": 0,
+    "NRaceLapsSource": 0,
+    "P2PActivations": 12,
+    "P2PActivationsGUI": 12,
+    "PitStopDelta": 61,
+    "PitStopsRequired": 0,
+    "RaceLaps": 37,
+    "ShiftToneEnabled": true,
+    "TelemPath": "M:/07 - SimRacing/Data",
+    "UpshiftStrategy": 0,
+    "UserRaceLaps": 0,
+    "UserShiftFlag": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+    ],
+    "UserShiftRPM": [
+        4000,
+        4000,
+        4000,
+        4000,
+        4000,
+        4000,
+        4000
+    ],
+    "VFuelTgt": 3.05,
+    "VFuelTgtOffset": 0,
+    "VUserFuelSet": 0,
+    "fFuelBeep": 300,
+    "fShiftBeep": 500,
+    "iRPath": "",
+    "rDDU": [
+        0,
+        0
+    ],
+    "rGUI": [
+        -1920,
+        0
+    ],
+    "tFuelBeep": 150,
+    "tShiftBeep": 150
+}
