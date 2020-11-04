@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from datetime import datetime
 import numpy as np
@@ -277,7 +278,7 @@ class IDDUCalcThread(IDDUThread):
                             else:
                                 self.db.BFuelSavingConfigLoaded = False
                                 print(self.db.timeStr +
-                                      ':\tFuel Saving congig loaded ({}, {}) does not match curretn session ({}, {})'.format(self.db.FuelTGTLiftPoints['SFuelConfigCarName'],
+                                      ':\tFuel Saving config loaded ({}, {}) does not match current session ({}, {})'.format(self.db.FuelTGTLiftPoints['SFuelConfigCarName'],
                                                                                                                              self.db.FuelTGTLiftPoints['SFuelConfigTrackName'],
                                                                                                                              self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'],
                                                                                                                              self.db.WeekendInfo['TrackDisplayShortName']))
@@ -424,7 +425,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.Alarm[1] = 3
 
                         # Lift beeps
-                        if self.db.BEnableLiftTones and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
+                        if self.db.config['BEnableLiftTones'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
                             self.LiftTone()
 
                         if type(self.db.FuelLevel) is float:
@@ -473,7 +474,7 @@ class IDDUCalcThread(IDDUThread):
                         self.db.dc[list(self.db.car.dcList.keys())[i]] = self.db.get(list(self.db.car.dcList.keys())[i])
 
                     for i in range(0, len(self.db.iDDUControls)):
-                        self.db.dc[list(self.db.iDDUControls.keys())[i]] = self.db.get(list(self.db.iDDUControls.keys())[i])
+                        self.db.dc[list(self.db.iDDUControls.keys())[i]] = self.db.config[list(self.db.iDDUControls.keys())[i]]
 
                     if self.db.SessionTime > self.db.RunStartTime + 3:
                         if not self.db.dcHeadlightFlash == self.db.dcHeadlightFlashOld and self.db.dcHeadlightFlash is not None:
@@ -510,9 +511,13 @@ class IDDUCalcThread(IDDUThread):
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
-            except TypeError:
-                print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc')
+            except TypeError as e:
+                print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc: ' + str(e))
                 self.db.Exception = 'TYPE ERROR in iDDUcalc'
+                if hasattr(e, 'message'):
+                    print(e.message)
+                else:
+                    print(e)
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
@@ -528,9 +533,9 @@ class IDDUCalcThread(IDDUThread):
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
-            except:  # TODO: find a way to handle this
-                print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc')
-                self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc'
+            except Exception as e:  # TODO: find a way to handle this
+                print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc: ' + str(e))
+                self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc: ' + str(e)
                 if not self.BError:
                     self.db.snapshot()
                 self.BError = True
@@ -1073,18 +1078,22 @@ class IDDUCalcThread(IDDUThread):
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
     def setFuelTgt(self, tgt, offset):
-        self.db.LapDistPctLift = np.array([])
-        rLift = np.array([])
-        self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
-        self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
-        self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+        if self.db.BFuelSavingConfigLoaded:
+            self.db.LapDistPctLift = np.array([])
+            rLift = np.array([])
+            self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+            self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
+            self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
 
-        for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):
-            x = self.db.FuelTGTLiftPoints['VFuelTGT']
-            y = self.db.FuelTGTLiftPoints['LapDistPct'][i]
-            self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(self.db.VFuelTgtEffective, x, y) / 100)
-            rLift = np.append(rLift, np.interp(self.db.VFuelTgtEffective, x, self.db.FuelTGTLiftPoints['LiftPoints'][i]))
+            for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):
+                x = self.db.FuelTGTLiftPoints['VFuelTGT']
+                y = self.db.FuelTGTLiftPoints['LapDistPct'][i]
+                self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(self.db.VFuelTgtEffective, x, y) / 100)
+                rLift = np.append(rLift, np.interp(self.db.VFuelTgtEffective, x, self.db.FuelTGTLiftPoints['LiftPoints'][i]))
 
-        self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
+            self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
 
-        self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
+            self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
+        else:
+            print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
+            return

@@ -287,11 +287,11 @@ class RenderScreen(RenderMain):
                     else:
                         if self.db.iDDUControls[self.db.dcChangedItems[0]][1]:
                             if self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 0:
-                                valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                                valueStr = convertString.roundedStr0(self.db.config[(self.db.dcChangedItems[0])])
                             elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 1:
-                                valueStr = convertString.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
+                                valueStr = convertString.roundedStr1(self.db.config[(self.db.dcChangedItems[0])], 3)
                             elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 2:
-                                valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
+                                valueStr = convertString.roundedStr2(self.db.config[(self.db.dcChangedItems[0])])
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                             self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
@@ -378,7 +378,7 @@ class RenderScreen(RenderMain):
         dx = abs(82.8427 * np.cos(2 * (45 / 180 * np.pi + aWind / 180 * np.pi)))
         RenderMain.screen.blit(pygame.transform.rotate(self.arrow, int(aWind)), [200 - dx, 40 - dx])
 
-        if self.db.MapHighlight:
+        if self.db.config['MapHighlight']:
             self.highlightSection(5, self.green)
             self.highlightSection(1, self.red)
 
