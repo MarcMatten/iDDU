@@ -58,9 +58,9 @@ class Car:
         else:
             self.BP2P = False
 
-        dcIgnoreList =['dcHeadlightFlash', 'dcPitSpeedLimiterToggle', 'dcStarter', 'dcTractionControlToggle', 'dcTearOffVisor', 'dcPushToPass', 'dcDashPage']  # TODO: shouldn't be here
+        dcIgnoreList = ['dcHeadlightFlash', 'dcPitSpeedLimiterToggle', 'dcStarter', 'dcTractionControlToggle', 'dcTearOffVisor', 'dcPushToPass', 'dcDashPage']  # TODO: shouldn't be here
 
-        dcNotInt =['dcBrakeBias']  # TODO: shouldn't be here
+        dcNotInt = ['dcBrakeBias']  # TODO: shouldn't be here
 
         keys = []
         if var_headers_names is None:
@@ -93,9 +93,9 @@ class Car:
         self.tLap = {}
 
     def setUserShiftRPM(self, db):
-        self.UserShiftRPM = db.UserShiftRPM
-        self.UpshiftStrategy = db.UpshiftStrategy
-        self.UserShiftFlag = db.UserShiftFlag
+        self.UserShiftRPM = db.config['UserShiftRPM']
+        self.UpshiftStrategy = db.config['UpshiftStrategy']
+        self.UserShiftFlag = db.config['UserShiftFlag']
 
     def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup):
         for i in range(0, len(NGear)):

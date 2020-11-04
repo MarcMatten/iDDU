@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 from datetime import datetime
 import numpy as np
@@ -822,7 +821,7 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.LastFuelLevel = self.db.FuelLevel
 
-        if self.db.self.db.config['BEnableLapLogging']:  # TODO: still required?
+        if self.db.config['BEnableLapLogging']:  # TODO: still required?
             now = datetime.now()
             date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -894,6 +893,7 @@ class IDDUCalcThread(IDDUThread):
 
         index = np.unique(self.time, return_index=True)[1]
         self.time = np.array(self.time)[index]
+        self.time = self.time - self.time[0]
         self.LapDistPct = np.array(self.LapDistPct)[index]
         self.YawNorth = np.array(self.YawNorth)[index]
         self.Yaw = np.array(self.Yaw)[index]
