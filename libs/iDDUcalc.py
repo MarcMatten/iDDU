@@ -1,4 +1,4 @@
-import os
+import sys, os
 import time
 from datetime import datetime
 import numpy as np
@@ -498,46 +498,51 @@ class IDDUCalcThread(IDDUThread):
 
                 time.sleep(self.rate)
 
-            except ValueError:
-                print(self.db.timeStr + ':\tVALUE ERROR in iDDUcalc')
-                self.db.Exception = 'VALUE ERROR in iDDUcalc'
-                if not self.BError:
-                    self.db.snapshot()
-                self.BError = True
-            except NameError:
-                print(self.db.timeStr + ':\tNAME ERROR in iDDUcalc')
-                self.db.Exception = 'NAME ERROR in iDDUcalc'
-                if not self.BError:
-                    self.db.snapshot()
-                self.BError = True
-            except TypeError as e:
-                print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc: ' + str(e))
-                self.db.Exception = 'TYPE ERROR in iDDUcalc'
-                if hasattr(e, 'message'):
-                    print(e.message)
-                else:
-                    print(e)
-                if not self.BError:
-                    self.db.snapshot()
-                self.BError = True
-            except KeyError:
-                print(self.db.timeStr + ':\tKEY ERROR in iDDUcalc')
-                self.db.Exception = 'KEY ERROR in iDDUcalc'
-                if not self.BError:
-                    self.db.snapshot()
-                self.BError = True
-            except IndexError:
-                print(self.db.timeStr + ':\tINDEX ERROR in iDDUcalc')
-                self.db.Exception = 'INDEX ERROR in iDDUcalc'
-                if not self.BError:
-                    self.db.snapshot()
-                self.BError = True
-            except Exception as e:  # TODO: find a way to handle this
-                print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc: ' + str(e))
-                self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc: ' + str(e)
-                if not self.BError:
-                    self.db.snapshot()
-                self.BError = True
+            # except ValueError:
+            #     print(self.db.timeStr + ':\tVALUE ERROR in iDDUcalc')
+            #     self.db.Exception = 'VALUE ERROR in iDDUcalc'
+            #     if not self.BError:
+            #         self.db.snapshot()
+            #     self.BError = True
+            # except NameError:
+            #     print(self.db.timeStr + ':\tNAME ERROR in iDDUcalc')
+            #     self.db.Exception = 'NAME ERROR in iDDUcalc'
+            #     if not self.BError:
+            #         self.db.snapshot()
+            #     self.BError = True
+            # except TypeError as e:
+            #     print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc: ' + str(e))
+            #     self.db.Exception = 'TYPE ERROR in iDDUcalc'
+            #     if hasattr(e, 'message'):
+            #         print(e.message)
+            #     else:
+            #         print(e)
+            #     if not self.BError:
+            #         self.db.snapshot()
+            #     self.BError = True
+            # except KeyError:
+            #     print(self.db.timeStr + ':\tKEY ERROR in iDDUcalc')
+            #     self.db.Exception = 'KEY ERROR in iDDUcalc'
+            #     if not self.BError:
+            #         self.db.snapshot()
+            #     self.BError = True
+            # except IndexError:
+            #     print(self.db.timeStr + ':\tINDEX ERROR in iDDUcalc')
+            #     self.db.Exception = 'INDEX ERROR in iDDUcalc'
+            #     if not self.BError:
+            #         self.db.snapshot()
+            #     self.BError = True
+            # except Exception as e:  # TODO: find a way to handle this
+            #     print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc: ' + str(e))
+            #     self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc: ' + str(e)
+            #     if not self.BError:
+            #         self.db.snapshot()
+            #     self.BError = True
+
+            except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')

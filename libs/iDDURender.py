@@ -1,4 +1,4 @@
-import os
+import sys, os
 import time
 import numpy as np
 import pygame
@@ -139,168 +139,174 @@ class RenderScreen(RenderMain):
         pygame.display.quit()
 
     def render(self):
-        t = time.perf_counter()
+        try:
+            t = time.perf_counter()
 
-        if self.db.DDUrunning and self.db.StartDDU and not self.BDisplayCreated:
-            RenderMain.screen = pygame.display.set_mode(self.resolution, pygame.NOFRAME)
-            self.BDisplayCreated = True
+            if self.db.DDUrunning and self.db.StartDDU and not self.BDisplayCreated:
+                RenderMain.screen = pygame.display.set_mode(self.resolution, pygame.NOFRAME)
+                self.BDisplayCreated = True
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.done = True
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-                self.db.StopDDU = True
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.done = True
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                    self.db.StopDDU = True
 
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if self.db.NDDUPage == 1:
-                    self.db.NDDUPage = 2
-                else:
-                    self.db.NDDUPage = 1
-
-        if self.ir.startup():
-            RenderMain.screen.fill(self.db.backgroundColour)
-
-            if self.ir['Gear'] > 0:
-                self.db.GearStr = str(int(self.ir['Gear']))
-            elif self.ir['Gear'] == 0:
-                self.db.GearStr = 'N'
-            elif self.ir['Gear'] < 0:
-                self.db.GearStr = 'R'
-
-            if self.ir.startup() and self.ir['IsOnTrack']:
-
-                if self.db.FlagException:
-                    if self.db.FlagExceptionVal == 1:
-                        RenderMain.screen.blit(self.checkered, [0, 0])
-                    elif self.db.FlagExceptionVal == 2:
-                        pygame.draw.circle(RenderMain.screen, self.orange, [400, 240], 185)
-                    elif self.db.FlagExceptionVal == 3:
-                        RenderMain.screen.blit(self.SCLabel, (130, -35))
-                    elif self.db.FlagExceptionVal == 4:
-                        RenderMain.screen.blit(self.dsq, [0, 0])
-                    elif self.db.FlagExceptionVal == 5:
-                        RenderMain.screen.blit(self.debry, [0, 0])
-                    elif self.db.FlagExceptionVal == 6:
-                        RenderMain.screen.blit(self.warning, [0, 0])
-
-            if self.ir.startup() and self.ir['IsOnTrack']:
-                # Radar Incicators
-                CarLeftRight = self.ir['CarLeftRight']
-                if np.isin(CarLeftRight, [2, 4, 5]):
-                    pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft, 0)
-                    if CarLeftRight == 5:
-                        pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft2, 0)
-                if np.isin(CarLeftRight, [3, 4, 6]):
-                    pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight, 0)
-                    if CarLeftRight == 6:
-                        pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight2, 0)
-
-                # my blue flag
-                if self.db.WeekendInfo['NumCarClasses'] > 1 and self.db.PlayerTrackSurface == 3 and not self.db.FlagException:
-                    if len(self.db.NLappingCars) == 1:
-                        text = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
-                        LabelSize = self.fontGear.size(text)
-                        Label = self.fontGear.render(text, True, self.db.NLappingCars[0]['Color'])
-                        RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 240 - LabelSize[1] / 2))
-                    elif len(self.db.NLappingCars) >= 1:
-                        text0 = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
-                        text1 = str(self.db.NLappingCars[1]['NCars']) + " x " + self.db.NLappingCars[1]['Class']
-                        LabelSize0 = self.fontGear.size(text0)
-                        Label0 = self.fontGear.render(text0, True, self.db.NLappingCars[0]['Color'])
-                        LabelSize1 = self.fontGear.size(text1)
-                        Label1 = self.fontGear.render(text1, True, self.db.NLappingCars[1]['Color'])
-
-                        gap = (480 - LabelSize0[1] - LabelSize1[1]) / 3
-
-                        RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
-                        RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
-
-            if self.db.NDDUPage == 1:
-                self.page1()
-            elif self.db.NDDUPage == 2:
-                self.page2()
-            elif self.db.NDDUPage == 3:
-                self.page3()
-
-        else:
-            self.page0()
-
-        if self.ir.startup() and self.ir['IsOnTrack']:
-
-            EngineWarnings = self.ir['EngineWarnings']
-            # warning and alarm messages
-            if EngineWarnings & 0x10 and self.db.Speed > 10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                self.warningLabel('PIT LIMITER', self.blue, self.white)
-            if EngineWarnings & 0x1:
-                self.warningLabel('WATER TEMP HIGH', self.red, self.white)
-            if EngineWarnings & 0x2:
-                self.warningLabel('LOW FUEL PRESSURE', self.red, self.white)
-            if EngineWarnings & 0x4:
-                self.warningLabel('LOW OIL PRESSURE', self.red, self.white)
-            if EngineWarnings & 0x8:
-                self.warningLabel('ENGINE STALLED', self.yellow, self.black)
-
-            if self.ir['SessionTime'] < self.db.tdcHeadlightFlash + 0.5:
-                if self.db.BdcHeadlightFlash:
-                    self.warningLabel('FLASH', self.green, self.white)
-
-            # for testing purposes....
-            SessionFlags = self.ir['SessionFlags']
-            if SessionFlags & 0x80:
-                self.warningLabel('CROSSED', self.white, self.black)
-            # if SessionFlags & 0x100: # normal yellow
-            #     self.warningLabel('YELLOW WAVING', self.white, self.black)
-            # if SessionFlags & 0x400:
-            #     self.warningLabel('GREEN HELD', self.white, self.black)
-            if SessionFlags & 0x2000:
-                self.warningLabel('RANDOM WAVING', self.white, self.black)
-            # if SessionFlags & 0x8000:
-            #     self.warningLabel('CAUTION WAVING', self.white, self.black)
-            # if SessionFlags & 0x10000:
-            #     self.warningLabel('BLACK', self.white, self.black)
-            if SessionFlags & 0x20000:
-                self.warningLabel('DISQUALIFIED', self.white, self.black)
-            # if SessionFlags & 0x80000:
-            #     self.warningLabel('FURLED', self.white, self.black)
-            # if SessionFlags & 0x100000:
-            #     self.warningLabel('REPAIR', self.white, self.black)
-
-            if self.db.OnPitRoad and self.db.Speed > 10 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                self.warningLabel('PIT LIMITER OFF', self.red, self.white)
-
-            # driver control change
-            if time.time() < self.db.dcChangeTime + 1:
-                if self.db.dcChangedItems[0] in self.db.car.dcList:
-                    if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
-                        if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
-                            valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
-                        elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 1:
-                            valueStr = convertString.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
-                        elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 2:
-                            valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
-                        else:
-                            valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                        self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
-                else:
-                    if self.db.dcChangedItems[0] == 'Push':
-                        self.changeLabel('VFuelTgt', 'Push')
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.db.NDDUPage == 1:
+                        self.db.NDDUPage = 2
                     else:
-                        if self.db.iDDUControls[self.db.dcChangedItems[0]][1]:
-                            if self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 0:
-                                valueStr = convertString.roundedStr0(self.db.config[(self.db.dcChangedItems[0])])
-                            elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 1:
-                                valueStr = convertString.roundedStr1(self.db.config[(self.db.dcChangedItems[0])], 3)
-                            elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 2:
-                                valueStr = convertString.roundedStr2(self.db.config[(self.db.dcChangedItems[0])])
+                        self.db.NDDUPage = 1
+
+            if self.ir.startup():
+                RenderMain.screen.fill(self.db.backgroundColour)
+
+                if self.ir['Gear'] > 0:
+                    self.db.GearStr = str(int(self.ir['Gear']))
+                elif self.ir['Gear'] == 0:
+                    self.db.GearStr = 'N'
+                elif self.ir['Gear'] < 0:
+                    self.db.GearStr = 'R'
+
+                if self.ir.startup() and self.ir['IsOnTrack']:
+
+                    if self.db.FlagException:
+                        if self.db.FlagExceptionVal == 1:
+                            RenderMain.screen.blit(self.checkered, [0, 0])
+                        elif self.db.FlagExceptionVal == 2:
+                            pygame.draw.circle(RenderMain.screen, self.orange, [400, 240], 185)
+                        elif self.db.FlagExceptionVal == 3:
+                            RenderMain.screen.blit(self.SCLabel, (130, -35))
+                        elif self.db.FlagExceptionVal == 4:
+                            RenderMain.screen.blit(self.dsq, [0, 0])
+                        elif self.db.FlagExceptionVal == 5:
+                            RenderMain.screen.blit(self.debry, [0, 0])
+                        elif self.db.FlagExceptionVal == 6:
+                            RenderMain.screen.blit(self.warning, [0, 0])
+
+                if self.ir.startup() and self.ir['IsOnTrack']:
+                    # Radar Incicators
+                    CarLeftRight = self.ir['CarLeftRight']
+                    if np.isin(CarLeftRight, [2, 4, 5]):
+                        pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft, 0)
+                        if CarLeftRight == 5:
+                            pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft2, 0)
+                    if np.isin(CarLeftRight, [3, 4, 6]):
+                        pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight, 0)
+                        if CarLeftRight == 6:
+                            pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight2, 0)
+
+                    # my blue flag
+                    if self.db.WeekendInfo['NumCarClasses'] > 1 and self.db.PlayerTrackSurface == 3 and not self.db.FlagException:
+                        if len(self.db.NLappingCars) == 1:
+                            text = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
+                            LabelSize = self.fontGear.size(text)
+                            Label = self.fontGear.render(text, True, self.db.NLappingCars[0]['Color'])
+                            RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 240 - LabelSize[1] / 2))
+                        elif len(self.db.NLappingCars) >= 1:
+                            text0 = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
+                            text1 = str(self.db.NLappingCars[1]['NCars']) + " x " + self.db.NLappingCars[1]['Class']
+                            LabelSize0 = self.fontGear.size(text0)
+                            Label0 = self.fontGear.render(text0, True, self.db.NLappingCars[0]['Color'])
+                            LabelSize1 = self.fontGear.size(text1)
+                            Label1 = self.fontGear.render(text1, True, self.db.NLappingCars[1]['Color'])
+
+                            gap = (480 - LabelSize0[1] - LabelSize1[1]) / 3
+
+                            RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
+                            RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
+
+                if self.db.NDDUPage == 1:
+                    self.page1()
+                elif self.db.NDDUPage == 2:
+                    self.page2()
+                elif self.db.NDDUPage == 3:
+                    self.page3()
+
+            else:
+                self.page0()
+
+            if self.ir.startup() and self.ir['IsOnTrack']:
+
+                EngineWarnings = self.ir['EngineWarnings']
+                # warning and alarm messages
+                if EngineWarnings & 0x10 and self.db.Speed > 10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
+                    self.warningLabel('PIT LIMITER', self.blue, self.white)
+                if EngineWarnings & 0x1:
+                    self.warningLabel('WATER TEMP HIGH', self.red, self.white)
+                if EngineWarnings & 0x2:
+                    self.warningLabel('LOW FUEL PRESSURE', self.red, self.white)
+                if EngineWarnings & 0x4:
+                    self.warningLabel('LOW OIL PRESSURE', self.red, self.white)
+                if EngineWarnings & 0x8:
+                    self.warningLabel('ENGINE STALLED', self.yellow, self.black)
+
+                if self.ir['SessionTime'] < self.db.tdcHeadlightFlash + 0.5:
+                    if self.db.BdcHeadlightFlash:
+                        self.warningLabel('FLASH', self.green, self.white)
+
+                # for testing purposes....
+                SessionFlags = self.ir['SessionFlags']
+                if SessionFlags & 0x80:
+                    self.warningLabel('CROSSED', self.white, self.black)
+                # if SessionFlags & 0x100: # normal yellow
+                #     self.warningLabel('YELLOW WAVING', self.white, self.black)
+                # if SessionFlags & 0x400:
+                #     self.warningLabel('GREEN HELD', self.white, self.black)
+                if SessionFlags & 0x2000:
+                    self.warningLabel('RANDOM WAVING', self.white, self.black)
+                # if SessionFlags & 0x8000:
+                #     self.warningLabel('CAUTION WAVING', self.white, self.black)
+                # if SessionFlags & 0x10000:
+                #     self.warningLabel('BLACK', self.white, self.black)
+                if SessionFlags & 0x20000:
+                    self.warningLabel('DISQUALIFIED', self.white, self.black)
+                # if SessionFlags & 0x80000:
+                #     self.warningLabel('FURLED', self.white, self.black)
+                # if SessionFlags & 0x100000:
+                #     self.warningLabel('REPAIR', self.white, self.black)
+
+                if self.db.OnPitRoad and self.db.Speed > 10 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
+                    self.warningLabel('PIT LIMITER OFF', self.red, self.white)
+
+                # driver control change
+                if time.time() < self.db.dcChangeTime + 1:
+                    if self.db.dcChangedItems[0] in self.db.car.dcList:
+                        if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
+                            if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
+                                valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
+                            elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 1:
+                                valueStr = convertString.roundedStr1(self.db.get(self.db.dcChangedItems[0]), 3)
+                            elif self.db.car.dcList[self.db.dcChangedItems[0]][2] == 2:
+                                valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                            self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
+                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
+                    else:
+                        if self.db.dcChangedItems[0] == 'Push':
+                            self.changeLabel('VFuelTgt', 'Push')
+                        else:
+                            if self.db.iDDUControls[self.db.dcChangedItems[0]][1]:
+                                if self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 0:
+                                    valueStr = convertString.roundedStr0(self.db.config[(self.db.dcChangedItems[0])])
+                                elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 1:
+                                    valueStr = convertString.roundedStr1(self.db.config[(self.db.dcChangedItems[0])], 3)
+                                elif self.db.iDDUControls[self.db.dcChangedItems[0]][2] == 2:
+                                    valueStr = convertString.roundedStr2(self.db.config[(self.db.dcChangedItems[0])])
+                                else:
+                                    valueStr = str(self.db.get(self.db.dcChangedItems[0]))
+                                self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
 
-        pygame.display.flip()
-        self.db.tExecuteRender = (time.perf_counter() - t) * 1000
-        self.clocker.tick(30)
+            pygame.display.flip()
+            self.db.tExecuteRender = (time.perf_counter() - t) * 1000
+            self.clocker.tick(30)
 
-        return self.done
+            return self.done
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
     def page0(self):
 
