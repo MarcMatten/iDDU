@@ -80,7 +80,7 @@ class Car:
             if temp.startswith('dc'):
                 if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
                     if not keys[i] is None:
-                        if any(keys[i] in s for s in dcIgnoreList):
+                        if keys[i] in dcIgnoreList:
                             self.dcList[keys[i]] = (keys[i].split('dc')[1], False, 0)
                         else:
                             if any(keys[i] in s for s in dcNotInt):
@@ -91,6 +91,8 @@ class Car:
         self.setUserShiftRPM(db)
 
         self.tLap = {}
+
+        db.BMultiInitRequest = True
 
     def setUserShiftRPM(self, db):
         self.UserShiftRPM = db.config['UserShiftRPM']

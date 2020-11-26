@@ -218,7 +218,7 @@ class IDDUCalcThread(IDDUThread):
                                 if self.db.CarIdxMap[k[j]] is None:
                                     continue
                                 else:
-                                    if self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed:
+                                    if self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassRelSpeed'] > self.db.PlayerCarClassRelSpeed and self.db.CarIdxTrackSurface[k[j]] == 3:
                                         name = self.db.DriverInfo['Drivers'][self.db.CarIdxMap[k[j]]]['CarClassShortName'].split(' ')[0]
                                         if name in CarClassList:
                                             NLappingCars[CarClassList.index(name)]['NCars'] += 1
