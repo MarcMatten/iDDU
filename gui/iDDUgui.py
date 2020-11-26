@@ -144,7 +144,7 @@ class Gui(IDDUItem):
         self.doubleSpinBox_JokerLapsRequired.setDecimals(0)
         self.doubleSpinBox_JokerLapsRequired.setMaximum(1000.0)
         self.doubleSpinBox_JokerLapsRequired.setSingleStep(1.0)
-        self.doubleSpinBox_JokerLapsRequired.setProperty("value", self.db.config['JokerLaps'])
+        self.doubleSpinBox_JokerLapsRequired.setProperty("value", self.db.config['JokerLapsRequired'])
         self.doubleSpinBox_JokerLapsRequired.setObjectName("doubleSpinBox_JokerLapsRequired")
         self.groupBox_7 = QtWidgets.QGroupBox(self.tabGeneral)
         self.groupBox_7.setGeometry(QtCore.QRect(10, 190, 291, 131))
@@ -748,7 +748,7 @@ class Gui(IDDUItem):
         self.retranslateUi(self.iDDU)
 
     def assignJokerLaps(self):
-        self.db.config['JokerLaps'] = self.doubleSpinBox_JokerLapsRequired.value()
+        self.db.config['JokerLapsRequired'] = self.doubleSpinBox_JokerLapsRequired.value()
         self.retranslateUi(self.iDDU)
 
     def assignP2P(self):
