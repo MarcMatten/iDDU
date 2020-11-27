@@ -400,6 +400,11 @@ class RenderScreen(RenderMain):
         self.CarOnMap(self.db.DriverCarIdx)
         self.CarOnMap(0)
 
+        if self.db.OnPitRoad:
+            for i in range(1, len(self.frames2)):
+                self.frames2[i].setTextColour(self.db.textColour)
+                self.frames2[i].drawFrame()
+
         Label = self.fontTiny2.render(self.db.weatherStr + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
         RenderMain.screen.blit(Label, (5, 1))
 
@@ -525,7 +530,9 @@ class RenderScreen(RenderMain):
             elif self.db.CarIdxPitStops[Idx] >= self.db.config['PitStopsRequired'] > 0 and self.ir['SessionInfo']['Sessions'][self.ir['SessionNum']]['SessionType'] == 'Race':
                 pygame.draw.circle(RenderMain.screen, self.green, [int(x), int(y)], 12, 0)
             pygame.draw.circle(RenderMain.screen, dotColour, [int(x), int(y)], 10, 0)
-            RenderMain.screen.blit(Label, (int(x) - 6, int(y) - 7))
+
+            LabelSize = self.fontTiny.size(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[Idx]]['CarNumber'])
+            RenderMain.screen.blit(Label, (int(x) - LabelSize[0]/2 , int(y) - 7))
 
     @staticmethod
     def bit2RBG(bitColor):

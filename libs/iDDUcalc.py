@@ -97,15 +97,12 @@ class IDDUCalcThread(IDDUThread):
                         pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                         deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
-                        r = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                                      [self.black[0], self.black[0], self.green[0], self.green[0], self.yellow[0],
-                                       self.orange[0], self.red[0]])
-                        g = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                                      [self.black[1], self.black[1], self.green[1], self.green[1], self.yellow[1],
-                                       self.orange[1], self.red[1]])
-                        b = np.interp(deltaSpeed, [-10, -1, 0, 1, 10, 30, 40],
-                                      [self.black[2], self.black[2], self.green[2], self.green[2], self.yellow[2],
-                                       self.orange[2], self.red[2]])
+                        r = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 1, 10, 20, 40],
+                                      [self.black[0], self.black[0], self.orange[0], self.yellow[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0]])
+                        g = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 1, 10, 20, 40],
+                                      [self.black[1], self.black[1], self.orange[1], self.yellow[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1]])
+                        b = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 1, 10, 20, 40],
+                                      [self.black[2], self.black[2], self.orange[2], self.yellow[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
 
                         self.db.backgroundColour = tuple([r, g, b])
                         self.db.textColour = self.white
