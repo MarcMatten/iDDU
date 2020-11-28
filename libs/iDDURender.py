@@ -119,6 +119,13 @@ class RenderScreen(RenderMain):
         self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 5)
         self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 4)
 
+        self.frames2 = list()
+
+        self.frames2.append(Frame('Gear', 10, 370, 114, 82, True))
+        self.frames2.append(Frame('Speed', 607, 370, 183, 82, True))
+        self.frames2[0].addLabel('GearStr', SimpleValue(7, 365, 114, '-', self.fontLarge, 0, 7, 1), 26)
+        self.frames2[0].addLabel('SpeedStr', SimpleValue(612, 365, 173, '-', self.fontLarge, 0, 0, 1), 27)
+
         self.frames3 = list()
 
         self.frames3.append(Frame('Distance to Pit', 54, 110, 317, 155, True))
@@ -390,7 +397,6 @@ class RenderScreen(RenderMain):
 
         # SFLine
         pygame.draw.polygon(RenderMain.screen, self.db.textColour, self.db.track.SFLine, 0)
-
         pygame.draw.lines(RenderMain.screen, self.db.textColour, True, self.db.track.map, 5)
 
         for n in range(1, len(self.db.DriverInfo['Drivers'])):
@@ -400,8 +406,10 @@ class RenderScreen(RenderMain):
         self.CarOnMap(self.db.DriverCarIdx)
         self.CarOnMap(0)
 
+        self.db.SpeedStr = convertString.roundedStr1(max(0.0, self.ir['Speed'] * 3.6), 3)
+
         if self.db.OnPitRoad:
-            for i in range(1, len(self.frames2)):
+            for i in range(0, len(self.frames2)):
                 self.frames2[i].setTextColour(self.db.textColour)
                 self.frames2[i].drawFrame()
 
