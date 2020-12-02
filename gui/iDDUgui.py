@@ -523,7 +523,7 @@ class Gui(IDDUItem):
 
         self.checkBox_BEnableLogger.setChecked(self.db.config['BLoggerActive'])
 
-        self.spinBoxRaceLaps.setValue(self.db.config['RaceLaps'])
+        self.spinBoxRaceLaps.setValue(self.db.config['UserRaceLaps'])
         self.doubleSpinBox_PitStopDelta.setValue(self.db.config['PitStopDelta'])
         self.doubleSpinBox_PitStopsRequired.setValue(self.db.config['PitStopsRequired'])
 
@@ -730,7 +730,7 @@ class Gui(IDDUItem):
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
         self.db.config['UserRaceLaps'] = self.spinBoxRaceLaps.value()
-        self.db.config['RaceLaps'] = self.spinBoxRaceLaps.value()
+        # self.db.config['RaceLaps'] = self.spinBoxRaceLaps.value()
         self.retranslateUi(self.iDDU)
 
     def assignDRS(self):

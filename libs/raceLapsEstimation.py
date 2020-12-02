@@ -24,7 +24,10 @@ class RaceLapsEstimationThread(IDDUThread):
                             CarIdx_temp = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['CarIdx']
                             temp_CarIdxtLap = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LastTime']
                             if temp_CarIdxtLap < 0:
-                                temp_CarIdxtLap = float('nan')
+                                if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
+                                    temp_CarIdxtLap = self.db.car.tLap[self.db.WeekendInfo['TrackName']][-1]
+                                else:
+                                    temp_CarIdxtLap = float('nan')
 
                             self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete'] - 1] = temp_CarIdxtLap
 

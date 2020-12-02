@@ -365,7 +365,8 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
     'VFuelTgtOffset': ['VFuelTgtOffset', True, 2, 0, -5, 5, 0.01],
     'BEnableLiftTones': ['Enable Lift Tones', True, 0, True, None, None, None, ['On', 'Off']],
-    'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']]
+    'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']],
+    'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1]
 }
 
 if not os.path.exists(calcData['dir'] + '/config.json'):
