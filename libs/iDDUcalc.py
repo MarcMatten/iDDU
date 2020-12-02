@@ -342,7 +342,6 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.NLapRemaining < 1:
                                 self.db.Alarm[3] = 3
                             if self.db.BNewLap and not self.db.OnPitRoad:
-                                # TODO: switch between user race laps and estimation --> see LapsToGo
                                 fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.5)
                                 self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
                                                        self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
@@ -881,9 +880,10 @@ class IDDUCalcThread(IDDUThread):
             self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
         self.db.oldLap = self.db.Lap
-        self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1  # TODO: switch between user race laps and estimation --> see fuel estimation
-        # if not self.db.OnPitRoad:
-        #     self.db.BWasOnPitRoad = False
+        if self.db.config['NRaceLapsSource'] == 0:
+            self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1
+        elif self.db.config['NRaceLapsSource'] == 1:
+            self.db.LapsToGo = self.db.config['UserRaceLaps'] - self.db.Lap + 1
 
         self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
             self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
