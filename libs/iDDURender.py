@@ -368,18 +368,20 @@ class RenderScreen(RenderMain):
 
         self.db.SpeedStr = convertString.roundedStr0(max(0.0, self.ir['Speed'] * 3.6))
 
-        if self.db.LapLimit:
-            if self.db.config['NRaceLapsSource'] == 0:
-                RaceLapsDisplay = self.db.config['RaceLaps'] - self.db.Lap + 1
-            elif self.db.config['NRaceLapsSource'] == 1:
-                RaceLapsDisplay = self.db.config['UserRaceLaps'] - self.db.Lap + 1
+        RaceLapsDisplay = 0
+        if self.db.config['NRaceLapsSource'] == 0:
+            RaceLapsDisplay = self.db.config['RaceLaps']
+        elif self.db.config['NRaceLapsSource'] == 1:
+            RaceLapsDisplay = self.db.config['UserRaceLaps']
 
+        if self.db.LapLimit:
             self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
             self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
 
         else:
-            self.db.LapStr = str(max(0, self.ir['Lap']))
+            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
             self.db.ToGoStr = '0'
+
         self.db.ClockStr = self.db.timeStr
 
         if self.db.RX:
