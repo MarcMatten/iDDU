@@ -261,6 +261,7 @@ class IDDUCalcThread(IDDUThread):
                             print(self.db.timeStr + ':\tGetting into car')
                             self.db.init = False
                             self.db.OutLap = True
+                            self.db.BMultiInitRequest = True
                             self.db.LastFuelLevel = self.db.FuelLevel
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime

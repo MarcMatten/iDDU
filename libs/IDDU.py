@@ -28,7 +28,7 @@ class IDDUItem:
 
     ir = irsdk.IRSDK()
 
-    vjoy = pyvjoy.VJoyDevice(1)
+    vjoy = pyvjoy.VJoyDevice(2)
 
     def __init__(self):
         pass
