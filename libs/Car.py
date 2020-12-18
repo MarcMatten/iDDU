@@ -95,9 +95,10 @@ class Car:
         db.BMultiInitRequest = True
 
     def setUserShiftRPM(self, db):
-        self.UserShiftRPM = db.config['UserShiftRPM']
-        self.UpshiftStrategy = db.config['UpshiftStrategy']
-        self.UserShiftFlag = db.config['UserShiftFlag']
+        if 'config' in dir(db):
+            self.UserShiftRPM = db.config['UserShiftRPM']
+            self.UpshiftStrategy = db.config['UpshiftStrategy']
+            self.UserShiftFlag = db.config['UserShiftFlag']
 
     def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup):
         for i in range(0, len(NGear)):
