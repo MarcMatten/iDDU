@@ -958,7 +958,7 @@ class Gui(IDDUItem):
         d['x'], d['y'] = maths.createTrack(d)
 
         tempDB = RTDB.RTDB()
-        tempDB.initialise(d, False)
+        tempDB.initialise(d, False, False)
 
         # check if car available
         carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
@@ -1066,7 +1066,7 @@ class Gui(IDDUItem):
 
     def LoadConfig(self):
         config = importExport.loadJson(self.db.dir + '/config.json')
-        self.db.initialise({'config': config}, False)
+        self.db.initialise({'config': config}, False, False)
         self.retranslateUi(self.iDDU)
 
     def SaveConfig(self):
@@ -1080,8 +1080,6 @@ class Gui(IDDUItem):
             self.iDDU.qTimer.setInterval(30000)
         else:
             self.iDDU.qTimer.setInterval(500)
-
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tREFRESH!')
 
 
     def SetiRPath(self):

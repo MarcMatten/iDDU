@@ -32,7 +32,7 @@ class RaceLapsEstimationThread(IDDUThread):
 
                             self.db.CarIdxtLap[CarIdx_temp][self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['LapsComplete'] - 1] = temp_CarIdxtLap
 
-                            temp_pitstopsremain_np = self.db.config['PitStopsRequired'] - np.array(self.db.CarIdxPitStops[CarIdx_temp])
+                            temp_pitstopsremain_np = np.int(self.db.config['PitStopsRequired']) - np.array(self.db.CarIdxPitStops[CarIdx_temp])
                             temp_pitstopsremain = temp_pitstopsremain_np.tolist()
                             NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[CarIdx_temp]))
 
@@ -41,8 +41,7 @@ class RaceLapsEstimationThread(IDDUThread):
                             CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)
 
                             # use this to find winner
-                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (maths.maxList(temp_pitstopsremain, 0) * self.db.config['PitStopDelta'])) / maths.meanTol(
-                                self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed - self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Lap']  # use this to find winner
+                            self.db.NLapRaceTime[CarIdx_temp] = (self.db.SessionLength - CarIdxtLapSum - (maths.maxList(temp_pitstopsremain, 0) * self.db.config['PitStopDelta'])) / maths.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.03) + NLapTimed - self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Lap']  # use this to find winner
 
                             # if my value lower than the winners, then + 1 lap
                             self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
@@ -51,7 +50,7 @@ class RaceLapsEstimationThread(IDDUThread):
 
                         self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
-                        temp_pitstopsremain_np = self.db.config['PitStopsRequired'] - np.array(self.db.CarIdxPitStops[self.db.DriverCarIdx])
+                        temp_pitstopsremain_np = np.int(self.db.config['PitStopsRequired']) - np.array(self.db.CarIdxPitStops[self.db.DriverCarIdx])
                         temp_pitstopsremain = temp_pitstopsremain_np.tolist()
                         CarIdxtLap_cleaned = [x for x in self.db.CarIdxtLap[self.db.DriverCarIdx] if str(x) != 'nan']
                         CarIdxtLapSum = np.sum(CarIdxtLap_cleaned)

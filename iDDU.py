@@ -355,7 +355,8 @@ calcData = {'startUp': False,
             'tNextLiftPoint': 0,
             'BMultiInitRequest': False,
             'BFuelSavingConfigLoaded': False,
-            'BMultiInitRequest': False
+            'BMultiInitRequest': False,
+            'BSnapshotMode': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -387,11 +388,11 @@ for i in range(0, len(iDDUControlsName)):
 
 # Create RTDB and initialise with
 myRTDB = RTDB.RTDB()
-myRTDB.initialise(helpData, False)
-myRTDB.initialise(iRData, True)
-myRTDB.initialise(calcData, False)
-myRTDB.initialise({'iDDUControls': iDDUControls}, False)
-myRTDB.initialise({'config': config}, False)
+myRTDB.initialise(helpData, False, False)
+myRTDB.initialise(iRData, True, False)
+myRTDB.initialise(calcData, False, False)
+myRTDB.initialise({'iDDUControls': iDDUControls}, False, False)
+myRTDB.initialise({'config': config}, False, False)
 
 dcList = list(myRTDB.car.dcList.keys())
 

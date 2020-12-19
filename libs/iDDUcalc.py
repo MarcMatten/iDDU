@@ -483,7 +483,7 @@ class IDDUCalcThread(IDDUThread):
                     self.db.BDDUexecuting = True
                 else:
                     # iRacing is not running
-                    if self.db.BDDUexecuting:  # necssary?
+                    if self.db.BDDUexecuting and not self.db.BSnapshotMode:  # necssary?
                         self.db.BDDUexecuting = False
                         self.db.BWaiting = True
                         self.db.oldSessionNum = -1
