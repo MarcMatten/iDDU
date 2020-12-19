@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import QTimer
 import sys
 import time
 import numpy as np
@@ -47,7 +48,18 @@ class Gui(IDDUItem):
 
         self.setupUi(iDDU)
         iDDU.show()
+
+        # make QTimer
+        iDDU.qTimer = QTimer()
+        # set interval to 1 s
+        iDDU.qTimer.setInterval(1000)  # 1000 ms = 1 s
+        # connect timeout signal to signal handler
+        iDDU.qTimer.timeout.connect(self.refreshGUI)
+        # start timer
+        iDDU.qTimer.start()
+
         sys.exit(app.exec_())
+
 
     def setupUi(self, iDDU):
         self.iDDU = iDDU
@@ -714,6 +726,14 @@ class Gui(IDDUItem):
         self.pushButtonSetTelemPath.setText(_translate("iDDU", "Set Telemetry Path"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSettings), _translate("iDDU", "Settings"))
 
+        self.spinBoxRaceLaps.setValue(self.db.config['UserRaceLaps'])
+        self.checkBox_BEnableLogger.setChecked(self.db.config['BLoggerActive'])
+        self.checkBox_BEnableLapLogging.setChecked(self.db.config['BEnableLapLogging'])
+        self.checkBox_FuelUp.setChecked(self.db.config['BBeginFueling'])
+        self.checkBox_ChangeTyres.setChecked(self.db.config['BChangeTyres'])
+        self.checkBox_PitCommandControl.setChecked(self.db.config['BPitCommandControl'])
+        self.comboBox_FuelMethod.setCurrentIndex(self.db.config['NFuelSetMethod'])
+        self.checkBox_UpshiftTone.setChecked(self.db.config['ShiftToneEnabled'])
 
         dcList = list(self.db.car.dcList.keys())
         k = 0
@@ -789,6 +809,8 @@ class Gui(IDDUItem):
                 print(self.db.timeStr + ': ' + str(eval(cmd)))
         except:
             print(self.db.timeStr + ': User command not working!')
+
+        self.retranslateUi(self.iDDU)
 
     def onUpdateText(self, text):
         cursor = self.textEdit.textCursor()
@@ -1050,6 +1072,17 @@ class Gui(IDDUItem):
     def SaveConfig(self):
         importExport.saveJson(self.db.config, self.db.dir + '/config.json')
         self.retranslateUi(self.iDDU)
+
+    def refreshGUI(self):
+        self.retranslateUi(self.iDDU)
+
+        if self.db.IsOnTrack:
+            self.iDDU.qTimer.setInterval(30000)
+        else:
+            self.iDDU.qTimer.setInterval(500)
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tREFRESH!')
+
 
     def SetiRPath(self):
         dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select iRacing Directory', './')
