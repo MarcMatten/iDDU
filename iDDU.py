@@ -359,12 +359,12 @@ calcData = {'startUp': False,
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
-    'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['On', 'Off']],
-    'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['On', 'Off']],
-    'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['On', 'Off']],
+    'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['Off', 'On']],
+    'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
+    'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
     'VFuelTgtOffset': ['VFuelTgtOffset', True, 2, 0, -5, 5, 0.01],
-    'BEnableLiftTones': ['Enable Lift Tones', True, 0, True, None, None, None, ['On', 'Off']],
+    'BEnableLiftTones': ['Enable Lift Tones', True, 0, True, None, None, None, ['Off', 'On']],
     'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']],
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1]
 }
