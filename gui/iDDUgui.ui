@@ -50,7 +50,7 @@
       <rect>
        <x>20</x>
        <y>330</y>
-       <width>291</width>
+       <width>281</width>
        <height>51</height>
       </rect>
      </property>
@@ -448,7 +448,7 @@
        <x>310</x>
        <y>210</y>
        <width>261</width>
-       <height>101</height>
+       <height>141</height>
       </rect>
      </property>
      <property name="title">
@@ -488,6 +488,19 @@
         <width>211</width>
         <height>22</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_MSDriverMarker">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>100</y>
+        <width>211</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>assign Driver Marker</string>
       </property>
      </widget>
     </widget>
@@ -1697,6 +1710,175 @@
      <property name="text">
       <string>Set Telemetry Path</string>
      </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_12">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>751</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <kerning>false</kerning>
+      </font>
+     </property>
+     <property name="title">
+      <string>Button assignments</string>
+     </property>
+     <widget class="QPushButton" name="pushButtonSaveDDUPage">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Change DDU Page</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditDDUPage">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>60</y>
+        <width>551</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonPreviousMulti">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Previous Multi Position</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditPreviousMulti">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>90</y>
+        <width>551</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonNextMulti">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Next Multi Position</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditNextMulti">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>120</y>
+        <width>551</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMultiDecrease">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>150</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Decrease Multi Value</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditMultiDecrease">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>150</y>
+        <width>551</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMultiIncrease">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>180</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Increase Multi Value</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditMultiIncrease">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>180</y>
+        <width>551</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_24">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>101</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Select Joystick</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_JoystickSelection">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>20</y>
+        <width>551</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Joystick 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Joystick 2</string>
+       </property>
+      </item>
+     </widget>
     </widget>
    </widget>
   </widget>

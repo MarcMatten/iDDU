@@ -58,7 +58,10 @@ class Gui(IDDUItem):
         # start timer
         iDDU.qTimer.start()
 
+        self.getJoystickList()
+
         sys.exit(app.exec_())
+
 
 
     def setupUi(self, iDDU):
@@ -78,11 +81,12 @@ class Gui(IDDUItem):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
         self.tabWidget.setSizePolicy(sizePolicy)
+        self.tabWidget.setMaximumSize(QtCore.QSize(781, 16777215))
         self.tabWidget.setObjectName("tabWidget")
         self.tabGeneral = QtWidgets.QWidget()
         self.tabGeneral.setObjectName("tabGeneral")
         self.groupBox_2 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_2.setGeometry(QtCore.QRect(20, 330, 291, 51))
+        self.groupBox_2.setGeometry(QtCore.QRect(20, 330, 281, 51))
         self.groupBox_2.setObjectName("groupBox_2")
         self.pushButton_StartDDU = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_StartDDU.setGeometry(QtCore.QRect(40, 20, 75, 23))
@@ -187,7 +191,7 @@ class Gui(IDDUItem):
         self.checkBox_BEnableLapLogging.setObjectName("checkBox_BEnableLapLogging")
         self.checkBox_BEnableLapLogging.setChecked(self.db.config['BEnableLapLogging'])
         self.groupBox_11 = QtWidgets.QGroupBox(self.tabGeneral)
-        self.groupBox_11.setGeometry(QtCore.QRect(310, 210, 261, 101))
+        self.groupBox_11.setGeometry(QtCore.QRect(310, 210, 261, 141))
         self.groupBox_11.setObjectName("groupBox_11")
         self.pushButton_MSMapDecrease = QtWidgets.QPushButton(self.groupBox_11)
         self.pushButton_MSMapDecrease.setGeometry(QtCore.QRect(20, 60, 91, 23))
@@ -203,6 +207,9 @@ class Gui(IDDUItem):
             self.comboBox_MultiSwitch.addItem(tempDcList[i])
         self.comboBox_MultiSwitch.setMaxVisibleItems(len(tempDcList))
         self.comboBox_MultiSwitch.setCurrentIndex(0)
+        self.pushButton_MSDriverMarker = QtWidgets.QPushButton(self.groupBox_11)
+        self.pushButton_MSDriverMarker.setGeometry(QtCore.QRect(20, 100, 211, 23))
+        self.pushButton_MSDriverMarker.setObjectName("pushButton_MSDriverMarker")
         self.tabWidget.addTab(self.tabGeneral, "")
         self.tabPitStops = QtWidgets.QWidget()
         self.tabPitStops.setObjectName("tabPitStops")
@@ -519,6 +526,7 @@ class Gui(IDDUItem):
         self.label_23.setGeometry(QtCore.QRect(20, 90, 91, 16))
         self.label_23.setObjectName("label_23")
         self.lineEditiRPath = QtWidgets.QLineEdit(self.tabSettings)
+        self.lineEditiRPath.setEnabled(True)
         self.lineEditiRPath.setGeometry(QtCore.QRect(110, 50, 551, 20))
         self.lineEditiRPath.setObjectName("lineEditiRPath")
         self.lineEditTelemPath = QtWidgets.QLineEdit(self.tabSettings)
@@ -530,6 +538,58 @@ class Gui(IDDUItem):
         self.pushButtonSetTelemPath = QtWidgets.QPushButton(self.tabSettings)
         self.pushButtonSetTelemPath.setGeometry(QtCore.QRect(670, 90, 101, 23))
         self.pushButtonSetTelemPath.setObjectName("pushButtonSetTelemPath")
+        self.groupBox_12 = QtWidgets.QGroupBox(self.tabSettings)
+        self.groupBox_12.setEnabled(True)
+        self.groupBox_12.setGeometry(QtCore.QRect(10, 120, 751, 211))
+        font = QtGui.QFont()
+        font.setKerning(False)
+        self.groupBox_12.setFont(font)
+        self.groupBox_12.setObjectName("groupBox_12")
+        self.pushButtonSaveDDUPage = QtWidgets.QPushButton(self.groupBox_12)
+        self.pushButtonSaveDDUPage.setGeometry(QtCore.QRect(10, 60, 161, 21))
+        self.pushButtonSaveDDUPage.setObjectName("pushButtonSaveDDUPage")
+        self.lineEditDDUPage = QtWidgets.QLineEdit(self.groupBox_12)
+        self.lineEditDDUPage.setGeometry(QtCore.QRect(190, 60, 551, 20))
+        self.lineEditDDUPage.setObjectName("lineEditDDUPage")
+        self.pushButtonPreviousMulti = QtWidgets.QPushButton(self.groupBox_12)
+        self.pushButtonPreviousMulti.setGeometry(QtCore.QRect(10, 90, 161, 21))
+        self.pushButtonPreviousMulti.setObjectName("pushButtonPreviousMulti")
+        self.lineEditPreviousMulti = QtWidgets.QLineEdit(self.groupBox_12)
+        self.lineEditPreviousMulti.setGeometry(QtCore.QRect(190, 90, 551, 20))
+        self.lineEditPreviousMulti.setObjectName("lineEditPreviousMulti")
+        self.pushButtonNextMulti = QtWidgets.QPushButton(self.groupBox_12)
+        self.pushButtonNextMulti.setGeometry(QtCore.QRect(10, 120, 161, 21))
+        self.pushButtonNextMulti.setObjectName("pushButtonNextMulti")
+        self.lineEditNextMulti = QtWidgets.QLineEdit(self.groupBox_12)
+        self.lineEditNextMulti.setGeometry(QtCore.QRect(190, 120, 551, 20))
+        self.lineEditNextMulti.setObjectName("lineEditNextMulti")
+        self.pushButtonMultiDecrease = QtWidgets.QPushButton(self.groupBox_12)
+        self.pushButtonMultiDecrease.setGeometry(QtCore.QRect(10, 150, 161, 21))
+        self.pushButtonMultiDecrease.setObjectName("pushButtonMultiDecrease")
+        self.lineEditMultiDecrease = QtWidgets.QLineEdit(self.groupBox_12)
+        self.lineEditMultiDecrease.setGeometry(QtCore.QRect(190, 150, 551, 20))
+        self.lineEditMultiDecrease.setObjectName("lineEditMultiDecrease")
+        self.pushButtonMultiIncrease = QtWidgets.QPushButton(self.groupBox_12)
+        self.pushButtonMultiIncrease.setGeometry(QtCore.QRect(10, 180, 161, 21))
+        self.pushButtonMultiIncrease.setObjectName("pushButtonMultiIncrease")
+        self.lineEditMultiIncrease = QtWidgets.QLineEdit(self.groupBox_12)
+        self.lineEditMultiIncrease.setGeometry(QtCore.QRect(190, 180, 551, 20))
+        self.lineEditMultiIncrease.setObjectName("lineEditMultiIncrease")
+        self.label_24 = QtWidgets.QLabel(self.groupBox_12)
+        self.label_24.setGeometry(QtCore.QRect(20, 20, 101, 21))
+        self.label_24.setObjectName("label_24")
+        self.comboBox_JoystickSelection = QtWidgets.QComboBox(self.groupBox_12)
+        self.comboBox_JoystickSelection.setGeometry(QtCore.QRect(190, 20, 551, 22))
+        self.comboBox_JoystickSelection.setObjectName("comboBox_JoystickSelection")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
+        self.comboBox_JoystickSelection.addItem("")
         self.tabWidget.addTab(self.tabSettings, "")
 
 
@@ -610,6 +670,13 @@ class Gui(IDDUItem):
         self.pushButtonSetiRPath.clicked.connect(self.SetiRPath)
         self.pushButtonSetTelemPath.clicked.connect(self.SetTelemPath)
 
+        self.pushButton_MSDriverMarker.clicked.connect(self.assignDriverMarker)
+        self.pushButtonPreviousMulti.clicked.connect(self.assignButtonPreviousMulti)
+        self.pushButtonNextMulti.clicked.connect(self.assignButtonNextMulti)
+        self.pushButtonMultiDecrease.clicked.connect(self.assignButtonMultiDecrease)
+        self.pushButtonMultiIncrease.clicked.connect(self.assignButtonMultiIncrease)
+        self.pushButtonSaveDDUPage.clicked.connect(self.assignButtonDDUPage)
+
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
         # app.aboutToQuit.connect(self.closeEvent)
@@ -648,6 +715,7 @@ class Gui(IDDUItem):
         self.groupBox_11.setTitle(_translate("iDDU", "Multi Switch"))
         self.pushButton_MSMapDecrease.setText(_translate("iDDU", "Map Decrease"))
         self.pushButton_MSMapIncrease.setText(_translate("iDDU", "Map Increase"))
+        self.pushButton_MSDriverMarker.setText(_translate("iDDU", "assign Driver Marker"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral), _translate("iDDU", "General"))
         self.label_10.setText(_translate("iDDU", "Pit Stop Delta"))
         self.checkBox_ChangeTyres.setText(_translate("iDDU", "Change Tyres"))
@@ -724,6 +792,13 @@ class Gui(IDDUItem):
         self.lineEditTelemPath.setText(_translate("iDDU", self.db.config['TelemPath']))
         self.pushButtonSetiRPath.setText(_translate("iDDU", "Set iRacing Path"))
         self.pushButtonSetTelemPath.setText(_translate("iDDU", "Set Telemetry Path"))
+        self.groupBox_12.setTitle(_translate("iDDU", "Button assignments"))
+        self.pushButtonSaveDDUPage.setText(_translate("iDDU", "Change DDU Page"))
+        self.pushButtonPreviousMulti.setText(_translate("iDDU", "Previous Multi Position"))
+        self.pushButtonNextMulti.setText(_translate("iDDU", "Next Multi Position"))
+        self.pushButtonMultiDecrease.setText(_translate("iDDU", "Decrease Multi Value"))
+        self.pushButtonMultiIncrease.setText(_translate("iDDU", "Increase Multi Value"))
+        self.label_24.setText(_translate("iDDU", "Select Joystick"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSettings), _translate("iDDU", "Settings"))
 
         self.spinBoxRaceLaps.setValue(self.db.config['UserRaceLaps'])
@@ -746,6 +821,11 @@ class Gui(IDDUItem):
 
         self.comboBox_MultiSwitch.setMaxVisibleItems(len(list(dict(self.dcConfig))))
         # self.comboBox_MultiSwitch.setCurrentIndex(0)
+
+        for i in range(0, len(self.joystickList)):
+            self.comboBox_JoystickSelection.setItemText(i, _translate("iDDU", self.joystickList[i]))
+
+        self.comboBox_JoystickSelection.setMaxVisibleItems(len(self.joystickList)+5)
 
     def assignRaceLaps(self):
         # self.db.LapsToGo = self.spinBoxRaceLaps.value()
@@ -1063,6 +1143,52 @@ class Gui(IDDUItem):
         mapName = self.comboBox_MultiSwitch.currentText()
         self.pressButton(self.dcConfig[mapName][1]+1, 0.2)
         self.retranslateUi(self.iDDU)
+
+    def assignDriverMarker(self):
+        self.pressButton(64, 0.2)
+
+    def getJoystickControl(self):
+        WaitingForEvent = True
+        t = time.time()
+        self.initJoystick(self.joystickList[self.comboBox_JoystickSelection.currentIndex()])
+
+        self.pygame.display.get_init()
+
+        while WaitingForEvent and (time.time()-t) < 10:
+            events = self.pygame.event.get()
+            for event in events:
+                if event.type == self.pygame.JOYBUTTONDOWN:
+                    WaitingForEvent = False
+                    print('Joystick: ' + str(event.joy))
+                    print('Button: ' + str(event.button))
+
+        if WaitingForEvent:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid Joystick input found....aborting!')
+        else:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tAssigned button {} of Joystick {}!'.format(event.button, event.joy))
+
+        return self.pygame.joystick.Joystick(event.joy).get_name(), event.button
+
+    def assignButtonPreviousMulti(self):
+        self.assignButton('PreviousMulti')
+
+    def assignButtonNextMulti(self):
+        self.assignButton('NextMulti')
+
+    def assignButtonMultiIncrease(self):
+        self.assignButton('MultiIncrease')
+
+    def assignButtonMultiDecrease(self):
+        self.assignButton('MultiDecrease')
+
+    def assignButtonDDUPage(self):
+        self.assignButton('DDUPage')
+
+    def assignButton(self, name):
+        joyID, joyButton = self.getJoystickControl()
+        self.db.config['ButtonAssignments'][name]['Joystick'] = joyID
+        self.db.config['ButtonAssignments'][name]['Button'] = joyButton
+        self.SaveConfig()
 
     def LoadConfig(self):
         config = importExport.loadJson(self.db.dir + '/config.json')

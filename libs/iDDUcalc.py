@@ -343,7 +343,7 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.NLapRemaining < 1:
                                 self.db.Alarm[3] = 3
                             if self.db.BNewLap and not self.db.OnPitRoad:
-                                fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.5)
+                                fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.1)
                                 self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
                                                        self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
                                 if self.db.VFuelAdd == 0:

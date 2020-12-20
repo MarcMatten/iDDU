@@ -55,5 +55,27 @@
         0
     ],
     "tFuelBeep": 150,
-    "tShiftBeep": 150
+    "tShiftBeep": 150,
+    "ButtonAssignments": {
+        "PreviousMulti": {
+            "Joystick": "None",
+            "Button": 0
+        },
+        "NextMulti": {
+            "Joystick": "None",
+            "Button": 0
+        },
+        "MultiIncrease": {
+            "Joystick": "None",
+            "Button": 0
+        },
+        "MultiDecrease": {
+            "Joystick": "None",
+            "Button": 0
+        },
+        "DDUPage": {
+            "Joystick": "None",
+            "Button": 0
+        }
+    }
 }

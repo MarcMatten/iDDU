@@ -11,6 +11,7 @@ class IDDUItem:
     pygame.init()
 
     myJoystick = None
+    joystickList = []
 
     white = (255, 255, 255)
     red = (255, 0, 0)
@@ -37,11 +38,23 @@ class IDDUItem:
     def setDB(rtdb):
         IDDUItem.db = rtdb
 
-    def initJoystick(self, name):
+    def getJoystickList(self):
         pygame.joystick.init()
+
+        for i in range(pygame.joystick.get_count()):
+            self.joystickList.append(pygame.joystick.Joystick(i).get_name())
+            print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
+
+
         print(self.db.timeStr + ': \t' + str(pygame.joystick.get_count()) + ' joysticks detected:')
 
+    def initJoystick(self, name):
+        # self.getJoystickList()
         desiredJoystick = 9999
+
+        for i in range(len(self.joystickList)):
+            if pygame.joystick.Joystick(i).get_name() == name:
+                desiredJoystick = i
 
         for i in range(pygame.joystick.get_count()):
             print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
