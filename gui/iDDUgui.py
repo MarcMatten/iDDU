@@ -810,6 +810,12 @@ class Gui(IDDUItem):
         self.comboBox_FuelMethod.setCurrentIndex(self.db.config['NFuelSetMethod'])
         self.checkBox_UpshiftTone.setChecked(self.db.config['ShiftToneEnabled'])
 
+        self.lineEditDDUPage.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['DDUPage']['Joystick'], self.db.config['ButtonAssignments']['DDUPage']['Button']))
+        self.lineEditNextMulti.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['NextMulti']['Joystick'], self.db.config['ButtonAssignments']['NextMulti']['Button']))
+        self.lineEditPreviousMulti.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['PreviousMulti']['Joystick'], self.db.config['ButtonAssignments']['PreviousMulti']['Button']))
+        self.lineEditMultiDecrease.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['MultiDecrease']['Joystick'], self.db.config['ButtonAssignments']['MultiDecrease']['Button']))
+        self.lineEditMultiIncrease.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['MultiIncrease']['Joystick'], self.db.config['ButtonAssignments']['MultiIncrease']['Button']))
+
         dcList = list(self.db.car.dcList.keys())
         k = 0
 
