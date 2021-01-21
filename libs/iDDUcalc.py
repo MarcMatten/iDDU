@@ -654,8 +654,10 @@ class IDDUCalcThread(IDDUThread):
                         'SessionTime'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         self.db.RenderLabel[21] = True
+                        self.db.RenderLabel[20] = True
                     else:
                         self.db.RenderLabel[21] = False
+                        self.db.RenderLabel[20] = False
             else:  # limited laps
                 self.db.config['RaceLaps'] = int(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'])
                 self.db.LapLimit = True
@@ -685,6 +687,11 @@ class IDDUCalcThread(IDDUThread):
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and (not self.db.LapLimit) and self.db.TimeLimit:
                 self.db.config['BEnableRaceLapEstimation'] = True
+                if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
+                    self.db.car.tLap[self.db.WeekendInfo['TrackName']][-1]
+                    NLapRaceTime = (self.db.SessionLength - (np.int(self.db.config['PitStopsRequired']) * self.db.config['PitStopDelta'])) / self.db.car.tLap[self.db.WeekendInfo['TrackName']][-1]
+                    self.db.NLapDriver = float(NLapRaceTime)
+                    self.db.config['RaceLaps'] = int(self.db.NLapDriver + 1)
             else:
                 self.db.config['BEnableRaceLapEstimation'] = False
 

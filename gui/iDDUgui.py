@@ -1066,6 +1066,8 @@ class Gui(IDDUItem):
         track.save(self.db.dir)
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
 
+        self.db.track.load(self.db.dir + TrackName + '.json')
+
         self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, track.LapDistPct)
 
         self.db.car.save(self.db.dir)
