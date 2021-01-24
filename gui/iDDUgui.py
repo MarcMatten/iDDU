@@ -1,9 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from PyQt5.QtCore import QTimer
 import sys
 import time
-import numpy as np
 import csv
 import os
 import winsound
@@ -13,6 +12,14 @@ from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
 from libs.IDDU import IDDUThread, IDDUItem
 from functionalities.libs import importExport, importIBT, maths
 from functionalities.RTDB import RTDB
+
+
+def decorator(fn):
+    def wrapper(*args, **kwargs):
+        fn_results = fn(*args, **kwargs)
+        return fn_results
+
+    return wrapper
 
 
 class iDDUGUIThread(IDDUThread):
@@ -32,11 +39,24 @@ class Stream(QtCore.QObject):
 
 
 class Gui(IDDUItem):
+    @decorator
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self.iDDU, 'Close iDDU?', "Are you sure to quit iDDU?", QMessageBox.Yes, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print("Closing iDDU...")
+            event.accept()
+            sys.exit(self.exec())
+        else:
+            event.ignore()
+
+
     def __init__(self):
         IDDUItem.__init__(self)
         import sys
         app = QtWidgets.QApplication(sys.argv)
         iDDU = QtWidgets.QWidget()
+        iDDU.closeEvent = self.closeEvent
         iDDU.setFixedSize(784, 441)
         if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
             iDDU.move(self.db.config['rGUI'][0], self.db.config['rGUI'][1])
@@ -66,8 +86,6 @@ class Gui(IDDUItem):
 
     def setupUi(self, iDDU):
         self.iDDU = iDDU
-        # iDDU.setObjectName("iDDU")
-        # iDDU.resize(784, 441)
         self.iDDU.setObjectName("iDDU")
         self.iDDU.resize(800, 480)
         icon = QtGui.QIcon()
@@ -1026,10 +1044,12 @@ class Gui(IDDUItem):
             self.db.NDDUPage = NDDUPageTemp
 
     def loadReferenceLap(self):
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImporting reference lap')
+
         ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', self.db.config['TelemPath'], 'IBT(*.ibt)')
 
         if ibtPath == ('', ''):
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to ibt file provided...aborting!')
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tNo valid path to ibt file provided...aborting!')
             return
 
         d, _ = importIBT.importIBT(ibtPath[0],
@@ -1037,10 +1057,10 @@ class Gui(IDDUItem):
                                    channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'YawNorth'],
                                    channelMapPath=self.db.dir + '/functionalities/libs/iRacingChannelMap.csv')
 
-        d['dt'] = np.diff(d['SessionTime'])
-        d['tLap'] = np.append(0, np.cumsum([d['dt']]))
-        d['LapDistPct'][0] = 0
-        d['LapDistPct'][-1] = 1
+        if not d:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tNo valid lap found...aborting!')
+            return
+
         d['x'], d['y'] = maths.createTrack(d)
 
         tempDB = RTDB.RTDB()
@@ -1050,6 +1070,7 @@ class Gui(IDDUItem):
         carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
         carName = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
 
+        # load or create car
         if carName + '.json' in carList:
             self.db.car.load("data/car/" + carName + '.json')
         else:
@@ -1064,13 +1085,18 @@ class Gui(IDDUItem):
         aNorth = d['YawNorth'][0]
         track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
         track.save(self.db.dir)
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tTrack has been successfully created')
 
-        self.db.track.load(self.db.dir + TrackName + '.json')
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tTrack {} has been successfully created.'.format(TrackName))
 
+        self.db.track.load(self.db.dir + '/data/track/' + TrackName + '.json')
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tAdding reference lap time to car {}'.format(self.db.car.name))
+
+        # add lap time to car
         self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, track.LapDistPct)
-
         self.db.car.save(self.db.dir)
+
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tReference lap time set successfully!')
 
     def setUserFuelPreset(self):
         self.db.config['VUserFuelSet'] = self.spinBox_FuelSetting.value()
@@ -1236,15 +1262,3 @@ class Gui(IDDUItem):
 
     def __del__(self):
         sys.stdout = sys.__stdout__
-
-    def closeEvent(self):  # TODO not working
-        print("CloseEvent")
-        time.sleep(10)
-        sys.exit()
-        reply = QtGui.QMessageBox.question(self, 'Message',
-                                           "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-
-        if reply == QtGui.QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()

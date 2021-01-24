@@ -564,7 +564,7 @@ class IDDUCalcThread(IDDUThread):
         self.db.BMultiInitRequest = True
 
         if self.db.startUp:
-            # self.db.StartDDU = True
+            self.db.StartDDU = True
             self.db.oldSessionNum = self.db.SessionNum
             self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
                 'DriverCarMaxFuelPct']

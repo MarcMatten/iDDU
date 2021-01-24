@@ -41,12 +41,13 @@ class IDDUItem:
     def getJoystickList(self):
         pygame.joystick.init()
 
+        print(self.db.timeStr + ': ' + str(pygame.joystick.get_count()) + ' joysticks detected:')
+
         for i in range(pygame.joystick.get_count()):
             self.joystickList.append(pygame.joystick.Joystick(i).get_name())
             print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
 
 
-        print(self.db.timeStr + ': \t' + str(pygame.joystick.get_count()) + ' joysticks detected:')
 
     def initJoystick(self, name):
         # self.getJoystickList()

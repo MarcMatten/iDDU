@@ -124,15 +124,20 @@ class Track:
         self.createMap()
 
     def load(self, path):
+        # TODO: error management
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\t\tAttempting to load track ' + path)
+
         data = importExport.loadJson(path)
 
         temp = list(data.items())
         for i in range(0, len(data)):
             self.__setattr__(temp[i][0], temp[i][1])
 
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\t\tTrack loaded, creating map.')
+
         self.createMap()
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded track ' + path)
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\t\tLoaded track {} successfully.'.format(path))
 
     def calcSFLine(self):
 
