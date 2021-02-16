@@ -7,7 +7,7 @@ from functionalities.libs import maths, convertString, importExport
 from libs import Track, Car
 from libs.IDDU import IDDUThread
 
-nan = float('nan')
+nan = float('nan')  # TODO: add to IDDu object?
 tLiftTones = [1, 0.5, 0]  # TODO: add to settings
 
 
@@ -296,7 +296,7 @@ class IDDUCalcThread(IDDUThread):
                         elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit event
                             self.db.OutLap = True
                             self.db.FuelConsumptionList = []
-                            self.db.FuelAvgConsumption = 0
+                            # self.db.FuelAvgConsumption = 0
                             self.db.sToPitStall = 0
                             self.db.PitSvFlagsEntry = 0
                             self.db.NDDUPage = 1
@@ -367,9 +367,10 @@ class IDDUCalcThread(IDDUThread):
                                         self.db.BTextColourFuelAddOverride = False
                                 self.db.VFuelAddOld = self.db.VFuelAdd
                         else:
-                            self.db.FuelAvgConsumption = 0
-                            self.db.NLapRemaining = 0
+                            # self.db.FuelAvgConsumption = 0
+                            # self.db.NLapRemaining = 0
                             self.db.VFuelAdd = 0
+                            self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
 
                         if self.db.BTextColourFuelAddOverride:
                             self.db.textColourFuelAdd = self.db.textColourFuelAddOverride
@@ -557,14 +558,14 @@ class IDDUCalcThread(IDDUThread):
         self.db.newLapTime = 0
         self.db.oldLap = self.db.Lap
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
-        self.db.JokerLapsRequired = 0
-        self.db.config['PitStopDelta'] = 0
+        # self.db.JokerLapsRequired = 0
+        # self.db.config['PitStopDelta'] = 0
         self.db.config['MapHighlight'] = False
         self.db.Alarm = [0]*10
         self.db.BMultiInitRequest = True
 
         if self.db.startUp:
-            self.db.StartDDU = True
+            self.db.StartDDU = False
             self.db.oldSessionNum = self.db.SessionNum
             self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
                 'DriverCarMaxFuelPct']
@@ -647,7 +648,7 @@ class IDDUCalcThread(IDDUThread):
                     self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         if self.db.SessionLength > 2100:
-                            self.db.config['PitStopDelta'] = 1
+                            self.db.config['PitStopsRequired'] = 1
                             self.db.config['MapHighlight'] = True
                     print(self.db.timeStr + ':\tRace mode 1')
                     print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
@@ -665,7 +666,7 @@ class IDDUCalcThread(IDDUThread):
                 self.db.RenderLabel[21] = False
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                     if (self.db.TrackLength*self.db.config['RaceLaps']) > 145:
-                        self.db.config['PitStopDelta'] = 1
+                        self.db.config['PitStopsRequired'] = 1
                         self.db.config['MapHighlight'] = True
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
@@ -848,7 +849,7 @@ class IDDUCalcThread(IDDUThread):
             f.write('DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
             f.write('CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
             f.write('LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
-            f.write('PitStopsRequired = ' + repr(self.db.config['PitStopDelta']) + '\n')
+            f.write('PitStopsRequired = ' + repr(self.db.config['PitStopsRequired']) + '\n')
             f.write('CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
             f.write('SessionNum = ' + repr(self.db.SessionNum) + '\n')
             f.write('ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')

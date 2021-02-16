@@ -385,7 +385,7 @@ class RenderScreen(RenderMain):
             self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
         else:
             self.db.LapStr = str(max(0, self.ir['Lap']))
-            self.db.ToGoStr = 'X'
+            self.db.ToGoStr = '-'
 
         self.db.ClockStr = self.db.timeStr
 
