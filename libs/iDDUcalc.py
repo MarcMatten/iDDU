@@ -280,6 +280,15 @@ class IDDUCalcThread(IDDUThread):
                                                                                                                              self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'],
                                                                                                                              self.db.WeekendInfo['TrackDisplayShortName']))
 
+                            pBrakeLFMax = self.db.LFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
+                            # print(pBrakeLFMax)
+                            # pBrakeRFMax = self.db.RFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
+                            pBrakeLRMax = self.db.LRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
+                            # pBrakeRRMax = self.db.RRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
+
+                            self.db.pBrakeFMax = pBrakeLFMax
+                            self.db.pBrakeRMax = pBrakeLRMax
+
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
                             self.db.BEnteringPits = False
@@ -370,7 +379,8 @@ class IDDUCalcThread(IDDUThread):
                             # self.db.FuelAvgConsumption = 0
                             # self.db.NLapRemaining = 0
                             self.db.VFuelAdd = 0
-                            self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
+                            if self.db.FuelAvgConsumption > 0:
+                                self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
 
                         if self.db.BTextColourFuelAddOverride:
                             self.db.textColourFuelAdd = self.db.textColourFuelAddOverride
@@ -440,6 +450,16 @@ class IDDUCalcThread(IDDUThread):
                                     self.setFuelTgt(self.db.VFuelTgt, self.db.config['VFuelTgtOffset'])
 
                         self.db.dcOld = self.db.dc.copy()
+
+                        # ABS Activity
+
+                        pBrakeFRef = self.db.pBrakeFMax * self.db.dcBrakeBias/100 * self.db.Brake
+                        pBrakeRRef = self.db.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.db.Brake
+
+                        dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
+
+                        self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
+
                     else:
                         if self.db.WasOnTrack:
                             print(self.db.timeStr + ':\tGetting out of car')
@@ -1108,3 +1128,15 @@ class IDDUCalcThread(IDDUThread):
         else:
             print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
             return
+
+    @staticmethod
+    def mapABSActivity(pBrake):
+        if pBrake < -15:
+            return 3
+        elif pBrake < -10:
+            return 2
+        elif pBrake < -5:
+            return 1
+        else:
+            return 0
+

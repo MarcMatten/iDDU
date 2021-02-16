@@ -136,7 +136,12 @@ iRData = {'LapBestLapTime': 0,
           'LongAccel': 0,
           'dcWeightJackerRight': 0,
           'dcAntiRollFront': 0,
-          'dcAntiRollRear': 0
+          'dcAntiRollRear': 0,
+          'Brake': 0,
+          'LFbrakeLinePress': 0,
+          'LRbrakeLinePress': 0,
+          'RFbrakeLinePress': 0,
+          'RRbrakeLinePress': 0
           }
 
 # calculated data
@@ -356,7 +361,10 @@ calcData = {'startUp': False,
             'BMultiInitRequest': False,
             'BFuelSavingConfigLoaded': False,
             'BMultiInitRequest': False,
-            'BSnapshotMode': False
+            'BSnapshotMode': False,
+            'pBrakeFMax': 0,
+            'pBrakeRMax': 0,
+            'rABSActivity': [0, 0, 0, 0]
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

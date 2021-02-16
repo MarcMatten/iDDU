@@ -16,6 +16,15 @@ class RenderMain(IDDUItem):
     ArrowLeft2 = [[120, 240], [200, 20], [200, 460]]
     ArrowRight2 = [[680, 240], [600, 20], [600, 460]]
 
+    ABSActivityLF = [[0, 0], [400, 0], [400, 10], [10, 10], [10, 240], [0, 240]]
+    ABSActivityRF = [[800, 0], [400, 0], [400, 10], [790, 10], [790, 240], [800, 240]]
+    ABSActivityLR = [[0, 480], [0, 240], [10, 240], [10, 470], [400, 470], [400, 480]]
+    ABSActivityRR = [[400, 480], [800, 480], [800, 240], [790, 240], [790, 470], [400, 470]]
+
+    ABSIndicationPoly = [ABSActivityLF, ABSActivityRF, ABSActivityLR, ABSActivityRR]
+
+    ABSColourCode = [IDDUItem.black, IDDUItem.yellow, IDDUItem.orange, IDDUItem.red]
+
     fontTiny = pygame.font.Font("files/KhmerUI.ttf", 12)  # Khmer UI Calibri
     fontTiny2 = pygame.font.Font("files/KhmerUI.ttf", 18)
     fontSmall = pygame.font.Font("files/KhmerUI.ttf", 20)
@@ -49,6 +58,7 @@ class RenderMain(IDDUItem):
     gas_white = pygame.image.load("files/gas_white.gif")
     gas_green = pygame.image.load("files/gas_green.gif")
     gas_orange = pygame.image.load("files/gas_orange.gif")
+
 
     BError = False
 
@@ -222,6 +232,11 @@ class RenderScreen(RenderMain):
 
                             RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
                             RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
+
+                # ABS Activation
+                for i in range(len(self.db.rABSActivity)):
+                    if self.db.rABSActivity[i] > 0:
+                        pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
 
                 if self.db.NDDUPage == 1:
                     self.page1()
