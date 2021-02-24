@@ -16,14 +16,14 @@ class RenderMain(IDDUItem):
     ArrowLeft2 = [[120, 240], [200, 20], [200, 460]]
     ArrowRight2 = [[680, 240], [600, 20], [600, 460]]
 
-    ABSActivityLF = [[0, 0], [400, 0], [400, 10], [10, 10], [10, 240], [0, 240]]
-    ABSActivityRF = [[800, 0], [400, 0], [400, 10], [790, 10], [790, 240], [800, 240]]
-    ABSActivityLR = [[0, 480], [0, 240], [10, 240], [10, 470], [400, 470], [400, 480]]
-    ABSActivityRR = [[400, 480], [800, 480], [800, 240], [790, 240], [790, 470], [400, 470]]
+    ABSActivityLF = [[0, 0], [400, 0], [400, 20], [20, 20], [20, 240], [0, 240]]
+    ABSActivityRF = [[800, 0], [400, 0], [400, 20], [780, 20], [780, 240], [800, 240]]
+    ABSActivityLR = [[0, 480], [0, 240], [20, 240], [20, 460], [400, 460], [400, 480]]
+    ABSActivityRR = [[400, 480], [800, 480], [800, 240], [780, 240], [780, 460], [400, 460]]
 
     ABSIndicationPoly = [ABSActivityLF, ABSActivityRF, ABSActivityLR, ABSActivityRR]
 
-    ABSColourCode = [IDDUItem.black, IDDUItem.yellow, IDDUItem.orange, IDDUItem.red]
+    ABSColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
 
     fontTiny = pygame.font.Font("files/KhmerUI.ttf", 12)  # Khmer UI Calibri
     fontTiny2 = pygame.font.Font("files/KhmerUI.ttf", 18)
