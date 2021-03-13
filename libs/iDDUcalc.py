@@ -288,8 +288,8 @@ class IDDUCalcThread(IDDUThread):
                                 pBrakeLRMax = self.db.LRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
                                 # pBrakeRRMax = self.db.RRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
 
-                                self.db.pBrakeFMax = pBrakeLFMax
-                                self.db.pBrakeRMax = pBrakeLRMax
+                                    self.db.car.setpBrakeMax(pBrakeLFMax, pBrakeLRMax)
+                                    self.db.car.save(self.db.dir)
 
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
@@ -473,8 +473,8 @@ class IDDUCalcThread(IDDUThread):
 
                         # ABS Activity
                         if 'dcABS' in self.db.car.dcList:
-                            pBrakeFRef = self.db.pBrakeFMax * self.db.dcBrakeBias/100 * self.db.Brake
-                            pBrakeRRef = self.db.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.db.Brake
+                            pBrakeFRef = self.db.car.pBrakeFMax * self.db.dcBrakeBias/100 * self.db.Brake
+                            pBrakeRRef = self.db.car.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.db.Brake
 
                             dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
 
