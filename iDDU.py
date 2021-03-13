@@ -362,11 +362,12 @@ calcData = {'startUp': False,
             'tNextLiftPoint': 0,
             'BMultiInitRequest': False,
             'BFuelSavingConfigLoaded': False,
-            'BMultiInitRequest': False,
             'BSnapshotMode': False,
             'pBrakeFMax': 0,
             'pBrakeRMax': 0,
-            'rABSActivity': [0, 0, 0, 0]
+            'rABSActivity': [0, 0, 0, 0],
+            'rRearLocking': 0,
+            'rWheelSpin': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

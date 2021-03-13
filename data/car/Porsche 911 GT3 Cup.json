@@ -11,6 +11,14 @@
     "NABSDisabled": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
+	"rGearRatios": [
+        5.109,
+        3.809,
+        3.068,
+        2.471,
+        2.024,
+        1.666
+    ],
     "UpshiftSettings": {
         "BShiftTone": [
             true,

@@ -36,6 +36,7 @@ class Car:
             'SetupName': 'SetupName',
             'CarSetup': {}
         }
+        self.rGearRatios = []
 
     def createCar(self, db, var_headers_names=None):
         DriverCarIdx = db.DriverInfo['DriverCarIdx']

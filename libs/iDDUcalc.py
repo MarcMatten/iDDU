@@ -9,6 +9,8 @@ from libs.IDDU import IDDUThread
 
 nan = float('nan')  # TODO: add to IDDu object?
 tLiftTones = [1, 0.5, 0]  # TODO: add to settings
+rSlipMapAcc = [4.5, 7, 8.5]
+rSlipMapBrk = [-4.5, -7, -8.5]
 
 
 # TODO: add more comments
@@ -279,15 +281,15 @@ class IDDUCalcThread(IDDUThread):
                                                                                                                              self.db.FuelTGTLiftPoints['SFuelConfigTrackName'],
                                                                                                                              self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'],
                                                                                                                              self.db.WeekendInfo['TrackDisplayShortName']))
+                            if 'dcABS' in self.db.car.dcList:
+                                pBrakeLFMax = self.db.LFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
+                                # print(pBrakeLFMax)
+                                # pBrakeRFMax = self.db.RFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
+                                pBrakeLRMax = self.db.LRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
+                                # pBrakeRRMax = self.db.RRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
 
-                            pBrakeLFMax = self.db.LFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
-                            # print(pBrakeLFMax)
-                            # pBrakeRFMax = self.db.RFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
-                            pBrakeLRMax = self.db.LRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
-                            # pBrakeRRMax = self.db.RRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
-
-                            self.db.pBrakeFMax = pBrakeLFMax
-                            self.db.pBrakeRMax = pBrakeLRMax
+                                self.db.pBrakeFMax = pBrakeLFMax
+                                self.db.pBrakeRMax = pBrakeLRMax
 
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
@@ -451,14 +453,42 @@ class IDDUCalcThread(IDDUThread):
 
                         self.db.dcOld = self.db.dc.copy()
 
+                        # rear slip ratio
+                        if self.db.VelocityX > 10:
+                            if self.db.Gear:
+                                rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear-1] * 0.3 / self.db.VelocityX - 1) * 100
+                        else:
+                            rSlipR = 0
+
+                        # wheel spin
+                        temp = 0
+                        if self.db.Throttle > 0.1:
+                            for i in range(len(rSlipMapAcc)):
+                                if rSlipR >= rSlipMapAcc[i]:
+                                    temp = i+1
+                                else:
+                                    pass
+
+                        self.db.rWheelSpin = temp
+
                         # ABS Activity
+                        if 'dcABS' in self.db.car.dcList:
+                            pBrakeFRef = self.db.pBrakeFMax * self.db.dcBrakeBias/100 * self.db.Brake
+                            pBrakeRRef = self.db.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.db.Brake
 
-                        pBrakeFRef = self.db.pBrakeFMax * self.db.dcBrakeBias/100 * self.db.Brake
-                        pBrakeRRef = self.db.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.db.Brake
+                            dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
 
-                        dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
+                            self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
+                        else:  # rear locking
+                            temp = 0
+                            if self.db.Brake > 0.1:
+                                for i in range(len(rSlipMapBrk)):
+                                    if rSlipR <= rSlipMapBrk[i]:
+                                        temp = i+1
+                                    else:
+                                        pass
 
-                        self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
+                            self.db.rRearLocking = temp
 
                     else:
                         if self.db.WasOnTrack:
@@ -1129,6 +1159,7 @@ class IDDUCalcThread(IDDUThread):
                 self.db.BLiftBeepPlayed[NLiftZone] = self.db.BLiftBeepPlayed[NLiftZone] + 1
 
             if not NLiftZoneOld == NLiftZone:
+                print('blah')
 
 
             # check which lift point is next

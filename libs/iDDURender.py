@@ -23,7 +23,11 @@ class RenderMain(IDDUItem):
 
     ABSIndicationPoly = [ABSActivityLF, ABSActivityRF, ABSActivityLR, ABSActivityRR]
 
+    RearPoly = [[0, 480], [0, 240], [20, 240], [20, 460], [780, 460], [780, 240], [800, 240], [800, 480]]
+
     ABSColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
+    WheelSpinColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
+    RearLockingColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
 
     fontTiny = pygame.font.Font("files/KhmerUI.ttf", 12)  # Khmer UI Calibri
     fontTiny2 = pygame.font.Font("files/KhmerUI.ttf", 18)
@@ -234,9 +238,16 @@ class RenderScreen(RenderMain):
                             RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
 
                 # ABS Activation
-                for i in range(len(self.db.rABSActivity)):
-                    if self.db.rABSActivity[i] > 0:
-                        pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
+                if 'dcABS' in self.db.car.dcList:
+                    for i in range(len(self.db.rABSActivity)):
+                        if self.db.rABSActivity[i] > 0:
+                            pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
+                elif self.db.rRearLocking > 0 and self.db.Brake > 0.1:
+                    pygame.draw.polygon(RenderMain.screen, self.RearLockingColourCode[self.db.rRearLocking], self.RearPoly, 0)
+
+                # Wheel spin
+                if self.db.rWheelSpin > 0 and self.db.Throttle > 0.1:
+                    pygame.draw.polygon(RenderMain.screen, self.WheelSpinColourCode[self.db.rWheelSpin], self.RearPoly, 0)
 
                 if self.db.NDDUPage == 1:
                     self.page1()
