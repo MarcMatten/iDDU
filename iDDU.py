@@ -410,12 +410,12 @@ dcList = list(myRTDB.car.dcList.keys())
 # initialise and start thread
 rtdbThread = RTDB.RTDBThread(0.01)
 rtdbThread.setDB(myRTDB)
-calcThread = iDDUcalc.IDDUCalcThread(0.005)
+calcThread = iDDUcalc.IDDUCalcThread(0.017)
 shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
-guiThread = iDDUgui.iDDUGUIThread(0.01)
+guiThread = iDDUgui.iDDUGUIThread(0.02)
 raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
-loggerThread = Logger.LoggerThread(0.01)
-ms = MultiSwitch.MultiSwitch(0.005)
+loggerThread = Logger.LoggerThread(0.02)
+ms = MultiSwitch.MultiSwitch(0.02)
 
 for i in range(0, len(iDDUControlsName)):
     if type(iDDUControls[iDDUControlsName[i]][3]) is bool:

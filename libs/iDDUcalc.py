@@ -11,7 +11,7 @@ nan = float('nan')  # TODO: add to IDDu object?
 tLiftTones = [1, 0.5, 0]  # TODO: add to settings
 rSlipMapAcc = [4.5, 7, 8.5]
 rSlipMapBrk = [-4.5, -7, -8.5]
-
+Brake = 0
 
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
@@ -283,13 +283,12 @@ class IDDUCalcThread(IDDUThread):
                                                                                                                              self.db.WeekendInfo['TrackDisplayShortName']))
                             if 'dcABS' in self.db.car.dcList:
                                 pBrakeLFMax = self.db.LFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
-                                # print(pBrakeLFMax)
-                                # pBrakeRFMax = self.db.RFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
+                                pBrakeRFMax = self.db.RFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
                                 pBrakeLRMax = self.db.LRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
-                                # pBrakeRRMax = self.db.RRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
+                                pBrakeRRMax = self.db.RRbrakeLinePress / (1 - self.db.dcBrakeBias / 100) / self.db.Brake
 
-                                    self.db.car.setpBrakeMax(pBrakeLFMax, pBrakeLRMax)
-                                    self.db.car.save(self.db.dir)
+                                self.db.car.setpBrakeMax((pBrakeLFMax + pBrakeRFMax)/2, (pBrakeLRMax+pBrakeRRMax)/2)
+                                self.db.car.save(self.db.dir)
 
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
@@ -473,15 +472,15 @@ class IDDUCalcThread(IDDUThread):
 
                         # ABS Activity
                         if 'dcABS' in self.db.car.dcList:
-                            pBrakeFRef = self.db.car.pBrakeFMax * self.db.dcBrakeBias/100 * self.db.Brake
-                            pBrakeRRef = self.db.car.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.db.Brake
+                            pBrakeFRef = self.db.car.pBrakeFMax * self.db.dcBrakeBias/100 * Brake
+                            pBrakeRRef = self.db.car.pBrakeFMax * (1-self.db.dcBrakeBias/100) * Brake
 
                             dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
 
                             self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
                         else:  # rear locking
                             temp = 0
-                            if self.db.Brake > 0.1:
+                            if Brake > 0.1:
                                 for i in range(len(rSlipMapBrk)):
                                     if rSlipR <= rSlipMapBrk[i]:
                                         temp = i+1
@@ -532,6 +531,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BdcHeadlightFlash = False
 
                     self.db.BDDUexecuting = True
+                    Brake = self.db.Brake
                 else:
                     # iRacing is not running
                     if self.db.BDDUexecuting and not self.db.BSnapshotMode:  # necssary?
