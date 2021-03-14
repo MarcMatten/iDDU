@@ -39,6 +39,9 @@ class Car:
         self.pBrakeFMax = 0
         self.pBrakeRMax = 0
         self.rGearRatios = []
+        self.rSlipMapAcc = [4.5, 7, 8.5]
+        self.rSlipMapBrk = [-4.5, -7, -8.5]
+        self.rABSActivityMap = [-2, -10, -15]
 
     def createCar(self, db, var_headers_names=None):
         DriverCarIdx = db.DriverInfo['DriverCarIdx']

@@ -9,8 +9,6 @@ from libs.IDDU import IDDUThread
 
 nan = float('nan')  # TODO: add to IDDu object?
 tLiftTones = [1, 0.5, 0]  # TODO: add to settings
-rSlipMapAcc = [4.5, 7, 8.5]
-rSlipMapBrk = [-4.5, -7, -8.5]
 Brake = 0
 
 # TODO: add more comments
@@ -462,8 +460,8 @@ class IDDUCalcThread(IDDUThread):
                         # wheel spin
                         temp = 0
                         if self.db.Throttle > 0.1:
-                            for i in range(len(rSlipMapAcc)):
-                                if rSlipR >= rSlipMapAcc[i]:
+                            for i in range(len(self.db.car.rSlipMapAcc)):
+                                if rSlipR >= self.db.car.rSlipMapAcc[i]:
                                     temp = i+1
                                 else:
                                     pass
@@ -481,8 +479,8 @@ class IDDUCalcThread(IDDUThread):
                         else:  # rear locking
                             temp = 0
                             if Brake > 0.1:
-                                for i in range(len(rSlipMapBrk)):
-                                    if rSlipR <= rSlipMapBrk[i]:
+                                for i in range(len(self.db.car.rSlipMapBrk)):
+                                    if rSlipR <= self.db.car.rSlipMapBrk[i]:
                                         temp = i+1
                                     else:
                                         pass
@@ -1198,13 +1196,12 @@ class IDDUCalcThread(IDDUThread):
             print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
             return
 
-    @staticmethod
-    def mapABSActivity(pBrake):
-        if pBrake < -15:
+    def mapABSActivity(self, pBrake):
+        if pBrake < self.db.car.rABSActivityMap[2]:
             return 3
-        elif pBrake < -10:
+        elif pBrake < self.db.car.rABSActivityMap[1]:
             return 2
-        elif pBrake < -2:
+        elif pBrake < self.db.car.rABSActivityMap[0]:
             return 1
         else:
             return 0
