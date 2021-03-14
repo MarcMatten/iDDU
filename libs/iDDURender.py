@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 import time
 import numpy as np
 import pygame
@@ -39,12 +40,12 @@ class RenderMain(IDDUItem):
     fontHuge = pygame.font.Font("files/KhmerUI.ttf", 480)
     SCLabel = fontHuge.render('SC', True, IDDUItem.black)
 
-    # # display
+    # display
     resolution = (800, 480)
-    # if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-    #     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
-    # else:
-    #     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+    if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920, 0)
+    else:
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
 
     fullscreen = True
     pygame.display.set_caption('iDDU')
@@ -62,7 +63,6 @@ class RenderMain(IDDUItem):
     gas_white = pygame.image.load("files/gas_white.gif")
     gas_green = pygame.image.load("files/gas_green.gif")
     gas_orange = pygame.image.load("files/gas_orange.gif")
-
 
     BError = False
 
@@ -242,11 +242,11 @@ class RenderScreen(RenderMain):
                     for i in range(len(self.db.rABSActivity)):
                         if self.db.rABSActivity[i] > 0:
                             pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
-                elif self.db.rRearLocking > 0 and self.db.Brake > 0.1:
+                elif self.db.rRearLocking:
                     pygame.draw.polygon(RenderMain.screen, self.RearLockingColourCode[self.db.rRearLocking], self.RearPoly, 0)
 
                 # Wheel spin
-                if self.db.rWheelSpin > 0 and self.db.Throttle > 0.1:
+                if self.db.rWheelSpin:
                     pygame.draw.polygon(RenderMain.screen, self.WheelSpinColourCode[self.db.rWheelSpin], self.RearPoly, 0)
 
                 if self.db.NDDUPage == 1:
@@ -581,7 +581,7 @@ class RenderScreen(RenderMain):
             pygame.draw.circle(RenderMain.screen, dotColour, [int(x), int(y)], 10, 0)
 
             LabelSize = self.fontTiny.size(self.db.DriverInfo['Drivers'][self.db.CarIdxMap[Idx]]['CarNumber'])
-            RenderMain.screen.blit(Label, (int(x) - LabelSize[0]/2 , int(y) - 7))
+            RenderMain.screen.blit(Label, (int(x) - LabelSize[0]/2, int(y) - 7))
 
     @staticmethod
     def bit2RBG(bitColor):

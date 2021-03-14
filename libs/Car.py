@@ -98,9 +98,6 @@ class Car:
 
         self.tLap = {}
 
-        if 'dcABS' in self.dcList:
-            self.setpBrakeMax()
-
         db.BMultiInitRequest = True
 
     def setUserShiftRPM(self, db):
@@ -177,4 +174,3 @@ class Car:
     def setpBrakeMax(self, pBrakeFMax, pBrakeRMax):
         self.pBrakeFMax = pBrakeFMax
         self.pBrakeRMax = pBrakeRMax
-

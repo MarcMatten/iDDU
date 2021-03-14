@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 import time
 from datetime import datetime
 import numpy as np
@@ -13,6 +14,8 @@ Brake = 0
 
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
+
+
 class IDDUCalcThread(IDDUThread):
     BError = False
 
@@ -737,7 +740,6 @@ class IDDUCalcThread(IDDUThread):
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and (not self.db.LapLimit) and self.db.TimeLimit:
                 self.db.config['BEnableRaceLapEstimation'] = True
                 if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
-                    self.db.car.tLap[self.db.WeekendInfo['TrackName']][-1]
                     NLapRaceTime = (self.db.SessionLength - (np.int(self.db.config['PitStopsRequired']) * self.db.config['PitStopDelta'])) / self.db.car.tLap[self.db.WeekendInfo['TrackName']][-1]
                     self.db.NLapDriver = float(NLapRaceTime)
                     self.db.config['RaceLaps'] = int(self.db.NLapDriver + 1)
@@ -1136,41 +1138,41 @@ class IDDUCalcThread(IDDUThread):
             if not self.db.NNextLiftPoint == NNextLiftPointOld:
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
-    def LiftTone2(self):
-        # get fuel tgt for this zone
-        # FuelConsCurve
-        # set tgt cons
-
-        # which zone?
-        if len(self.db.LapDistPctWOT) > 0:
-            N_temp = np.argwhere(self.db.LapDistPct > np.array(self.db.LapDistPctWO))
-            if N_temp.__len__() > 0:
-                NLiftZone = N_temp[0][0]
-            else:
-                NLiftZone = 0
-
-            if self.db.FuelUsePerHour > 0:
-                self.db.tNextLiftPoint = (self.db.FuelLevel - self.db.LastFuelLevel) / (self.db.FuelUsePerHour/3600)
-
-            if self.db.BLiftBeepPlayed[NLiftZone] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[NLiftZone]]:
-                self.db.BLiftToneRequest = True
-                self.db.BLiftBeepPlayed[NLiftZone] = self.db.BLiftBeepPlayed[NLiftZone] + 1
-
-            if not NLiftZoneOld == NLiftZone:
-                print('blah')
-
-
-            # check which lift point is next
-            NLiftZoneOld = NLiftZone
-
-            NNextLiftPointOld = self.db.NNextLiftPoint
-            if np.all(np.isnan(d)):
-                self.db.NNextLiftPoint = 0
-            else:
-                self.db.NNextLiftPoint = np.nanargmin(d)
-
-            if not self.db.NNextLiftPoint == NNextLiftPointOld:
-                self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
+    # def LiftTone2(self):
+    #     # get fuel tgt for this zone
+    #     # FuelConsCurve
+    #     # set tgt cons
+    #
+    #     # which zone?
+    #     if len(self.db.LapDistPctWOT) > 0:
+    #         N_temp = np.argwhere(self.db.LapDistPct > np.array(self.db.LapDistPctWO))
+    #         if N_temp.__len__() > 0:
+    #             NLiftZone = N_temp[0][0]
+    #         else:
+    #             NLiftZone = 0
+    #
+    #         if self.db.FuelUsePerHour > 0:
+    #             self.db.tNextLiftPoint = (self.db.FuelLevel - self.db.LastFuelLevel) / (self.db.FuelUsePerHour/3600)
+    #
+    #         if self.db.BLiftBeepPlayed[NLiftZone] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[NLiftZone]]:
+    #             self.db.BLiftToneRequest = True
+    #             self.db.BLiftBeepPlayed[NLiftZone] = self.db.BLiftBeepPlayed[NLiftZone] + 1
+    #
+    #         if not NLiftZoneOld == NLiftZone:
+    #             print('blah')
+    #
+    #
+    #         # check which lift point is next
+    #         NLiftZoneOld = NLiftZone
+    #
+    #         NNextLiftPointOld = self.db.NNextLiftPoint
+    #         if np.all(np.isnan(d)):
+    #             self.db.NNextLiftPoint = 0
+    #         else:
+    #             self.db.NNextLiftPoint = np.nanargmin(d)
+    #
+    #         if not self.db.NNextLiftPoint == NNextLiftPointOld:
+    #             self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:
@@ -1205,4 +1207,3 @@ class IDDUCalcThread(IDDUThread):
             return 1
         else:
             return 0
-

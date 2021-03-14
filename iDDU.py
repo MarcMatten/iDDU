@@ -329,21 +329,21 @@ calcData = {'startUp': False,
             'BPitstopCompleted': False,
             'NLappingCars': [
                 {
-                'Class': 'LMP1',
-                'NCars': 2,
-                'Color': (255, 218, 89),
-                'sDiff': -10
+                 'Class': 'LMP1',
+                 'NCars': 2,
+                 'Color': (255, 218, 89),
+                 'sDiff': -10
                 },
                 {
-                'Class': 'HPD',
-                'NCars': 1,
-                'Color': (255, 218, 89),
-                'sDiff': -50
+                 'Class': 'HPD',
+                 'NCars': 1,
+                 'Color': (255, 218, 89),
+                 'sDiff': -50
                 }
             ],
             'PlayerCarClassRelSpeed': 0,
             'Exception': None,
-            'CarIdxMap': np.linspace(0,63,64).astype(int).tolist(),
+            'CarIdxMap': np.linspace(0, 63, 64).astype(int).tolist(),
             'BLiftToneRequest': False,
             'FuelTGTLiftPoints': {
                 'SFuelConfigCarName': None,
