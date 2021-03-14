@@ -36,6 +36,8 @@ class Car:
             'SetupName': 'SetupName',
             'CarSetup': {}
         }
+        self.pBrakeFMax = 0
+        self.pBrakeRMax = 0
         self.rGearRatios = []
 
     def createCar(self, db, var_headers_names=None):
@@ -92,6 +94,9 @@ class Car:
         self.setUserShiftRPM(db)
 
         self.tLap = {}
+
+        if 'dcABS' in self.dcList:
+            self.setpBrakeMax()
 
         db.BMultiInitRequest = True
 
@@ -165,3 +170,8 @@ class Car:
             self.__setattr__(temp[i][0], temp[i][1])
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded car ' + path)
+
+    def setpBrakeMax(self, pBrakeFMax, pBrakeRMax):
+        self.pBrakeFMax = pBrakeFMax
+        self.pBrakeRMax = pBrakeRMax
+
