@@ -121,6 +121,9 @@ class Car:
         self.Coasting['SetupName'] = SetupName
         self.Coasting['CarSetup'] = CarSetup
 
+    def setGearRatios(self, rGearRatios):
+        self.rGearRatios = rGearRatios
+
     def addLapTime(self, trackName, tLap, LapDistPct, LapDistPctTrack):
         self.tLap[trackName] = np.interp(LapDistPctTrack, LapDistPct, tLap).tolist()
 
