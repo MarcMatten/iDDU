@@ -367,7 +367,8 @@ calcData = {'startUp': False,
             'pBrakeRMax': 0,
             'rABSActivity': [0, 0, 0, 0],
             'rRearLocking': 0,
-            'rWheelSpin': 0
+            'rWheelSpin': 0,
+            'rSlipR': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

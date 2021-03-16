@@ -455,16 +455,16 @@ class IDDUCalcThread(IDDUThread):
 
                         # rear slip ratio
                         if self.db.VelocityX > 10:
-                            if self.db.Gear:
-                                rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear-1] * 0.3 / self.db.VelocityX - 1) * 100
+                            if self.db.Gear > 0:
+                                self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear-1] * 0.3 / self.db.VelocityX - 1) * 100
                         else:
-                            rSlipR = 0
+                            self.db.rSlipR = 0
 
                         # wheel spin
                         temp = 0
                         if self.db.Throttle > 0.1:
                             for i in range(len(self.db.car.rSlipMapAcc)):
-                                if rSlipR >= self.db.car.rSlipMapAcc[i]:
+                                if self.db.rSlipR >= self.db.car.rSlipMapAcc[i]:
                                     temp = i+1
                                 else:
                                     pass
@@ -481,9 +481,9 @@ class IDDUCalcThread(IDDUThread):
                             self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
                         else:  # rear locking
                             temp = 0
-                            if Brake > 0.1:
+                            if self.db.Brake > 0.1:
                                 for i in range(len(self.db.car.rSlipMapBrk)):
-                                    if rSlipR <= self.db.car.rSlipMapBrk[i]:
+                                    if self.db.rSlipR <= self.db.car.rSlipMapBrk[i]:
                                         temp = i+1
                                     else:
                                         pass

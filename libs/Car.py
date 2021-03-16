@@ -19,12 +19,12 @@ class Car:
         self.UpshiftStrategy = 0
         self.UserShiftFlag = 0
         self.UpshiftSettings = {
-            'nMotorShiftOptimal': [99999]*7,
-            'nMotorShiftTarget': [99999]*7,
-            'vCarShiftOptimal': [99999]*7,
-            'vCarShiftTarget': [99999]*7,
+            'nMotorShiftOptimal': [0]*8,
+            'nMotorShiftTarget': [0]*8,
+            'vCarShiftOptimal': [0]*8,
+            'vCarShiftTarget': [0]*8,
             'BShiftTone': [False]*7,
-            'NGear': [1, 2, 3, 4, 5, 6, 7],
+            'NGear': [1, 2, 3, 4, 5, 6, 7, 8],
             'SetupName': 'SetupName',
             'CarSetup': {},
             'BValid': False
@@ -38,7 +38,7 @@ class Car:
         }
         self.pBrakeFMax = 0
         self.pBrakeRMax = 0
-        self.rGearRatios = []
+        self.rGearRatios = [0]*8
         self.rSlipMapAcc = [4.5, 7, 8.5]
         self.rSlipMapBrk = [-4.5, -7, -8.5]
         self.rABSActivityMap = [-2, -10, -15]

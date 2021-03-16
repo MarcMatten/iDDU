@@ -16,6 +16,7 @@ class ShiftToneThread(IDDUThread):
         self.tBeep = 0
         self.BShiftTone = False
         self.oldGear = 0
+        self.rSlipRMax = 6
 
     def run(self):
         while 1:
@@ -40,7 +41,7 @@ class ShiftToneThread(IDDUThread):
                             continue  # no shift beep when close to lift beep
 
                     if self.db.config['ShiftToneEnabled']:
-                        if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20:
+                        if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20 and self.db.rSlipR < self.rSlipRMax:
                             if self.db.config['UpshiftStrategy'] < 4:  # iRacing shift rpm
                                 if self.ir['RPM'] >= self.db.iRShiftRPM[self.db.config['UpshiftStrategy']] and self.db.config['UserShiftFlag'][self.ir['Gear'] - 1]:
                                     self.beep()
@@ -52,7 +53,7 @@ class ShiftToneThread(IDDUThread):
                                 else:
                                     self.db.Alarm[7] = 0
                             elif self.db.config['UpshiftStrategy'] == 5:  # optimised shift rpm from car file
-                                if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and self.ir['RPM'] >=  self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
+                                if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
                                     self.beep()
                                 else:
                                     self.db.Alarm[7] = 0
