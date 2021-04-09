@@ -66,6 +66,8 @@ class RenderMain(IDDUItem):
 
     BError = False
 
+    tWarningLabel = 0
+
     def __init__(self):
         IDDUItem.__init__(self)
 
@@ -264,43 +266,43 @@ class RenderScreen(RenderMain):
                 EngineWarnings = self.ir['EngineWarnings']
                 # warning and alarm messages
                 if EngineWarnings & 0x10 and self.db.Speed > 10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                    self.warningLabel('PIT LIMITER', self.blue, self.white)
+                    self.warningLabel('PIT LIMITER', self.blue, self.white, 4)
                 if EngineWarnings & 0x1:
-                    self.warningLabel('WATER TEMP HIGH', self.red, self.white)
+                    self.warningLabel('WATER TEMP HIGH', self.red, self.white, 4)
                 if EngineWarnings & 0x2:
-                    self.warningLabel('LOW FUEL PRESSURE', self.red, self.white)
+                    self.warningLabel('LOW FUEL PRESSURE', self.red, self.white, 4)
                 if EngineWarnings & 0x4:
-                    self.warningLabel('LOW OIL PRESSURE', self.red, self.white)
+                    self.warningLabel('LOW OIL PRESSURE', self.red, self.white, 4)
                 if EngineWarnings & 0x8:
-                    self.warningLabel('ENGINE STALLED', self.yellow, self.black)
+                    self.warningLabel('ENGINE STALLED', self.yellow, self.black, 4)
 
-                if self.ir['SessionTime'] < self.db.tdcHeadlightFlash + 0.5:
+                if self.ir['SessionTime'] < self.db.tdcHeadlightFlash + 1:
                     if self.db.BdcHeadlightFlash:
-                        self.warningLabel('FLASH', self.green, self.white)
+                        self.warningLabel('FLASH', self.green, self.white, 5)
 
                 # for testing purposes....
                 SessionFlags = self.ir['SessionFlags']
                 if SessionFlags & 0x80:
-                    self.warningLabel('CROSSED', self.white, self.black)
+                    self.warningLabel('CROSSED', self.white, self.black, 0)
                 # if SessionFlags & 0x100: # normal yellow
                 #     self.warningLabel('YELLOW WAVING', self.white, self.black)
                 # if SessionFlags & 0x400:
                 #     self.warningLabel('GREEN HELD', self.white, self.black)
                 if SessionFlags & 0x2000:
-                    self.warningLabel('RANDOM WAVING', self.white, self.black)
+                    self.warningLabel('RANDOM WAVING', self.white, self.black, 0)
                 # if SessionFlags & 0x8000:
                 #     self.warningLabel('CAUTION WAVING', self.white, self.black)
                 # if SessionFlags & 0x10000:
                 #     self.warningLabel('BLACK', self.white, self.black)
                 if SessionFlags & 0x20000:
-                    self.warningLabel('DISQUALIFIED', self.white, self.black)
+                    self.warningLabel('DISQUALIFIED', self.white, self.black, 0)
                 # if SessionFlags & 0x80000:
                 #     self.warningLabel('FURLED', self.white, self.black)
                 # if SessionFlags & 0x100000:
                 #     self.warningLabel('REPAIR', self.white, self.black)
 
                 if self.db.OnPitRoad and self.db.Speed > 10 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                    self.warningLabel('PIT LIMITER OFF', self.red, self.white)
+                    self.warningLabel('PIT LIMITER OFF', self.red, self.white, 4)
 
                 # driver control change
                 if time.time() < self.db.dcChangeTime + 1:
@@ -410,8 +412,19 @@ class RenderScreen(RenderMain):
             self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
             self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
         else:
-            self.db.LapStr = str(max(0, self.ir['Lap']))
-            self.db.ToGoStr = '-'
+            # self.db.LapStr = str(max(0, self.ir['Lap']))
+            # self.db.ToGoStr = '-'
+            if self.db.LapLimit:
+                self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+                self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
+            else:
+                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+                    self.db.ToGoStr = '0'
+                else:
+                    self.db.LapStr = str(max(0, self.ir['Lap']))
+                    self.db.ToGoStr = '0'
+
 
         self.db.ClockStr = self.db.timeStr
 
@@ -462,9 +475,6 @@ class RenderScreen(RenderMain):
         RenderMain.screen.blit(Label2, (5, 458))
 
     def page3(self):
-
-        if not self.db.EngineWarnings & 0x10:
-            self.warningLabel('PIT LIMITER OFF', self.red, self.white)
 
         self.db.SpeedStr = convertString.roundedStr1(max(0.0, self.ir['Speed'] * 3.6), 3)
         self.db.sToPitStallStr = convertString.roundedStr0(self.db.sToPitStall)
@@ -641,11 +651,20 @@ class RenderScreen(RenderMain):
         else:
             return
 
-    def warningLabel(self, text, colour, textcolour):
-        pygame.draw.rect(RenderMain.screen, colour, [0, 0, 800, 100], 0)
-        LabelSize = self.fontLarge.size(text)
-        Label = self.fontLarge.render(text, True, textcolour)
-        RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
+    def warningLabel(self, text, colour, textcolour, f):
+        if f:
+            if (time.time() - self.tWarningLabel) < 1/f:
+                pygame.draw.rect(RenderMain.screen, colour, [0, 0, 800, 100], 0)
+                LabelSize = self.fontLarge.size(text)
+                Label = self.fontLarge.render(text, True, textcolour)
+                RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
+            elif (time.time() - self.tWarningLabel) >= 2/f:
+                self.tWarningLabel = time.time()
+        else:
+            pygame.draw.rect(RenderMain.screen, colour, [0, 0, 800, 100], 0)
+            LabelSize = self.fontLarge.size(text)
+            Label = self.fontLarge.render(text, True, textcolour)
+            RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
 
     def changeLabel(self, text, value):
         pygame.draw.rect(RenderMain.screen, self.black, [0, 0, 800, 480], 0)

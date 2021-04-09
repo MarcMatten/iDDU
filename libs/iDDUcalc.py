@@ -455,7 +455,7 @@ class IDDUCalcThread(IDDUThread):
 
                         # rear slip ratio
                         if self.db.VelocityX > 10:
-                            if self.db.Gear > 0:
+                            if self.db.Gear > 0 and self.db.car.rGearRatios[self.db.Gear-1] > 0:
                                 self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear-1] * 0.3 / self.db.VelocityX - 1) * 100
                         else:
                             self.db.rSlipR = 0
@@ -528,7 +528,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BdcHeadlightFlash = True
                             self.db.tdcHeadlightFlash = self.db.SessionTime
 
-                        if self.db.SessionTime > self.db.tdcHeadlightFlash + 0.5:
+                        if self.db.SessionTime > self.db.tdcHeadlightFlash + 1:
                             self.db.BdcHeadlightFlash = False
 
                     self.db.BDDUexecuting = True
