@@ -10,7 +10,6 @@ from libs.IDDU import IDDUThread
 
 nan = float('nan')  # TODO: add to IDDu object?
 tLiftTones = [1, 0.5, 0]  # TODO: add to settings
-Brake = 0
 
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
@@ -18,6 +17,7 @@ Brake = 0
 
 class IDDUCalcThread(IDDUThread):
     BError = False
+    Brake = 0
 
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -384,6 +384,8 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.FuelAvgConsumption > 0:
                                 self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
 
+                        self.db.VFuelUsedLap = self.db.LastFuelLevel - self.db.FuelLevel
+
                         if self.db.BTextColourFuelAddOverride:
                             self.db.textColourFuelAdd = self.db.textColourFuelAddOverride
                         else:
@@ -435,6 +437,12 @@ class IDDUCalcThread(IDDUThread):
 
                         # Lift beeps
                         if self.db.config['BEnableLiftTones'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
+                            # get fuel data at reference point
+                            if self.db.BUpdateVFuelDelta and self.db.LapDistPct >= self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]:
+                                # positive = overconsumption
+                                self.db.VFuelDelta = self.db.VFuelUsedLap - self.db.FuelTGTLiftPoints['VFuelReference'][self.db.NNextLiftPoint]
+                                self.db.BUpdateVFuelDelta = False
+
                             self.LiftTone()
 
                         if type(self.db.FuelLevel) is float:
@@ -449,14 +457,14 @@ class IDDUCalcThread(IDDUThread):
                                 if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
                                     if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
-                                    self.setFuelTgt(self.db.VFuelTgt, self.db.config['VFuelTgtOffset'])
+                                    self.setFuelTgt(self.db.VFuelTgt, np.float(self.db.VFuelTgtOffset))
 
                         self.db.dcOld = self.db.dc.copy()
 
                         # rear slip ratio
                         if self.db.VelocityX > 10:
-                            if self.db.Gear > 0 and self.db.car.rGearRatios[self.db.Gear-1] > 0:
-                                self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear-1] * 0.3 / self.db.VelocityX - 1) * 100
+                            if self.db.Gear > 0 and self.db.car.rGearRatios[self.db.Gear] > 0:
+                                self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear] * 0.3 / self.db.VelocityX - 1) * 100
                         else:
                             self.db.rSlipR = 0
 
@@ -473,8 +481,8 @@ class IDDUCalcThread(IDDUThread):
 
                         # ABS Activity
                         if 'dcABS' in self.db.car.dcList:
-                            pBrakeFRef = self.db.car.pBrakeFMax * self.db.dcBrakeBias/100 * Brake
-                            pBrakeRRef = self.db.car.pBrakeFMax * (1-self.db.dcBrakeBias/100) * Brake
+                            pBrakeFRef = self.db.car.pBrakeFMax * self.db.dcBrakeBias/100 * self.Brake
+                            pBrakeRRef = self.db.car.pBrakeFMax * (1-self.db.dcBrakeBias/100) * self.Brake
 
                             dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
 
@@ -532,7 +540,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BdcHeadlightFlash = False
 
                     self.db.BDDUexecuting = True
-                    Brake = self.db.Brake
+                    self.Brake = self.db.Brake
                 else:
                     # iRacing is not running
                     if self.db.BDDUexecuting and not self.db.BSnapshotMode:  # necssary?
@@ -1102,69 +1110,33 @@ class IDDUCalcThread(IDDUThread):
         hexColor = format(bitColor, '06x')
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
 
-    def LiftTone(self):
-
-        if len(self.db.LapDistPctLift) > 0 and (len(self.db.LapDistPctLift) > self.db.NNextLiftPoint):
-
-            if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.4:
-                ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint] + 1) * self.db.track.sTrack
-            else:
-                if self.db.LapDistPct > (self.db.LapDistPctLift[self.db.NNextLiftPoint] + (75 / self.db.track.sTrack)):
-                    ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1) * self.db.track.sTrack
-                else:
-                    ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint]) * self.db.track.sTrack
-
-            LongAccel = self.db.LongAccel
-            Speed = self.db.Speed
-            if LongAccel == 0:
-                self.db.tNextLiftPoint = - ds / Speed
-            else:
-                self.db.tNextLiftPoint = - Speed / LongAccel + np.sqrt(np.square(Speed / LongAccel) - (2 * ds) / LongAccel)
-
-            if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]]:
-                self.db.BLiftToneRequest = True
-                self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
-
-            # check which lift point is next
-            d = self.db.LapDistPctLift - self.db.LapDistPct
-            d[d < 0] = np.nan
-            d[d > 1] = d[d > 1] - 1
-            NNextLiftPointOld = self.db.NNextLiftPoint
-            if np.all(np.isnan(d)):
-                self.db.NNextLiftPoint = 0
-            else:
-                self.db.NNextLiftPoint = np.nanargmin(d)
-
-            if not self.db.NNextLiftPoint == NNextLiftPointOld:
-                self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
-
-    # def LiftTone2(self):
-    #     # get fuel tgt for this zone
-    #     # FuelConsCurve
-    #     # set tgt cons
+    # def LiftTone(self):
     #
-    #     # which zone?
-    #     if len(self.db.LapDistPctWOT) > 0:
-    #         N_temp = np.argwhere(self.db.LapDistPct > np.array(self.db.LapDistPctWO))
-    #         if N_temp.__len__() > 0:
-    #             NLiftZone = N_temp[0][0]
+    #     if len(self.db.LapDistPctLift) > 0 and (len(self.db.LapDistPctLift) > self.db.NNextLiftPoint):
+    #
+    #         if self.db.LapDistPctLift[self.db.NNextLiftPoint] > 1 and self.db.LapDistPct < 0.4:
+    #             ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint] + 1) * self.db.track.sTrack
     #         else:
-    #             NLiftZone = 0
+    #             if self.db.LapDistPct > (self.db.LapDistPctLift[self.db.NNextLiftPoint] + (75 / self.db.track.sTrack)):
+    #                 ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint] - 1) * self.db.track.sTrack
+    #             else:
+    #                 ds = (self.db.LapDistPct - self.db.LapDistPctLift[self.db.NNextLiftPoint]) * self.db.track.sTrack
     #
-    #         if self.db.FuelUsePerHour > 0:
-    #             self.db.tNextLiftPoint = (self.db.FuelLevel - self.db.LastFuelLevel) / (self.db.FuelUsePerHour/3600)
+    #         LongAccel = self.db.LongAccel
+    #         Speed = self.db.Speed
+    #         if LongAccel == 0:
+    #             self.db.tNextLiftPoint = - ds / Speed
+    #         else:
+    #             self.db.tNextLiftPoint = - Speed / LongAccel + np.sqrt(np.square(Speed / LongAccel) - (2 * ds) / LongAccel)
     #
-    #         if self.db.BLiftBeepPlayed[NLiftZone] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[NLiftZone]]:
+    #         if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]]:
     #             self.db.BLiftToneRequest = True
-    #             self.db.BLiftBeepPlayed[NLiftZone] = self.db.BLiftBeepPlayed[NLiftZone] + 1
-    #
-    #         if not NLiftZoneOld == NLiftZone:
-    #             print('blah')
-    #
+    #             self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
     #
     #         # check which lift point is next
-    #         NLiftZoneOld = NLiftZone
-    #
+    #         d = self.db.LapDistPctLift - self.db.LapDistPct
+    #         d[d < 0] = np.nan
+    #         d[d > 1] = d[d > 1] - 1
     #         NNextLiftPointOld = self.db.NNextLiftPoint
     #         if np.all(np.isnan(d)):
     #             self.db.NNextLiftPoint = 0
@@ -1174,29 +1146,72 @@ class IDDUCalcThread(IDDUThread):
     #         if not self.db.NNextLiftPoint == NNextLiftPointOld:
     #             self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
+    def LiftTone(self):
+
+        if len(self.db.VFuelBudget) > 0 and (len(self.db.VFuelBudget) > self.db.NNextLiftPoint):
+
+            self.db.VFuelBudgetActive = self.db.VFuelBudget[self.db.NNextLiftPoint]
+            self.db.VFuelReferenceActive = self.db.VFuelReference[self.db.NNextLiftPoint]
+            self.db.dVFuelTgt = self.db.FuelLevel + self.db.VFuelBudgetActive - self.db.VFuelStartStraight
+
+            self.db.tNextLiftPoint = self.db.dVFuelTgt / (self.db.FuelUsePerHour / 3600 / self.db.DriverInfo['DriverCarFuelKgPerLtr'])
+
+            if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]]:
+                self.db.BLiftToneRequest = True
+                self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
+
+            # check which lift point is next; 0 = approaching first corner
+            NNextLiftPointOld = self.db.NNextLiftPoint
+            self.getNStraight()
+
+            # change in straight
+            if not self.db.NNextLiftPoint == NNextLiftPointOld:
+                self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
+                self.db.VFuelStartStraight = self.db.FuelLevel
+                self.db.BUpdateVFuelDelta = True
+
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:
+            print('setFuelTgt')
             self.db.LapDistPctLift = np.array([])
+            self.db.VFuelBudget = np.array([])
             rLift = np.array([])
-            # VFuelLift = np.array([])
             self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
             self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
             self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
 
-            for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPct'])):
+            for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPctLift'])):
                 x = self.db.FuelTGTLiftPoints['VFuelTGT']
-                y = self.db.FuelTGTLiftPoints['LapDistPct'][i]
+                y = self.db.FuelTGTLiftPoints['LapDistPctLift'][i]
                 self.db.LapDistPctLift = np.append(self.db.LapDistPctLift, np.interp(self.db.VFuelTgtEffective, x, y) / 100)
                 rLift = np.append(rLift, np.interp(self.db.VFuelTgtEffective, x, self.db.FuelTGTLiftPoints['LiftPoints'][i]))
-                # VFuelLift = 0
+
+                y2 = self.db.FuelTGTLiftPoints['VFuelBudget'][i]
+                self.db.VFuelBudget = np.append(self.db.VFuelBudget, np.interp(self.db.config['VFuelTgt'], x, y2))
+
+                y3 = self.db.FuelTGTLiftPoints['VFuelReference'][i]
+                self.db.VFuelReference = np.append(self.db.VFuelBudget, np.interp(self.db.config['VFuelTgt'], x, y3))
 
             self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
-            # self.db.VFuelLiftTarget = 0
+            self.db.VFuelBudget[rLift <= 0.01] = self.db.VFuelBudget[rLift <= 0.01] + 10
 
-            self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
+            self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPctLift'])
         else:
-            print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
+            # print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
             return
+
+    def getNStraight(self):
+        # 0 = approaching first corner
+        d = np.array(self.db.FuelTGTLiftPoints['LapDistPctApex']) / 100 - self.db.LapDistPct
+
+        d = np.where(d >= 0)
+
+        if len(d[0]) > 0:
+            d = np.min(d)
+        else:
+            d = 0
+
+        self.db.NNextLiftPoint = np.min(d)
 
     def mapABSActivity(self, pBrake):
         if pBrake < self.db.car.rABSActivityMap[2]:

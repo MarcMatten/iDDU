@@ -368,7 +368,16 @@ calcData = {'startUp': False,
             'rABSActivity': [0, 0, 0, 0],
             'rRearLocking': 0,
             'rWheelSpin': 0,
-            'rSlipR': 0
+            'rSlipR': 0,
+            'VFuelUsedLap': 0,
+            'VFuelBudgetActive': 0,
+            'VFuelReferenceActive': 0,
+            'VFuelBudget': np.array([]),
+            'VFuelReference': np.array([]),
+            'dVFuelTgt': 0,
+            'VFuelStartStraight': 0,
+            'BUpdateVFuelDelta': False,
+            'VFuelDelta': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
