@@ -273,7 +273,7 @@ class IDDUCalcThread(IDDUThread):
                                 self.ir.pit_command(0)
 
                             if self.db.FuelTGTLiftPoints['SFuelConfigCarName'] == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'] \
-                                    and self.db.FuelTGTLiftPoints['SFuelConfigTrackName'] == self.db.WeekendInfo['TrackDisplayShortName']:
+                                    and self.db.FuelTGTLiftPoints['SFuelConfigTrackName'] == self.db.WeekendInfo['TrackName']:
                                 self.db.BFuelSavingConfigLoaded = True
                             else:
                                 self.db.BFuelSavingConfigLoaded = False
@@ -438,10 +438,15 @@ class IDDUCalcThread(IDDUThread):
                         # Lift beeps
                         if self.db.config['BEnableLiftTones'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
                             # get fuel data at reference point
-                            if self.db.BUpdateVFuelDelta and self.db.LapDistPct >= self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]:
-                                # positive = overconsumption
-                                self.db.VFuelDelta = self.db.VFuelUsedLap - self.db.FuelTGTLiftPoints['VFuelReference'][self.db.NNextLiftPoint]
-                                self.db.BUpdateVFuelDelta = False
+                            if self.db.BUpdateVFuelDelta and self.db.LapDistPct * 100 >= self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]:
+                                if self.db.NNextLiftPoint > 0:
+                                    self.db.VFuelDelta = self.db.VFuelUsedLap - self.db.VFuelReference[self.db.NNextLiftPoint]  # positive = overconsumption
+                                    self.db.VFuelStartStraight = self.db.FuelLevel
+                                    self.db.BUpdateVFuelDelta = False
+                                elif self.db.NNextLiftPoint == 0 and self.db.LapDistPct * 100 < self.db.FuelTGTLiftPoints['LapDistPctReference'][1]:
+                                    self.db.VFuelDelta = self.db.VFuelUsedLap - self.db.VFuelReference[self.db.NNextLiftPoint]  # positive = overconsumption
+                                    self.db.VFuelStartStraight = self.db.FuelLevel
+                                    self.db.BUpdateVFuelDelta = False
 
                             self.LiftTone()
 
@@ -455,9 +460,10 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.dcChangedItems = list(temp.keys())
                                 self.db.dcChangeTime = time.time()
                                 if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
-                                    if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
+                                    # if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
+                                    if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.config['VFuelTgt'] and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
-                                    self.setFuelTgt(self.db.VFuelTgt, np.float(self.db.VFuelTgtOffset))
+                                    self.setFuelTgt(self.db.config['VFuelTgt'], np.float(self.db.VFuelTgtOffset))
 
                         self.db.dcOld = self.db.dc.copy()
 
@@ -1167,7 +1173,7 @@ class IDDUCalcThread(IDDUThread):
             # change in straight
             if not self.db.NNextLiftPoint == NNextLiftPointOld:
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
-                self.db.VFuelStartStraight = self.db.FuelLevel
+                # self.db.VFuelStartStraight = self.db.FuelLevel
                 self.db.BUpdateVFuelDelta = True
 
     def setFuelTgt(self, tgt, offset):
@@ -1175,6 +1181,7 @@ class IDDUCalcThread(IDDUThread):
             print('setFuelTgt')
             self.db.LapDistPctLift = np.array([])
             self.db.VFuelBudget = np.array([])
+            self.db.VFuelReference = np.array([])
             rLift = np.array([])
             self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
             self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
@@ -1190,12 +1197,16 @@ class IDDUCalcThread(IDDUThread):
                 self.db.VFuelBudget = np.append(self.db.VFuelBudget, np.interp(self.db.config['VFuelTgt'], x, y2))
 
                 y3 = self.db.FuelTGTLiftPoints['VFuelReference'][i]
-                self.db.VFuelReference = np.append(self.db.VFuelBudget, np.interp(self.db.config['VFuelTgt'], x, y3))
+                self.db.VFuelReference = np.append(self.db.VFuelReference, np.interp(self.db.config['VFuelTgt'], x, y3))
 
             self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
             self.db.VFuelBudget[rLift <= 0.01] = self.db.VFuelBudget[rLift <= 0.01] + 10
 
             self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPctLift'])
+
+            print('TGT: {}'.format(self.db.VFuelTgtEffective))
+            print('VFuelBudget: ', self.db.VFuelBudget)
+            print('VFuelReference: ', self.db.VFuelReference)
         else:
             # print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
             return

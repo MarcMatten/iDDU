@@ -378,8 +378,10 @@ class RenderScreen(RenderMain):
 
         # LabelStrings
         self.db.BestLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapBestLapTime']))
-        self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapLastLapTime']))
-        self.db.DeltaBestStr = convertString.convertDelta(self.ir['LapDeltaToSessionBestLap'])
+        # self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapLastLapTime']))
+        self.db.LastLapStr = convertString.roundedStr2(self.db.VFuelStartStraight)
+        # self.db.DeltaBestStr = convertString.convertDelta(self.ir['LapDeltaToSessionBestLap'])
+        self.db.DeltaBestStr = convertString.roundedStr2(self.db.VFuelDelta)
 
         self.db.dcTractionControlStr = convertString.roundedStr0(self.ir['dcTractionControl'])
         self.db.dcTractionControl2Str = convertString.roundedStr0(self.ir['dcTractionControl2'])
@@ -387,6 +389,7 @@ class RenderScreen(RenderMain):
         self.db.dcFuelMixtureStr = convertString.roundedStr0(self.ir['dcFuelMixture'])
         self.db.dcThrottleShapeStr = convertString.roundedStr0(self.ir['dcThrottleShape'])
         self.db.dcABSStr = convertString.roundedStr0(self.ir['dcABS'])
+        self.db.dcABSStr = convertString.roundedStr0(self.db.NNextLiftPoint)
 
         self.db.FuelLevelStr = convertString.roundedStr1(self.ir['FuelLevel'], 3)
         self.db.FuelAvgConsStr = convertString.roundedStr2(max(0, self.db.FuelAvgConsumption))
