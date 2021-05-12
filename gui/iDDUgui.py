@@ -12,6 +12,7 @@ from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
 from libs.IDDU import IDDUThread, IDDUItem
 from functionalities.libs import importExport, importIBT, maths
 from functionalities.RTDB import RTDB
+import numpy as np
 
 
 def decorator(fn):
@@ -467,7 +468,7 @@ class Gui(IDDUItem):
         self.tabFuelManagement = QtWidgets.QWidget()
         self.tabFuelManagement.setObjectName("tabFuelManagement")
         self.groupBox_9 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 231))
+        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 201))
         self.groupBox_9.setObjectName("groupBox_9")
         self.checkBox_EnableFuelManagement = QtWidgets.QCheckBox(self.groupBox_9)
         self.checkBox_EnableFuelManagement.setGeometry(QtCore.QRect(20, 30, 161, 17))
@@ -483,10 +484,10 @@ class Gui(IDDUItem):
         self.calcRollOutButton.setGeometry(QtCore.QRect(20, 110, 191, 23))
         self.calcRollOutButton.setObjectName("calcRollOutButton")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_4.setGeometry(QtCore.QRect(10, 260, 221, 121))
+        self.groupBox_4.setGeometry(QtCore.QRect(250, 10, 511, 201))
         self.groupBox_4.setObjectName("groupBox_4")
         self.pushButton_testFuelTone = QtWidgets.QPushButton(self.groupBox_4)
-        self.pushButton_testFuelTone.setGeometry(QtCore.QRect(60, 90, 91, 23))
+        self.pushButton_testFuelTone.setGeometry(QtCore.QRect(60, 100, 91, 23))
         self.pushButton_testFuelTone.setObjectName("pushButton_testFuelTone")
         self.label_18 = QtWidgets.QLabel(self.groupBox_4)
         self.label_18.setGeometry(QtCore.QRect(10, 20, 101, 22))
@@ -508,6 +509,61 @@ class Gui(IDDUItem):
         self.label_19 = QtWidgets.QLabel(self.groupBox_4)
         self.label_19.setGeometry(QtCore.QRect(10, 60, 101, 22))
         self.label_19.setObjectName("label_19")
+        self.label_25 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_25.setGeometry(QtCore.QRect(280, 20, 101, 22))
+        self.label_25.setObjectName("label_25")
+        self.doubleSpinBox_tLiftReaction = QtWidgets.QDoubleSpinBox(self.groupBox_4)
+        self.doubleSpinBox_tLiftReaction.setGeometry(QtCore.QRect(390, 20, 101, 22))
+        self.doubleSpinBox_tLiftReaction.setPrefix("")
+        self.doubleSpinBox_tLiftReaction.setSuffix("")
+        self.doubleSpinBox_tLiftReaction.setDecimals(2)
+        self.doubleSpinBox_tLiftReaction.setMinimum(-2.0)
+        self.doubleSpinBox_tLiftReaction.setMaximum(2.0)
+        self.doubleSpinBox_tLiftReaction.setSingleStep(0.01)
+        self.doubleSpinBox_tLiftReaction.setProperty("value", self.db.config['tReactionLift'])
+        self.doubleSpinBox_tLiftReaction.setObjectName("doubleSpinBox_tLiftReaction")
+        self.groupBox_13 = QtWidgets.QGroupBox(self.groupBox_4)
+        self.groupBox_13.setGeometry(QtCore.QRect(270, 70, 231, 111))
+        self.groupBox_13.setObjectName("groupBox_13")
+        self.doubleSpinBox_tLift1 = QtWidgets.QDoubleSpinBox(self.groupBox_13)
+        self.doubleSpinBox_tLift1.setGeometry(QtCore.QRect(120, 20, 101, 22))
+        self.doubleSpinBox_tLift1.setPrefix("")
+        self.doubleSpinBox_tLift1.setSuffix("")
+        self.doubleSpinBox_tLift1.setDecimals(2)
+        self.doubleSpinBox_tLift1.setMinimum(-3.0)
+        self.doubleSpinBox_tLift1.setMaximum(3.0)
+        self.doubleSpinBox_tLift1.setSingleStep(0.01)
+        self.doubleSpinBox_tLift1.setProperty("value", self.db.config['tLiftTones'][0])
+        self.doubleSpinBox_tLift1.setObjectName("doubleSpinBox_tLift1")
+        self.doubleSpinBox_tLift3 = QtWidgets.QDoubleSpinBox(self.groupBox_13)
+        self.doubleSpinBox_tLift3.setGeometry(QtCore.QRect(120, 80, 101, 22))
+        self.doubleSpinBox_tLift3.setPrefix("")
+        self.doubleSpinBox_tLift3.setSuffix("")
+        self.doubleSpinBox_tLift3.setDecimals(2)
+        self.doubleSpinBox_tLift3.setMinimum(-3.0)
+        self.doubleSpinBox_tLift3.setMaximum(3.0)
+        self.doubleSpinBox_tLift3.setSingleStep(0.01)
+        self.doubleSpinBox_tLift3.setProperty("value", self.db.config['tLiftTones'][2])
+        self.doubleSpinBox_tLift3.setObjectName("doubleSpinBox_tLift3")
+        self.doubleSpinBox_tLift2 = QtWidgets.QDoubleSpinBox(self.groupBox_13)
+        self.doubleSpinBox_tLift2.setGeometry(QtCore.QRect(120, 50, 101, 22))
+        self.doubleSpinBox_tLift2.setPrefix("")
+        self.doubleSpinBox_tLift2.setSuffix("")
+        self.doubleSpinBox_tLift2.setDecimals(2)
+        self.doubleSpinBox_tLift2.setMinimum(-3.0)
+        self.doubleSpinBox_tLift2.setMaximum(3.0)
+        self.doubleSpinBox_tLift2.setSingleStep(0.01)
+        self.doubleSpinBox_tLift2.setProperty("value", self.db.config['tLiftTones'][1])
+        self.doubleSpinBox_tLift2.setObjectName("doubleSpinBox_tLift2")
+        self.label_28 = QtWidgets.QLabel(self.groupBox_13)
+        self.label_28.setGeometry(QtCore.QRect(10, 80, 101, 22))
+        self.label_28.setObjectName("label_28")
+        self.label_27 = QtWidgets.QLabel(self.groupBox_13)
+        self.label_27.setGeometry(QtCore.QRect(10, 50, 101, 22))
+        self.label_27.setObjectName("label_27")
+        self.label_26 = QtWidgets.QLabel(self.groupBox_13)
+        self.label_26.setGeometry(QtCore.QRect(10, 20, 101, 22))
+        self.label_26.setObjectName("label_26")
         self.tabWidget.addTab(self.tabFuelManagement, "")
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
@@ -694,6 +750,12 @@ class Gui(IDDUItem):
         self.pushButtonMultiDecrease.clicked.connect(self.assignButtonMultiDecrease)
         self.pushButtonMultiIncrease.clicked.connect(self.assignButtonMultiIncrease)
         self.pushButtonSaveDDUPage.clicked.connect(self.assignButtonDDUPage)
+        
+
+        self.doubleSpinBox_tLiftReaction.valueChanged.connect(self.setTLiftReaction)
+        self.doubleSpinBox_tLift1.valueChanged.connect(self.setTLift)
+        self.doubleSpinBox_tLift2.valueChanged.connect(self.setTLift)
+        self.doubleSpinBox_tLift3.valueChanged.connect(self.setTLift)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -1259,6 +1321,15 @@ class Gui(IDDUItem):
 
         self.db.config['TelemPath'] = dirPath
         self.SaveConfig()
+
+    def setTLift(self):
+        tLiftTones = [self.doubleSpinBox_tLift1.value(), self.doubleSpinBox_tLift2.value(), self.doubleSpinBox_tLift3.value()]
+        self.db.config['tLiftTones'] = np.flip(np.sort(tLiftTones))
+        self.retranslateUi(self.iDDU)
+
+    def setTLiftReaction(self):
+        self.db.config['tReactionLift'] = self.doubleSpinBox_tLiftReaction.value()
+        self.retranslateUi(self.iDDU)
 
     def __del__(self):
         sys.stdout = sys.__stdout__

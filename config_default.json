@@ -22,6 +22,12 @@
     "TelemPath": "M:/07 - SimRacing/Data",
     "UpshiftStrategy": 0,
     "UserRaceLaps": 99,
+    "tReactionLift": 0.15,
+    "tLiftTones": [
+        1,
+        0.5,
+        0
+    ],
     "UserShiftFlag": [
         true,
         true,
