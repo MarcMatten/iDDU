@@ -9,7 +9,6 @@ from libs import Track, Car
 from libs.IDDU import IDDUThread
 
 nan = float('nan')  # TODO: add to IDDu object?
-tLiftTones = [1, 0.5, 0]  # TODO: add to settings
 
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
@@ -1162,7 +1161,8 @@ class IDDUCalcThread(IDDUThread):
 
             self.db.tNextLiftPoint = self.db.dVFuelTgt / (self.db.FuelUsePerHour / 3600 / self.db.DriverInfo['DriverCarFuelKgPerLtr'])
 
-            if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and self.db.tNextLiftPoint <= tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]]:
+            if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and \
+                    self.db.tNextLiftPoint <= self.db.config['tLiftTones'][self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] + self.db.config['tReactionLift']:
                 self.db.BLiftToneRequest = True
                 self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
 
@@ -1183,9 +1183,11 @@ class IDDUCalcThread(IDDUThread):
             self.db.VFuelBudget = np.array([])
             self.db.VFuelReference = np.array([])
             rLift = np.array([])
-            self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])]).round(2)])
+            self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']),
+                                                 np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])]).round(2)])
             self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
-            self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']), np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+            self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']),
+                                                np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
 
             for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPctLift'])):
                 x = self.db.FuelTGTLiftPoints['VFuelTGT']
