@@ -382,7 +382,8 @@ calcData = {'startUp': False,
             'dVFuelTgt': 0,
             'VFuelStartStraight': 0,
             'BUpdateVFuelDelta': False,
-            'VFuelDelta': 0
+            'VFuelDelta': 0,
+            'tLiftTones': [1, 0.5, 0]
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

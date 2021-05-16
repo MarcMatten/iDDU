@@ -1075,12 +1075,15 @@ class IDDUCalcThread(IDDUThread):
             print(self.db.timeStr + ':\tSaved track as: ' + r"data/track/" + self.db.track.name + ".json")
 
         if BRecordtLap:
-            self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct)
-            self.db.car.save(self.db.dir)
-            self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
+            if maths.strictly_increasing(self.time) and maths.strictly_increasing(self.LapDistPct):
+                self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct)
+                self.db.car.save(self.db.dir)
+                self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 
-            print(self.db.timeStr + ':\tLap time has been recorded successfully!')
-            print(self.db.timeStr + ':\tSaved car as: ' + r"data/car/" + self.db.car.name + ".json")
+                print(self.db.timeStr + ':\tLap time has been recorded successfully!')
+                print(self.db.timeStr + ':\tSaved car as: ' + r"data/car/" + self.db.car.name + ".json")
+            else:
+                print(self.db.timeStr + ':\tRecorded Laptime is not monotonically increasing. Aborted track creation!')
 
         self.BCreateTrack = False
         self.BRecordtLap = False
@@ -1215,7 +1218,7 @@ class IDDUCalcThread(IDDUThread):
             self.db.tNextLiftPoint = self.db.dVFuelTgt / (self.db.FuelUsePerHour / 3600 / self.db.DriverInfo['DriverCarFuelKgPerLtr'])
 
             if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and \
-                    self.db.tNextLiftPoint <= self.db.config['tLiftTones'][self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] + self.db.config['tReactionLift']:
+                    self.db.tNextLiftPoint <= self.db.tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] + self.db.config['tReactionLift']:
                 self.db.BLiftToneRequest = True
                 self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
 

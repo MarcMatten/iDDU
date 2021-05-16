@@ -1,1 +1,1 @@
-pyuic5 -x C:\Users\Marc\Documents\Projekte\iDDU\gui\iDDUgui.ui -o C:\Users\Marc\Documents\Projekte\iDDU\gui\iDDUgui_temp.py
+pyuic5 -x iDDUgui.ui -o iDDUgui_temp.py

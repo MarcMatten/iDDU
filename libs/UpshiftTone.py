@@ -37,7 +37,7 @@ class ShiftToneThread(IDDUThread):
                             self.db.BLiftToneRequest = False
                             self.db.Alarm[7] = 0
                             continue  # no shift beep when lift beep
-                        if self.db.tNextLiftPoint < self.db.config['tLiftTones'][0] + 0.5 and len(self.db.LapDistPctLift) > 0:
+                        if self.db.tNextLiftPoint < self.db.tLiftTones[0] + 0.5 and len(self.db.LapDistPctLift) > 0:
                             time.sleep(self.rate)
                             self.db.Alarm[7] = 0
                             continue  # no shift beep when close to lift beep
