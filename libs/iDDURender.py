@@ -123,8 +123,11 @@ class RenderScreen(RenderMain):
 
         self.frames[4].addLabel('dcBrakeBiasStr', LabeledValue2('BBias', 21, 303, 125, '-', self.fontSmall, self.fontLarge, 0, 0), 9)
         self.frames[4].addLabel('dcABSStr', LabeledValue2('ABS', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 8)
+        self.frames[4].addLabel('dcFARBStr', LabeledValue2('FARB', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 30)
         self.frames[4].addLabel('dcTractionControlStr', LabeledValue2('TC1', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 11)
+        self.frames[4].addLabel('dcWeightJackerStr', LabeledValue2('Jacker', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 32)
         self.frames[4].addLabel('dcTractionControl2Str', LabeledValue2('TC2', 120, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 12)
+        self.frames[4].addLabel('dcRARBStr', LabeledValue2('RARB', 219, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 31)
         self.frames[4].addLabel('DRSStr', LabeledValue2('DRS', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 2, 5), 18)
         self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 3, 4), 19)
 
@@ -134,6 +137,8 @@ class RenderScreen(RenderMain):
         self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 318, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 10)
         self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 5)
         self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 4)
+        self.frames[5].addLabel('VFuelDeltaStr', LabeledValue2('Delta', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 29)
+        self.frames[5].addLabel('VFuelTgtStr', LabeledValue2('TGT', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 28)
 
         self.frames2 = list()
 
@@ -378,10 +383,8 @@ class RenderScreen(RenderMain):
 
         # LabelStrings
         self.db.BestLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapBestLapTime']))
-        # self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapLastLapTime']))
-        self.db.LastLapStr = convertString.roundedStr2(self.db.VFuelStartStraight)
-        # self.db.DeltaBestStr = convertString.convertDelta(self.ir['LapDeltaToSessionBestLap'])
-        self.db.DeltaBestStr = convertString.roundedStr2(self.db.VFuelDelta)
+        self.db.LastLapStr = convertString.convertTimeMMSSsss(max(0, self.ir['LapLastLapTime']))
+        self.db.DeltaBestStr = convertString.convertDelta(self.ir['LapDeltaToSessionBestLap'])
 
         self.db.dcTractionControlStr = convertString.roundedStr0(self.ir['dcTractionControl'])
         self.db.dcTractionControl2Str = convertString.roundedStr0(self.ir['dcTractionControl2'])
@@ -389,11 +392,15 @@ class RenderScreen(RenderMain):
         self.db.dcFuelMixtureStr = convertString.roundedStr0(self.ir['dcFuelMixture'])
         self.db.dcThrottleShapeStr = convertString.roundedStr0(self.ir['dcThrottleShape'])
         self.db.dcABSStr = convertString.roundedStr0(self.ir['dcABS'])
-        self.db.dcABSStr = convertString.roundedStr0(self.db.NNextLiftPoint)
+        self.db.dcFARBStr = convertString.roundedStr0(self.ir['dcAntiRollFront'])
+        self.db.dcRARBStr = convertString.roundedStr0(self.ir['dcAntiRollRear'])
+        self.db.dcWeightJackerStr = convertString.roundedStr0(self.ir['dcWeightJackerRight'])
 
         self.db.FuelLevelStr = convertString.roundedStr1(self.ir['FuelLevel'], 3)
         self.db.FuelAvgConsStr = convertString.roundedStr2(max(0, self.db.FuelAvgConsumption))
+        self.db.VFuelTgtStr = convertString.roundedStr2(self.db.config['VFuelTgt'])
         self.db.FuelLastConsStr = convertString.roundedStr2(max(0, self.db.FuelLastCons))
+        self.db.VFuelDeltaStr = convertString.roundedStr2(self.db.VFuelDelta, BPlus=True)
         self.db.FuelLapsStr = convertString.roundedStr1(self.db.NLapRemaining, 3)
         self.db.FuelAddStr = convertString.roundedStr1(max(0, self.db.VFuelAdd), 3)
 
@@ -405,28 +412,39 @@ class RenderScreen(RenderMain):
         elif self.db.config['NRaceLapsSource'] == 1:
             RaceLapsDisplay = self.db.config['UserRaceLaps']
 
+        if RaceLapsDisplay >= 100:
+            self.db.LapStr = str(max(0, self.ir['Lap']))
+        else:
+            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+
+        self.db.ToGoStr = '0'
+
+
         if (self.db.LapLimit and not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race') or self.db.config['BEnableRaceLapEstimation']:
-            # if self.db.LapLimit:
-            #     self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
-            #     self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
+            # if RaceLapsDisplay >= 100:
+            #     self.db.LapStr = str(max(0, self.ir['Lap']))
             # else:
             #     self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
-            #     self.db.ToGoStr = '0'
-            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
             self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
         else:
             # self.db.LapStr = str(max(0, self.ir['Lap']))
             # self.db.ToGoStr = '-'
             if self.db.LapLimit:
-                self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+                # if RaceLapsDisplay >= 100:
+                #     self.db.LapStr = str(max(0, self.ir['Lap']))
+                # else:
+                #     self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
                 self.db.ToGoStr = convertString.roundedStr1(max(0, RaceLapsDisplay - self.ir['Lap'] + 1 - self.ir['LapDistPct']), 3)
             else:
-                if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                    self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
-                    self.db.ToGoStr = '0'
-                else:
+                if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
+                    # if RaceLapsDisplay >= 100:
+                    #     self.db.LapStr = str(max(0, self.ir['Lap']))
+                    # else:
+                    #     self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+                    # self.db.ToGoStr = '0'
+                # else:
                     self.db.LapStr = str(max(0, self.ir['Lap']))
-                    self.db.ToGoStr = '0'
+                    # self.db.ToGoStr = '0'
 
 
         self.db.ClockStr = self.db.timeStr

@@ -345,6 +345,12 @@ class IDDUCalcThread(IDDUThread):
                                 self.time = np.append(self.time, self.db.SessionTime)
 
                         # fuel consumption -----------------------------------------------------------------------------------------
+                        if not self.db.config['BEnableLiftTones']:
+                            self.db.RenderLabel[4] = True
+                            self.db.RenderLabel[5] = True
+                            self.db.RenderLabel[28] = False
+                            self.db.RenderLabel[29] = False
+
                         if len(self.db.FuelConsumptionList) >= 1:
                             self.db.FuelAvgConsumption = maths.meanTol(self.db.FuelConsumptionList, 0.2)
                             self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
@@ -467,7 +473,7 @@ class IDDUCalcThread(IDDUThread):
                         self.db.dcOld = self.db.dc.copy()
 
                         # rear slip ratio
-                        if self.db.VelocityX > 10:
+                        if self.db.VelocityX > 10 and not self.db.WeekendInfo['Category'] == 'Oval':
                             if self.db.Gear > 0 and self.db.car.rGearRatios[self.db.Gear] > 0:
                                 self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.Gear] * 0.3 / self.db.VelocityX - 1) * 100
                         else:
@@ -851,6 +857,48 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.SubSessionIDOld = self.db.WeekendInfo['SubSessionID']
 
+        # Display
+        if 'dcABS' in self.db.car.dcList:
+            self.db.RenderLabel[8] = True
+        else:
+            self.db.RenderLabel[8] = False
+
+        if 'dcTractionControl' in self.db.car.dcList:
+            self.db.RenderLabel[11] = True
+        else:
+            self.db.RenderLabel[11] = False
+
+        if 'dcTractionControl2' in self.db.car.dcList:
+            self.db.RenderLabel[12] = True
+        else:
+            self.db.RenderLabel[12] = False
+
+        if 'dcFuelMixture' in self.db.car.dcList:
+            self.db.RenderLabel[10] = True
+        else:
+            self.db.RenderLabel[10] = False
+
+        if 'dcBrakeBias' in self.db.car.dcList:
+            self.db.RenderLabel[9] = True
+        else:
+            self.db.RenderLabel[9] = False
+
+        if 'dcAntiRollFront' in self.db.car.dcList:
+            self.db.RenderLabel[30] = True
+        else:
+            self.db.RenderLabel[30] = False
+
+        if 'dcAntiRollRear' in self.db.car.dcList:
+            self.db.RenderLabel[31] = True
+        else:
+            self.db.RenderLabel[31] = False
+
+        if 'dcWeightJackerRight' in self.db.car.dcList:
+            self.db.RenderLabel[32] = True
+        else:
+            self.db.RenderLabel[32] = False
+
+
     def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')
 
@@ -960,6 +1008,11 @@ class IDDUCalcThread(IDDUThread):
         self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
             self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
             self.db.AirDensity) + ' kg/m³     vWind: '
+
+        self.db.RenderLabel[4] = True
+        self.db.RenderLabel[5] = True
+        self.db.RenderLabel[28] = False
+        self.db.RenderLabel[29] = False
 
     def createTrackFile(self, BCreateTrack, BRecordtLap):
 
@@ -1175,6 +1228,11 @@ class IDDUCalcThread(IDDUThread):
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
                 # self.db.VFuelStartStraight = self.db.FuelLevel
                 self.db.BUpdateVFuelDelta = True
+
+                self.db.RenderLabel[4] = False
+                self.db.RenderLabel[5] = False
+                self.db.RenderLabel[28] = True
+                self.db.RenderLabel[29] = True
 
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:

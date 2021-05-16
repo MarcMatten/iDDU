@@ -1287,12 +1287,12 @@ class Gui(IDDUItem):
         self.SaveConfig()
 
     def LoadConfig(self):
-        config = importExport.loadJson(self.db.dir + '/config.json')
+        config = importExport.loadJson(self.db.dir + '/data/configs/config.json')
         self.db.initialise({'config': config}, False, False)
         self.retranslateUi(self.iDDU)
 
     def SaveConfig(self):
-        importExport.saveJson(self.db.config, self.db.dir + '/config.json')
+        importExport.saveJson(self.db.config, self.db.dir + '/data/configs/config.json')
         self.retranslateUi(self.iDDU)
 
     def refreshGUI(self):

@@ -29,15 +29,17 @@ class ShiftToneThread(IDDUThread):
                 while self.ir['IsOnTrack'] and (self.db.config['ShiftToneEnabled'] or self.db.config['BEnableLiftTones']):
                     t = time.perf_counter()
 
-                    if self.db.config['BEnableLiftTones']:
+                    if self.db.config['BEnableLiftTones'] and self.ir['Throttle'] > 0.9:
                         if self.db.BLiftToneRequest:
                             self.vjoy.set_button(63, 1)
                             winsound.Beep(self.db.config['fFuelBeep'], self.db.config['tFuelBeep'])
                             self.vjoy.set_button(63, 0)
                             self.db.BLiftToneRequest = False
+                            self.db.Alarm[7] = 0
                             continue  # no shift beep when lift beep
-                        if self.db.tNextLiftPoint < 2 and len(self.db.LapDistPctLift) > 0:
+                        if self.db.tNextLiftPoint < self.db.config['tLiftTones'][0] + 0.5 and len(self.db.LapDistPctLift) > 0:
                             time.sleep(self.rate)
+                            self.db.Alarm[7] = 0
                             continue  # no shift beep when close to lift beep
 
                     if self.db.config['ShiftToneEnabled']:

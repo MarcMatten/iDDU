@@ -245,6 +245,11 @@ calcData = {'startUp': False,
                 True,  # 25 Distance to pit stall
                 True,  # 26 speed in pit lane
                 True,  # 27 Gear in pit lane
+                False,  # 28 VFuelTgt
+                False,  # 29 VFuelDelta
+                False,  # 30 FARB
+                False,  # 31 RARB
+                False,  # 32 Weigth Jacker
             ],
             'P2P': False,
             'DRS': False,
@@ -391,12 +396,12 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1]
 }
 
-if not os.path.exists(calcData['dir'] + '/config.json'):
-    copyfile(calcData['dir'] + '/config_default.json', calcData['dir'] + '/config.json')
+if not os.path.exists(calcData['dir'] + '/data/configs/config.json'):
+    copyfile(calcData['dir'] + '/data/configs/config_default.json', calcData['dir'] + '/data/configs/config.json')
     print('No config.json found. Created new default config.json from config_default.json')
 
 
-config = importExport.loadJson(calcData['dir'] + '/config.json')
+config = importExport.loadJson(calcData['dir'] + '/data/configs/config.json')
 
 iDDUControlsNameInit = {}
 
