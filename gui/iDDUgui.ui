@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>478</height>
+    <width>784</width>
+    <height>465</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,10 +20,10 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>781</width>
-     <height>461</height>
+     <x>12</x>
+     <y>11</y>
+     <width>761</width>
+     <height>445</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -39,7 +39,7 @@
     </size>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabGeneral">
     <attribute name="title">
@@ -710,7 +710,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>0</y>
+       <y>10</y>
        <width>301</width>
        <height>391</height>
       </rect>
@@ -1150,7 +1150,7 @@
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>0</y>
+       <y>10</y>
        <width>401</width>
        <height>141</height>
       </rect>
@@ -1277,7 +1277,7 @@
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>150</y>
+       <y>160</y>
        <width>401</width>
        <height>91</height>
       </rect>
@@ -1448,7 +1448,7 @@
        <x>250</x>
        <y>10</y>
        <width>511</width>
-       <height>201</height>
+       <height>141</height>
       </rect>
      </property>
      <property name="title">
@@ -1457,17 +1457,17 @@
      <widget class="QPushButton" name="testFuelTone">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>100</y>
-        <width>91</width>
-        <height>23</height>
+        <x>310</x>
+        <y>70</y>
+        <width>141</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
        <string>Play Test Tone</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_18">
+     <widget class="QLabel" name="label_FuelToneFrequency">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -1477,13 +1477,13 @@
        </rect>
       </property>
       <property name="text">
-       <string>Tone Frequency</string>
+       <string>Lift Tone Frequency</string>
       </property>
      </widget>
      <widget class="QSpinBox" name="spinBox_FuelToneFrequency">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>150</x>
         <y>20</y>
         <width>71</width>
         <height>22</height>
@@ -1505,7 +1505,7 @@
      <widget class="QSpinBox" name="spinBox_FuelToneDuration">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>150</x>
         <y>60</y>
         <width>71</width>
         <height>22</height>
@@ -1524,7 +1524,7 @@
        <number>150</number>
       </property>
      </widget>
-     <widget class="QLabel" name="label_19">
+     <widget class="QLabel" name="label_FuelToneDuration">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -1534,10 +1534,10 @@
        </rect>
       </property>
       <property name="text">
-       <string>Tone Duration</string>
+       <string>Lift Tone Duration</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_25">
+     <widget class="QLabel" name="label_tLiftReaction">
       <property name="geometry">
        <rect>
         <x>280</x>
@@ -1581,150 +1581,49 @@
        <double>0.150000000000000</double>
       </property>
      </widget>
-     <widget class="QGroupBox" name="groupBox_13">
+     <widget class="QLabel" name="label_tLiftGap">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>70</y>
-        <width>231</width>
-        <height>111</height>
+        <x>10</x>
+        <y>100</y>
+        <width>121</width>
+        <height>22</height>
        </rect>
       </property>
-      <property name="title">
-       <string>Lift Tone Lead Times</string>
+      <property name="text">
+       <string>Gap between Lift Tones</string>
       </property>
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_tLiftReaction1">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>20</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="decimals">
-        <number>2</number>
-       </property>
-       <property name="minimum">
-        <double>-3.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>3.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>1.000000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_tLiftReaction3">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>80</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="decimals">
-        <number>2</number>
-       </property>
-       <property name="minimum">
-        <double>-3.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>3.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.000000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_tLiftReaction2">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>50</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="decimals">
-        <number>2</number>
-       </property>
-       <property name="minimum">
-        <double>-3.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>3.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.500000000000000</double>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_28">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>80</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tone 3</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_27">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tone 2</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_26">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tone 1</string>
-       </property>
-      </widget>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_tLiftGap">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>100</y>
+        <width>71</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string/>
+      </property>
+      <property name="decimals">
+       <number>2</number>
+      </property>
+      <property name="minimum">
+       <double>-3.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>3.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+      <property name="value">
+       <double>0.500000000000000</double>
+      </property>
      </widget>
     </widget>
    </widget>
@@ -1738,7 +1637,7 @@
        <x>10</x>
        <y>40</y>
        <width>741</width>
-       <height>321</height>
+       <height>341</height>
       </rect>
      </property>
     </widget>
@@ -1746,7 +1645,7 @@
      <property name="geometry">
       <rect>
        <x>650</x>
-       <y>370</y>
+       <y>390</y>
        <width>101</width>
        <height>23</height>
       </rect>
@@ -1759,7 +1658,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>370</y>
+       <y>390</y>
        <width>631</width>
        <height>20</height>
       </rect>
@@ -1856,7 +1755,7 @@
       <rect>
        <x>110</x>
        <y>50</y>
-       <width>551</width>
+       <width>521</width>
        <height>20</height>
       </rect>
      </property>
@@ -1869,7 +1768,7 @@
       <rect>
        <x>110</x>
        <y>90</y>
-       <width>551</width>
+       <width>521</width>
        <height>20</height>
       </rect>
      </property>
@@ -1877,7 +1776,7 @@
     <widget class="QPushButton" name="pushButtonSetiRPath">
      <property name="geometry">
       <rect>
-       <x>670</x>
+       <x>640</x>
        <y>50</y>
        <width>101</width>
        <height>23</height>
@@ -1890,7 +1789,7 @@
     <widget class="QPushButton" name="pushButtonSetTelemPath">
      <property name="geometry">
       <rect>
-       <x>670</x>
+       <x>640</x>
        <y>90</y>
        <width>101</width>
        <height>23</height>
@@ -1938,7 +1837,7 @@
        <rect>
         <x>190</x>
         <y>60</y>
-        <width>551</width>
+        <width>541</width>
         <height>20</height>
        </rect>
       </property>
@@ -1961,7 +1860,7 @@
        <rect>
         <x>190</x>
         <y>90</y>
-        <width>551</width>
+        <width>541</width>
         <height>20</height>
        </rect>
       </property>
@@ -1984,7 +1883,7 @@
        <rect>
         <x>190</x>
         <y>120</y>
-        <width>551</width>
+        <width>541</width>
         <height>20</height>
        </rect>
       </property>
@@ -2007,7 +1906,7 @@
        <rect>
         <x>190</x>
         <y>150</y>
-        <width>551</width>
+        <width>541</width>
         <height>20</height>
        </rect>
       </property>
@@ -2030,7 +1929,7 @@
        <rect>
         <x>190</x>
         <y>180</y>
-        <width>551</width>
+        <width>541</width>
         <height>20</height>
        </rect>
       </property>
@@ -2053,7 +1952,7 @@
        <rect>
         <x>190</x>
         <y>20</y>
-        <width>551</width>
+        <width>541</width>
         <height>22</height>
        </rect>
       </property>
