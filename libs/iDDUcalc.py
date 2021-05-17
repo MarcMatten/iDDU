@@ -1218,7 +1218,8 @@ class IDDUCalcThread(IDDUThread):
             self.db.tNextLiftPoint = self.db.dVFuelTgt / (self.db.FuelUsePerHour / 3600 / self.db.DriverInfo['DriverCarFuelKgPerLtr'])
 
             if self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] < 3 and \
-                    self.db.tNextLiftPoint <= self.db.tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] + self.db.config['tReactionLift']:
+                    self.db.tNextLiftPoint <= self.db.tLiftTones[self.db.BLiftBeepPlayed[self.db.NNextLiftPoint]] + self.db.config['tReactionLift'] and \
+                    self.db.LapDistPct < self.db.FuelTGTLiftPoints['LapDistPctBrake'][self.db.NNextLiftPoint] / 100:
                 self.db.BLiftToneRequest = True
                 self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] = self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] + 1
 
