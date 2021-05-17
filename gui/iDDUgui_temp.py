@@ -2,23 +2,21 @@
 
 # Form implementation generated from reading ui file 'iDDUgui.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_iDDU(object):
     def setupUi(self, iDDU):
         iDDU.setObjectName("iDDU")
-        iDDU.resize(784, 465)
+        iDDU.resize(798, 448)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("//MYCLOUDEX2ULTRA/MarcsWD/Projekte/iRacing_Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iDDU.setWindowIcon(icon)
         self.tabWidget = QtWidgets.QTabWidget(iDDU)
-        self.tabWidget.setGeometry(QtCore.QRect(12, 11, 761, 445))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 781, 431))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -379,7 +377,7 @@ class Ui_iDDU(object):
         self.tabFuelManagement = QtWidgets.QWidget()
         self.tabFuelManagement.setObjectName("tabFuelManagement")
         self.groupBox_9 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 201))
+        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 251))
         self.groupBox_9.setObjectName("groupBox_9")
         self.checkBox_EnableFuelManagement = QtWidgets.QCheckBox(self.groupBox_9)
         self.checkBox_EnableFuelManagement.setGeometry(QtCore.QRect(20, 30, 161, 17))
@@ -394,6 +392,19 @@ class Ui_iDDU(object):
         self.calcRollOutButton = QtWidgets.QPushButton(self.groupBox_9)
         self.calcRollOutButton.setGeometry(QtCore.QRect(20, 110, 191, 23))
         self.calcRollOutButton.setObjectName("calcRollOutButton")
+        self.label_VFuelTGT = QtWidgets.QLabel(self.groupBox_9)
+        self.label_VFuelTGT.setGeometry(QtCore.QRect(20, 210, 101, 22))
+        self.label_VFuelTGT.setObjectName("label_VFuelTGT")
+        self.doubleSpinBox_VFuelTGT = QtWidgets.QDoubleSpinBox(self.groupBox_9)
+        self.doubleSpinBox_VFuelTGT.setGeometry(QtCore.QRect(140, 210, 71, 22))
+        self.doubleSpinBox_VFuelTGT.setPrefix("")
+        self.doubleSpinBox_VFuelTGT.setSuffix("")
+        self.doubleSpinBox_VFuelTGT.setDecimals(2)
+        self.doubleSpinBox_VFuelTGT.setMinimum(-3.0)
+        self.doubleSpinBox_VFuelTGT.setMaximum(20.0)
+        self.doubleSpinBox_VFuelTGT.setSingleStep(0.01)
+        self.doubleSpinBox_VFuelTGT.setProperty("value", 0.0)
+        self.doubleSpinBox_VFuelTGT.setObjectName("doubleSpinBox_VFuelTGT")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabFuelManagement)
         self.groupBox_4.setGeometry(QtCore.QRect(250, 10, 511, 141))
         self.groupBox_4.setObjectName("groupBox_4")
@@ -450,13 +461,13 @@ class Ui_iDDU(object):
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
         self.textEdit = QtWidgets.QTextEdit(self.tabDebug)
-        self.textEdit.setGeometry(QtCore.QRect(10, 40, 741, 341))
+        self.textEdit.setGeometry(QtCore.QRect(10, 40, 756, 331))
         self.textEdit.setObjectName("textEdit")
         self.pushButtonInvoke = QtWidgets.QPushButton(self.tabDebug)
-        self.pushButtonInvoke.setGeometry(QtCore.QRect(650, 390, 101, 23))
+        self.pushButtonInvoke.setGeometry(QtCore.QRect(670, 380, 101, 23))
         self.pushButtonInvoke.setObjectName("pushButtonInvoke")
         self.lineEditInvoke = QtWidgets.QLineEdit(self.tabDebug)
-        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 390, 631, 20))
+        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 380, 651, 20))
         self.lineEditInvoke.setObjectName("lineEditInvoke")
         self.pushButtonSaveSnapshot = QtWidgets.QPushButton(self.tabDebug)
         self.pushButtonSaveSnapshot.setGeometry(QtCore.QRect(10, 10, 101, 23))
@@ -540,7 +551,7 @@ class Ui_iDDU(object):
         self.tabWidget.addTab(self.tabSettings, "")
 
         self.retranslateUi(iDDU)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         self.comboBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(iDDU)
 
@@ -626,6 +637,7 @@ class Ui_iDDU(object):
         self.openButton_2.setText(_translate("iDDU", "Load Configuration"))
         self.calcFuelSavingButton.setText(_translate("iDDU", "Calculate fuel saving from data"))
         self.calcRollOutButton.setText(_translate("iDDU", "Calculate roll-out curves"))
+        self.label_VFuelTGT.setText(_translate("iDDU", "Consumption Target"))
         self.groupBox_4.setTitle(_translate("iDDU", "Audio Settings"))
         self.testFuelTone.setText(_translate("iDDU", "Play Test Tone"))
         self.label_FuelToneFrequency.setText(_translate("iDDU", "Lift Tone Frequency"))
@@ -664,3 +676,4 @@ if __name__ == "__main__":
     ui.setupUi(iDDU)
     iDDU.show()
     sys.exit(app.exec_())
+

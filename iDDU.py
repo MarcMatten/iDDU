@@ -397,82 +397,87 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1]
 }
 
-if not os.path.exists(calcData['dir'] + '/data/configs/config.json'):
-    copyfile(calcData['dir'] + '/data/configs/config_default.json', calcData['dir'] + '/data/configs/config.json')
-    print('No config.json found. Created new default config.json from config_default.json')
+if __name__ == "__main__":
+    if not os.path.exists(calcData['dir'] + '/data/configs/config.json'):
+        copyfile(calcData['dir'] + '/data/configs/config_default.json', calcData['dir'] + '/data/configs/config.json')
+        print('No config.json found. Created new default config.json from config_default.json')
 
+    config_default = importExport.loadJson(calcData['dir'] + '/data/configs/config_default.json')
+    config_local = importExport.loadJson(calcData['dir'] + '/data/configs/config.json')
 
-config = importExport.loadJson(calcData['dir'] + '/data/configs/config.json')
+    config = {**config_default, **config_local}
 
-iDDUControlsNameInit = {}
+    iDDUControlsNameInit = {}
 
-iDDUControlsName = list(iDDUControls.keys())
-for i in range(0, len(iDDUControlsName)):
-    if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
-        iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]]
-    else:
-        iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]][0]
+    iDDUControlsName = list(iDDUControls.keys())
+    for i in range(0, len(iDDUControlsName)):
+        if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
+            iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]]
+        else:
+            iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]][0]
 
-# Create RTDB and initialise with
-myRTDB = RTDB.RTDB()
-myRTDB.initialise(helpData, False, False)
-myRTDB.initialise(iRData, True, False)
-myRTDB.initialise(calcData, False, False)
-myRTDB.initialise({'iDDUControls': iDDUControls}, False, False)
-myRTDB.initialise({'config': config}, False, False)
+    # Create RTDB and initialise with
+    myRTDB = RTDB.RTDB()
+    myRTDB.initialise(helpData, False, False)
+    myRTDB.initialise(iRData, True, False)
+    myRTDB.initialise(calcData, False, False)
+    myRTDB.initialise({'iDDUControls': iDDUControls}, False, False)
+    myRTDB.initialise({'config': config}, False, False)
 
-dcList = list(myRTDB.car.dcList.keys())
+    dcList = list(myRTDB.car.dcList.keys())
 
-# initialise and start thread
-rtdbThread = RTDB.RTDBThread(0.01)
-rtdbThread.setDB(myRTDB)
-calcThread = iDDUcalc.IDDUCalcThread(0.017)
-shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
-guiThread = iDDUgui.iDDUGUIThread(0.02)
-raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
-loggerThread = Logger.LoggerThread(0.02)
-ms = MultiSwitch.MultiSwitch(0.005)
+    # initialise and start thread
+    rtdbThread = RTDB.RTDBThread(0.01)
+    rtdbThread.setDB(myRTDB)
+    calcThread = iDDUcalc.IDDUCalcThread(0.017)
+    shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
+    # guiThread = iDDUgui.iDDUGUIThread(0.02)
+    raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
+    loggerThread = Logger.LoggerThread(0.02)
+    ms = MultiSwitch.MultiSwitch(0.005)
 
-for i in range(0, len(iDDUControlsName)):
-    if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
-        ms.addMapping(iDDUControlsName[i])
-    else:
-        ms.addMapping(iDDUControlsName[i], minValue=iDDUControls[iDDUControlsName[i]][4], maxValue=iDDUControls[iDDUControlsName[i]][5], step=iDDUControls[iDDUControlsName[i]][6])
+    for i in range(0, len(iDDUControlsName)):
+        if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
+            ms.addMapping(iDDUControlsName[i])
+        else:
+            ms.addMapping(iDDUControlsName[i], minValue=iDDUControls[iDDUControlsName[i]][4], maxValue=iDDUControls[iDDUControlsName[i]][5], step=iDDUControls[iDDUControlsName[i]][6])
 
-ms.initCar()
+    ms.initCar()
 
-calcThread.start()
-time.sleep(0.1)
-rtdbThread.start()
-time.sleep(0.1)
-guiThread.start()
-time.sleep(0.1)
-shiftToneThread.start()
-time.sleep(0.1)
-raceLapsEstimationThread.start()
-time.sleep(0.1)
-loggerThread.start()
-time.sleep(0.1)
-ms.start()
-time.sleep(0.1)
+    calcThread.start()
+    time.sleep(0.1)
+    rtdbThread.start()
+    time.sleep(0.1)
+    # guiThread.start()
+    time.sleep(0.1)
+    shiftToneThread.start()
+    time.sleep(0.1)
+    raceLapsEstimationThread.start()
+    time.sleep(0.1)
+    loggerThread.start()
+    time.sleep(0.1)
+    ms.start()
+    time.sleep(0.1)
 
-iRRender = None
+    iDDUgui.Gui()
 
-# loop to run programme
-while not myRTDB.done:
-    if myRTDB.DDUrunning:
-        myRTDB.done = iRRender.render()
-        if myRTDB.StartDDU:
-            myRTDB.StartDDU = False
-    elif myRTDB.StartDDU:
-        print(myRTDB.timeStr + ': Starting DDU')
-        iRRender = iDDURender.RenderScreen()
-        myRTDB.DDUrunning = True
+    iRRender = None
 
-    if myRTDB.StopDDU:
-        print(myRTDB.timeStr + ': Stopping DDU')
-        iRRender.stopRendering()
-        myRTDB.StopDDU = False
-        myRTDB.DDUrunning = False
+    # loop to run programme
+    while not myRTDB.done:
+        if myRTDB.DDUrunning:
+            myRTDB.done = iRRender.render()
+            if myRTDB.StartDDU:
+                myRTDB.StartDDU = False
+        elif myRTDB.StartDDU:
+            print(myRTDB.timeStr + ': Starting DDU')
+            iRRender = iDDURender.RenderScreen()
+            myRTDB.DDUrunning = True
 
-    time.sleep(0.001)
+        if myRTDB.StopDDU:
+            print(myRTDB.timeStr + ': Stopping DDU')
+            iRRender.stopRendering()
+            myRTDB.StopDDU = False
+            myRTDB.DDUrunning = False
+
+        time.sleep(0.001)

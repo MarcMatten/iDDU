@@ -12,6 +12,7 @@ from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
 from libs.IDDU import IDDUThread, IDDUItem
 from functionalities.libs import importExport, importIBT, maths
 from functionalities.RTDB import RTDB
+import numpy as np
 
 
 def decorator(fn):
@@ -22,13 +23,13 @@ def decorator(fn):
     return wrapper
 
 
-class iDDUGUIThread(IDDUThread):
-
-    def __init__(self, rate):
-        IDDUThread.__init__(self, rate)
-
-    def run(self):
-        Gui()
+# class iDDUGUIThread(IDDUThread):
+# 
+#     def __init__(self, rate):
+#         IDDUThread.__init__(self, rate)
+# 
+#     def run(self):
+#         Gui()
 
 
 class Stream(QtCore.QObject):
@@ -39,6 +40,7 @@ class Stream(QtCore.QObject):
 
 
 class Gui(IDDUItem):
+
     @decorator
     def closeEvent(self, event):
         reply = QMessageBox.question(self.iDDU, 'Close iDDU?', "Are you sure to quit iDDU?", QMessageBox.Yes, QMessageBox.No)
@@ -46,10 +48,9 @@ class Gui(IDDUItem):
         if reply == QMessageBox.Yes:
             print("Closing iDDU...")
             event.accept()
-            sys.exit(self.exec())
+            sys.exit(self.exec_())
         else:
             event.ignore()
-
 
     def __init__(self):
         IDDUItem.__init__(self)
@@ -81,18 +82,17 @@ class Gui(IDDUItem):
 
         sys.exit(app.exec_())
 
-
-
     def setupUi(self, iDDU):
         self.iDDU = iDDU
         self.iDDU.setObjectName("iDDU")
-        self.iDDU.resize(798, 448)
+        # self.iDDU.resize(798, 448)
+        self.iDDU.setFixedSize(798, 448)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(self.db.dir + "/files/gui/iRacing_Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iDDU.setWindowIcon(icon)
 
         self.tabWidget = QtWidgets.QTabWidget(iDDU)
-        self.tabWidget.setGeometry(QtCore.QRect(12, 11, 761, 445))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 781, 431))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -466,7 +466,7 @@ class Gui(IDDUItem):
         self.tabFuelManagement = QtWidgets.QWidget()
         self.tabFuelManagement.setObjectName("tabFuelManagement")
         self.groupBox_9 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 201))
+        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 251))
         self.groupBox_9.setObjectName("groupBox_9")
         self.checkBox_EnableFuelManagement = QtWidgets.QCheckBox(self.groupBox_9)
         self.checkBox_EnableFuelManagement.setGeometry(QtCore.QRect(20, 30, 161, 17))
@@ -481,6 +481,19 @@ class Gui(IDDUItem):
         self.calcRollOutButton = QtWidgets.QPushButton(self.groupBox_9)
         self.calcRollOutButton.setGeometry(QtCore.QRect(20, 110, 191, 23))
         self.calcRollOutButton.setObjectName("calcRollOutButton")
+        self.label_VFuelTGT = QtWidgets.QLabel(self.groupBox_9)
+        self.label_VFuelTGT.setGeometry(QtCore.QRect(20, 210, 101, 22))
+        self.label_VFuelTGT.setObjectName("label_VFuelTGT")
+        self.doubleSpinBox_VFuelTGT = QtWidgets.QDoubleSpinBox(self.groupBox_9)
+        self.doubleSpinBox_VFuelTGT.setGeometry(QtCore.QRect(140, 210, 71, 22))
+        self.doubleSpinBox_VFuelTGT.setPrefix("")
+        self.doubleSpinBox_VFuelTGT.setSuffix("")
+        self.doubleSpinBox_VFuelTGT.setDecimals(2)
+        self.doubleSpinBox_VFuelTGT.setMinimum(0.0)
+        self.doubleSpinBox_VFuelTGT.setMaximum(20.0)
+        self.doubleSpinBox_VFuelTGT.setSingleStep(0.01)
+        self.doubleSpinBox_VFuelTGT.setProperty("value", self.db.config['VFuelTgt'])
+        self.doubleSpinBox_VFuelTGT.setObjectName("doubleSpinBox_VFuelTGT")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabFuelManagement)
         self.groupBox_4.setGeometry(QtCore.QRect(250, 10, 511, 141))
         self.groupBox_4.setObjectName("groupBox_4")
@@ -531,19 +544,19 @@ class Gui(IDDUItem):
         self.doubleSpinBox_tLiftGap.setMinimum(-3.0)
         self.doubleSpinBox_tLiftGap.setMaximum(3.0)
         self.doubleSpinBox_tLiftGap.setSingleStep(0.01)
-        self.doubleSpinBox_tLiftGap.setProperty("value", 0.5)
+        self.doubleSpinBox_tLiftGap.setProperty("value", self.db.config['tLiftGap'])
         self.doubleSpinBox_tLiftGap.setObjectName("doubleSpinBox_tLiftGap")
         self.tabWidget.addTab(self.tabFuelManagement, "")
         self.tabDebug = QtWidgets.QWidget()
         self.tabDebug.setObjectName("tabDebug")
         self.textEdit = QtWidgets.QTextEdit(self.tabDebug)
-        self.textEdit.setGeometry(QtCore.QRect(10, 40, 741, 341))
+        self.textEdit.setGeometry(QtCore.QRect(10, 40, 756, 331))
         self.textEdit.setObjectName("textEdit")
         self.pushButtonInvoke = QtWidgets.QPushButton(self.tabDebug)
-        self.pushButtonInvoke.setGeometry(QtCore.QRect(650, 390, 101, 23))
+        self.pushButtonInvoke.setGeometry(QtCore.QRect(670, 380, 101, 23))
         self.pushButtonInvoke.setObjectName("pushButtonInvoke")
         self.lineEditInvoke = QtWidgets.QLineEdit(self.tabDebug)
-        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 390, 631, 20))
+        self.lineEditInvoke.setGeometry(QtCore.QRect(10, 380, 651, 20))
         self.lineEditInvoke.setObjectName("lineEditInvoke")
         self.pushButtonSaveSnapshot = QtWidgets.QPushButton(self.tabDebug)
         self.pushButtonSaveSnapshot.setGeometry(QtCore.QRect(10, 10, 101, 23))
@@ -718,9 +731,10 @@ class Gui(IDDUItem):
         self.pushButtonMultiIncrease.clicked.connect(self.assignButtonMultiIncrease)
         self.pushButtonSaveDDUPage.clicked.connect(self.assignButtonDDUPage)
         
-
         self.doubleSpinBox_tLiftReaction.valueChanged.connect(self.setTLiftReaction)
         self.doubleSpinBox_tLiftGap.valueChanged.connect(self.setTLift)
+        self.doubleSpinBox_VFuelTGT.valueChanged.connect(self.setVFuelTgt)
+        
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -818,6 +832,7 @@ class Gui(IDDUItem):
         self.openButton_2.setText(_translate("iDDU", "Load Configuration"))
         self.calcFuelSavingButton.setText(_translate("iDDU", "Calculate fuel saving from data"))
         self.calcRollOutButton.setText(_translate("iDDU", "Calculate roll-out curves"))
+        self.label_VFuelTGT.setText(_translate("iDDU", "Consumption Target"))
         self.groupBox_4.setTitle(_translate("iDDU", "Audio Settings"))
         self.pushButton_testFuelTone.setText(_translate("iDDU", "Play Test Tone"))
         self.label_FuelToneFrequency.setText(_translate("iDDU", "Tone Frequency"))
@@ -1189,6 +1204,14 @@ class Gui(IDDUItem):
 
         self.db.config['BEnableLiftTones'] = True
 
+        self.doubleSpinBox_VFuelTGT.setMinimum(np.min(self.db.FuelTGTLiftPoints['VFuelTGT']))
+        self.doubleSpinBox_VFuelTGT.setMaximum(np.max(self.db.FuelTGTLiftPoints['VFuelTGT']))
+        self.doubleSpinBox_VFuelTGT.setProperty("value", self.db.config['VFuelTgt'])
+        
+        self.retranslateUi(self.iDDU)
+    
+    def setVFuelTgt(self):
+        self.db.config['VFuelTgt'] = self.doubleSpinBox_VFuelTGT.value()
         self.retranslateUi(self.iDDU)
 
     def calcUpshiftRPM(self):
