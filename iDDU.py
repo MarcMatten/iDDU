@@ -431,7 +431,7 @@ if __name__ == "__main__":
     rtdbThread.setDB(myRTDB)
     calcThread = iDDUcalc.IDDUCalcThread(0.017)
     shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
-    # guiThread = iDDUgui.iDDUGUIThread(0.02)
+    guiThread = iDDUgui.iDDUGUIThread(0.02)
     raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
     loggerThread = Logger.LoggerThread(0.02)
     ms = MultiSwitch.MultiSwitch(0.005)
@@ -448,7 +448,7 @@ if __name__ == "__main__":
     time.sleep(0.1)
     rtdbThread.start()
     time.sleep(0.1)
-    # guiThread.start()
+    guiThread.start()
     time.sleep(0.1)
     shiftToneThread.start()
     time.sleep(0.1)
@@ -458,8 +458,6 @@ if __name__ == "__main__":
     time.sleep(0.1)
     ms.start()
     time.sleep(0.1)
-
-    iDDUgui.Gui()
 
     iRRender = None
 

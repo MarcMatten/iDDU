@@ -23,13 +23,13 @@ def decorator(fn):
     return wrapper
 
 
-# class iDDUGUIThread(IDDUThread):
-# 
-#     def __init__(self, rate):
-#         IDDUThread.__init__(self, rate)
-# 
-#     def run(self):
-#         Gui()
+class iDDUGUIThread(IDDUThread):
+
+    def __init__(self, rate):
+        IDDUThread.__init__(self, rate)
+
+    def run(self):
+        Gui()
 
 
 class Stream(QtCore.QObject):

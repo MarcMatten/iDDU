@@ -893,7 +893,7 @@ class IDDUCalcThread(IDDUThread):
         else:
             self.db.RenderLabel[31] = False
 
-        if 'dcWeightJackerRight' in self.db.car.dcList:
+        if 'dcWeightJackerRight' in self.db.car.dcList and self.db.WeekendInfo['Category'] == 'Oval':
             self.db.RenderLabel[32] = True
         else:
             self.db.RenderLabel[32] = False

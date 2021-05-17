@@ -129,7 +129,7 @@ class RenderScreen(RenderMain):
         self.frames[4].addLabel('dcTractionControl2Str', LabeledValue2('TC2', 120, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 12)
         self.frames[4].addLabel('dcRARBStr', LabeledValue2('RARB', 219, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 31)
         self.frames[4].addLabel('DRSStr', LabeledValue2('DRS', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 2, 5), 18)
-        self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 3, 4), 19)
+        self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 21, 387, 67, '0', self.fontSmall, self.fontLarge, 3, 4), 19)
 
         self.frames[5].addLabel('FuelLevelStr', LabeledValue2('Remaining', 318, 303, 125, '-', self.fontSmall, self.fontLarge, 0, 2), 3)
         self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 481, 303, 125, '-', self.fontSmall, self.fontLarge, 1, 0), 7)
