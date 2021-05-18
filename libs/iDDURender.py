@@ -270,7 +270,7 @@ class RenderScreen(RenderMain):
 
                 EngineWarnings = self.ir['EngineWarnings']
                 # warning and alarm messages
-                if EngineWarnings & 0x10 and self.db.Speed > 10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
+                if EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
                     self.warningLabel('PIT LIMITER', self.blue, self.white, 4)
                 if EngineWarnings & 0x1:
                     self.warningLabel('WATER TEMP HIGH', self.red, self.white, 4)
@@ -306,7 +306,7 @@ class RenderScreen(RenderMain):
                 # if SessionFlags & 0x100000:
                 #     self.warningLabel('REPAIR', self.white, self.black)
 
-                if self.db.OnPitRoad and self.db.Speed > 10 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
+                if self.db.OnPitRoad and self.db.Speed > 5 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
                     self.warningLabel('PIT LIMITER OFF', self.red, self.white, 4)
 
                 # driver control change

@@ -437,7 +437,7 @@ class IDDUCalcThread(IDDUThread):
                                     self.db.Alarm[4] = 1
                                     self.db.P2PCounter = self.db.P2PCounter + 1
 
-                            if self.db.SessionTime < self.db.P2PTime + 3:
+                            if self.db.SessionTime < self.db.P2PTime + 20:
                                 self.db.Alarm[4] = 1
 
                             self.db.old_PushToPass = self.db.PushToPass
@@ -1015,6 +1015,7 @@ class IDDUCalcThread(IDDUThread):
             self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
             self.db.AirDensity) + ' kg/m³     vWind: '
 
+        # display fuel consumption information
         self.db.RenderLabel[4] = True
         self.db.RenderLabel[5] = True
         self.db.RenderLabel[28] = False
