@@ -352,7 +352,13 @@ class IDDUCalcThread(IDDUThread):
                             self.db.RenderLabel[29] = False
 
                         if len(self.db.FuelConsumptionList) >= 1:
-                            self.db.FuelAvgConsumption = maths.meanTol(self.db.FuelConsumptionList, 0.2)
+                            if self.db.config['NFuelConsumptionMethod'] == 0:
+                                self.db.FuelAvgConsumption = maths.meanTol(self.db.FuelConsumptionList, 0.2)
+                            elif self.db.config['NFuelConsumptionMethod'] == 1:
+                                self.db.FuelAvgConsumption = np.mean(self.db.FuelConsumptionList[-3:])
+                            elif self.db.config['NFuelConsumptionMethod'] == 2 and self.db.WeekendInfo['TrackName'] in self.db.car.VFuelLap:
+                                self.db.FuelAvgConsumption = self.db.car.VFuelLap[self.db.WeekendInfo['TrackName']]
+
                             self.db.NLapRemaining = self.db.FuelLevel / self.db.FuelAvgConsumption
                             if self.db.NLapRemaining < 3:
                                 self.db.Alarm[3] = 2
@@ -1076,7 +1082,7 @@ class IDDUCalcThread(IDDUThread):
 
         if BRecordtLap:
             if maths.strictly_increasing(self.time) and maths.strictly_increasing(self.LapDistPct):
-                self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct)
+                self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct, self.db.FuelConsumptionList[-1])
                 self.db.car.save(self.db.dir)
                 self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 

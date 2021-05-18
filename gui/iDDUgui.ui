@@ -1380,7 +1380,7 @@
        <x>10</x>
        <y>10</y>
        <width>231</width>
-       <height>251</height>
+       <height>321</height>
       </rect>
      </property>
      <property name="title">
@@ -1483,6 +1483,71 @@
       </property>
       <property name="value">
        <double>0.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_NFuelConsumptionMethod">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>280</y>
+        <width>191</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string>iRacing First RPM</string>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="maxVisibleItems">
+       <number>3</number>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+      </property>
+      <item>
+       <property name="text">
+        <string>iRacing First RPM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>iRacing Shift RPM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>iRacing Last RPM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>iRacing Blink RPM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>User defined</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>from Car properties</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_NFuelConsumptionMethod">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>250</y>
+        <width>191</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fuel Consumption Calculation Method</string>
       </property>
      </widget>
     </widget>

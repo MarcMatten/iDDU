@@ -15,6 +15,7 @@ class Car:
         self.NTC1Disabled = 0
         self.NTC2Disabled = 0
         self.tLap = {}
+        self.VFuelLap = {}
         self.UserShiftRPM = 0
         self.UpshiftStrategy = 0
         self.UserShiftFlag = 0
@@ -129,8 +130,9 @@ class Car:
     def setGearRatios(self, rGearRatios):
         self.rGearRatios = rGearRatios
 
-    def addLapTime(self, trackName, tLap, LapDistPct, LapDistPctTrack):
+    def addLapTime(self, trackName, tLap, LapDistPct, LapDistPctTrack, VFuelLap):
         self.tLap[trackName] = np.interp(LapDistPctTrack, LapDistPct, tLap).tolist()
+        self.VFuelLap[trackName] = VFuelLap
 
     def save(self, *args):
 

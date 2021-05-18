@@ -466,7 +466,7 @@ class Gui(IDDUItem):
         self.tabFuelManagement = QtWidgets.QWidget()
         self.tabFuelManagement.setObjectName("tabFuelManagement")
         self.groupBox_9 = QtWidgets.QGroupBox(self.tabFuelManagement)
-        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 251))
+        self.groupBox_9.setGeometry(QtCore.QRect(10, 10, 231, 321))
         self.groupBox_9.setObjectName("groupBox_9")
         self.checkBox_EnableFuelManagement = QtWidgets.QCheckBox(self.groupBox_9)
         self.checkBox_EnableFuelManagement.setGeometry(QtCore.QRect(20, 30, 161, 17))
@@ -494,6 +494,17 @@ class Gui(IDDUItem):
         self.doubleSpinBox_VFuelTGT.setSingleStep(0.01)
         self.doubleSpinBox_VFuelTGT.setProperty("value", self.db.config['VFuelTgt'])
         self.doubleSpinBox_VFuelTGT.setObjectName("doubleSpinBox_VFuelTGT")
+        self.comboBox_NFuelConsumptionMethod = QtWidgets.QComboBox(self.groupBox_9)
+        self.comboBox_NFuelConsumptionMethod.setGeometry(QtCore.QRect(20, 280, 191, 22))
+        self.comboBox_NFuelConsumptionMethod.setMaxVisibleItems(3)
+        self.comboBox_NFuelConsumptionMethod.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.comboBox_NFuelConsumptionMethod.setObjectName("comboBox_NFuelConsumptionMethod")
+        self.comboBox_NFuelConsumptionMethod.addItem("Average all laps")
+        self.comboBox_NFuelConsumptionMethod.addItem("Average last 3 laps")
+        self.comboBox_NFuelConsumptionMethod.addItem("Reference lap")
+        self.label_NFuelConsumptionMethod = QtWidgets.QLabel(self.groupBox_9)
+        self.label_NFuelConsumptionMethod.setGeometry(QtCore.QRect(20, 250, 191, 22))
+        self.label_NFuelConsumptionMethod.setObjectName("label_NFuelConsumptionMethod")
         self.groupBox_4 = QtWidgets.QGroupBox(self.tabFuelManagement)
         self.groupBox_4.setGeometry(QtCore.QRect(250, 10, 511, 141))
         self.groupBox_4.setObjectName("groupBox_4")
@@ -734,7 +745,7 @@ class Gui(IDDUItem):
         self.doubleSpinBox_tLiftReaction.valueChanged.connect(self.setTLiftReaction)
         self.doubleSpinBox_tLiftGap.valueChanged.connect(self.setTLift)
         self.doubleSpinBox_VFuelTGT.valueChanged.connect(self.setVFuelTgt)
-        
+        self.comboBox_NFuelConsumptionMethod.currentIndexChanged.connect(self.NFuelConsumptionMethod)
 
         # finish = self.iDDU.closeEvent()
         # QtCore.QMetaObject.connectSlotsByName(iDDU)
@@ -744,7 +755,9 @@ class Gui(IDDUItem):
         # finish.triggered.connect(self.closeEvent)
 
         self.retranslateUi(iDDU)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
+        self.comboBox.setCurrentIndex(0)
+        self.comboBox_NFuelConsumptionMethod.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(iDDU)
         self.UpshiftStrategy()
 
@@ -833,6 +846,7 @@ class Gui(IDDUItem):
         self.calcFuelSavingButton.setText(_translate("iDDU", "Calculate fuel saving from data"))
         self.calcRollOutButton.setText(_translate("iDDU", "Calculate roll-out curves"))
         self.label_VFuelTGT.setText(_translate("iDDU", "Consumption Target"))
+        self.label_NFuelConsumptionMethod.setText(_translate("iDDU", "Fuel Consumption Calculation Method"))
         self.groupBox_4.setTitle(_translate("iDDU", "Audio Settings"))
         self.pushButton_testFuelTone.setText(_translate("iDDU", "Play Test Tone"))
         self.label_FuelToneFrequency.setText(_translate("iDDU", "Tone Frequency"))
@@ -871,6 +885,7 @@ class Gui(IDDUItem):
         self.checkBox_PitCommandControl.setChecked(self.db.config['BPitCommandControl'])
         self.comboBox_FuelMethod.setCurrentIndex(self.db.config['NFuelSetMethod'])
         self.checkBox_UpshiftTone.setChecked(self.db.config['ShiftToneEnabled'])
+        self.comboBox_NFuelConsumptionMethod.setCurrentIndex(self.db.config['NFuelConsumptionMethod'])
 
         self.lineEditDDUPage.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['DDUPage']['Joystick'], self.db.config['ButtonAssignments']['DDUPage']['Button']))
         self.lineEditNextMulti.setText('Device: {} | Button: {}'.format(self.db.config['ButtonAssignments']['NextMulti']['Joystick'], self.db.config['ButtonAssignments']['NextMulti']['Button']))
@@ -1138,7 +1153,7 @@ class Gui(IDDUItem):
 
         # add lap time to car
         if maths.strictly_increasing(d['tLap']) and maths.strictly_increasing(d['LapDistPct']):
-            self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, track.LapDistPct)
+            self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, track.LapDistPct, d['VFuelLap'])
             self.db.car.save(self.db.dir)
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tReference lap time set successfully!')
         else:
@@ -1299,7 +1314,6 @@ class Gui(IDDUItem):
         else:
             self.iDDU.qTimer.setInterval(500)
 
-
     def SetiRPath(self):
         dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select iRacing Directory', './')
 
@@ -1326,6 +1340,10 @@ class Gui(IDDUItem):
 
     def setTLiftReaction(self):
         self.db.config['tReactionLift'] = self.doubleSpinBox_tLiftReaction.value()
+        self.retranslateUi(self.iDDU)
+
+    def NFuelConsumptionMethod(self):
+        self.db.config['NFuelConsumptionMethod'] = self.comboBox_NFuelConsumptionMethod.currentIndex()
         self.retranslateUi(self.iDDU)
 
     def __del__(self):
