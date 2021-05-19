@@ -154,7 +154,7 @@ calcData = {'startUp': False,
             'BWasOnPitRoad': False,
             'BDDUexecuting': False,
             'WasOnTrack': False,
-            'StintLap': 0,
+            'NStintLap': 0,
             'oldSessionNum': -1,
             'oldLap': 0.1,
             'FuelConsumptionList': [],
@@ -395,7 +395,9 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'BEnableLiftTones': ['Enable Lift Tones', True, 0, True, None, None, None, ['Off', 'On']],
     'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']],
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1],
-    'NFuelConsumptionMethod': ['Fuel Consumption Method', True, 1, 0, 0, 2, 1, ['Avg', 'Last 3', 'Ref']]
+    'NFuelConsumptionMethod': ['Fuel Consumption Method', True, 1, 0, 0, 2, 1, ['Avg', 'Last 3', 'Ref']],
+    'NFuelTargetMethod': ['Fuel Target Method', True, 1, 0, 0, 2, 1, ['Static', 'Finish', 'Stint']],
+    'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1]
 }
 
 if __name__ == "__main__":

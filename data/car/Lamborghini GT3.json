@@ -385,6 +385,10 @@
         4000,
         4000
     ],
+    "VFuelLap": {
+        "midohio full": 2.453919696741735,
+        "sebring club": 2.0511874736971767
+    },
     "dcList": {
         "dcABS": [
             "ABS",
