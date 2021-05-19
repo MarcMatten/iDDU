@@ -755,7 +755,7 @@ class Gui(IDDUItem):
         # finish.triggered.connect(self.closeEvent)
 
         self.retranslateUi(iDDU)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
         self.comboBox.setCurrentIndex(0)
         self.comboBox_NFuelConsumptionMethod.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(iDDU)
