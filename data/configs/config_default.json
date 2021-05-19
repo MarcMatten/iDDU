@@ -43,8 +43,9 @@
         4000
     ],
     "VFuelTgt": 3.05,
-    "VFuelTgtOffset": 0,
+    "VFuelTgtOffset": 0,    
     "VUserFuelSet": 0,
+    "NFuelConsumptionMethod": 0,
     "fFuelBeep": 300,
     "fShiftBeep": 500,
     "iRPath": "",
