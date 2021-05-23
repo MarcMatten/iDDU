@@ -345,7 +345,7 @@ class IDDUCalcThread(IDDUThread):
                                 self.time = np.append(self.time, self.db.SessionTime)
 
                         # fuel consumption -----------------------------------------------------------------------------------------
-                        if not self.db.config['BEnableLiftTones']:
+                        if not self.db.config['NFuelTargetMethod']:
                             self.db.RenderLabel[4] = True
                             self.db.RenderLabel[5] = True
                             self.db.RenderLabel[28] = False
@@ -447,7 +447,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.Alarm[1] = 3
 
                         # Lift beeps
-                        if self.db.config['BEnableLiftTones'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
+                        if self.db.config['NFuelTargetMethod'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
                             # get fuel data at reference point
                             if self.db.BUpdateVFuelDelta and self.db.LapDistPct * 100 >= self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]:
                                 if self.db.NNextLiftPoint > 0:
@@ -1003,9 +1003,9 @@ class IDDUCalcThread(IDDUThread):
         VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3) / self.db.LapsToGo
         VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / (self.db.config['NLapsStintPlanned'] - self.db.StintLap)
 
-        if self.db.config['NFuelTargetMethod'] == 1:  # Finish
+        if self.db.config['NFuelTargetMethod'] == 2:  # Finish
             self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
-        elif self.db.config['NFuelTargetMethod'] == 2:  # Stint
+        elif self.db.config['NFuelTargetMethod'] == 3:  # Stint
             if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] < self.db.CarIdxPitStops[self.db.DriverCarIdx]:
                 self.setFuelTgt(VFuelConsumptionTargetStint, 0)
             else:

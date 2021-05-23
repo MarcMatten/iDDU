@@ -2,7 +2,6 @@
     "BBeginFueling": false,
     "BChangeTyres": false,
     "BEnableLapLogging": false,
-    "BEnableLiftTones": false,
     "BEnableRaceLapEstimation": false,
     "BLoggerActive": false,
     "BPitCommandControl": false,
