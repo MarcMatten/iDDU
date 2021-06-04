@@ -31,3 +31,7 @@
 /data/fuelSaving
 /data/shiftTone
 /data/track
+/libs/*.pyo
+/libs/*.bak
+*.pyo
+/data/configs/config.json

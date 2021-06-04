@@ -25,94 +25,94 @@
         "CarSetup": {
             "Chassis": {
                 "Front": {
-                    "ArbPreload": "-55.7 Nm",
-                    "BarBladePosition": 5,
-                    "BarBlades": "Ti",
-                    "BarDiameter": "Large",
-                    "DropLinkPosition": "Wide (Slow)",
+                    "ArbPreload": "-3.0 Nm",
+                    "BarBladePosition": 4,
+                    "BarBlades": "Steel",
+                    "BarDiameter": "Small",
+                    "DropLinkPosition": "Narrow (Fast)",
                     "RdSpring": "None",
-                    "RdSpringGap": "118.2 mm"
+                    "RdSpringGap": "119.0 mm"
                 },
                 "General": {
                     "BallastForward": "0 mm",
                     "BrakePressure": "Medium",
                     "BrakePressureBias": "57.9%",
-                    "CrossWeight": "672 N to the left front",
+                    "CrossWeight": "-439 N to the left front",
                     "NoseWeight": "47.2%",
                     "SteeringOffset": "-6 deg",
                     "SteeringPinion": "6 tooth",
                     "Wheelbase": "119\""
                 },
                 "LeftFront": {
-                    "Camber": "+2.64 deg",
-                    "Caster": "+5.16 deg",
-                    "CornerWeight": "2378 N",
-                    "PushrodLength": "617.8 mm",
-                    "RideHeight": "17.5 mm",
-                    "SpringRate": "394 N/mm",
+                    "Camber": "+2.52 deg",
+                    "Caster": "+6.23 deg",
+                    "CornerWeight": "1822 N",
+                    "PushrodLength": "618.0 mm",
+                    "RideHeight": "19.8 mm",
+                    "SpringRate": "490 N/mm",
                     "ToeIn": "-1 mm"
                 },
                 "LeftRear": {
-                    "Camber": "+2.93 deg",
-                    "CornerWeight": "1682 N",
-                    "PushrodLength": "507.3 mm",
-                    "RideHeight": "47.6 mm",
-                    "SpringRate": "473 N/mm",
+                    "Camber": "+2.24 deg",
+                    "CornerWeight": "2299 N",
+                    "PushrodLength": "509.0 mm",
+                    "RideHeight": "44.1 mm",
+                    "SpringRate": "525 N/mm",
                     "ToeIn": "+0 mm"
                 },
                 "Rear": {
                     "FuelLevel": "70.0 L",
                     "RdSpring": "None",
-                    "RdSpringGap": "177.2 mm",
-                    "WeightJacker": 20
+                    "RdSpringGap": "173.9 mm",
+                    "WeightJacker": 0
                 },
                 "RearArb": {
-                    "ArbBlades": 2,
+                    "ArbBlades": 4,
                     "ArbDiameter": "Small",
                     "ArbDropLinkPosition": "Wide (Slow)",
-                    "ArbPreload": "22.7 Nm"
+                    "ArbPreload": "3.3 Nm"
                 },
                 "RightFront": {
-                    "Camber": "-2.87 deg",
-                    "Caster": "+6.39 deg",
-                    "CornerWeight": "1704 N",
-                    "PushrodLength": "631.2 mm",
-                    "RideHeight": "32.8 mm",
-                    "SpringRate": "499 N/mm",
-                    "ToeIn": "-1 mm"
+                    "Camber": "-3.35 deg",
+                    "Caster": "+7.94 deg",
+                    "CornerWeight": "2261 N",
+                    "PushrodLength": "631.1 mm",
+                    "RideHeight": "30.5 mm",
+                    "SpringRate": "525 N/mm",
+                    "ToeIn": "-0 mm"
                 },
                 "RightRear": {
-                    "Camber": "-1.59 deg",
-                    "CornerWeight": "2884 N",
-                    "PushrodLength": "515.9 mm",
-                    "SpringRate": "438 N/mm",
-                    "ToeIn": "+0 mm"
+                    "Camber": "-1.10 deg",
+                    "CornerWeight": "2268 N",
+                    "PushrodLength": "515.5 mm",
+                    "SpringRate": "499 N/mm",
+                    "ToeIn": "-2 mm"
                 }
             },
             "Dampers": {
                 "LeftFrontDamper": {
-                    "HighSpeedComp": "-9 clicks",
-                    "HighSpeedRebound": "-11 clicks",
-                    "LowSpeedComp": "-12 clicks",
-                    "LowSpeedRebound": "-7 clicks"
+                    "HighSpeedComp": "0 clicks",
+                    "HighSpeedRebound": "0 clicks",
+                    "LowSpeedComp": "0 clicks",
+                    "LowSpeedRebound": "0 clicks"
                 },
                 "LeftRearDamper": {
-                    "HighSpeedComp": "-8 clicks",
-                    "HighSpeedRebound": "-19 clicks",
-                    "LowSpeedComp": "-6 clicks",
-                    "LowSpeedRebound": "-18 clicks"
+                    "HighSpeedComp": "-23 clicks",
+                    "HighSpeedRebound": "0 clicks",
+                    "LowSpeedComp": "-23 clicks",
+                    "LowSpeedRebound": "0 clicks"
                 },
                 "RightFrontDamper": {
-                    "HighSpeedComp": "-16 clicks",
-                    "HighSpeedRebound": "-9 clicks",
-                    "LowSpeedComp": "-7 clicks",
-                    "LowSpeedRebound": "-2 clicks"
+                    "HighSpeedComp": "0 clicks",
+                    "HighSpeedRebound": "0 clicks",
+                    "LowSpeedComp": "0 clicks",
+                    "LowSpeedRebound": "0 clicks"
                 },
                 "RightRearDamper": {
-                    "HighSpeedComp": "-18 clicks",
-                    "HighSpeedRebound": "-16 clicks",
-                    "LowSpeedComp": "-13 clicks",
-                    "LowSpeedRebound": "-10 clicks"
+                    "HighSpeedComp": "0 clicks",
+                    "HighSpeedRebound": "0 clicks",
+                    "LowSpeedComp": "0 clicks",
+                    "LowSpeedRebound": "0 clicks"
                 }
             },
             "Drivetrain": {
@@ -126,22 +126,22 @@
                     "TurboBoostPressure": "Indy race"
                 },
                 "Gearbox": {
-                    "FifthGear": "24/29, 366.6 Km/h",
+                    "FifthGear": "20/24, 369.2 Km/h",
                     "FinalDrive": "20/47",
-                    "FirstGear": "14/34, 182.4 Km/h",
-                    "FourthGear": "22/28, 348.1 Km/h",
-                    "SecondGear": "17/30 , 251.0 Km/h",
-                    "SixthGear": "19/22, 382.6 Km/h",
-                    "ThirdGear": "19/27, 311.7 Km/h"
+                    "FirstGear": "16/34, 208.5 Km/h",
+                    "FourthGear": "20/27, 328.1 Km/h",
+                    "SecondGear": "17/31, 242.9 Km/h",
+                    "SixthGear": "20/23, 385.2 Km/h",
+                    "ThirdGear": "19/30, 280.6 Km/h"
                 }
             },
             "TiresAero": {
                 "AeroCalculator": {
-                    "AvgFrontRhAtSpeed": "10.3 mm",
-                    "AvgRearRhAtSpeed": "20.6 mm",
-                    "AvgTiltAtSpeed": "0.0 mm",
-                    "DownforceToDrag": "3.607:1",
-                    "FrontDownforce": "44.25%"
+                    "AvgFrontRhAtSpeed": "7.9 mm",
+                    "AvgRearRhAtSpeed": "23.8 mm",
+                    "AvgTiltAtSpeed": "-1.6 mm",
+                    "DownforceToDrag": "3.698:1",
+                    "FrontDownforce": "44.00%"
                 },
                 "BodyAero": {
                     "Diffuser": "Sidewall ON/Strakes Z+15",
@@ -149,40 +149,40 @@
                     "TrailingEdgeWicker": "No wicker"
                 },
                 "FrontAero": {
-                    "WingAngle": "-0.50 deg",
-                    "WingEndplateAngle": "1 deg",
+                    "WingAngle": "-2.00 deg",
+                    "WingEndplateAngle": "-1 deg",
                     "WingFlapConfig": "Single plane",
-                    "WingMainplaneExt": true,
-                    "WingWicker": "STEP 1"
+                    "WingMainplaneExt": false,
+                    "WingWicker": "STEP 3"
                 },
                 "LeftFront": {
-                    "ColdPressure": "227 kPa",
-                    "LastHotPressure": "263 kPa",
-                    "LastTempsOMI": "124C, 114C, 83C",
-                    "TreadRemaining": "96%, 96%, 100%"
+                    "ColdPressure": "234 kPa",
+                    "LastHotPressure": "241 kPa",
+                    "LastTempsOMI": "40C, 40C, 40C",
+                    "TreadRemaining": "100%, 100%, 100%"
                 },
                 "LeftRear": {
-                    "ColdPressure": "227 kPa",
-                    "LastHotPressure": "267 kPa",
-                    "LastTempsOMI": "121C, 103C, 81C",
-                    "TreadRemaining": "97%, 99%, 100%"
+                    "ColdPressure": "234 kPa",
+                    "LastHotPressure": "231 kPa",
+                    "LastTempsOMI": "40C, 40C, 40C",
+                    "TreadRemaining": "100%, 100%, 100%"
                 },
                 "RearAero": {
                     "WingAngle": "2.00 deg",
                     "WingFlapConfig": "Single plane",
-                    "WingWicker": "3/8\" x 24.5\" span"
+                    "WingWicker": "3/8\" x 13.2\" span"
                 },
                 "RightFront": {
                     "ColdPressure": "241 kPa",
-                    "LastHotPressure": "284 kPa",
-                    "LastTempsIMO": "128C, 123C, 114C",
-                    "TreadRemaining": "94%, 94%, 96%"
+                    "LastHotPressure": "241 kPa",
+                    "LastTempsIMO": "40C, 40C, 40C",
+                    "TreadRemaining": "100%, 100%, 100%"
                 },
                 "RightRear": {
                     "ColdPressure": "241 kPa",
-                    "LastHotPressure": "299 kPa",
-                    "LastTempsIMO": "147C, 145C, 134C",
-                    "TreadRemaining": "92%, 92%, 95%"
+                    "LastHotPressure": "241 kPa",
+                    "LastTempsIMO": "40C, 40C, 40C",
+                    "TreadRemaining": "100%, 100%, 100%"
                 },
                 "TireCompound": {
                     "TireCompound": "Primary"
@@ -199,40 +199,40 @@
             6,
             7
         ],
-        "SetupName": "indianapolis_ovalindypit.sto",
+        "SetupName": "Indy\\Indy_500_2021_Race.sto",
         "nMotorShiftOptimal": [
-            11831.926963457257,
-            12078.975164960058,
-            11977.839859175963,
-            11990.169362804889,
-            11874.073687208227,
+            11873.593830852993,
+            11916.892113972168,
+            11964.788035457048,
+            11972.956568469164,
+            11781.36210625599,
             99999,
             99999
         ],
         "nMotorShiftTarget": [
-            11308.149448275391,
-            11880.489174007324,
-            11902.365263085552,
-            11964.928128778052,
-            11869.186624041364,
+            11484.821396847998,
+            11666.769879961705,
+            11819.121247949295,
+            11917.591792517671,
+            11776.054646758186,
             99999,
             99999
         ],
         "vCarShiftOptimal": [
-            48.412391662597656,
-            68.65211486816406,
-            84.75273402098162,
-            94.82060241699219,
-            98.9747314453125,
+            55.84584045410156,
+            65.51953048706055,
+            76.18307266235351,
+            89.34396667480469,
+            99.00923755401242,
             99999,
             99999
         ],
         "vCarShiftTarget": [
-            46.16780694765405,
-            67.49476428193377,
-            84.21072589881194,
-            94.61869495672597,
-            98.93325330628363,
+            53.97596592526563,
+            64.12503527742834,
+            75.2305928962994,
+            88.92711799359866,
+            98.96447557631843,
             99999,
             99999
         ]
@@ -256,6 +256,7 @@
         4000,
         4000
     ],
+    "VFuelLap": {},
     "dcList": {
         "dcAntiRollFront": [
             "AntiRollFront",
@@ -289,7 +290,7 @@
         ],
         "dcPushToPass": [
             "PushToPass",
-            true,
+            false,
             0
         ],
         "dcTearOffVisor": [
@@ -318,12 +319,13 @@
         -15
     ],
     "rGearRatios": [
-        3.765268092688598,
-        2.7347169271199463,
-        2.2015420678208435,
-        1.9712097130019175,
-        1.8705216613192766,
-        1.7920919298607725
+        null,
+        3.283921850990146,
+        2.819171973490991,
+        2.4417889819675267,
+        2.088148361288884,
+        1.8555960775947955,
+        1.777966531570901
     ],
     "rSlipMapAcc": [
         4.5,

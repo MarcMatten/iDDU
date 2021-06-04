@@ -26,87 +26,87 @@
             "Chassis": {
                 "Front": {
                     "AntiRollBar": "soft",
-                    "BrakeBias": "55.0%",
+                    "BrakeBias": "54.0%",
                     "DivePlanes": 1,
-                    "ToeIn": "-3 mm"
+                    "ToeIn": "-2 mm"
                 },
                 "LeftFront": {
-                    "BumpStiffness": "+8 clicks",
-                    "Camber": "-2.4 deg",
-                    "Caster": "+6.9 deg",
-                    "CornerWeight": "1366 N",
+                    "BumpStiffness": "+9 clicks",
+                    "Camber": "-4.5 deg",
+                    "Caster": "+10.2 deg",
+                    "CornerWeight": "1365 N",
                     "ReboundStiffness": "+15 clicks",
-                    "RideHeight": "28.5 mm",
-                    "SpringPerchOffset": "38 mm",
-                    "SpringRate": "90 N/mm"
+                    "RideHeight": "26.7 mm",
+                    "SpringPerchOffset": "44 mm",
+                    "SpringRate": "120 N/mm"
                 },
                 "LeftRear": {
-                    "BumpStiffness": "+10 clicks",
-                    "Camber": "-1.3 deg",
-                    "CornerWeight": "2273 N",
-                    "ReboundStiffness": "+21 clicks",
-                    "RideHeight": "41.0 mm",
-                    "SpringPerchOffset": "42 mm",
+                    "BumpStiffness": "+11 clicks",
+                    "Camber": "-3.4 deg",
+                    "CornerWeight": "2284 N",
+                    "ReboundStiffness": "+15 clicks",
+                    "RideHeight": "47.8 mm",
+                    "SpringPerchOffset": "37 mm",
                     "SpringRate": "90 N/mm"
                 },
                 "Rear": {
-                    "AntiRollBar": "medium",
-                    "CrossWeight": "50.1%",
-                    "DiffCoastRampAngle": "55 deg",
-                    "DiffDriveRampAngle": "80 deg",
-                    "DiffPreload": "0 Nm",
-                    "FuelLevel": "32.1 L",
+                    "AntiRollBar": "firm",
+                    "CrossWeight": "50.2%",
+                    "DiffCoastRampAngle": "70 deg",
+                    "DiffDriveRampAngle": "75 deg",
+                    "DiffPreload": "75 Nm",
+                    "FuelLevel": "35.1 L",
                     "GearSet": "medium",
                     "ToeIn": "+1 mm",
-                    "WingSetting": "38.4 deg"
+                    "WingSetting": "26.4 deg"
                 },
                 "RightFront": {
-                    "BumpStiffness": "+8 clicks",
-                    "Camber": "-2.4 deg",
-                    "Caster": "+6.9 deg",
-                    "CornerWeight": "1460 N",
+                    "BumpStiffness": "+9 clicks",
+                    "Camber": "-4.5 deg",
+                    "Caster": "+10.2 deg",
+                    "CornerWeight": "1471 N",
                     "ReboundStiffness": "+15 clicks",
-                    "RideHeight": "27.3 mm",
-                    "SpringPerchOffset": "38 mm",
-                    "SpringRate": "90 N/mm"
+                    "RideHeight": "26.7 mm",
+                    "SpringPerchOffset": "43 mm",
+                    "SpringRate": "120 N/mm"
                 },
                 "RightRear": {
-                    "BumpStiffness": "+10 clicks",
-                    "Camber": "-1.2 deg",
-                    "CornerWeight": "2359 N",
-                    "ReboundStiffness": "+21 clicks",
-                    "RideHeight": "39.6 mm",
-                    "SpringPerchOffset": "42 mm",
+                    "BumpStiffness": "+11 clicks",
+                    "Camber": "-3.4 deg",
+                    "CornerWeight": "2361 N",
+                    "ReboundStiffness": "+15 clicks",
+                    "RideHeight": "47.9 mm",
+                    "SpringPerchOffset": "36 mm",
                     "SpringRate": "90 N/mm"
                 }
             },
             "Tires": {
                 "LeftFront": {
-                    "ColdPressure": "152 kPa",
-                    "LastHotPressure": "152 kPa",
-                    "LastTempsOMI": "59C, 59C, 59C",
+                    "ColdPressure": "134 kPa",
+                    "LastHotPressure": "134 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
                     "TreadRemaining": "100%, 100%, 100%"
                 },
                 "LeftRear": {
-                    "ColdPressure": "152 kPa",
-                    "LastHotPressure": "152 kPa",
-                    "LastTempsOMI": "59C, 59C, 59C",
+                    "ColdPressure": "131 kPa",
+                    "LastHotPressure": "131 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
                     "TreadRemaining": "100%, 100%, 100%"
                 },
                 "RightFront": {
-                    "ColdPressure": "152 kPa",
-                    "LastHotPressure": "152 kPa",
-                    "LastTempsIMO": "59C, 59C, 59C",
+                    "ColdPressure": "134 kPa",
+                    "LastHotPressure": "134 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
                     "TreadRemaining": "100%, 100%, 100%"
                 },
                 "RightRear": {
-                    "ColdPressure": "152 kPa",
-                    "LastHotPressure": "152 kPa",
-                    "LastTempsIMO": "59C, 59C, 59C",
+                    "ColdPressure": "131 kPa",
+                    "LastHotPressure": "131 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
                     "TreadRemaining": "100%, 100%, 100%"
                 }
             },
-            "UpdateCount": 1
+            "UpdateCount": 2
         },
         "NGear": [
             1,
@@ -117,40 +117,40 @@
             6,
             7
         ],
-        "SetupName": "bathurst.sto",
+        "SetupName": "silverstone.sto",
         "nMotorShiftOptimal": [
-            10562.693614737844,
-            10713.330040435007,
-            10733.333481716129,
-            10634.516095162388,
-            10549.63702315938,
+            10515.970708201301,
+            10668.511499534732,
+            10677.64091189366,
+            10531.107782490477,
+            10585.94012731564,
             99999,
             99999
         ],
         "nMotorShiftTarget": [
-            9638.19208659112,
-            10279.32266138706,
-            10509.726237947147,
-            10524.679413382211,
-            10512.166726163132,
+            9624.08247172679,
+            10251.032412590335,
+            10449.548503431939,
+            10412.468335182979,
+            10545.46752299266,
             99999,
             99999
         ],
         "vCarShiftOptimal": [
-            30.131956100463867,
-            41.85403060913086,
-            51.19801712036133,
-            58.70578068047628,
-            64.7216632820675,
+            30.024386978149415,
+            41.50944519042969,
+            50.682400131225585,
+            57.81594935051931,
+            64.55794814254136,
             99999,
             99999
         ],
         "vCarShiftTarget": [
-            27.34154482995593,
-            40.09588474927855,
-            50.10579294741295,
-            58.087974891534834,
-            64.48887268457115,
+            27.329232948392406,
+            39.8209397059925,
+            49.57671482475794,
+            57.15381827914249,
+            64.30996838268702,
             99999,
             99999
         ]
@@ -174,6 +174,7 @@
         4000,
         4000
     ],
+    "VFuelLap": {},
     "dcList": {
         "dcBrakeBias": [
             "BrakeBias",
@@ -203,6 +204,32 @@
         10750.0
     ],
     "name": "Radical SR8",
+    "pBrakeFMax": 0,
+    "pBrakeRMax": 0,
+    "rABSActivityMap": [
+        -2,
+        -10,
+        -15
+    ],
+    "rGearRatios": [
+        null,
+        5.3369461307766075,
+        3.9696068029460956,
+        3.268632425862329,
+        2.832081382311786,
+        2.550992830138476,
+        2.286861325119306
+    ],
+    "rSlipMapAcc": [
+        4.5,
+        7,
+        8.5
+    ],
+    "rSlipMapBrk": [
+        -4.5,
+        -7,
+        -8.5
+    ],
     "tLap": {
         "bathurst": [
             0.0,
