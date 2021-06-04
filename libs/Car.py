@@ -2,6 +2,8 @@ import numpy as np
 import time
 import irsdk
 from functionalities.libs import importExport
+import xmltodict
+
 
 
 class Car:
@@ -176,3 +178,34 @@ class Car:
     def setpBrakeMax(self, pBrakeFMax, pBrakeRMax):
         self.pBrakeFMax = pBrakeFMax
         self.pBrakeRMax = pBrakeRMax
+
+    def MotecXMLexport(self):
+        path = 'C:/Users/marc/Documents/MoTeC/i2/Workspaces/Circuit 1/Maths'
+
+        # real defaul xml
+
+        with open(path +'/default.xml') as fd:
+            doc = xmltodict.parse(fd.read())
+
+        # populate struct with new values
+        doc['Maths']['@Id'] = self.name
+        doc['Maths']['@Condition'] = '\'Vehicle Id\' == "{}"'.format(self.name)
+
+        for i in range(0, max(self.UpshiftSettings['NGear'])):
+            for exp in doc['Maths']['MathConstants']['MathConstant']:
+                if exp['@Name'] == 'nMotorShiftGear{}'.format(i+1):
+                    exp['@Value'] = str(self.UpshiftSettings['nMotorShiftOptimal'][i])
+
+        for i in range(0, len(self.UpshiftSettings['NGear'])):
+            for exp in doc['Maths']['MathConstants']['MathConstant']:
+                if exp['@Name'] == 'rGear{}'.format(i+1):
+                    exp['@Value'] = str(self.rGearRatios[i+1])
+
+
+        # export xml
+        xmlString = xmltodict.unparse(doc, pretty=True)
+        f = open(path + '/{}.xml'.format(self.name), "a")
+        f.write(xmlString)
+        f.close()
+
+

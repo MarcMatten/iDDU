@@ -1,1 +1,1 @@
-pyinstaller -w -F C:\Users\Marc\Documents\Projekte\iDDU\iDDU.py
+pyinstaller _iDDU.spec

@@ -201,7 +201,7 @@ calcData = {'startUp': False,
             'FuelAdd': 1,
             'time': [],
             'iRShiftRPM': [100000, 100000, 100000, 100000],
-            'StartDDU': False,
+            'StartDDU': True,
             'StopDDU': False,
             'DDUrunning': False,
             'SessionLength': 86400,
@@ -446,23 +446,17 @@ if __name__ == "__main__":
     ms.initCar()
 
     calcThread.start()
-    time.sleep(0.1)
     rtdbThread.start()
-    time.sleep(0.1)
     guiThread.start()
-    time.sleep(0.1)
     shiftToneThread.start()
-    time.sleep(0.1)
     raceLapsEstimationThread.start()
-    time.sleep(0.1)
     loggerThread.start()
-    time.sleep(0.1)
     ms.start()
-    time.sleep(0.1)
 
     iRRender = None
 
     # loop to run programme
+    time.sleep(0.3)
     while not myRTDB.done:
         if myRTDB.DDUrunning:
             myRTDB.done = iRRender.render()
