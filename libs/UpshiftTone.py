@@ -26,10 +26,10 @@ class ShiftToneThread(IDDUThread):
                     self.initialise()
 
                 # execute this loop while player is on track
-                while self.ir['IsOnTrack'] and (self.db.config['ShiftToneEnabled'] or self.db.config['BEnableLiftTones']):
+                while self.ir['IsOnTrack'] and (self.db.config['ShiftToneEnabled'] or self.db.config['NFuelTargetMethod']):
                     t = time.perf_counter()
 
-                    if self.db.config['BEnableLiftTones'] and self.ir['Throttle'] > 0.9:
+                    if self.db.config['NFuelTargetMethod'] and self.ir['Throttle'] > 0.9:
                         if self.db.BLiftToneRequest:
                             self.vjoy.set_button(63, 1)
                             winsound.Beep(self.db.config['fFuelBeep'], self.db.config['tFuelBeep'])

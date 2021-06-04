@@ -36,7 +36,7 @@ class RenderMain(IDDUItem):
     fontMedium = pygame.font.Font("files/KhmerUI.ttf", 40)
     fontLarge = pygame.font.Font("files/KhmerUI.ttf", 60)
     fontGear = pygame.font.Font("files/KhmerUI.ttf", 163)
-    fontReallyLarge = pygame.font.Font("files/KhmerUI.ttf", 350)
+    fontReallyLarge = pygame.font.Font("files/KhmerUI.ttf", 300)
     fontHuge = pygame.font.Font("files/KhmerUI.ttf", 480)
     SCLabel = fontHuge.render('SC', True, IDDUItem.black)
 

@@ -346,7 +346,7 @@ class IDDUCalcThread(IDDUThread):
                                 self.time = np.append(self.time, self.db.SessionTime)
 
                         # fuel consumption -----------------------------------------------------------------------------------------
-                        if not self.db.config['BEnableLiftTones']:
+                        if not self.db.config['NFuelTargetMethod']:
                             self.db.RenderLabel[4] = True
                             self.db.RenderLabel[5] = True
                             self.db.RenderLabel[28] = False
@@ -448,7 +448,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.Alarm[1] = 3
 
                         # Lift beeps
-                        if self.db.config['BEnableLiftTones'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
+                        if self.db.config['NFuelTargetMethod'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
                             # get fuel data at reference point
                             if self.db.BUpdateVFuelDelta and self.db.LapDistPct * 100 >= self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]:
                                 if self.db.NNextLiftPoint > 0:
@@ -940,15 +940,6 @@ class IDDUCalcThread(IDDUThread):
         if self.db.BPitCommandUpdate:
             self.setPitCommands()
 
-        # Fuel Calculations
-        self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
-        if (not self.db.OutLap) and (not self.db.OnPitRoad):
-            self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
-        else:
-            self.db.OutLap = False
-
-        self.db.LastFuelLevel = self.db.FuelLevel
-
         if self.db.config['BEnableLapLogging']:  # TODO: still required?
             now = datetime.now()
             date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
@@ -994,6 +985,43 @@ class IDDUCalcThread(IDDUThread):
             f.write('BLiftBeepPlayed = ' + repr(self.db.BLiftBeepPlayed) + '\n')
             f.close()
 
+        self.db.oldLap = self.db.Lap
+        if self.db.config['NRaceLapsSource'] == 0:
+            self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1
+        elif self.db.config['NRaceLapsSource'] == 1:
+            self.db.LapsToGo = self.db.config['UserRaceLaps'] - self.db.Lap + 1
+
+        # Fuel Calculations
+        self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
+        if (not self.db.OutLap) and (not self.db.OnPitRoad):
+            self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
+        else:
+            self.db.OutLap = False
+
+        self.db.LastFuelLevel = self.db.FuelLevel
+
+
+        VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3) / self.db.LapsToGo
+        VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / (self.db.config['NLapsStintPlanned'] - self.db.StintLap)
+
+        if self.db.config['NFuelTargetMethod'] == 2:  # Finish
+            self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
+        elif self.db.config['NFuelTargetMethod'] == 3:  # Stint
+            if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] < self.db.CarIdxPitStops[self.db.DriverCarIdx]:
+                self.setFuelTgt(VFuelConsumptionTargetStint, 0)
+            else:
+                self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
+
+        self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
+            self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
+            self.db.AirDensity) + ' kg/m³     vWind: '
+
+        # display fuel consumption information
+        self.db.RenderLabel[4] = True
+        self.db.RenderLabel[5] = True
+        self.db.RenderLabel[28] = False
+        self.db.RenderLabel[29] = False
+
         self.db.StintLap = self.db.StintLap + 1
 
         if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 1:
@@ -1005,22 +1033,6 @@ class IDDUCalcThread(IDDUThread):
 
         if (self.BCreateTrack or self.BRecordtLap) and self.Logging and self.logLap < self.db.Lap and self.db.BNewLap:
             self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
-
-        self.db.oldLap = self.db.Lap
-        if self.db.config['NRaceLapsSource'] == 0:
-            self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1
-        elif self.db.config['NRaceLapsSource'] == 1:
-            self.db.LapsToGo = self.db.config['UserRaceLaps'] - self.db.Lap + 1
-
-        self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
-            self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
-            self.db.AirDensity) + ' kg/m³     vWind: '
-
-        # display fuel consumption information
-        self.db.RenderLabel[4] = True
-        self.db.RenderLabel[5] = True
-        self.db.RenderLabel[28] = False
-        self.db.RenderLabel[29] = False
 
     def createTrackFile(self, BCreateTrack, BRecordtLap):
 

@@ -154,7 +154,7 @@ calcData = {'startUp': False,
             'BWasOnPitRoad': False,
             'BDDUexecuting': False,
             'WasOnTrack': False,
-            'StintLap': 0,
+            'NStintLap': 0,
             'oldSessionNum': -1,
             'oldLap': 0.1,
             'FuelConsumptionList': [],
@@ -201,7 +201,7 @@ calcData = {'startUp': False,
             'FuelAdd': 1,
             'time': [],
             'iRShiftRPM': [100000, 100000, 100000, 100000],
-            'StartDDU': False,
+            'StartDDU': True,
             'StopDDU': False,
             'DDUrunning': False,
             'SessionLength': 86400,
@@ -391,11 +391,11 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
     'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
-    'VFuelTgtOffset': ['VFuelTgtOffset', False, 2, 0, -5, 5, 0.01],
-    'BEnableLiftTones': ['Enable Lift Tones', True, 0, True, None, None, None, ['Off', 'On']],
     'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']],
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1],
-    'NFuelConsumptionMethod': ['Fuel Consumption Method', True, 0, 0, 0, 1, 1, ['Run Avg', 'Last 3', 'Ref Lap']]
+    'NFuelConsumptionMethod': ['Fuel Consumption Method', True, 1, 0, 0, 2, 1, ['Avg', 'Last 3', 'Ref']],
+    'NFuelTargetMethod': ['Fuel Management', True, 1, 0, 0, 3, 1, ['Off', 'Static', 'Finish', 'Stint']],
+    'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1]
 }
 
 if __name__ == "__main__":
@@ -446,23 +446,17 @@ if __name__ == "__main__":
     ms.initCar()
 
     calcThread.start()
-    time.sleep(0.1)
     rtdbThread.start()
-    time.sleep(0.1)
     guiThread.start()
-    time.sleep(0.1)
     shiftToneThread.start()
-    time.sleep(0.1)
     raceLapsEstimationThread.start()
-    time.sleep(0.1)
     loggerThread.start()
-    time.sleep(0.1)
     ms.start()
-    time.sleep(0.1)
 
     iRRender = None
 
     # loop to run programme
+    time.sleep(0.3)
     while not myRTDB.done:
         if myRTDB.DDUrunning:
             myRTDB.done = iRRender.render()

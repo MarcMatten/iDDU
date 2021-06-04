@@ -3,6 +3,9 @@ import irsdk
 import pygame
 import pyvjoy
 import time
+import ctypes
+
+ctypes.windll.kernel32.SetDllDirectoryW(None)
 
 class IDDUItem:
     db = 0
