@@ -317,6 +317,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BTyreChangeRequest = [False, False, False, False]
                             self.db.BTyreChangeCompleted = [False, False, False, False]
                             self.db.BWasOnPitRoad = False
+                            self.db.BPitCommandUpdate = True
 
                         # check if new lap
                         if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:

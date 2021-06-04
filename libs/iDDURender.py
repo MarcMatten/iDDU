@@ -196,7 +196,7 @@ class RenderScreen(RenderMain):
                 elif self.ir['Gear'] < 0:
                     self.db.GearStr = 'R'
 
-                if self.ir.startup() and self.ir['IsOnTrack']:
+                if self.ir.startup():
 
                     if self.db.FlagException:
                         if self.db.FlagExceptionVal == 1:
@@ -212,49 +212,49 @@ class RenderScreen(RenderMain):
                         elif self.db.FlagExceptionVal == 6:
                             RenderMain.screen.blit(self.warning, [0, 0])
 
-                if self.ir.startup() and self.ir['IsOnTrack']:
-                    # Radar Incicators
-                    CarLeftRight = self.ir['CarLeftRight']
-                    if np.isin(CarLeftRight, [2, 4, 5]):
-                        pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft, 0)
-                        if CarLeftRight == 5:
-                            pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft2, 0)
-                    if np.isin(CarLeftRight, [3, 4, 6]):
-                        pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight, 0)
-                        if CarLeftRight == 6:
-                            pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight2, 0)
+                    if self.ir['IsOnTrack']:
+                        # Radar Incicators
+                        CarLeftRight = self.ir['CarLeftRight']
+                        if np.isin(CarLeftRight, [2, 4, 5]):
+                            pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft, 0)
+                            if CarLeftRight == 5:
+                                pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowLeft2, 0)
+                        if np.isin(CarLeftRight, [3, 4, 6]):
+                            pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight, 0)
+                            if CarLeftRight == 6:
+                                pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight2, 0)
 
-                    # my blue flag
-                    if self.db.WeekendInfo['NumCarClasses'] > 1 and self.db.PlayerTrackSurface == 3 and not self.db.FlagException:
-                        if len(self.db.NLappingCars) == 1:
-                            text = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
-                            LabelSize = self.fontGear.size(text)
-                            Label = self.fontGear.render(text, True, self.db.NLappingCars[0]['Color'])
-                            RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 240 - LabelSize[1] / 2))
-                        elif len(self.db.NLappingCars) >= 1:
-                            text0 = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
-                            text1 = str(self.db.NLappingCars[1]['NCars']) + " x " + self.db.NLappingCars[1]['Class']
-                            LabelSize0 = self.fontGear.size(text0)
-                            Label0 = self.fontGear.render(text0, True, self.db.NLappingCars[0]['Color'])
-                            LabelSize1 = self.fontGear.size(text1)
-                            Label1 = self.fontGear.render(text1, True, self.db.NLappingCars[1]['Color'])
+                        # my blue flag
+                        if self.db.WeekendInfo['NumCarClasses'] > 1 and self.db.PlayerTrackSurface == 3 and not self.db.FlagException:
+                            if len(self.db.NLappingCars) == 1:
+                                text = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
+                                LabelSize = self.fontGear.size(text)
+                                Label = self.fontGear.render(text, True, self.db.NLappingCars[0]['Color'])
+                                RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 240 - LabelSize[1] / 2))
+                            elif len(self.db.NLappingCars) >= 1:
+                                text0 = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
+                                text1 = str(self.db.NLappingCars[1]['NCars']) + " x " + self.db.NLappingCars[1]['Class']
+                                LabelSize0 = self.fontGear.size(text0)
+                                Label0 = self.fontGear.render(text0, True, self.db.NLappingCars[0]['Color'])
+                                LabelSize1 = self.fontGear.size(text1)
+                                Label1 = self.fontGear.render(text1, True, self.db.NLappingCars[1]['Color'])
 
-                            gap = (480 - LabelSize0[1] - LabelSize1[1]) / 3
+                                gap = (480 - LabelSize0[1] - LabelSize1[1]) / 3
 
-                            RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
-                            RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
+                                RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
+                                RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
 
-                # ABS Activation
-                if 'dcABS' in self.db.car.dcList:
-                    for i in range(len(self.db.rABSActivity)):
-                        if self.db.rABSActivity[i] > 0:
-                            pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
-                elif self.db.rRearLocking:
-                    pygame.draw.polygon(RenderMain.screen, self.RearLockingColourCode[self.db.rRearLocking], self.RearPoly, 0)
+                    # ABS Activation
+                    if 'dcABS' in self.db.car.dcList:
+                        for i in range(len(self.db.rABSActivity)):
+                            if self.db.rABSActivity[i] > 0:
+                                pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
+                    elif self.db.rRearLocking:
+                        pygame.draw.polygon(RenderMain.screen, self.RearLockingColourCode[self.db.rRearLocking], self.RearPoly, 0)
 
-                # Wheel spin
-                if self.db.rWheelSpin:
-                    pygame.draw.polygon(RenderMain.screen, self.WheelSpinColourCode[self.db.rWheelSpin], self.RearPoly, 0)
+                    # Wheel spin
+                    if self.db.rWheelSpin:
+                        pygame.draw.polygon(RenderMain.screen, self.WheelSpinColourCode[self.db.rWheelSpin], self.RearPoly, 0)
 
                 if self.db.NDDUPage == 1:
                     self.page1()
