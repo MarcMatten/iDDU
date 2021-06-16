@@ -5,10 +5,21 @@ from functionalities.libs import importExport
 import xmltodict
 
 
-
 class Car:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        if 'Driver' in kwargs:
+            self.name = kwargs['Driver']['CarScreenNameShort']
+            self.carPath = kwargs['Driver']['CarPath']
+        else:
+            if 'name' in kwargs:
+                self.name = kwargs['name']
+            else:
+                print('Error while creating car! No NAME provided.')
+            if 'carPath' in kwargs:
+                self.carPath = kwargs['carPath']
+            else:
+                print('Error while creating car! No CARPATH provided.')
+
         self.iRShiftRPM = []
         self.BDRS = False
         self.BP2P = False
@@ -45,6 +56,7 @@ class Car:
         self.rSlipMapAcc = [4.5, 7, 8.5]
         self.rSlipMapBrk = [-4.5, -7, -8.5]
         self.rABSActivityMap = [-2, -10, -15]
+        self.NGearMax = 0
 
     def createCar(self, db, var_headers_names=None):
         DriverCarIdx = db.DriverInfo['DriverCarIdx']
@@ -109,7 +121,7 @@ class Car:
             self.UpshiftStrategy = db.config['UpshiftStrategy']
             self.UserShiftFlag = db.config['UserShiftFlag']
 
-    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup):
+    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup, NGearMax):
         for i in range(0, len(NGear)):
             self.UpshiftSettings['nMotorShiftOptimal'][i] = nMotorShiftOptimal[i]
             self.UpshiftSettings['vCarShiftOptimal'][i] = vCarShiftOptimal[i]
@@ -121,6 +133,7 @@ class Car:
         self.UpshiftSettings['CarSetup'] = CarSetup
         self.UpshiftStrategy = 5
         self.UpshiftSettings['BValid'] = True
+        self.NGearMax = NGearMax
 
     def setCoastingData(self, gLongPolyFit, QFuelPolyFit, NGear, SetupName, CarSetup):
         self.Coasting['gLongCoastPolyFit'] = gLongPolyFit
@@ -179,32 +192,36 @@ class Car:
         self.pBrakeFMax = pBrakeFMax
         self.pBrakeRMax = pBrakeRMax
 
-    def MotecXMLexport(self):
-        path = 'C:/Users/marc/Documents/MoTeC/i2/Workspaces/Circuit 1/Maths'
+    def MotecXMLexport(self, rootPath=str, MotecPath=str) -> None:
+        """
+        Exports all calculated vehilce parameters to a Motec readable XML file
 
-        # real defaul xml
+        :param rootPath: Path to project  directory
+        :param MotecPath: Path to Motec project directory
+        :return:
+        """
 
-        with open(path +'/default.xml') as fd:
+        # read default xml
+        with open(rootPath + '/files/default.xml') as fd:
             doc = xmltodict.parse(fd.read())
 
         # populate struct with new values
-        doc['Maths']['@Id'] = self.name
-        doc['Maths']['@Condition'] = '\'Vehicle Id\' == "{}"'.format(self.name)
+        doc['Maths']['@Id'] = self.carPath
+        doc['Maths']['@Condition'] = '\'Vehicle Id\' == "{}"'.format(self.carPath)
 
-        for i in range(0, max(self.UpshiftSettings['NGear'])):
+        for i in range(0, self.NGearMax):
             for exp in doc['Maths']['MathConstants']['MathConstant']:
                 if exp['@Name'] == 'nMotorShiftGear{}'.format(i+1):
                     exp['@Value'] = str(self.UpshiftSettings['nMotorShiftOptimal'][i])
 
-        for i in range(0, len(self.UpshiftSettings['NGear'])):
+        for i in range(1, self.NGearMax + 1):
             for exp in doc['Maths']['MathConstants']['MathConstant']:
-                if exp['@Name'] == 'rGear{}'.format(i+1):
-                    exp['@Value'] = str(self.rGearRatios[i+1])
-
+                if exp['@Name'] == 'rGear{}'.format(i):
+                    exp['@Value'] = str(self.rGearRatios[i])
 
         # export xml
         xmlString = xmltodict.unparse(doc, pretty=True)
-        f = open(path + '/{}.xml'.format(self.name), "a")
+        f = open(MotecPath + '/Maths/{}.xml'.format(self.name), "a")
         f.write(xmlString)
         f.close()
 

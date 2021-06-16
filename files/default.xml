@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Maths Locale="German_Germany.1252" DefaultLocale="C" Id="default" Condition="'Vehicle Id' == &quot;XYZ&quot;">
+ <MathConstants>
+  <MathConstant Name="nMotorShiftGear1" Value="0" Unit="rpm"/>
+  <MathConstant Name="nMotorShiftGear2" Value="0" Unit="rpm"/>
+  <MathConstant Name="nMotorShiftGear3" Value="0" Unit="rpm"/>
+  <MathConstant Name="nMotorShiftGear4" Value="0" Unit="rpm"/>
+  <MathConstant Name="nMotorShiftGear5" Value="0" Unit="rpm"/>
+  <MathConstant Name="PI" Value="3.14159265" Unit=""/>
+  <MathConstant Name="rGear1" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear2" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear3" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear4" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear5" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear6" Value="0" Unit="ratio"/>
+ </MathConstants>
+</Maths>

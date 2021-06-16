@@ -661,16 +661,17 @@ class IDDUCalcThread(IDDUThread):
 
             # car
             carName = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']
+            carPath = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath']
             if carName + '.json' in self.carList:
-                self.loadCar(carName)
+                self.loadCar(carName)  # TODO: required?
                 if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
                     self.BRecordtLap = False
                     self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
                 else:
                     self.BRecordtLap = True
             else:
-                self.loadCar('default')
-                self.db.car = Car.Car(carName)
+                self.loadCar('default')  # TODO: required?
+                self.db.car = Car.Car(Driver=self.db.DriverInfo['Drivers'][self.db.DriverCarIdx])
                 self.db.car.createCar(self.db)
                 self.db.car.save(self.db.dir)
                 self.BRecordtLap = True
@@ -914,10 +915,10 @@ class IDDUCalcThread(IDDUThread):
 
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
-    def loadCar(self, name):
+    def loadCar(self, name):  # TODO: required?
         print(self.db.timeStr + ':\tLoading car: ' + r"car/" + name + '.json')
 
-        self.db.car = Car.Car(name)
+        self.db.car = Car.Car(name, 'carPath')
         self.db.car.load("data/car/" + name + '.json')
 
         self.db.queryData.extend(list(self.db.car.dcList.keys()))

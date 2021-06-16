@@ -1150,12 +1150,13 @@ class Gui(IDDUItem):
         # check if car available
         carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
         carName = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
+        carPath = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarPath']
 
         # load or create car
         if carName + '.json' in carList:
             self.db.car.load("data/car/" + carName + '.json')
         else:
-            self.db.car = Car.Car(carName)
+            self.db.car = Car.Car(Driver=d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']])
             self.db.car.createCar(tempDB)
             self.db.car.save(self.db.dir)
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCar has been successfully created')
