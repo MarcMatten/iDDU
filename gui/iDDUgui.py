@@ -605,20 +605,20 @@ class Gui(IDDUItem):
         self.label_23.setObjectName("label_23")
         self.lineEditiRPath = QtWidgets.QLineEdit(self.tabSettings)
         self.lineEditiRPath.setEnabled(True)
-        self.lineEditiRPath.setGeometry(QtCore.QRect(110, 50, 521, 20))
+        self.lineEditiRPath.setGeometry(QtCore.QRect(130, 50, 501, 20))
         self.lineEditiRPath.setObjectName("lineEditiRPath")
         self.lineEditTelemPath = QtWidgets.QLineEdit(self.tabSettings)
-        self.lineEditTelemPath.setGeometry(QtCore.QRect(110, 90, 521, 20))
+        self.lineEditTelemPath.setGeometry(QtCore.QRect(130, 90, 501, 20))
         self.lineEditTelemPath.setObjectName("lineEditTelemPath")
         self.pushButtonSetiRPath = QtWidgets.QPushButton(self.tabSettings)
-        self.pushButtonSetiRPath.setGeometry(QtCore.QRect(640, 50, 101, 23))
+        self.pushButtonSetiRPath.setGeometry(QtCore.QRect(660, 50, 101, 23))
         self.pushButtonSetiRPath.setObjectName("pushButtonSetiRPath")
         self.pushButtonSetTelemPath = QtWidgets.QPushButton(self.tabSettings)
-        self.pushButtonSetTelemPath.setGeometry(QtCore.QRect(640, 90, 101, 23))
+        self.pushButtonSetTelemPath.setGeometry(QtCore.QRect(660, 90, 101, 23))
         self.pushButtonSetTelemPath.setObjectName("pushButtonSetTelemPath")
         self.groupBox_12 = QtWidgets.QGroupBox(self.tabSettings)
         self.groupBox_12.setEnabled(True)
-        self.groupBox_12.setGeometry(QtCore.QRect(10, 120, 751, 211))
+        self.groupBox_12.setGeometry(QtCore.QRect(10, 160, 751, 211))
         font = QtGui.QFont()
         font.setKerning(False)
         self.groupBox_12.setFont(font)
@@ -668,6 +668,15 @@ class Gui(IDDUItem):
         self.comboBox_JoystickSelection.addItem("")
         self.comboBox_JoystickSelection.addItem("")
         self.comboBox_JoystickSelection.addItem("")
+        self.label_25 = QtWidgets.QLabel(self.tabSettings)
+        self.label_25.setGeometry(QtCore.QRect(20, 130, 91, 16))
+        self.label_25.setObjectName("label_25")
+        self.pushButtonSetMotecPath = QtWidgets.QPushButton(self.tabSettings)
+        self.pushButtonSetMotecPath.setGeometry(QtCore.QRect(660, 130, 101, 23))
+        self.pushButtonSetMotecPath.setObjectName("pushButtonSetMotecPath")
+        self.lineEditMotecPath = QtWidgets.QLineEdit(self.tabSettings)
+        self.lineEditMotecPath.setGeometry(QtCore.QRect(130, 130, 501, 20))
+        self.lineEditMotecPath.setObjectName("lineEditMotecPath")
         self.tabWidget.addTab(self.tabSettings, "")
 
 
@@ -747,6 +756,7 @@ class Gui(IDDUItem):
         self.pushButtonSaveConfig.clicked.connect(self.SaveConfig)
         self.pushButtonSetiRPath.clicked.connect(self.SetiRPath)
         self.pushButtonSetTelemPath.clicked.connect(self.SetTelemPath)
+        self.pushButtonSetMotecPath.clicked.connect(self.SetMotecPath)
 
         self.pushButton_MSDriverMarker.clicked.connect(self.assignDriverMarker)
         self.pushButtonPreviousMulti.clicked.connect(self.assignButtonPreviousMulti)
@@ -887,6 +897,7 @@ class Gui(IDDUItem):
         self.label_23.setText(_translate("iDDU", "Telemetry Path:"))
         self.lineEditiRPath.setText(_translate("iDDU", self.db.config['iRPath']))
         self.lineEditTelemPath.setText(_translate("iDDU", self.db.config['TelemPath']))
+        self.lineEditMotecPath.setText(_translate("iDDU", self.db.config['MotecProjectPath']))
         self.pushButtonSetiRPath.setText(_translate("iDDU", "Set iRacing Path"))
         self.pushButtonSetTelemPath.setText(_translate("iDDU", "Set Telemetry Path"))
         self.groupBox_12.setTitle(_translate("iDDU", "Button assignments"))
@@ -896,6 +907,8 @@ class Gui(IDDUItem):
         self.pushButtonMultiDecrease.setText(_translate("iDDU", "Decrease Multi Value"))
         self.pushButtonMultiIncrease.setText(_translate("iDDU", "Increase Multi Value"))
         self.label_24.setText(_translate("iDDU", "Select Joystick"))
+        self.label_25.setText(_translate("iDDU", "Motec Project Path:"))
+        self.pushButtonSetMotecPath.setText(_translate("iDDU", "Set Motec Path"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSettings), _translate("iDDU", "Settings"))
 
         self.spinBoxRaceLaps.setValue(self.db.config['UserRaceLaps'])
@@ -1347,6 +1360,15 @@ class Gui(IDDUItem):
             return
 
         self.db.config['TelemPath'] = dirPath
+        self.SaveConfig()
+
+    def SetMotecPath(self):
+        dirPath = QFileDialog.getExistingDirectory(self.iDDU, 'Select Motec Project Directory', './')
+
+        if dirPath == '':
+            return
+
+        self.db.config['MotecProjectPath'] = dirPath
         self.SaveConfig()
 
     def setTLift(self):

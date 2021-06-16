@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'iDDUgui.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_iDDU(object):
     def setupUi(self, iDDU):
@@ -523,20 +521,20 @@ class Ui_iDDU(object):
         self.label_23.setObjectName("label_23")
         self.lineEditiRPath = QtWidgets.QLineEdit(self.tabSettings)
         self.lineEditiRPath.setEnabled(True)
-        self.lineEditiRPath.setGeometry(QtCore.QRect(110, 50, 521, 20))
+        self.lineEditiRPath.setGeometry(QtCore.QRect(130, 50, 501, 20))
         self.lineEditiRPath.setObjectName("lineEditiRPath")
         self.lineEditTelemPath = QtWidgets.QLineEdit(self.tabSettings)
-        self.lineEditTelemPath.setGeometry(QtCore.QRect(110, 90, 521, 20))
+        self.lineEditTelemPath.setGeometry(QtCore.QRect(130, 90, 501, 20))
         self.lineEditTelemPath.setObjectName("lineEditTelemPath")
         self.pushButtonSetiRPath = QtWidgets.QPushButton(self.tabSettings)
-        self.pushButtonSetiRPath.setGeometry(QtCore.QRect(640, 50, 101, 23))
+        self.pushButtonSetiRPath.setGeometry(QtCore.QRect(660, 50, 101, 23))
         self.pushButtonSetiRPath.setObjectName("pushButtonSetiRPath")
         self.pushButtonSetTelemPath = QtWidgets.QPushButton(self.tabSettings)
-        self.pushButtonSetTelemPath.setGeometry(QtCore.QRect(640, 90, 101, 23))
+        self.pushButtonSetTelemPath.setGeometry(QtCore.QRect(660, 90, 101, 23))
         self.pushButtonSetTelemPath.setObjectName("pushButtonSetTelemPath")
         self.groupBox_12 = QtWidgets.QGroupBox(self.tabSettings)
         self.groupBox_12.setEnabled(True)
-        self.groupBox_12.setGeometry(QtCore.QRect(10, 120, 751, 211))
+        self.groupBox_12.setGeometry(QtCore.QRect(10, 160, 751, 211))
         font = QtGui.QFont()
         font.setKerning(False)
         self.groupBox_12.setFont(font)
@@ -579,10 +577,19 @@ class Ui_iDDU(object):
         self.comboBox_JoystickSelection.setObjectName("comboBox_JoystickSelection")
         self.comboBox_JoystickSelection.addItem("")
         self.comboBox_JoystickSelection.addItem("")
+        self.label_25 = QtWidgets.QLabel(self.tabSettings)
+        self.label_25.setGeometry(QtCore.QRect(20, 130, 91, 16))
+        self.label_25.setObjectName("label_25")
+        self.pushButtonSetMotecPath = QtWidgets.QPushButton(self.tabSettings)
+        self.pushButtonSetMotecPath.setGeometry(QtCore.QRect(660, 130, 101, 23))
+        self.pushButtonSetMotecPath.setObjectName("pushButtonSetMotecPath")
+        self.lineEditMotecPath = QtWidgets.QLineEdit(self.tabSettings)
+        self.lineEditMotecPath.setGeometry(QtCore.QRect(130, 130, 501, 20))
+        self.lineEditMotecPath.setObjectName("lineEditMotecPath")
         self.tabWidget.addTab(self.tabSettings, "")
 
         self.retranslateUi(iDDU)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(5)
         self.comboBox.setCurrentIndex(0)
         self.comboBox_NFuelConsumptionMethod.setCurrentIndex(0)
         self.comboBox_NFuelManagement.setCurrentIndex(0)
@@ -712,6 +719,8 @@ class Ui_iDDU(object):
         self.label_24.setText(_translate("iDDU", "Select Joystick"))
         self.comboBox_JoystickSelection.setItemText(0, _translate("iDDU", "Joystick 1"))
         self.comboBox_JoystickSelection.setItemText(1, _translate("iDDU", "Joystick 2"))
+        self.label_25.setText(_translate("iDDU", "Motec Project Path:"))
+        self.pushButtonSetMotecPath.setText(_translate("iDDU", "Set Motec Path"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSettings), _translate("iDDU", "Settings"))
 
 
@@ -723,3 +732,4 @@ if __name__ == "__main__":
     ui.setupUi(iDDU)
     iDDU.show()
     sys.exit(app.exec_())
+
