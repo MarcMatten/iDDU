@@ -24,9 +24,9 @@ class Car:
         self.BDRS = False
         self.BP2P = False
         self.dcList = {}
-        self.NABSDisabled = 0
-        self.NTC1Disabled = 0
-        self.NTC2Disabled = 0
+        self.NABSDisabled = None
+        self.NTC1Disabled = None
+        self.NTC2Disabled = None
         self.tLap = {}
         self.VFuelLap = {}
         self.UserShiftRPM = 0
@@ -44,9 +44,9 @@ class Car:
             'BValid': False
         }
         self.Coasting = {
-            'gLongCoastPolyFit': [],
-            'QFuelCoastPolyFit':  [],
-            'NGear': [],
+            'gLongCoastPolyFit': [1.25, -0.099, 0]*8,
+            'QFuelCoastPolyFit':  [0.001, 0, 0]*8,
+            'NGear': [0, 1, 2, 3, 4, 5, 6, 7],
             'SetupName': 'SetupName',
             'CarSetup': {}
         }
