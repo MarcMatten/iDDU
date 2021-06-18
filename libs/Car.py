@@ -44,8 +44,8 @@ class Car:
             'BValid': False
         }
         self.Coasting = {
-            'gLongCoastPolyFit': [1.25, -0.099, 0]*8,
-            'QFuelCoastPolyFit':  [0.001, 0, 0]*8,
+            'gLongCoastPolyFit': np.repeat([[1.25, -0.099, 0]], 8, axis=0),
+            'QFuelCoastPolyFit':  np.repeat([[0.001, 0, 0]], 8, axis=0),
             'NGear': [0, 1, 2, 3, 4, 5, 6, 7],
             'SetupName': 'SetupName',
             'CarSetup': {}
