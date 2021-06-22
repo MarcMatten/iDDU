@@ -19,7 +19,7 @@
 /.idea
 /data/snapshots
 /data/laplog
-/gui/*.bak
+*.bak
 /data/fuelSaving/*/*.png
 /data/fuelSaving/*/*.json
 /data/shiftTone/*/*.png
@@ -31,6 +31,7 @@
 /data/fuelSaving
 /data/shiftTone
 /data/track
+/data/rollOut
 /libs/*.pyo
 /libs/*.bak
 *.pyo
