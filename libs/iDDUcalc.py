@@ -16,6 +16,7 @@ nan = float('nan')  # TODO: add to IDDu object?
 
 class IDDUCalcThread(IDDUThread):
     BError = False
+    SError = ''
     Brake = 0
 
     def __init__(self, rate):
@@ -617,7 +618,10 @@ class IDDUCalcThread(IDDUThread):
             except Exception as e:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+                ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
+                if not self.SError == ErrorString:
+                    self.SError = ErrorString
+                    print(self.SError)
 
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')
@@ -663,14 +667,14 @@ class IDDUCalcThread(IDDUThread):
             carName = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']
             carPath = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath']
             if carName + '.json' in self.carList:
-                self.loadCar(carName)  # TODO: required?
+                self.loadCar(carName, carPath)  # TODO: required?
                 if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
                     self.BRecordtLap = False
                     self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
                 else:
                     self.BRecordtLap = True
             else:
-                self.loadCar('default')  # TODO: required?
+                self.loadCar('default', 'default')  # TODO: required?
                 self.db.car = Car.Car(Driver=self.db.DriverInfo['Drivers'][self.db.DriverCarIdx])
                 self.db.car.createCar(self.db)
                 self.db.car.save(self.db.dir)
@@ -915,10 +919,10 @@ class IDDUCalcThread(IDDUThread):
 
         print(self.db.timeStr + ':\tTrack has been loaded successfully.')
 
-    def loadCar(self, name):  # TODO: required?
+    def loadCar(self, name, carPath):  # TODO: required?
         print(self.db.timeStr + ':\tLoading car: ' + r"car/" + name + '.json')
 
-        self.db.car = Car.Car(name, 'carPath')
+        self.db.car = Car.Car(name=name, carPath=carPath)
         self.db.car.load("data/car/" + name + '.json')
 
         self.db.queryData.extend(list(self.db.car.dcList.keys()))
