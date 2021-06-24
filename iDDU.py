@@ -8,6 +8,7 @@ import os
 from functionalities.MultiSwitch import MultiSwitch
 from functionalities.libs import importExport
 from shutil import copyfile
+from libs import IDDU
 
 
 nan = float('nan')
@@ -399,6 +400,9 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
 }
 
 if __name__ == "__main__":
+
+    IDDU.IDDUItem.logger.info('Starting iDDU')
+
     if not os.path.exists(calcData['dir'] + '/data/configs/config.json'):
         copyfile(calcData['dir'] + '/data/configs/config_default.json', calcData['dir'] + '/data/configs/config.json')
         print('No config.json found. Created new default config.json from config_default.json')

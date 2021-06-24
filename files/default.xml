@@ -13,5 +13,7 @@
   <MathConstant Name="rGear4" Value="0" Unit="ratio"/>
   <MathConstant Name="rGear5" Value="0" Unit="ratio"/>
   <MathConstant Name="rGear6" Value="0" Unit="ratio"/>
+  <MathConstant Name="pBrakeFMax" Value="0" Unit="bar"/>
+  <MathConstant Name="pBrakeRMax" Value="0" Unit="bar"/>
  </MathConstants>
 </Maths>

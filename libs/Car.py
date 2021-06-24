@@ -3,6 +3,7 @@ import time
 import irsdk
 from functionalities.libs import importExport
 import xmltodict
+from collections import OrderedDict
 
 
 class Car:
@@ -48,7 +49,8 @@ class Car:
             'QFuelCoastPolyFit':  np.repeat([[0.001, 0, 0]], 8, axis=0),
             'NGear': [0, 1, 2, 3, 4, 5, 6, 7],
             'SetupName': 'SetupName',
-            'CarSetup': {}
+            'CarSetup': {},
+            'BValid': False
         }
         self.pBrakeFMax = 0
         self.pBrakeRMax = 0
@@ -141,6 +143,7 @@ class Car:
         self.Coasting['NGear'] = NGear
         self.Coasting['SetupName'] = SetupName
         self.Coasting['CarSetup'] = CarSetup
+        self.Coasting['BValid'] = True
 
     def setGearRatios(self, rGearRatios):
         self.rGearRatios = rGearRatios
@@ -201,6 +204,23 @@ class Car:
         :return:
         """
 
+        def write2XML(name, value, unit):
+            BDone = False
+            for exp in doc['Maths']['MathConstants']['MathConstant']:
+                if exp['@Name'] == name:
+                    exp['@Value'] = str(value)
+                    exp['@Unit'] = unit
+                    BDone = True
+
+            if not BDone:
+                OD = OrderedDict()
+                OD['@Name'] = name
+                OD['@Value'] = str(value)
+                OD['@Unit'] = unit
+                doc['Maths']['MathConstants']['MathConstant'].append(OD)
+
+
+
         # read default xml
         with open(rootPath + '/files/default.xml') as fd:
             doc = xmltodict.parse(fd.read())
@@ -209,20 +229,31 @@ class Car:
         doc['Maths']['@Id'] = self.carPath
         doc['Maths']['@Condition'] = '\'Vehicle Id\' == "{}"'.format(self.carPath)
 
-        for i in range(0, self.NGearMax):
-            for exp in doc['Maths']['MathConstants']['MathConstant']:
-                if exp['@Name'] == 'nMotorShiftGear{}'.format(i+1):
-                    exp['@Value'] = str(self.UpshiftSettings['nMotorShiftOptimal'][i])
+        # shift RPM
+        if self.UpshiftSettings['BValid']:
+            for i in range(0, self.NGearMax):
+                write2XML('nMotorShiftGear{}'.format(i+1), self.UpshiftSettings['nMotorShiftOptimal'][i], 'rpm')
+        self.Coasting['gLongCoastPolyFit'][0][0]
+        # gear ratios
+        if self.UpshiftSettings['BValid'] or self.Coasting['BValid']:
+            for i in range(1, self.NGearMax + 1):
+                write2XML('rGear{}'.format(i), self.rGearRatios[i], 'ratio')
 
-        for i in range(1, self.NGearMax + 1):
-            for exp in doc['Maths']['MathConstants']['MathConstant']:
-                if exp['@Name'] == 'rGear{}'.format(i):
-                    exp['@Value'] = str(self.rGearRatios[i])
+        # coasting
+        if self.Coasting['BValid']:
+            for i in range(0, self.NGearMax + 1):
+                for k in range(0, len(self.Coasting['gLongCoastPolyFit'][i])):
+                    write2XML('gLongCoastGear{}Poly{}'.format(i, k), self.Coasting['gLongCoastPolyFit'][i][k], '')
+
+        # brake line pressure
+        write2XML('pBrakeFMax', self.pBrakeFMax, 'bar')
+        write2XML('pBrakeRMax', self.pBrakeRMax, 'bar')
 
         # export xml
         xmlString = xmltodict.unparse(doc, pretty=True)
         f = open(MotecPath + '/Maths/{}.xml'.format(self.name), "a")
         f.write(xmlString)
         f.close()
+        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tExported Motec XML file: {}.xml'.format(self.name))
 
 

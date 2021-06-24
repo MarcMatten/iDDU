@@ -4,6 +4,7 @@ import pygame
 import pyvjoy
 import time
 import ctypes
+import logging
 
 ctypes.windll.kernel32.SetDllDirectoryW(None)
 
@@ -33,6 +34,15 @@ class IDDUItem:
     ir = irsdk.IRSDK()
 
     vjoy = pyvjoy.VJoyDevice(2)
+
+    logger = logging.getLogger('iDDULogger')
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s | %(funcName)s || %(message)s')
+    file_handler = logging.FileHandler('iDDU.log')
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
 
     def __init__(self):
         pass

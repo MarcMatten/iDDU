@@ -51,6 +51,8 @@ class IDDUCalcThread(IDDUThread):
         self.y = None
         self.snapshot = False
 
+        self.logger.info('Started iDDUcalc')
+
     def run(self):
         while 1:
             try:
@@ -290,6 +292,7 @@ class IDDUCalcThread(IDDUThread):
 
                                 self.db.car.setpBrakeMax((pBrakeLFMax + pBrakeRFMax)/2, (pBrakeLRMax+pBrakeRRMax)/2)
                                 self.db.car.save(self.db.dir)
+                                self.db.car.MotecXMLexport(rootPath=self.dir, MotecPath=self.db.config['MotecProjectPath'])
 
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True

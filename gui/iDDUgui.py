@@ -1260,7 +1260,7 @@ class Gui(IDDUItem):
         self.retranslateUi(self.iDDU)
 
     def calcUpshiftRPM(self):
-        getShiftRPM.getShiftRPM(self.db.dir, self.db.config['TelemPath'])
+        getShiftRPM.getShiftRPM(self.db.dir, self.db.config['TelemPath'], self.db.config['MotecProjectPath'])
         self.retranslateUi(self.iDDU)
 
     def calcFuelSaving(self):
@@ -1268,7 +1268,7 @@ class Gui(IDDUItem):
         self.retranslateUi(self.iDDU)
 
     def calcRollOut(self):
-        rollOut.getRollOutCurve(self.db.dir, self.db.config['TelemPath'])
+        rollOut.getRollOutCurve(self.db.dir, self.db.config['TelemPath'], self.db.config['MotecProjectPath'])
         self.retranslateUi(self.iDDU)
 
     def MSMapDecrease(self):
