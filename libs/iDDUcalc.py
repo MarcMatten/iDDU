@@ -703,6 +703,9 @@ class IDDUCalcThread(IDDUThread):
                 self.db.RenderLabel[17] = False
                 print(self.db.timeStr + ':\tRoad Racing')
 
+            self.db.config['PitStopsRequired'] = 0
+            self.db.config['MapHighlight'] = False
+
             # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
                 self.db.config['RaceLaps'] = self.db.config['UserRaceLaps']
@@ -1015,10 +1018,10 @@ class IDDUCalcThread(IDDUThread):
         if self.db.config['NFuelTargetMethod'] == 2:  # Finish
             self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
         elif self.db.config['NFuelTargetMethod'] == 3:  # Stint
-            if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] < self.db.CarIdxPitStops[self.db.DriverCarIdx]:
-                self.setFuelTgt(VFuelConsumptionTargetStint, 0)
-            else:
+            if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] <= self.db.CarIdxPitStops[self.db.DriverCarIdx]:
                 self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
+            else:
+                self.setFuelTgt(VFuelConsumptionTargetStint, 0)
 
         self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
             self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
@@ -1291,8 +1294,9 @@ class IDDUCalcThread(IDDUThread):
                 y3 = self.db.FuelTGTLiftPoints['VFuelReference'][i]
                 self.db.VFuelReference = np.append(self.db.VFuelReference, np.interp(self.db.config['VFuelTgt'], x, y3))
 
-            self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
-            self.db.VFuelBudget[rLift <= 0.01] = self.db.VFuelBudget[rLift <= 0.01] + 10
+            self.db.LapDistPctLift = self.db.LapDistPctLift
+            # self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
+            # self.db.VFuelBudget[rLift <= 0.01] = self.db.VFuelBudget[rLift <= 0.01] + 10
 
             self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPctLift'])
 

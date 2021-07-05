@@ -13,6 +13,7 @@ from libs.IDDU import IDDUThread, IDDUItem
 from functionalities.libs import importExport, importIBT, maths
 from functionalities.RTDB import RTDB
 import numpy as np
+from libs.setReferenceLap import setReferenceLap
 
 
 def decorator(fn):
@@ -682,11 +683,13 @@ class Gui(IDDUItem):
 
         self.checkBox_BEnableLogger.setChecked(self.db.config['BLoggerActive'])
 
+        self.spinBoxStintLaps.setValue(self.db.config['NLapsStintPlanned'])
         self.spinBoxRaceLaps.setValue(self.db.config['UserRaceLaps'])
         self.doubleSpinBox_PitStopDelta.setValue(self.db.config['PitStopDelta'])
         self.doubleSpinBox_PitStopsRequired.setValue(self.db.config['PitStopsRequired'])
 
         self.spinBoxRaceLaps.valueChanged.connect(self.assignRaceLaps)
+        self.spinBoxStintLaps.valueChanged.connect(self.assignStintLaps)
         self.doubleSpinBox_PitStopDelta.valueChanged.connect(self.assignPitStopDelta)
         self.doubleSpinBox_PitStopsRequired.valueChanged.connect(self.assignPitStopsRequired)
 
@@ -912,6 +915,7 @@ class Gui(IDDUItem):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSettings), _translate("iDDU", "Settings"))
 
         self.spinBoxRaceLaps.setValue(self.db.config['UserRaceLaps'])
+        self.spinBoxStintLaps.setValue(self.db.config['NLapsStintPlanned'])
         self.checkBox_BEnableLogger.setChecked(self.db.config['BLoggerActive'])
         self.checkBox_BEnableLapLogging.setChecked(self.db.config['BEnableLapLogging'])
         self.checkBox_FuelUp.setChecked(self.db.config['BBeginFueling'])
@@ -946,9 +950,11 @@ class Gui(IDDUItem):
         self.comboBox_JoystickSelection.setMaxVisibleItems(len(self.joystickList)+5)
 
     def assignRaceLaps(self):
-        # self.db.LapsToGo = self.spinBoxRaceLaps.value()
         self.db.config['UserRaceLaps'] = self.spinBoxRaceLaps.value()
-        # self.db.config['RaceLaps'] = self.spinBoxRaceLaps.value()
+        self.retranslateUi(self.iDDU)
+
+    def assignStintLaps(self):
+        self.db.config['NLapsStintPlanned'] = self.spinBoxStintLaps.value()
         self.retranslateUi(self.iDDU)
 
     def assignDRS(self):
@@ -1140,60 +1146,62 @@ class Gui(IDDUItem):
     def loadReferenceLap(self):
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImporting reference lap')
 
-        ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', self.db.config['TelemPath'], 'IBT(*.ibt)')
+        # ibtPath = QFileDialog.getOpenFileName(self.iDDU, 'Load IBT file', self.db.config['TelemPath'], 'IBT(*.ibt)')
+        #
+        # if ibtPath == ('', ''):
+        #     print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tNo valid path to ibt file provided...aborting!')
+        #     return
 
-        if ibtPath == ('', ''):
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tNo valid path to ibt file provided...aborting!')
-            return
+        setReferenceLap(dirPath=self.db.dir, TelemPath=self.db.config['TelemPath'])
 
-        d, _ = importIBT.importIBT(ibtPath[0],
-                                   lap='f',
-                                   channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'YawNorth'],
-                                   channelMapPath=self.db.dir + '/functionalities/libs/iRacingChannelMap.csv')
-
-        if not d:
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tNo valid lap found...aborting!')
-            return
-
-        d['x'], d['y'] = maths.createTrack(d)
-
-        tempDB = RTDB.RTDB()
-        tempDB.initialise(d, False, False)
-
-        # check if car available
-        carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
-        carName = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
-        carPath = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarPath']
-
-        # load or create car
-        if carName + '.json' in carList:
-            self.db.car.load("data/car/" + carName + '.json')
-        else:
-            self.db.car = Car.Car(Driver=d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']])
-            self.db.car.createCar(tempDB)
-            self.db.car.save(self.db.dir)
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCar has been successfully created')
-
-        # create track
-        TrackName = d['WeekendInfo']['TrackName']
-        track = Track.Track(TrackName)
-        aNorth = d['YawNorth'][0]
-        track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
-        track.save(self.db.dir)
-
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tTrack {} has been successfully created.'.format(TrackName))
-
-        self.db.track.load(self.db.dir + '/data/track/' + TrackName + '.json')
-
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tAdding reference lap time to car {}'.format(self.db.car.name))
-
-        # add lap time to car
-        if maths.strictly_increasing(d['tLap']) and maths.strictly_increasing(d['LapDistPct']):
-            self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, track.LapDistPct, d['VFuelLap'])
-            self.db.car.save(self.db.dir)
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tReference lap time set successfully!')
-        else:
-            print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tRecorded Laptime is not monotonically increasing. Aborted track creation!')
+        # d, _ = importIBT.importIBT(ibtPath[0],
+        #                            lap='f',
+        #                            channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'YawNorth'],
+        #                            channelMapPath=self.db.dir + '/functionalities/libs/iRacingChannelMap.csv')
+        #
+        # if not d:
+        #     print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tNo valid lap found...aborting!')
+        #     return
+        #
+        # d['x'], d['y'] = maths.createTrack(d)
+        #
+        # tempDB = RTDB.RTDB()
+        # tempDB.initialise(d, False, False)
+        #
+        # # check if car available
+        # carList = importExport.getFiles(self.db.dir + '/data/car', 'json')
+        # carName = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarScreenNameShort']
+        # carPath = d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']]['CarPath']
+        #
+        # # load or create car
+        # if carName + '.json' in carList:
+        #     self.db.car.load("data/car/" + carName + '.json')
+        # else:
+        #     self.db.car = Car.Car(Driver=d['DriverInfo']['Drivers'][tempDB.DriverInfo['DriverCarIdx']])
+        #     self.db.car.createCar(tempDB)
+        #     self.db.car.save(self.db.dir)
+        #     print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCar has been successfully created')
+        #
+        # # create track
+        # TrackName = d['WeekendInfo']['TrackName']
+        # track = Track.Track(TrackName)
+        # aNorth = d['YawNorth'][0]
+        # track.createTrack(d['x'], d['y'], d['LapDistPct']*100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0])*1000)
+        # track.save(self.db.dir)
+        #
+        # print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tTrack {} has been successfully created.'.format(TrackName))
+        #
+        # self.db.track.load(self.db.dir + '/data/track/' + TrackName + '.json')
+        #
+        # print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tAdding reference lap time to car {}'.format(self.db.car.name))
+        #
+        # # add lap time to car
+        # if maths.strictly_increasing(d['tLap']) and maths.strictly_increasing(d['LapDistPct']):
+        #     self.db.car.addLapTime(TrackName, d['tLap'], d['LapDistPct']*100, track.LapDistPct, d['VFuelLap'])
+        #     self.db.car.save(self.db.dir)
+        #     print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tReference lap time set successfully!')
+        # else:
+        #     print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tRecorded Laptime is not monotonically increasing. Aborted track creation!')
 
     def setUserFuelPreset(self):
         self.db.config['VUserFuelSet'] = self.spinBox_FuelSetting.value()
