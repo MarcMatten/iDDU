@@ -1,9 +1,173 @@
 {
     "BDRS": false,
     "BP2P": false,
+    "Coasting": {
+        "BValid": false,
+        "CarSetup": {},
+        "NGear": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "QFuelCoastPolyFit": [
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ]
+        ],
+        "SetupName": "SetupName",
+        "gLongCoastPolyFit": [
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ]
+        ]
+    },
     "NABSDisabled": 0,
+    "NGearMax": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
+    "UpshiftSettings": {
+        "BShiftTone": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+        ],
+        "BValid": false,
+        "CarSetup": {},
+        "NGear": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "SetupName": "SetupName",
+        "nMotorShiftOptimal": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "nMotorShiftTarget": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vCarShiftOptimal": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vCarShiftTarget": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
     "UpshiftStrategy": 1,
     "UserShiftFlag": [
         true,
@@ -23,6 +187,10 @@
         4000,
         4000
     ],
+    "VFuelLap": {
+        "roadatlanta full": 2.7767673218684945
+    },
+    "carPath": "default",
     "dcList": {
         "dcBrakeBias": [
             "BrakeBias",
@@ -42,6 +210,33 @@
         8500.0
     ],
     "name": "default",
+    "pBrakeFMax": 0,
+    "pBrakeRMax": 0,
+    "rABSActivityMap": [
+        -2,
+        -10,
+        -15
+    ],
+    "rGearRatios": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "rSlipMapAcc": [
+        4.5,
+        7,
+        8.5
+    ],
+    "rSlipMapBrk": [
+        -4.5,
+        -7,
+        -8.5
+    ],
     "tLap": {
         "default": [
             0.0,

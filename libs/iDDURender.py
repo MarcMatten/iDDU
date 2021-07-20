@@ -101,7 +101,7 @@ class RenderScreen(RenderMain):
         self.frames.append(Frame('Fuel', 307, 287, 483, 183, False))
 
         # List of lables to display
-        # textColourTag: 1 = FuelAdd, 2 = DRS, 3 = P2P, 4 = Joker
+        # textColourTag: 1 = FuelAdd, 2 = DRS, 3 = P2P, 4 = Joker, 5 = FuelDelta, 6 = Last Consumption Delta
         # alarmTag: 1 = TC, 2 = Fuel Level, 3 = Fuel laps, 4 = P2P, 5 = DRS, 6 = Joker, 7 = Shift
 
         self.frames[0].addLabel('BestLapStr', LabeledValue2('Best', 21, 26, 265, '12:34.567', self.fontSmall, self.fontLarge, 0, 0), 0)
@@ -135,9 +135,9 @@ class RenderScreen(RenderMain):
         self.frames[5].addLabel('FuelAddStr', LabeledValue2('Add', 481, 303, 125, '-', self.fontSmall, self.fontLarge, 1, 0), 7)
         self.frames[5].addLabel('FuelLapsStr', LabeledValue2('Laps', 644, 303, 135, '-', self.fontSmall, self.fontLarge, 0, 3), 6)
         self.frames[5].addLabel('dcFuelMixtureStr', LabeledValue2('Mix', 318, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 10)
-        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 5)
+        self.frames[5].addLabel('FuelLastConsStr', LabeledValue2('Last', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 6, 0), 5)
         self.frames[5].addLabel('FuelAvgConsStr', LabeledValue2('Avg', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 4)
-        self.frames[5].addLabel('VFuelDeltaStr', LabeledValue2('Delta', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 29)
+        self.frames[5].addLabel('VFuelDeltaStr', LabeledValue2('Delta', 447, 387, 135, '-', self.fontSmall, self.fontLarge, 5, 0), 29)
         self.frames[5].addLabel('VFuelTgtStr', LabeledValue2('TGT', 649, 387, 135, '-', self.fontSmall, self.fontLarge, 0, 0), 28)
 
         self.frames2 = list()
@@ -780,6 +780,12 @@ class LabeledValue(RenderMain):
         elif self.colourTag == 4:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourJoker)
+        elif self.colourTag == 5:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDelta)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDelta)
+        elif self.colourTag == 6:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourLapCons)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourLapCons)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
@@ -813,6 +819,12 @@ class LabeledValue2(RenderMain):
         elif self.colourTag == 4:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourJoker)
+        elif self.colourTag == 5:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDelta)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDelta)
+        elif self.colourTag == 6:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourLapCons)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourLapCons)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)
@@ -833,6 +845,12 @@ class LabeledValue2(RenderMain):
         elif self.colourTag == 4:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourJoker)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourJoker)
+        elif self.colourTag == 5:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourDelta)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourDelta)
+        elif self.colourTag == 6:
+            self.ValLabel = self.valFont.render(self.value, True, self.db.textColourLapCons)
+            self.LabLabel = self.labFont.render(self.title, True, self.db.textColourLapCons)
         else:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColour)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColour)

@@ -36,3 +36,4 @@
 /libs/*.bak
 *.pyo
 /data/configs/config.json
+*.log

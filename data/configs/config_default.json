@@ -24,6 +24,7 @@
     "UserRaceLaps": 99,
     "tReactionLift": 0.15,
     "tLiftGap": 0.5,
+    "tDisplayConsumption": 10,
     "UserShiftFlag": [
         true,
         true,

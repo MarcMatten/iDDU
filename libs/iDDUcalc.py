@@ -18,6 +18,8 @@ class IDDUCalcThread(IDDUThread):
     BError = False
     SError = ''
     Brake = 0
+    PitStates = None
+    PitStatesOld = None
 
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -463,6 +465,15 @@ class IDDUCalcThread(IDDUThread):
                                     self.db.VFuelDelta = self.db.VFuelUsedLap - self.db.VFuelReference[self.db.NNextLiftPoint]  # positive = overconsumption
                                     self.db.VFuelStartStraight = self.db.FuelLevel
                                     self.db.BUpdateVFuelDelta = False
+
+                            VFuelDelta = np.round(self.db.VFuelDelta, 2)
+
+                            if VFuelDelta > 0.0:
+                                self.db.textColourDelta = self.red
+                            elif VFuelDelta < 0.0:
+                                self.db.textColourDelta = self.green
+                            else:
+                                self.db.textColourDelta = self.db.textColour
 
                             self.LiftTone()
 
@@ -948,8 +959,11 @@ class IDDUCalcThread(IDDUThread):
         self.db.newLapTime = self.db.SessionTime
         # self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
 
-        if self.db.BPitCommandUpdate:
+        self.PitStates = (self.db.config['BPitCommandControl'], self.db.config['BChangeTyres'], self.db.config['BBeginFueling'], self.db.config['NFuelSetMethod'], self.db.config['VUserFuelSet'])
+
+        if not self.PitStates == self.PitStatesOld or self.db.BPitCommandUpdate:
             self.setPitCommands()
+            self.PitStatesOld = self.PitStates
 
         if self.db.config['BEnableLapLogging']:  # TODO: still required?
             now = datetime.now()
@@ -1009,8 +1023,16 @@ class IDDUCalcThread(IDDUThread):
         else:
             self.db.OutLap = False
 
-        self.db.LastFuelLevel = self.db.FuelLevel
+        FuelLapConsDelta = np.round(self.db.FuelLastCons - self.db.config['VFuelTgt'], 2)
 
+        if FuelLapConsDelta > 0.0 and self.db.config['NFuelTargetMethod'] > 0:
+            self.db.textColourLapCons = self.red
+        elif FuelLapConsDelta < 0.0 and self.db.config['NFuelTargetMethod'] > 0:
+            self.db.textColourLapCons = self.green
+        else:
+            self.db.textColourLapCons = self.db.textColour
+
+        self.db.LastFuelLevel = self.db.FuelLevel
 
         VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3) / self.db.LapsToGo
         VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / (self.db.config['NLapsStintPlanned'] - self.db.StintLap)
@@ -1259,7 +1281,7 @@ class IDDUCalcThread(IDDUThread):
             self.getNStraight()
 
             # change in straight
-            if not self.db.NNextLiftPoint == NNextLiftPointOld:
+            if not self.db.NNextLiftPoint == NNextLiftPointOld and self.db.SessionTime - self.db.newLapTime > self.db.config['tDisplayConsumption']:
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
                 # self.db.VFuelStartStraight = self.db.FuelLevel
                 self.db.BUpdateVFuelDelta = True
