@@ -200,7 +200,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.StintLap = 0
                             print(self.db.timeStr + ':\tIsOnTrack')
 
-                        self.db.Alarm[0:6] = [0] * 6
+                        self.db.Alarm[0:8] = [0] * 9
 
                         # my blue flag
                         if self.db.WeekendInfo['NumCarClasses'] > 1:
@@ -450,8 +450,12 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.PushToPass
 
                         # alarm
-                        if self.db.dcTractionControlToggle:
+                        if not self.db.dcTractionControlToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled:
                             self.db.Alarm[1] = 3
+                        if not self.db.dcTractionControlToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
+                            self.db.Alarm[9] = 3
+                        if not self.db.dcABSToggle or self.db.dcABS == self.db.car.NABSDisabled:
+                            self.db.Alarm[8] = 3
 
                         # Lift beeps
                         if self.db.config['NFuelTargetMethod'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
@@ -633,7 +637,9 @@ class IDDUCalcThread(IDDUThread):
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                 ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
+
                 if not self.SError == ErrorString:
+                    self.logger.error(ErrorString)
                     self.SError = ErrorString
                     print(self.SError)
 
@@ -1281,15 +1287,16 @@ class IDDUCalcThread(IDDUThread):
             self.getNStraight()
 
             # change in straight
-            if not self.db.NNextLiftPoint == NNextLiftPointOld and self.db.SessionTime - self.db.newLapTime > self.db.config['tDisplayConsumption']:
+            if not self.db.NNextLiftPoint == NNextLiftPointOld:
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
                 # self.db.VFuelStartStraight = self.db.FuelLevel
                 self.db.BUpdateVFuelDelta = True
 
-                self.db.RenderLabel[4] = False
-                self.db.RenderLabel[5] = False
-                self.db.RenderLabel[28] = True
-                self.db.RenderLabel[29] = True
+                if self.db.SessionTime - self.db.newLapTime > self.db.config['tDisplayConsumption']:
+                    self.db.RenderLabel[4] = False
+                    self.db.RenderLabel[5] = False
+                    self.db.RenderLabel[28] = True
+                    self.db.RenderLabel[29] = True
 
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:

@@ -233,7 +233,6 @@ class Car:
         if self.UpshiftSettings['BValid']:
             for i in range(0, self.NGearMax):
                 write2XML('nMotorShiftGear{}'.format(i+1), self.UpshiftSettings['nMotorShiftOptimal'][i], 'rpm')
-        self.Coasting['gLongCoastPolyFit'][0][0]
         # gear ratios
         if self.UpshiftSettings['BValid'] or self.Coasting['BValid']:
             for i in range(1, self.NGearMax + 1):

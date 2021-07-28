@@ -5,6 +5,8 @@ import pyvjoy
 import time
 import ctypes
 import logging
+import os
+from libs.MyLogger import MyLogger
 
 ctypes.windll.kernel32.SetDllDirectoryW(None)
 
@@ -35,14 +37,17 @@ class IDDUItem:
 
     vjoy = pyvjoy.VJoyDevice(2)
 
-    logger = logging.getLogger('iDDULogger')
-    logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s | %(funcName)s || %(message)s')
-    file_handler = logging.FileHandler('iDDU.log')
-    file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    LogFilePath = os.path.abspath(os.path.join((os.getcwd()).split('iDDU')[0], 'iDDU', 'data','iDDU.log'))
 
+    # logger = logging.getLogger('iDDULogger')
+    # logger.setLevel(logging.INFO)
+    # formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s | %(funcName)s || %(message)s')
+    # file_handler = logging.FileHandler(LogFilePath)
+    # file_handler.setLevel(logging.INFO)
+    # file_handler.setFormatter(formatter)
+    # logger.addHandler(file_handler)
+
+    logger = MyLogger()
 
     def __init__(self):
         pass
@@ -54,13 +59,13 @@ class IDDUItem:
     def getJoystickList(self):
         pygame.joystick.init()
 
-        print(self.db.timeStr + ': ' + str(pygame.joystick.get_count()) + ' joysticks detected:')
+        # print(self.db.timeStr + ': ' + str(pygame.joystick.get_count()) + ' joysticks detected:')
+        self.logger.info(str(pygame.joystick.get_count()) + ' joysticks detected:')
 
         for i in range(pygame.joystick.get_count()):
             self.joystickList.append(pygame.joystick.Joystick(i).get_name())
-            print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
-
-
+            # print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
+            self.logger.info('Joystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
 
     def initJoystick(self, name):
         # self.getJoystickList()
@@ -71,18 +76,22 @@ class IDDUItem:
                 desiredJoystick = i
 
         for i in range(pygame.joystick.get_count()):
-            print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
+            # print(self.db.timeStr + ':\tJoystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
+            self.logger.info('Joystick ', i, ': ', pygame.joystick.Joystick(i).get_name())
             if pygame.joystick.Joystick(i).get_name() == name:
                 desiredJoystick = i
 
         if not desiredJoystick == 9999:
-            print(self.db.timeStr + ':\tConnecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
+            # print(self.db.timeStr + ':\tConnecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
+            self.logger.info('Connecting to', pygame.joystick.Joystick(desiredJoystick).get_name())
             IDDUItem.myJoystick = pygame.joystick.Joystick(desiredJoystick)
             IDDUItem.myJoystick.get_name()
             IDDUItem.myJoystick.init()
-            print(self.db.timeStr + ':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
+            # print(self.db.timeStr + ':\tSuccessfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
+            self.logger.info('Successfully connected to', pygame.joystick.Joystick(desiredJoystick).get_name(), '!')
         else:
-            print(self.db.timeStr + ':\tFANATEC ClubSport Wheel Base not found!')
+            # print(self.db.timeStr + ':\tFANATEC ClubSport Wheel Base not found!')
+            self.logger.error('FANATEC ClubSport Wheel Base not found!')
 
     def pressButton(self, ID, t):
         self.vjoy.set_button(ID, 1)
