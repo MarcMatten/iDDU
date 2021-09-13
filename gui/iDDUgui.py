@@ -14,6 +14,7 @@ from functionalities.libs import importExport, importIBT, maths
 from functionalities.RTDB import RTDB
 import numpy as np
 from libs.setReferenceLap import setReferenceLap
+from libs.MyLogger import MyLogger
 
 
 def decorator(fn):
@@ -66,6 +67,7 @@ class Gui(IDDUItem):
             # change console output to iDDU print window
             sys.stdout = Stream(newText=self.onUpdateText)
             sys.stderr = Stream(newText=self.onUpdateText)
+            MyLogger.consoleHandler.setStream(sys.stdout)
 
         self.setupUi(iDDU)
         iDDU.show()

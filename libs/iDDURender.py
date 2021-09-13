@@ -126,7 +126,7 @@ class RenderScreen(RenderMain):
         self.frames[4].addLabel('dcFARBStr', LabeledValue2('FARB', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 30)
         self.frames[4].addLabel('dcTractionControlStr', LabeledValue2('TC1', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 11)
         self.frames[4].addLabel('dcWeightJackerStr', LabeledValue2('Jacker', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 32)
-        self.frames[4].addLabel('dcTractionControl2Str', LabeledValue2('TC2', 120, 387, 67, '-', self.fontSmall, self.fontLarge, 9, 1), 12)
+        self.frames[4].addLabel('dcTractionControl2Str', LabeledValue2('TC2', 120, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 9), 12)
         self.frames[4].addLabel('dcRARBStr', LabeledValue2('RARB', 219, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 31)
         self.frames[4].addLabel('DRSStr', LabeledValue2('DRS', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 2, 5), 18)
         self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 21, 387, 67, '0', self.fontSmall, self.fontLarge, 3, 4), 19)

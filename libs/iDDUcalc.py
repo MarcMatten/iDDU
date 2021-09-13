@@ -200,7 +200,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.StintLap = 0
                             print(self.db.timeStr + ':\tIsOnTrack')
 
-                        self.db.Alarm[0:8] = [0] * 9
+                        self.db.Alarm = [0] * 10
 
                         # my blue flag
                         if self.db.WeekendInfo['NumCarClasses'] > 1:
@@ -450,11 +450,11 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.PushToPass
 
                         # alarm
-                        if not self.db.dcTractionControlToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled:
+                        if self.db.dcTractionControlToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled:
                             self.db.Alarm[1] = 3
-                        if not self.db.dcTractionControlToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
+                        if self.db.dcTractionControlToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
                             self.db.Alarm[9] = 3
-                        if not self.db.dcABSToggle or self.db.dcABS == self.db.car.NABSDisabled:
+                        if self.db.dcABSToggle or self.db.dcABS == self.db.car.NABSDisabled:
                             self.db.Alarm[8] = 3
 
                         # Lift beeps
@@ -1300,7 +1300,6 @@ class IDDUCalcThread(IDDUThread):
 
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:
-            print('setFuelTgt')
             self.db.LapDistPctLift = np.array([])
             self.db.VFuelBudget = np.array([])
             self.db.VFuelReference = np.array([])
@@ -1309,7 +1308,7 @@ class IDDUCalcThread(IDDUThread):
                                                  np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])]).round(2)])
             self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
             self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']),
-                                                np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])])
+                                                np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])]).round(2)
 
             for i in range(0, len(self.db.FuelTGTLiftPoints['LapDistPctLift'])):
                 x = self.db.FuelTGTLiftPoints['VFuelTGT']
@@ -1324,16 +1323,9 @@ class IDDUCalcThread(IDDUThread):
                 self.db.VFuelReference = np.append(self.db.VFuelReference, np.interp(self.db.config['VFuelTgt'], x, y3))
 
             self.db.LapDistPctLift = self.db.LapDistPctLift
-            # self.db.LapDistPctLift = self.db.LapDistPctLift[rLift > 0.01]
-            # self.db.VFuelBudget[rLift <= 0.01] = self.db.VFuelBudget[rLift <= 0.01] + 10
 
             self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPctLift'])
-
-            print('TGT: {}'.format(self.db.VFuelTgtEffective))
-            print('VFuelBudget: ', self.db.VFuelBudget)
-            print('VFuelReference: ', self.db.VFuelReference)
         else:
-            # print(self.db.timeStr + ':\tNo Fuel Config loaded, target could not be set!')
             return
 
     def getNStraight(self):

@@ -43,7 +43,7 @@ def setReferenceLap(dirPath: str, TelemPath: str, ibtPath: str = None, ibtFile: 
         d['x'], d['y'] = maths.createTrack(d)
 
         # check for monotonic behaviour
-        idxRmv = None
+        idxRmv = []
         if not maths.strictly_increasing(d['tLap']):
             idxRmv = np.argwhere(np.diff(d['tLap']) <= 0)
         if not maths.strictly_increasing(d['LapDistPct']):

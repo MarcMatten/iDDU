@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 
 class MyLogger:
@@ -14,12 +15,12 @@ class MyLogger:
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    consoleHandler = logging.StreamHandler()
+    consoleHandler = logging.StreamHandler(sys.stdout)
     consoleHandler.setFormatter(formatter)
     logger.addHandler(consoleHandler)
 
     error = logger.error
-    werning = logger.warning
+    warning = logger.warning
     info = logger.info
     debug = logger.debug
     critical = logger.critical
