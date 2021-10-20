@@ -20,6 +20,7 @@ class IDDUCalcThread(IDDUThread):
     Brake = 0
     PitStates = None
     PitStatesOld = None
+    dpBrakeOld = np.array([0, 0, 0, 0])
 
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -104,12 +105,13 @@ class IDDUCalcThread(IDDUThread):
                         pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
                         deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
-                        r = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 2, 5, 20, 40],
-                                      [self.black[0], self.black[0], self.blue[0], self.cyan[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0]])
-                        g = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 2, 5, 20, 40],
-                                      [self.black[1], self.black[1], self.blue[1], self.cyan[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1]])
-                        b = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 2, 5, 20, 40],
-                                      [self.black[2], self.black[2], self.blue[2], self.cyan[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2]])
+                        #                            k   k   b   c  g    g    y    o   r   r
+                        r = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 0.7, 1.2, 1.6, 20, 40],
+                                      [self.black[0], self.black[0], self.blue[0], self.cyan[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0], self.red[0]])
+                        g = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 0.7, 1.2, 1.6, 20, 40],
+                                      [self.black[1], self.black[1], self.blue[1], self.cyan[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1], self.red[1]])
+                        b = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 0.7, 1.2, 1.6, 20, 40],
+                                      [self.black[2], self.black[2], self.blue[2], self.cyan[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2], self.red[2]])
 
                         self.db.backgroundColour = tuple([r, g, b])
                         self.db.textColour = self.white
@@ -523,7 +525,10 @@ class IDDUCalcThread(IDDUThread):
 
                             dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
 
-                            self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
+                            # self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
+                            self.db.rABSActivity = list(map(self.mapABSActivity, np.array([dpBrake, self.dpBrakeOld]).max(axis=0)))
+
+                            self.dpBrakeOld = dpBrake
                         else:  # rear locking
                             temp = 0
                             if self.db.Brake > 0.1:
