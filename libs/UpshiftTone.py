@@ -1,6 +1,8 @@
 import time
 import winsound
 from libs.IDDU import IDDUThread
+import numpy as np
+from scipy.interpolate import interp1d
 
 
 class ShiftToneThread(IDDUThread):
@@ -17,6 +19,8 @@ class ShiftToneThread(IDDUThread):
         self.BShiftTone = False
         self.oldGear = 0
         self.rSlipRMax = 6
+        self.nMotorLED = np.zeros([10, 8])
+        self.nMotorLEDLUT = [interp1d([0, 10000], [0, 1], kind='nearest')]*10
 
     def run(self):
         while 1:
@@ -43,6 +47,9 @@ class ShiftToneThread(IDDUThread):
                             continue  # no shift beep when close to lift beep
 
                     if self.db.config['UpshiftStrategy'] == 5 and self.ir['Gear'] in range(1, self.db.car.NGearMax):
+
+                        self.db.NShiftLEDState = self.nMotorLEDLUT[max(self.ir['Gear'], 0)](self.ir['RPM'])
+
                         if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
                             self.db.Alarm[7] = 4
                         elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][2]:
@@ -143,3 +150,34 @@ class ShiftToneThread(IDDUThread):
 
         self.BInitialised = True
         self.db.BUpshiftToneInitRequest = False
+
+        # shift LEDs
+        self.nMotorLED = np.zeros([self.db.car.NGearMax + 1, 8])
+
+        self.nMotorLED[0, :] = np.concatenate((np.linspace(self.FirstRPM, self.ShiftRPM, 4)[0:3],
+                                               np.linspace(self.ShiftRPM, self.LastRPM, 4),
+                                               np.array(self.BlinkRPM)),
+                                              axis=None)
+
+        for i in range(0, self.db.car.NGearMax-1):
+            self.nMotorLED[i + 1, :] = np.concatenate((np.linspace(self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][0], self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][1], 4)[0:3],
+                                                       np.linspace(self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][1], self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][2], 4),
+                                                       np.array(self.BlinkRPM)),
+                                                      axis=None)
+
+        self.nMotorLED[self.db.car.NGearMax, :] = self.nMotorLED[self.db.car.NGearMax - 1, :]
+
+        for i in range(0, len(self.nMotorLED)):
+            self.nMotorLEDLUT[i] = interp1d(np.concatenate((0, self.nMotorLED[i, :], 100000), axis=None), [0, 1, 2, 3, 4, 5, 6, 7, 8, 8], kind='previous')
+
+
+        # self.nMotorLED[self.db.car.NGearMax, :] = np.concatenate((np.linspace(self.FirstRPM, self.ShiftRPM, 4)[0:3],
+        #                                                               np.linspace(self.ShiftRPM, self.LastRPM, 4),
+        #                                                               np.array(self.BlinkRPM)),
+        #                                                              axis=None)
+
+
+
+
+
+

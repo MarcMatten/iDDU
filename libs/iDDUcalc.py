@@ -1351,6 +1351,8 @@ class IDDUCalcThread(IDDUThread):
         self.db.NNextLiftPoint = np.min(d)
 
     def mapABSActivity(self, pBrake):
+        if pBrake < self.db.car.rABSActivityMap[3]:
+            return 4
         if pBrake < self.db.car.rABSActivityMap[2]:
             return 3
         elif pBrake < self.db.car.rABSActivityMap[1]:

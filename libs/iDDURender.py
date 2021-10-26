@@ -26,9 +26,9 @@ class RenderMain(IDDUItem):
 
     RearPoly = [[0, 480], [0, 240], [20, 240], [20, 460], [780, 460], [780, 240], [800, 240], [800, 480]]
 
-    ABSColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
-    WheelSpinColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
-    RearLockingColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.red, IDDUItem.blue]
+    ABSColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.yellow, IDDUItem.red, IDDUItem.blue]
+    WheelSpinColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.yellow, IDDUItem.red, IDDUItem.blue]
+    RearLockingColourCode = [IDDUItem.black, IDDUItem.green, IDDUItem.yellow, IDDUItem.red, IDDUItem.blue]
 
     fontTiny = pygame.font.Font("files/KhmerUI.ttf", 12)  # Khmer UI Calibri
     fontTiny2 = pygame.font.Font("files/KhmerUI.ttf", 18)

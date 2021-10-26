@@ -390,7 +390,8 @@ calcData = {'startUp': False,
             'BUpdateVFuelDelta': False,
             'VFuelDelta': 0,
             'tLiftTones': [1, 0.5, 0],
-            'BLEDsInit': False
+            'BLEDsInit': False,
+            'NShiftLEDState': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

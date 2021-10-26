@@ -58,7 +58,7 @@ class Car:
         self.rGearRatios = [0]*8
         self.rSlipMapAcc = [4.5, 7, 8.5]
         self.rSlipMapBrk = [-4.5, -7, -8.5]
-        self.rABSActivityMap = [-2, -10, -15]
+        self.rABSActivityMap = [-1, -5, -10, -15]
         self.NGearMax = 0
 
     def createCar(self, db, var_headers_names=None):
