@@ -3,6 +3,7 @@ from libs.IDDU import IDDUThread
 import serial
 import serial.tools.list_ports
 import struct
+import numpy as np
 
 RPMLEDPattern = [0, 3, 6, 7, 8]
 
@@ -45,9 +46,9 @@ class SerialComsThread(IDDUThread):
                 while self.BArduinoConnected:
                     t = time.perf_counter()
 
-                    vCar = int(3.06 * abs(self.db.Speed))-128
+                    vCar = 0 #np.int8(min(max(3.06 * abs(self.db.Speed)-128, -128), 127))
                     BInitLEDs = 0
-                    ShiftLEDs = RPMLEDPattern[self.db.Alarm[7]]
+                    ShiftLEDs = np.int8(max(min(RPMLEDPattern[self.db.Alarm[7]], 8), 0))
                     SlipLEDsFL = 0
                     SlipLEDsFR = 0
                     SlipLEDsRL = 0
@@ -59,22 +60,22 @@ class SerialComsThread(IDDUThread):
 
                     # ABS Activation
                     if 'dcABS' in self.db.car.dcList:
-                        SlipLEDsFL = self.db.rABSActivity[0]
-                        SlipLEDsFR = self.db.rABSActivity[1]
-                        SlipLEDsRL = self.db.rABSActivity[2]
-                        SlipLEDsRR = self.db.rABSActivity[3]
+                        SlipLEDsFL = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
+                        SlipLEDsFR = np.int8(min(max(self.db.rABSActivity[1], 0), 4))
+                        SlipLEDsRL = np.int8(min(max(self.db.rABSActivity[2], 0), 4))
+                        SlipLEDsRR = np.int8(min(max(self.db.rABSActivity[3], 0), 4))
                     elif self.db.rRearLocking:
-                        SlipLEDsRL = self.db.rRearLocking
-                        SlipLEDsRR = self.db.rRearLocking
+                        SlipLEDsRL = np.int8(min(max(self.db.rRearLocking, 0), 4))
+                        SlipLEDsRR = np.int8(min(max(self.db.rRearLocking, 0), 4))
 
                     # Wheel spin
                     if self.db.rWheelSpin:
-                        SlipLEDsRL = self.db.rWheelSpin
-                        SlipLEDsRR = self.db.rWheelSpin
+                        SlipLEDsRL = np.int8(min(max(self.db.rWheelSpin, 0), 4))
+                        SlipLEDsRR = np.int8(min(max(self.db.rWheelSpin, 0), 4))
 
                     if self.BArduinoConnected:
                         t2 = time.perf_counter()
-                        msg = struct.pack('>Bbbbbbb', int(ShiftLEDs), int(SlipLEDsFL), int(SlipLEDsFR), int(SlipLEDsRL), int(SlipLEDsRR), vCar, int(BInitLEDs))
+                        msg = struct.pack('>bbbbbbb', ShiftLEDs, SlipLEDsFL, SlipLEDsFR, SlipLEDsRL, SlipLEDsRR, BInitLEDs, vCar)
                         # bits = bin(int(ShiftLEDs)) + bin(int(SlipLEDsFL))[2:] + bin(int(SlipLEDsFR))[2:] + bin(int(SlipLEDsRL))[2:] + bin(SlipLEDsRR)[2:] + bin(vCar)[2:] + bin(int(BInitLEDs))[2:]
                         # RPM - format(8, '#006b')
                         # slip - format(4, '#005b')
