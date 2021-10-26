@@ -23,6 +23,7 @@ class LoggerThread(IDDUThread):
                      'tExecuteRTDB',
                      'tExecuteUpshiftTone',
                      'tExecuteRaceLapsEstimation',
+                     'tExecuteSerialComs'
                      'tExecuteLogger',
                      'tExecuteRender',
                      'tExecuteCalc',

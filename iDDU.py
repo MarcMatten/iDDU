@@ -2,7 +2,7 @@
 import time
 import numpy as np
 from functionalities.RTDB import RTDB
-from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger
+from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger, SerialComs
 from gui import iDDUgui
 import os
 from functionalities.MultiSwitch import MultiSwitch
@@ -177,7 +177,7 @@ calcData = {'startUp': False,
             'FlagCallTime': 0,
             'FlagException': False,
             'FlagExceptionVal': 0,
-            'Alarm': [0]*10,
+            'Alarm': np.array([0]*10),
             'VFuelAddOld': 1,
             'GreenTime': 0,
             'RemTimeValue': 0,
@@ -319,6 +319,8 @@ calcData = {'startUp': False,
             'tExecuteRTDB': 0,
             'tExecuteUpshiftTone': 0,
             'tExecuteRaceLapsEstimation': 0,
+            'tExecuteSerialComs': 0,
+            'tExecuteSerialComs2': 0,
             'tExecuteLogger': 0,
             'tExecuteRender': 0,
             'tExecuteCalc': 0,
@@ -387,7 +389,8 @@ calcData = {'startUp': False,
             'VFuelStartStraight': 0,
             'BUpdateVFuelDelta': False,
             'VFuelDelta': 0,
-            'tLiftTones': [1, 0.5, 0]
+            'tLiftTones': [1, 0.5, 0],
+            'BLEDsInit': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -440,6 +443,7 @@ if __name__ == "__main__":
     calcThread = iDDUcalc.IDDUCalcThread(0.017)
     shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
     guiThread = iDDUgui.iDDUGUIThread(0.02)
+    serialComsThread = SerialComs.SerialComsThread(0.003)
     raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
     loggerThread = Logger.LoggerThread(0.02)
     ms = MultiSwitch.MultiSwitch(0.005)
@@ -458,6 +462,7 @@ if __name__ == "__main__":
     shiftToneThread.start()
     raceLapsEstimationThread.start()
     loggerThread.start()
+    serialComsThread.start()
     ms.start()
 
     iRRender = None

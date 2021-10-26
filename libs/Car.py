@@ -38,6 +38,7 @@ class Car:
             'nMotorShiftTarget': [0]*8,
             'vCarShiftOptimal': [0]*8,
             'vCarShiftTarget': [0]*8,
+            'nMotorShiftLEDs': [[0, 0, 0]] * 8,
             'BShiftTone': [False]*7,
             'NGear': [1, 2, 3, 4, 5, 6, 7, 8],
             'SetupName': 'SetupName',
@@ -123,12 +124,13 @@ class Car:
             self.UpshiftStrategy = db.config['UpshiftStrategy']
             self.UserShiftFlag = db.config['UserShiftFlag']
 
-    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup, NGearMax):
+    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup, NGearMax, nMotorShiftLEDs):
         for i in range(0, len(NGear)):
             self.UpshiftSettings['nMotorShiftOptimal'][i] = nMotorShiftOptimal[i]
             self.UpshiftSettings['vCarShiftOptimal'][i] = vCarShiftOptimal[i]
             self.UpshiftSettings['nMotorShiftTarget'][i] = nMotorShiftTarget[i]
             self.UpshiftSettings['vCarShiftTarget'][i] = vCarShiftTarget[i]
+            self.UpshiftSettings['nMotorShiftLEDs'][i] = nMotorShiftLEDs[i]
             self.UpshiftSettings['BShiftTone'][i] = True
 
         self.UpshiftSettings['SetupName'] = SetupName
@@ -218,8 +220,6 @@ class Car:
                 OD['@Value'] = str(value)
                 OD['@Unit'] = unit
                 doc['Maths']['MathConstants']['MathConstant'].append(OD)
-
-
 
         # read default xml
         with open(rootPath + '/files/default.xml') as fd:

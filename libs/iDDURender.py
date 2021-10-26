@@ -863,6 +863,8 @@ class LabeledValue2(RenderMain):
                 pygame.draw.rect(RenderMain.screen, self.orange, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
             elif self.db.Alarm[self.alarmTag] == 3:
                 pygame.draw.rect(RenderMain.screen, self.red, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
+            elif self.db.Alarm[self.alarmTag] == 4:
+                pygame.draw.rect(RenderMain.screen, self.blue, [self.x - 3, self.y, self.width + 6, 8 + self.ValSize[1]], 0)
 
         RenderMain.screen.blit(self.LabLabel, (self.x, self.y))
         RenderMain.screen.blit(self.ValLabel, (self.x + self.width - self.ValSize[0], self.y + 15))
@@ -912,6 +914,8 @@ class SimpleValue(RenderMain):
                 pygame.draw.rect(RenderMain.screen, self.orange, [self.x - 3, self.y + 41, self.width + 6, 135], 0)
             elif self.db.Alarm[self.alarmTag] == 3:
                 pygame.draw.rect(RenderMain.screen, self.red, [self.x - 3, self.y + 41, self.width + 6, 135], 0)
+            elif self.db.Alarm[self.alarmTag] == 4:
+                pygame.draw.rect(RenderMain.screen, self.blue, [self.x - 3, self.y + 41, self.width + 6, 135], 0)
         if self.center:
             RenderMain.screen.blit(self.ValLabel, (self.x + self.width/2 - self.ValSize[0]/2, self.y + 15))
         else:

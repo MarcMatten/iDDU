@@ -28,10 +28,10 @@ class IDDUCalcThread(IDDUThread):
         self.FlagCallTime = 0
         self.init = False
 
-        self.Yaw = []
-        self.YawNorth = []
-        self.VelocityX = []
-        self.VelocityY = []
+        self.Yaw = np.array([])
+        self.YawNorth = np.array([])
+        self.VelocityX = np.array([])
+        self.VelocityY = np.array([])
         self.LapDistPct = np.array([])
         self.time = np.array([])
         self.dx = np.array(0)
@@ -202,7 +202,9 @@ class IDDUCalcThread(IDDUThread):
                             self.db.StintLap = 0
                             print(self.db.timeStr + ':\tIsOnTrack')
 
-                        self.db.Alarm = [0] * 10
+                        # self.db.Alarm = np.array([0] * 10)
+                        self.db.Alarm[0:7] = 0
+                        self.db.Alarm[8:] = 0
 
                         # my blue flag
                         if self.db.WeekendInfo['NumCarClasses'] > 1:
@@ -275,6 +277,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime
                             self.db.Run = self.db.Run + 1
+                            self.db.BLEDsInit = True
                             if self.db.config['BPitCommandControl']:
                                 self.ir.pit_command(0)
 
@@ -339,17 +342,17 @@ class IDDUCalcThread(IDDUThread):
 
                             if len(self.time) > 0:
                                 if not self.time[-1] == self.db.SessionTime:
-                                    self.Yaw.append(self.db.Yaw)
-                                    self.YawNorth.append(self.db.YawNorth)
-                                    self.VelocityX.append(self.db.VelocityX)
-                                    self.VelocityY.append(self.db.VelocityY)
+                                    self.Yaw = np.append(self.Yaw, self.db.Yaw)
+                                    self.YawNorth = np.append(self.YawNorth, self.db.YawNorth)
+                                    self.VelocityX = np.append(self.VelocityX, self.db.VelocityX)
+                                    self.VelocityY = np.append(self.VelocityY, self.db.VelocityY)
                                     self.LapDistPct = np.append(self.LapDistPct, self.db.LapDistPct * 100)
                                     self.time = np.append(self.time, self.db.SessionTime)
                             else:
-                                self.Yaw.append(self.db.Yaw)
-                                self.YawNorth.append(self.db.YawNorth)
-                                self.VelocityX.append(self.db.VelocityX)
-                                self.VelocityY.append(self.db.VelocityY)
+                                self.Yaw = np.append(self.Yaw, self.db.Yaw)
+                                self.YawNorth = np.append(self.YawNorth, self.db.YawNorth)
+                                self.VelocityX = np.append(self.VelocityX, self.db.VelocityX)
+                                self.VelocityY = np.append(self.VelocityY, self.db.VelocityY)
                                 self.LapDistPct = np.append(self.LapDistPct, self.db.LapDistPct * 100)
                                 self.time = np.append(self.time, self.db.SessionTime)
 
@@ -650,7 +653,7 @@ class IDDUCalcThread(IDDUThread):
 
     def initSession(self):
         print(self.db.timeStr + ': Initialising Session ==========================')
-        time.sleep(3)
+        time.sleep(0.3)
         print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
         self.trackList = importExport.getFiles(self.dir + '/data/track', 'json')
         self.carList = importExport.getFiles(self.dir + '/data/car', 'json')
@@ -667,7 +670,9 @@ class IDDUCalcThread(IDDUThread):
         # self.db.JokerLapsRequired = 0
         # self.db.config['PitStopDelta'] = 0
         self.db.config['MapHighlight'] = False
-        self.db.Alarm = [0]*10
+        # self.db.Alarm[0:7] = 0
+        # self.db.Alarm[8:] = 0
+        self.db.Alarm = np.array([0] * 10)
         self.db.BMultiInitRequest = True
 
         if self.db.startUp:
@@ -937,7 +942,6 @@ class IDDUCalcThread(IDDUThread):
             self.db.RenderLabel[32] = True
         else:
             self.db.RenderLabel[32] = False
-
 
     def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')

@@ -35,33 +35,59 @@ class ShiftToneThread(IDDUThread):
                             winsound.Beep(self.db.config['fFuelBeep'], self.db.config['tFuelBeep'])
                             self.vjoy.set_button(63, 0)
                             self.db.BLiftToneRequest = False
-                            self.db.Alarm[7] = 0
+                            # self.db.Alarm[7] = 0
                             continue  # no shift beep when lift beep
                         if self.db.tNextLiftPoint < self.db.tLiftTones[0] + 0.5 and len(self.db.LapDistPctLift) > 0:
                             time.sleep(self.rate)
-                            self.db.Alarm[7] = 0
+                            # self.db.Alarm[7] = 0
                             continue  # no shift beep when close to lift beep
+
+                    if self.db.config['UpshiftStrategy'] == 5 and self.ir['Gear'] in range(1, self.db.car.NGearMax):
+                        if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
+                            self.db.Alarm[7] = 4
+                        elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][2]:
+                            self.db.Alarm[7] = 3
+                        elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][1]:
+                            self.db.Alarm[7] = 2
+                        elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][0]:
+                            self.db.Alarm[7] = 1
+                        else:
+                            self.db.Alarm[7] = 0
+                    else:
+                        if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
+                            self.db.Alarm[7] = 4
+                        elif self.ir['RPM'] >= self.db.car.iRShiftRPM[2]:
+                            self.db.Alarm[7] = 3
+                        elif self.ir['RPM'] >= self.db.car.iRShiftRPM[1]:
+                            self.db.Alarm[7] = 2
+                        elif self.ir['RPM'] >= self.db.car.iRShiftRPM[0]:
+                            self.db.Alarm[7] = 1
+                        else:
+                            self.db.Alarm[7] = 0
 
                     if self.db.config['ShiftToneEnabled']:
                         if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20 and self.db.rSlipR < self.rSlipRMax:
                             if self.db.config['UpshiftStrategy'] < 4:  # iRacing shift rpm
                                 if self.ir['RPM'] >= self.db.iRShiftRPM[self.db.config['UpshiftStrategy']] and self.db.config['UserShiftFlag'][self.ir['Gear'] - 1]:
                                     self.beep()
-                                else:
-                                    self.db.Alarm[7] = 0
+                                # else:
+                                    # self.db.Alarm[7] = 0
                             elif self.db.config['UpshiftStrategy'] == 4:  # user shift rpm
                                 if self.ir['RPM'] >= self.db.config['UserShiftRPM'][self.ir['Gear'] - 1] and self.db.config['UserShiftFlag'][self.ir['Gear'] - 1]:
                                     self.beep()
-                                else:
-                                    self.db.Alarm[7] = 0
+                                # else:
+                                    # self.db.Alarm[7] = 0
                             elif self.db.config['UpshiftStrategy'] == 5:  # optimised shift rpm from car file
-                                if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
+                                if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and \
+                                        self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and \
+                                        (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= \
+                                        self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
                                     self.beep()
-                                else:
-                                    self.db.Alarm[7] = 0
-                        else:
-                            self.db.Alarm[7] = 0
-                    
+                                # else:
+                                    # self.db.Alarm[7] = 0
+                        # else:
+                            # self.db.Alarm[7] = 0
+
                     if (not self.oldGear == self.ir['Gear']) and self.BShiftTone:
                         tShiftReaction = max(time.time() - self.tBeep + self.db.config['tShiftBeep'] / 1000, 0)
                         if tShiftReaction > 1:
@@ -73,9 +99,9 @@ class ShiftToneThread(IDDUThread):
 
                     if self.ir['Gear'] > 0:
                         self.oldGear = self.ir['Gear']
-                    
+
                     self.db.tExecuteUpshiftTone = (time.perf_counter() - t) * 1000
-                    
+
                     time.sleep(self.rate)
 
                 time.sleep(0.2)
@@ -85,7 +111,7 @@ class ShiftToneThread(IDDUThread):
             self.BInitialised = False
 
     def beep(self):
-        self.db.Alarm[7] = 3
+        # self.db.Alarm[7] = 3
         if time.time() > (self.tBeep + 0.75):
             self.vjoy.set_button(63, 1)
             winsound.Beep(self.db.config['fShiftBeep'], self.db.config['tShiftBeep'])
