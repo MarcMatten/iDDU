@@ -85,15 +85,15 @@ class SerialComsThread(IDDUThread):
                         self.serial.write(msg)
                         # self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 0))
                         self.db.tExecuteSerialComs2 = (time.perf_counter() - t2) * 1000
-                        if self.db.tExecuteSerialComs2 >= 50:
-                            self.logger.warning(msg)
-                            self.logger.warning(ShiftLEDs)
-                            self.logger.warning(SlipLEDsFL)
-                            self.logger.warning(SlipLEDsFR)
-                            self.logger.warning(SlipLEDsRL)
-                            self.logger.warning(SlipLEDsRR)
-                            self.logger.warning(vCar)
-                            self.logger.warning(BInitLEDs)
+                        # if self.db.tExecuteSerialComs2 >= 50:
+                            # self.logger.warning(msg)
+                            # self.logger.warning(ShiftLEDs)
+                            # self.logger.warning(SlipLEDsFL)
+                            # self.logger.warning(SlipLEDsFR)
+                            # self.logger.warning(SlipLEDsRL)
+                            # self.logger.warning(SlipLEDsRR)
+                            # self.logger.warning(vCar)
+                            # self.logger.warning(BInitLEDs)
 
 
                     self.db.tExecuteSerialComs = (time.perf_counter() - t) * 1000

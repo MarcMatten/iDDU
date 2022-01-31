@@ -9,6 +9,7 @@
         "gLongCoastPolyFit": []
     },
     "NABSDisabled": 0,
+    "NGearMax": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
     "UpshiftSettings": {
@@ -192,6 +193,8 @@
         4000,
         4000
     ],
+    "VFuelLap": {},
+    "carPath": "audir8gt3",
     "dcList": {
         "dcABS": [
             "ABS",
@@ -241,6 +244,33 @@
         8150.0
     ],
     "name": "Audi R8 LMS",
+    "pBrakeFMax": 137.03191776086788,
+    "pBrakeRMax": 137.0319096729009,
+    "rABSActivityMap": [
+        -2,
+        -10,
+        -15
+    ],
+    "rGearRatios": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "rSlipMapAcc": [
+        4.5,
+        7,
+        8.5
+    ],
+    "rSlipMapBrk": [
+        -4.5,
+        -7,
+        -8.5
+    ],
     "tLap": {
         "belleisle": [
             0.0,

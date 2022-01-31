@@ -6,6 +6,8 @@
   <MathConstant Name="nMotorShiftGear3" Value="0" Unit="rpm"/>
   <MathConstant Name="nMotorShiftGear4" Value="0" Unit="rpm"/>
   <MathConstant Name="nMotorShiftGear5" Value="0" Unit="rpm"/>
+  <MathConstant Name="nMotorShiftGear6" Value="0" Unit="rpm"/>
+  <MathConstant Name="nMotorShiftGear7" Value="0" Unit="rpm"/>
   <MathConstant Name="PI" Value="3.14159265" Unit=""/>
   <MathConstant Name="rGear1" Value="0" Unit="ratio"/>
   <MathConstant Name="rGear2" Value="0" Unit="ratio"/>
@@ -13,6 +15,8 @@
   <MathConstant Name="rGear4" Value="0" Unit="ratio"/>
   <MathConstant Name="rGear5" Value="0" Unit="ratio"/>
   <MathConstant Name="rGear6" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear7" Value="0" Unit="ratio"/>
+  <MathConstant Name="rGear8" Value="0" Unit="ratio"/>
   <MathConstant Name="pBrakeFMax" Value="0" Unit="bar"/>
   <MathConstant Name="pBrakeRMax" Value="0" Unit="bar"/>
  </MathConstants>

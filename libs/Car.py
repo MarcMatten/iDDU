@@ -250,7 +250,7 @@ class Car:
 
         # export xml
         xmlString = xmltodict.unparse(doc, pretty=True)
-        f = open(MotecPath + '/Maths/{}.xml'.format(self.name), "a")
+        f = open(MotecPath + '/Maths/{}.xml'.format(self.name), "w")
         f.write(xmlString)
         f.close()
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tExported Motec XML file: {}.xml'.format(self.name))

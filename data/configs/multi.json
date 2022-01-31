@@ -19,13 +19,29 @@
         2,
         3
     ],
+    "dcDiffPreload": [
+        20,
+        21
+    ],
     "dcFuelMixture": [
         4,
         5
     ],
+    "dcLaunchRPM": [
+        22,
+        23
+    ],
+    "dcPeakBrakeBias": [
+        24,
+        25
+    ],
     "dcThrottleShape": [
         6,
         7
+    ],
+    "dcToggleWindshieldWipers": [
+        26,
+        27
     ],
     "dcTractionControl": [
         8,
@@ -34,6 +50,10 @@
     "dcTractionControl2": [
         10,
         11
+    ],
+    "dcTriggerWindshieldWipers": [
+        28,
+        29
     ],
     "dcWeightJackerRight": [
         14,

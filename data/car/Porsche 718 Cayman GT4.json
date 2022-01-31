@@ -87,6 +87,7 @@
         ]
     },
     "NABSDisabled": 0,
+    "NGearMax": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
     "UpshiftSettings": {
@@ -247,6 +248,8 @@
         4000,
         4000
     ],
+    "VFuelLap": {},
+    "carPath": "porsche718gt4",
     "dcList": {
         "dcABS": [
             "ESC",
@@ -286,8 +289,8 @@
         7800.0
     ],
     "name": "Porsche 718 Cayman GT4",
-    "pBrakeFMax": 173.49398659639837,
-    "pBrakeRMax": 173.49394454253368,
+    "pBrakeFMax": 0.0,
+    "pBrakeRMax": 0.0,
     "rABSActivityMap": [
         -2,
         -10,
