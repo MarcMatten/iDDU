@@ -244,17 +244,17 @@ class RenderScreen(RenderMain):
                                 RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
                                 RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
 
-                    # ABS Activation
-                    if 'dcABS' in self.db.car.dcList:
-                        for i in range(len(self.db.rABSActivity)):
-                            if self.db.rABSActivity[i] > 0:
-                                pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
-                    elif self.db.rRearLocking:
-                        pygame.draw.polygon(RenderMain.screen, self.RearLockingColourCode[self.db.rRearLocking], self.RearPoly, 0)
-
-                    # Wheel spin
-                    if self.db.rWheelSpin:
-                        pygame.draw.polygon(RenderMain.screen, self.WheelSpinColourCode[self.db.rWheelSpin], self.RearPoly, 0)
+                    # # ABS Activation
+                    # if 'dcABS' in self.db.car.dcList:
+                    #     for i in range(len(self.db.rABSActivity)):
+                    #         if self.db.rABSActivity[i] > 0:
+                    #             pygame.draw.polygon(RenderMain.screen, self.ABSColourCode[self.db.rABSActivity[i]], self.ABSIndicationPoly[i], 0)
+                    # elif self.db.rRearLocking:
+                    #     pygame.draw.polygon(RenderMain.screen, self.RearLockingColourCode[self.db.rRearLocking], self.RearPoly, 0)
+                    #
+                    # # Wheel spin
+                    # if self.db.rWheelSpin:
+                    #     pygame.draw.polygon(RenderMain.screen, self.WheelSpinColourCode[self.db.rWheelSpin], self.RearPoly, 0)
 
                 if self.db.NDDUPage == 1:
                     self.page1()

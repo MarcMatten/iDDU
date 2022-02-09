@@ -468,9 +468,10 @@
     "pBrakeFMax": 77.85962543336538,
     "pBrakeRMax": 77.85962826022592,
     "rABSActivityMap": [
-        -2,
+        -1,
         -10,
-        -15
+        -20,
+        -30
     ],
     "rGearRatios": [
         null,

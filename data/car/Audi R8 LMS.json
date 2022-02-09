@@ -6,6 +6,7 @@
         "NGear": [],
         "QFuelCoastPolyFit": [],
         "SetupName": "SetupName",
+        "BValid": false,
         "gLongCoastPolyFit": []
     },
     "NABSDisabled": 0,
@@ -247,9 +248,10 @@
     "pBrakeFMax": 137.03191776086788,
     "pBrakeRMax": 137.0319096729009,
     "rABSActivityMap": [
-        -2,
+        -1,
         -10,
-        -15
+        -20,
+        -30
     ],
     "rGearRatios": [
         0,

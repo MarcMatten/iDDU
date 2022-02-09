@@ -82,7 +82,7 @@ class Car:
         else:
             self.BP2P = False
 
-        dcIgnoreList = ['dcHeadlightFlash', 'dcPitSpeedLimiterToggle', 'dcStarter', 'dcTractionControlToggle', 'dcTearOffVisor', 'dcPushToPass', 'dcDashPage']  # TODO: shouldn't be here
+        dcIgnoreList = ['dcHeadlightFlash', 'dcPitSpeedLimiterToggle', 'dcStarter', 'dcTractionControlToggle', 'dcTearOffVisor', 'dcPushToPass', 'dcDashPage', 'dcToggleWindshieldWipers', 'dcTriggerWindshieldWipers']  # TODO: shouldn't be here
 
         dcNotInt = ['dcBrakeBias']  # TODO: shouldn't be here
 

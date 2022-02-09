@@ -48,7 +48,10 @@ class ShiftToneThread(IDDUThread):
 
                     if self.db.config['UpshiftStrategy'] == 5 and self.ir['Gear'] in range(1, self.db.car.NGearMax):
 
-                        self.db.NShiftLEDState = self.nMotorLEDLUT[max(self.ir['Gear'], 0)](self.ir['RPM'])
+                        if self.ir['EngineWarnings'] & 0x20:
+                            self.db.NShiftLEDState = 8
+                        else:
+                            self.db.NShiftLEDState = self.nMotorLEDLUT[max(self.ir['Gear'], 0)](self.ir['RPM'])
 
                         if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
                             self.db.Alarm[7] = 4
@@ -166,6 +169,9 @@ class ShiftToneThread(IDDUThread):
                                                       axis=None)
 
         self.nMotorLED[self.db.car.NGearMax, :] = self.nMotorLED[self.db.car.NGearMax - 1, :]
+
+        # avoid case where BlinkRPM < nMotorShift causes limiter to flash too early
+        self.nMotorLED[:, -1] = np.maximum(self.nMotorLED[:, -1], self.nMotorLED[:, -2] + (self.nMotorLED[:, -2] - self.nMotorLED[:, -3]))
 
         for i in range(0, len(self.nMotorLED)):
             self.nMotorLEDLUT[i] = interp1d(np.concatenate((0, self.nMotorLED[i, :], 100000), axis=None), [0, 1, 2, 3, 4, 5, 6, 7, 8, 8], kind='previous')

@@ -2,6 +2,7 @@
     "BDRS": false,
     "BP2P": false,
     "Coasting": {
+        "BValid": true,
         "NGear": [
             0.0,
             1.0,
@@ -292,9 +293,10 @@
     "pBrakeFMax": 0.0,
     "pBrakeRMax": 0.0,
     "rABSActivityMap": [
-        -2,
+        -1,
         -10,
-        -15
+        -20,
+        -30
     ],
     "rGearRatios": [
         0,

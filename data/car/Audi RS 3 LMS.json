@@ -122,9 +122,9 @@
         "SetupName": "BrandsHatch\\22S1\\22S1-IMPC-Brands-RS3-CAW.sto",
         "nMotorShiftLEDs": [
             [
-                4771.136780407841,
-                5687.205118379298,
-                6432.393471791791
+                3000.676196107774,
+                4000.96631526811507,
+                5237.361934184899
             ],
             [
                 4771.136780407841,
@@ -286,8 +286,8 @@
         7800.0
     ],
     "name": "Audi RS 3 LMS",
-    "pBrakeFMax": 77.7853315181165,
-    "pBrakeRMax": 65.33965645589561,
+    "pBrakeFMax": 0.0,
+    "pBrakeRMax": 0.0,
     "rABSActivityMap": [
         -1,
         -5,

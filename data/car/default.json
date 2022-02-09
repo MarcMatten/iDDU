@@ -255,6 +255,7 @@
     "pBrakeFMax": 0,
     "pBrakeRMax": 0,
     "rABSActivityMap": [
+        -1,
         -2,
         -10,
         -15
