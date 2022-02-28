@@ -266,6 +266,9 @@ class RenderScreen(RenderMain):
             else:
                 self.page0()
 
+            if self.db.BLoadRaceSetupWarning:
+                self.warningLabel('LOAD RACE SETUP!', self.yellow, self.black, 3)
+
             if self.ir.startup() and self.ir['IsOnTrack']:
 
                 EngineWarnings = self.ir['EngineWarnings']

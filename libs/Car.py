@@ -56,8 +56,8 @@ class Car:
         self.pBrakeFMax = 0
         self.pBrakeRMax = 0
         self.rGearRatios = [0]*8
-        self.rSlipMapAcc = [4.5, 7, 8.5]
-        self.rSlipMapBrk = [-4.5, -7, -8.5]
+        self.rSlipMapAcc = [2.5, 4, 6.5, 9]
+        self.rSlipMapBrk = [-2.5, -4, -6.5, -9]
         self.rABSActivityMap = [-1, -5, -10, -15]
         self.NGearMax = 0
 

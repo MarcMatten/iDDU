@@ -21,6 +21,8 @@ class ShiftToneThread(IDDUThread):
         self.rSlipRMax = 6
         self.nMotorLED = np.zeros([10, 8])
         self.nMotorLEDLUT = [interp1d([0, 10000], [0, 1], kind='nearest')]*10
+        self.LEDToAlarm = interp1d([0, 1, 4, 7, 8], [0, 1, 2, 3, 4], kind='previous')
+        self.AlarmToLED = interp1d([0, 1, 2, 3, 4], [0, 1, 4, 7, 8], kind='previous')
 
     def run(self):
         while 1:
@@ -46,23 +48,26 @@ class ShiftToneThread(IDDUThread):
                             # self.db.Alarm[7] = 0
                             continue  # no shift beep when close to lift beep
 
-                    if self.db.config['UpshiftStrategy'] == 5 and self.ir['Gear'] in range(1, self.db.car.NGearMax):
+                    if self.db.config['UpshiftStrategy'] == 5 and self.ir['Gear'] in range(1, self.db.car.NGearMax + 1):
 
                         if self.ir['EngineWarnings'] & 0x20:
                             self.db.NShiftLEDState = 8
+                            self.db.Alarm[7] = 4
                         else:
                             self.db.NShiftLEDState = self.nMotorLEDLUT[max(self.ir['Gear'], 0)](self.ir['RPM'])
+                            self.db.Alarm[7] = self.LEDToAlarm( self.db.NShiftLEDState)
 
-                        if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
-                            self.db.Alarm[7] = 4
-                        elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][2]:
-                            self.db.Alarm[7] = 3
-                        elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][1]:
-                            self.db.Alarm[7] = 2
-                        elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][0]:
-                            self.db.Alarm[7] = 1
-                        else:
-                            self.db.Alarm[7] = 0
+                        # if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
+                        #     self.db.Alarm[7] = 4
+                        # elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][2]:
+                        #     self.db.Alarm[7] = 3
+                        #     print(60)
+                        # elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][1]:
+                        #     self.db.Alarm[7] = 2
+                        # elif self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftLEDs'][self.ir['Gear'] - 1][0]:
+                        #     self.db.Alarm[7] = 1
+                        # else:
+                        #     self.db.Alarm[7] = 0
                     else:
                         if self.ir['RPM'] >= self.db.car.iRShiftRPM[3]:
                             self.db.Alarm[7] = 4
@@ -74,6 +79,7 @@ class ShiftToneThread(IDDUThread):
                             self.db.Alarm[7] = 1
                         else:
                             self.db.Alarm[7] = 0
+                        self.db.NShiftLEDState = self.AlarmToLED(self.db.Alarm[7])
 
                     if self.db.config['ShiftToneEnabled']:
                         if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20 and self.db.rSlipR < self.rSlipRMax:
@@ -155,7 +161,7 @@ class ShiftToneThread(IDDUThread):
         self.db.BUpshiftToneInitRequest = False
 
         # shift LEDs
-        self.nMotorLED = np.zeros([self.db.car.NGearMax + 1, 8])
+        self.nMotorLED = np.ones([self.db.car.NGearMax + 1, 8]) * 100000
 
         self.nMotorLED[0, :] = np.concatenate((np.linspace(self.FirstRPM, self.ShiftRPM, 4)[0:3],
                                                np.linspace(self.ShiftRPM, self.LastRPM, 4),
@@ -168,13 +174,28 @@ class ShiftToneThread(IDDUThread):
                                                        np.array(self.BlinkRPM)),
                                                       axis=None)
 
+            print(i)
+        print(self.nMotorLED)
+
         self.nMotorLED[self.db.car.NGearMax, :] = self.nMotorLED[self.db.car.NGearMax - 1, :]
 
         # avoid case where BlinkRPM < nMotorShift causes limiter to flash too early
         self.nMotorLED[:, -1] = np.maximum(self.nMotorLED[:, -1], self.nMotorLED[:, -2] + (self.nMotorLED[:, -2] - self.nMotorLED[:, -3]))
 
+
+        print('===========================')
+        print(self.nMotorLED)
+        print(len(self.nMotorLED))
+        print(np.size(self.nMotorLED))
+        print('===========================')
+
         for i in range(0, len(self.nMotorLED)):
             self.nMotorLEDLUT[i] = interp1d(np.concatenate((0, self.nMotorLED[i, :], 100000), axis=None), [0, 1, 2, 3, 4, 5, 6, 7, 8, 8], kind='previous')
+            print(i)
+            print(np.concatenate((0, self.nMotorLED[i, :], 100000), axis=None))
+
+        print('===========================')
+        print(self.nMotorLEDLUT)
 
 
         # self.nMotorLED[self.db.car.NGearMax, :] = np.concatenate((np.linspace(self.FirstRPM, self.ShiftRPM, 4)[0:3],

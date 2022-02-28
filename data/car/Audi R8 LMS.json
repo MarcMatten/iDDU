@@ -2,11 +2,11 @@
     "BDRS": false,
     "BP2P": false,
     "Coasting": {
+        "BValid": false,
         "CarSetup": {},
         "NGear": [],
         "QFuelCoastPolyFit": [],
         "SetupName": "SetupName",
-        "BValid": false,
         "gLongCoastPolyFit": []
     },
     "NABSDisabled": 0,

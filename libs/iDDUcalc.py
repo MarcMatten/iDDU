@@ -73,7 +73,7 @@ class IDDUCalcThread(IDDUThread):
                     if not self.db.BDDUexecuting:
                         print(self.db.timeStr + ': Connecting to iRacing')
 
-                    if self.db.oldSessionNum < self.db.SessionNum or not self.db.WeekendInfo['SubSessionID'] == self.db.SubSessionIDOld:
+                    if self.db.oldSessionNum < self.db.SessionNum or not self.db.WeekendInfo['SubSessionID'] == self.db.SubSessionIDOld or not self.db.SessionTypeOld == self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']:
                         self.initSession()
 
                     if self.db.SessionTime < 10 + self.db.GreenTime:
@@ -85,6 +85,17 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.NClassPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['ClassPosition'] + 1
                                 self.db.NPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Position']
                                 self.db.BResults = True
+
+                    if self.db.BLoadRaceSetupWarning:
+                        CurrentSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
+                                        'UpdateCount': self.db.CarSetup['UpdateCount'],
+                                        'FuelLevel': self.db.FuelLevel}
+
+                        if not self.db.LastSetup == CurrentSetup:
+                            if CurrentSetup['FuelLevel'] == 0:
+                                pass
+                            if CurrentSetup['FuelLevel'] > self.db.LastSetup['FuelLevel']:
+                                self.db.BLoadRaceSetupWarning = False
 
                     if self.db.BResults:
                         self.db.PosStr = str(self.db.NClassPosition) + '/' + str(self.db.NDriversMyClass)
@@ -301,13 +312,17 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.car.save(self.db.dir)
                                 self.db.car.MotecXMLexport(rootPath=self.dir, MotecPath=self.db.config['MotecProjectPath'])
 
+                            self.db.LastSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
+                                                 'UpdateCount': self.db.CarSetup['UpdateCount'],
+                                                 'FuelLevel': self.db.FuelLevel}
+
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
                             self.db.BEnteringPits = False
                             if self.db.PitstopActive:  # during pitstop
                                 if not self.db.BPitstop:  # pit stop start event
                                     self.db.PitSvFlagsEntry = self.db.PitSvFlags
-                                    self.db.VFuelPitStopStart = self.db.FuelLevel
+                                    self.db.VFuelPitStopStart = self.db.FuelLevel0o98i
                                     self.db.BPitstop = True
                                 self.pitStop()
                                 if (not self.db.BPitstopCompleted) and self.db.PlayerCarPitSvStatus == 2:  # pit stop completed event
@@ -379,7 +394,7 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.BNewLap and not self.db.OnPitRoad:
                                 fuelNeed = self.db.FuelAvgConsumption * (self.db.LapsToGo - 1 + 0.1)
                                 self.db.VFuelAdd = min(max(fuelNeed - self.db.FuelLevel + self.db.FuelAvgConsumption, 0),
-                                                       self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'])
+                                                       self.db.DriverCarFuelMaxLtr)
                                 if self.db.VFuelAdd == 0:
                                     # self.ir.pit_command(2, 1) # Add fuel, optionally specify the amount to add in liters or pass '0' to use existing amount
                                     # self.ir.pit_command(11) # Uncheck add fuel
@@ -388,13 +403,13 @@ class IDDUCalcThread(IDDUThread):
                                     if not round(self.db.VFuelAdd) == round(self.db.VFuelAddOld):
                                         if self.db.config['NFuelSetMethod'] == 1 and self.db.config['BBeginFueling'] and self.db.config['BPitCommandControl']:
                                             self.ir.pit_command(2, round(self.db.VFuelAdd + 1 + 1e-10))  # Add fuel
-                                    if self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + self.db.FuelAvgConsumption:
+                                    if self.db.VFuelAdd < self.db.DriverCarFuelMaxLtr - self.db.FuelLevel + self.db.FuelAvgConsumption:
                                         self.db.textColourFuelAddOverride = self.green
                                         self.db.BTextColourFuelAddOverride = True
-                                    elif self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 2 * self.db.FuelAvgConsumption:
+                                    elif self.db.VFuelAdd < self.db.DriverCarFuelMaxLtr - self.db.FuelLevel + 2 * self.db.FuelAvgConsumption:
                                         self.db.textColourFuelAddOverride = self.yellow
                                         self.db.BTextColourFuelAddOverride = True
-                                    elif self.db.VFuelAdd < self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct'] - self.db.FuelLevel + 3 * self.db.FuelAvgConsumption:
+                                    elif self.db.VFuelAdd < self.db.DriverCarFuelMaxLtr - self.db.FuelLevel + 3 * self.db.FuelAvgConsumption:
                                         self.db.textColourFuelAddOverride = self.red
                                         self.db.BTextColourFuelAddOverride = True
                                     else:
@@ -455,11 +470,18 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.PushToPass
 
                         # alarm
-                        if self.db.dcTractionControlToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled:
-                            self.db.Alarm[1] = 3
-                        if self.db.dcTractionControlToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
-                            self.db.Alarm[9] = 3
-                        if self.db.dcABSToggle or self.db.dcABS == self.db.car.NABSDisabled:
+                        if self.db.car.name in ['Dallara P217 LMP2']:
+                            BTcToggle = True
+                        else:
+                            BTcToggle = self.db.dcTractionControlToggle
+
+                        if self.db.dcTractionControl:
+                            if not BTcToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled:
+                                self.db.Alarm[1] = 3
+                            if not BTcToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
+                                self.db.Alarm[9] = 3
+
+                        if (not self.db.dcABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled:
                             self.db.Alarm[8] = 3
 
                         # Lift beeps
@@ -499,7 +521,7 @@ class IDDUCalcThread(IDDUThread):
                                     # if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
                                     if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.config['VFuelTgt'] and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
-                                    self.setFuelTgt(self.db.config['VFuelTgt'], np.float(self.db.VFuelTgtOffset))
+                                    self.db.BFuelTgtSet = self.setFuelTgt(self.db.config['VFuelTgt'], np.float(self.db.VFuelTgtOffset))
 
                         self.db.dcOld = self.db.dc.copy()
 
@@ -678,8 +700,7 @@ class IDDUCalcThread(IDDUThread):
         if self.db.startUp:
             self.db.StartDDU = False
             self.db.oldSessionNum = self.db.SessionNum
-            self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo[
-                'DriverCarMaxFuelPct']
+            self.db.DriverCarFuelMaxLtr = self.db.DriverInfo['DriverCarFuelMaxLtr'] * self.db.DriverInfo['DriverCarMaxFuelPct']
             self.db.DriverCarIdx = self.db.DriverInfo['DriverCarIdx']
             self.db.PlayerCarClassRelSpeed = self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassRelSpeed']
 
@@ -901,6 +922,7 @@ class IDDUCalcThread(IDDUThread):
             self.db.NDriversMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['NDrivers']
 
         self.db.SubSessionIDOld = self.db.WeekendInfo['SubSessionID']
+        self.db.SessionTypeOld = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']
 
         # Display
         if 'dcABS' in self.db.car.dcList:
@@ -942,6 +964,16 @@ class IDDUCalcThread(IDDUThread):
             self.db.RenderLabel[32] = True
         else:
             self.db.RenderLabel[32] = False
+
+        # check if setup has changed since quali
+        if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and not self.db.WeekendInfo['WeekendOptions']['IsFixedSetup'] and self.db.LastSetup:
+            CurrentSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
+                            'UpdateCount': self.db.CarSetup['UpdateCount'],
+                            'FuelLevel': self.db.FuelLevel}
+
+            if CurrentSetup == self.db.LastSetup or self.db.FuelLevel < 0.2 * self.db.DriverCarFuelMaxLtr:
+                self.db.BLoadRaceSetupWarning = True
+
 
     def loadTrack(self, name):
         print(self.db.timeStr + ':\tLoading track: ' + r"track/" + name + '.json')
@@ -1053,12 +1085,12 @@ class IDDUCalcThread(IDDUThread):
         VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / (self.db.config['NLapsStintPlanned'] - self.db.StintLap)
 
         if self.db.config['NFuelTargetMethod'] == 2:  # Finish
-            self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
+            self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
         elif self.db.config['NFuelTargetMethod'] == 3:  # Stint
             if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] <= self.db.CarIdxPitStops[self.db.DriverCarIdx]:
-                self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
+                self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
             else:
-                self.setFuelTgt(VFuelConsumptionTargetStint, 0)
+                self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetStint, 0)
 
         self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
             self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
@@ -1277,6 +1309,9 @@ class IDDUCalcThread(IDDUThread):
 
     def LiftTone(self):
 
+        if not self.db.BFuelTgtSet:
+            self.db.BFuelTgtSet = self.setFuelTgt(self.db.config['VFuelTgt'], np.float(self.db.VFuelTgtOffset))
+
         if len(self.db.VFuelBudget) > 0 and (len(self.db.VFuelBudget) > self.db.NNextLiftPoint):
 
             self.db.VFuelBudgetActive = self.db.VFuelBudget[self.db.NNextLiftPoint]
@@ -1309,12 +1344,13 @@ class IDDUCalcThread(IDDUThread):
 
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:
+            BTGTSet = False
             self.db.LapDistPctLift = np.array([])
             self.db.VFuelBudget = np.array([])
             self.db.VFuelReference = np.array([])
             rLift = np.array([])
             self.db.config['VFuelTgt'] = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']),
-                                                 np.max([tgt, np.minrSlipMapAcc(self.db.FuelTGTLiftPoints['VFuelTGT'])]).round(2)])
+                                                 np.max([tgt, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])]).round(2)])
             self.db.config['VFuelTgtOffset'] = np.min([1, np.max([offset, -1])]).astype(float)
             self.db.VFuelTgtEffective = np.min([np.max(self.db.FuelTGTLiftPoints['VFuelTGT']),
                                                 np.max([tgt + offset, np.min(self.db.FuelTGTLiftPoints['VFuelTGT'])])]).round(2)
@@ -1331,11 +1367,15 @@ class IDDUCalcThread(IDDUThread):
                 y3 = self.db.FuelTGTLiftPoints['VFuelReference'][i]
                 self.db.VFuelReference = np.append(self.db.VFuelReference, np.interp(self.db.config['VFuelTgt'], x, y3))
 
+                BTGTSet = True
+
             self.db.LapDistPctLift = self.db.LapDistPctLift
 
             self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPctLift'])
+
+            return BTGTSet
         else:
-            return
+            return False
 
     def getNStraight(self):
         # 0 = approaching first corner

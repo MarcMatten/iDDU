@@ -127,46 +127,6 @@
             8
         ],
         "SetupName": "SetupName",
-        "nMotorShiftOptimal": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        ],
-        "nMotorShiftTarget": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        ],
-        "vCarShiftOptimal": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        ],
-        "vCarShiftTarget": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        ],
         "nMotorShiftLEDs": [
             [
                 7144.92154357334,
@@ -208,6 +168,46 @@
                 100000,
                 100000
             ]
+        ],
+        "nMotorShiftOptimal": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "nMotorShiftTarget": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vCarShiftOptimal": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vCarShiftTarget": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
         ]
     },
     "UpshiftStrategy": 1,
@@ -230,7 +230,8 @@
         4000
     ],
     "VFuelLap": {
-        "roadatlanta full": 2.7767673218684945
+        "roadatlanta full": 2.7767673218684945,
+        "watkinsglen 2021 fullcourse": 3.5937508821641315
     },
     "carPath": "default",
     "dcList": {

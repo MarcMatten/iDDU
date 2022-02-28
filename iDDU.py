@@ -144,7 +144,8 @@ iRData = {'LapBestLapTime': 0,
           'LFbrakeLinePress': 0,
           'LRbrakeLinePress': 0,
           'RFbrakeLinePress': 0,
-          'RRbrakeLinePress': 0
+          'RRbrakeLinePress': 0,
+          'CarSetup': None
           }
 
 # calculated data
@@ -391,7 +392,11 @@ calcData = {'startUp': False,
             'VFuelDelta': 0,
             'tLiftTones': [1, 0.5, 0],
             'BLEDsInit': False,
-            'NShiftLEDState': 0
+            'NShiftLEDState': 0,
+            'BLoadRaceSetupWarning': False,
+            'LastSetup': {},
+            'SessionTypeOld': None,
+            'BFuelTgtSet': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -475,15 +480,18 @@ if __name__ == "__main__":
             myRTDB.done = iRRender.render()
             if myRTDB.StartDDU:
                 myRTDB.StartDDU = False
+
+            if myRTDB.StopDDU:
+                print(myRTDB.timeStr + ': Stopping DDU')
+                iRRender.stopRendering()
+                myRTDB.StopDDU = False
+                myRTDB.DDUrunning = False
+
         elif myRTDB.StartDDU:
             print(myRTDB.timeStr + ': Starting DDU')
             iRRender = iDDURender.RenderScreen()
             myRTDB.DDUrunning = True
+            # myRTDB.StartDDU = False
 
-        if myRTDB.StopDDU:
-            print(myRTDB.timeStr + ': Stopping DDU')
-            iRRender.stopRendering()
-            myRTDB.StopDDU = False
-            myRTDB.DDUrunning = False
 
         time.sleep(0.001)
