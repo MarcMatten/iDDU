@@ -1,7 +1,7 @@
 import time
 import copy
 from libs import Track, Car
-from functionalities.libs import importExport, importIBT, maths, convertString
+from libs.auxiliaries import importExport, importIBT, convertString, maths
 from tkinter import filedialog
 import numpy as np
 import tkinter as tk

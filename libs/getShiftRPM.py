@@ -8,11 +8,11 @@ import numpy as np
 import scipy.optimize
 import scipy.signal
 
-from functionalities.RTDB import RTDB
-from functionalities.libs import filters, maths, importIBT, importExport
+from libs.RTDB import RTDB
+from libs.auxiliaries import importExport, filters, importIBT, maths
 from libs.Car import Car
 
-from SimRacingTools.getGearRatios import getGearRatios
+from libs.getGearRatios import getGearRatios
 
 
 def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
@@ -135,7 +135,7 @@ def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
         vCar = np.linspace(vCarMin[i] - 5, vCarMax[i] + 5, 100)
 
         plt.scatter(d['vCar'][d['BRPMRange'][i]], d['gLong'][d['BRPMRange'][i]], marker='.', zorder=1, color=cmap(i))
-        plt.plot(vCar, maths.polyVal(vCar, gLongPolyFit[i][0], gLongPolyFit[i][1], gLongPolyFit[i][2], gLongPolyFit[i][3]), label='Gear {}'.format(i+1), zorder=2, color=cmap(i+2))
+        plt.plot(vCar, maths.polyVal(vCar, gLongPolyFit[i][0], gLongPolyFit[i][1], gLongPolyFit[i][2], gLongPolyFit[i][3]), label='Gear {}'.format(i + 1), zorder=2, color=cmap(i + 2))
 
     vCarShiftOptimal = []
     vCarShiftTarget = []
@@ -175,7 +175,7 @@ def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
 
     for i in range(0, np.max(d['Gear'])):
         vCar = np.linspace(vCarMin[i] - 10, vCarMax[i] + 10, 100)
-        plt.plot(vCar, maths.polyVal(vCar, RPMPolyFit[i][0], RPMPolyFit[i][1], RPMPolyFit[i][2]), label='Gear {}'.format(i+1), zorder=1)
+        plt.plot(vCar, maths.polyVal(vCar, RPMPolyFit[i][0], RPMPolyFit[i][1], RPMPolyFit[i][2]), label='Gear {}'.format(i + 1), zorder=1)
 
         if i < np.max(d['Gear']) - 1:
             nMotorShiftOptimal.append(maths.polyVal(vCarShiftOptimal[i], RPMPolyFit[i][0], RPMPolyFit[i][1], RPMPolyFit[i][2]))

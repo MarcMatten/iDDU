@@ -9,7 +9,7 @@ import numpy as np
 import scipy.optimize
 import scipy.signal
 
-from functionalities.libs import filters, maths, importIBT, importExport
+from libs.auxiliaries import importExport, filters, importIBT, maths
 from libs.Car import Car
 from datetime import datetime
 from libs.setReferenceLap import setReferenceLap

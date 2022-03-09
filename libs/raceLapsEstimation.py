@@ -2,7 +2,7 @@
 import sys, os
 import time
 import numpy as np
-from functionalities.libs import maths, convertString
+from libs.auxiliaries import convertString, maths
 from libs.IDDU import IDDUThread
 
 
@@ -46,7 +46,7 @@ class RaceLapsEstimationThread(IDDUThread):
                             # if my value lower than the winners, then + 1 lap
                             self.db.TFinishPredicted[CarIdx_temp] = (np.ceil(
                                 self.db.NLapRaceTime[CarIdx_temp]) - NLapTimed) * maths.meanTol(self.db.CarIdxtLap[CarIdx_temp], 0.05) + CarIdxtLapSum + (
-                                                                        maths.maxList(temp_pitstopsremain, 0) * self.db.config['PitStopDelta'])
+                                                                            maths.maxList(temp_pitstopsremain, 0) * self.db.config['PitStopDelta'])
 
                         self.db.WinnerCarIdx = self.db.NLapRaceTime.index(max(self.db.NLapRaceTime))
 
@@ -57,8 +57,8 @@ class RaceLapsEstimationThread(IDDUThread):
                         NLapTimed = np.count_nonzero(~np.isnan(self.db.CarIdxtLap[self.db.DriverCarIdx]))
 
                         self.db.NLapWinnerRaceTime = (self.db.TFinishPredicted[self.db.WinnerCarIdx] - CarIdxtLapSum - (
-                            maths.maxList(temp_pitstopsremain, 0) * self.db.config['PitStopDelta'])) / maths.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
-                                                                                                                     0.05) + NLapTimed  # use this to find winner
+                                maths.maxList(temp_pitstopsremain, 0) * self.db.config['PitStopDelta'])) / maths.meanTol(self.db.CarIdxtLap[self.db.DriverCarIdx],
+                                                                                                                         0.05) + NLapTimed  # use this to find winner
 
                         if self.db.WinnerCarIdx == self.db.DriverCarIdx:
                             self.db.NLapDriver = float(self.db.NLapRaceTime[self.db.DriverCarIdx])

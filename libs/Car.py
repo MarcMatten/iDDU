@@ -1,7 +1,7 @@
 import numpy as np
 import time
 import irsdk
-from functionalities.libs import importExport
+from libs.auxiliaries import importExport
 import xmltodict
 from collections import OrderedDict
 

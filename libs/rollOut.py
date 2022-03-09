@@ -8,8 +8,8 @@ import numpy as np
 import scipy.optimize
 import scipy.signal
 
-from functionalities.RTDB import RTDB
-from functionalities.libs import maths, importIBT, importExport, filters
+from libs.RTDB import RTDB
+from libs.auxiliaries import importExport, filters, importIBT, maths
 from libs.Car import Car
 from datetime import datetime
 
@@ -110,7 +110,7 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
         # plot gLong vs vCar
         if i > 0:
             plt.scatter(d['vCar'][d['BGear'][i]], d['gLong'][d['BGear'][i]], color=cmap(i), marker=".")
-            plt.plot(vCar, maths.polyVal(vCar, gLongPolyFit[i]), color=cmap(i+1), label='Gear {}'.format(i))
+            plt.plot(vCar, maths.polyVal(vCar, gLongPolyFit[i]), color=cmap(i + 1), label='Gear {}'.format(i))
 
     plt.legend()
     plt.savefig(resultsDirPath + '/roll_out_curve.png', dpi=300, orientation='landscape', progressive=True)
@@ -126,7 +126,7 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     for i in range(0, NGearMax + 1):
         if i > 0 or any(d['BGear'][i]):
             plt.scatter(d['vCar'][d['BGear'][i]], d['QFuel'][d['BGear'][i]], color=cmap(i), marker=".")
-            plt.plot(vCar, maths.polyVal(vCar, QFuelPolyFit[i]), color=cmap(i+1), label='Gear {}'.format(i))
+            plt.plot(vCar, maths.polyVal(vCar, QFuelPolyFit[i]), color=cmap(i + 1), label='Gear {}'.format(i))
 
     plt.legend()
     plt.savefig(resultsDirPath + '/coasting_fuel_consumption.png', dpi=300, orientation='landscape', progressive=True)

@@ -1,7 +1,7 @@
 import irsdk
 import numpy as np
 import scipy.signal
-from functionalities.libs import importExport, convertString
+from libs.auxiliaries import importExport, convertString
 
 defaultChannels = ['SessionTime', 'LapCurrentLapTime', 'LapDist', 'LapDistPct', 'Speed', 'Lap', 'FuelLevel', 'FuelUsePerHour']
 

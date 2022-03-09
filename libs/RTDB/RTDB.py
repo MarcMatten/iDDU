@@ -1,7 +1,7 @@
 import time
 from libs import Car, Track
 import os
-from functionalities.libs import importExport
+from libs.auxiliaries import importExport
 from libs.IDDU import IDDUThread
 import numpy as np
 
@@ -78,7 +78,7 @@ class RTDB:
         for i in range(0, len(variables)):
             data[variables[i]] = self.__getattribute__(variables[i])
 
-        importExport.saveJson(data, nameStr+'.json')
+        importExport.saveJson(data, nameStr + '.json')
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ': Saved snapshot: ' + nameStr+'.json')
 

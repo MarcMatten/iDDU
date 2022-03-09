@@ -1,12 +1,12 @@
 # import all required packages
 import time
 import numpy as np
-from functionalities.RTDB import RTDB
+from libs.RTDB import RTDB
 from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger, SerialComs
 from gui import iDDUgui
 import os
-from functionalities.MultiSwitch import MultiSwitch
-from functionalities.libs import importExport
+from libs.MultiSwitch import MultiSwitch
+from libs.auxiliaries import importExport
 from shutil import copyfile
 from libs import IDDU
 

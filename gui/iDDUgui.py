@@ -6,12 +6,9 @@ import time
 import csv
 import os
 import winsound
-from libs import Track, Car
-from SimRacingTools import getShiftRPM
-from SimRacingTools.FuelSavingOptimiser import fuelSavingOptimiser, rollOut
+from libs import Track, getShiftRPM, fuelSavingOptimiser, rollOut
 from libs.IDDU import IDDUThread, IDDUItem
-from functionalities.libs import importExport, importIBT, maths
-from functionalities.RTDB import RTDB
+from libs.auxiliaries import importExport
 import numpy as np
 from libs.setReferenceLap import setReferenceLap
 from libs.MyLogger import MyLogger

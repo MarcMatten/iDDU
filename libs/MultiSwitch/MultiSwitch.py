@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from functionalities.libs import importExport
+from libs.auxiliaries import importExport
 from libs.IDDU import IDDUItem, IDDUThread
 
 

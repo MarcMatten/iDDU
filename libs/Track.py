@@ -1,5 +1,5 @@
 import csv
-from functionalities.libs import maths, importExport
+from libs.auxiliaries import importExport, maths
 import matplotlib.pyplot as plt
 import numpy as np
 import time

@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import numpy as np
 
-from functionalities.libs import maths, convertString, importExport
+from libs.auxiliaries import importExport, convertString, maths
 from libs import Track, Car
 from libs.IDDU import IDDUThread
 

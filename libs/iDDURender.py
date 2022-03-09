@@ -3,7 +3,7 @@ import os
 import time
 import numpy as np
 import pygame
-from functionalities.libs import convertString
+from libs.auxiliaries import convertString
 from libs.IDDU import IDDUItem
 
 
