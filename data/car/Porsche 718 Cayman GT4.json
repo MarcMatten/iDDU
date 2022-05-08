@@ -87,10 +87,10 @@
             ]
         ]
     },
-    "NABSDisabled": 0,
-    "NGearMax": 0,
-    "NTC1Disabled": 0,
-    "NTC2Disabled": 0,
+    "NABSDisabled": 1,
+    "NGearMax": 6,
+    "NTC1Disabled": 1,
+    "NTC2Disabled": null,
     "UpshiftSettings": {
         "BShiftTone": [
             true,
@@ -107,81 +107,82 @@
                 "Front": {
                     "ArbSetting": 2,
                     "CrossWeight": "50.0%",
-                    "ToeIn": "-1.9 mm"
+                    "ToeIn": "-1.0 mm"
                 },
                 "InCarDials": {
-                    "AbsTcEscSetting": 3,
-                    "BrakePressureBias": "47.7%"
+                    "AbsTcEscSetting": 4,
+                    "BrakePads": "Medium friction",
+                    "BrakePressureBias": "45.5%"
                 },
                 "LeftFront": {
-                    "BumpStiffness": "+2 clicks",
-                    "Camber": "-5.0 deg",
-                    "CornerWeight": "2829 N",
-                    "ReboundStiffness": "+7 clicks",
-                    "RideHeight": "101.3 mm",
-                    "SpringPerchOffset": "87.0 mm"
+                    "BumpStiffness": "+16 clicks",
+                    "Camber": "-4.4 deg",
+                    "CornerWeight": "2861 N",
+                    "ReboundStiffness": "+12 clicks",
+                    "RideHeight": "96.5 mm",
+                    "SpringPerchOffset": "95.5 mm"
                 },
                 "LeftRear": {
-                    "BumpStiffness": "+0 clicks",
-                    "Camber": "-3.8 deg",
-                    "CornerWeight": "4197 N",
-                    "ReboundStiffness": "+0 clicks",
-                    "RideHeight": "101.7 mm",
-                    "SpringPerchOffset": "109.5 mm",
-                    "SpringRate": "150 N/mm",
-                    "ToeIn": "-0.4 mm"
+                    "BumpStiffness": "+18 clicks",
+                    "Camber": "-4.0 deg",
+                    "CornerWeight": "4221 N",
+                    "ReboundStiffness": "+14 clicks",
+                    "RideHeight": "96.0 mm",
+                    "SpringPerchOffset": "89.5 mm",
+                    "SpringRate": "130 N/mm",
+                    "ToeIn": "+0.1 mm"
                 },
                 "Rear": {
-                    "ArbBlades": 3,
-                    "FuelLevel": "55.0 L",
-                    "WingSetting": 5
+                    "ArbBlades": 2,
+                    "FuelLevel": "60.0 L",
+                    "WingSetting": 3
                 },
                 "RightFront": {
-                    "BumpStiffness": "+2 clicks",
-                    "Camber": "-5.0 deg",
-                    "CornerWeight": "2829 N",
-                    "ReboundStiffness": "+7 clicks",
-                    "RideHeight": "101.3 mm",
-                    "SpringPerchOffset": "87.0 mm"
+                    "BumpStiffness": "+16 clicks",
+                    "Camber": "-4.4 deg",
+                    "CornerWeight": "2861 N",
+                    "ReboundStiffness": "+12 clicks",
+                    "RideHeight": "96.5 mm",
+                    "SpringPerchOffset": "95.5 mm"
                 },
                 "RightRear": {
-                    "BumpStiffness": "+0 clicks",
-                    "Camber": "-3.8 deg",
-                    "CornerWeight": "4197 N",
-                    "ReboundStiffness": "+0 clicks",
-                    "RideHeight": "101.7 mm",
-                    "SpringPerchOffset": "109.5 mm",
-                    "SpringRate": "150 N/mm",
-                    "ToeIn": "-0.4 mm"
+                    "BumpStiffness": "+18 clicks",
+                    "Camber": "-4.0 deg",
+                    "CornerWeight": "4221 N",
+                    "ReboundStiffness": "+14 clicks",
+                    "RideHeight": "96.0 mm",
+                    "SpringPerchOffset": "89.5 mm",
+                    "SpringRate": "130 N/mm",
+                    "ToeIn": "+0.1 mm"
                 }
             },
             "Tires": {
                 "LeftFront": {
-                    "LastHotPressure": "138 kPa",
-                    "LastTempsOMI": "49C, 49C, 49C",
-                    "StartingPressure": "138 kPa",
+                    "LastHotPressure": "176 kPa",
+                    "LastTempsOMI": "47C, 47C, 47C",
+                    "StartingPressure": "176 kPa",
                     "TreadRemaining": "100%, 100%, 100%"
                 },
                 "LeftRear": {
-                    "LastHotPressure": "138 kPa",
-                    "LastTempsOMI": "49C, 49C, 49C",
-                    "StartingPressure": "138 kPa",
+                    "LastHotPressure": "169 kPa",
+                    "LastTempsOMI": "47C, 47C, 47C",
+                    "StartingPressure": "169 kPa",
                     "TreadRemaining": "100%, 100%, 100%"
                 },
                 "RightFront": {
-                    "LastHotPressure": "138 kPa",
-                    "LastTempsIMO": "49C, 49C, 49C",
-                    "StartingPressure": "138 kPa",
+                    "LastHotPressure": "176 kPa",
+                    "LastTempsIMO": "47C, 47C, 47C",
+                    "StartingPressure": "176 kPa",
                     "TreadRemaining": "100%, 100%, 100%"
                 },
                 "RightRear": {
-                    "LastHotPressure": "138 kPa",
-                    "LastTempsIMO": "49C, 49C, 49C",
-                    "StartingPressure": "138 kPa",
+                    "LastHotPressure": "169 kPa",
+                    "LastTempsIMO": "47C, 47C, 47C",
+                    "StartingPressure": "169 kPa",
                     "TreadRemaining": "100%, 100%, 100%"
                 }
             },
-            "UpdateCount": 2
+            "UpdateCount": 1
         },
         "NGear": [
             1,
@@ -190,42 +191,85 @@
             4,
             5,
             6,
-            7
+            7,
+            8
         ],
-        "SetupName": "Daytona\\21S1\\21S1-IMSAPILOT-Daytona-Cayman-CAW.sto",
+        "SetupName": "Nordschleife\\21S4\\21S4-IMPC-Nordschleife-Cayman-RB.sto",
+        "nMotorShiftLEDs": [
+            [
+                1222.6653953439422,
+                4093.164218137719,
+                6390.68046203712
+            ],
+            [
+                6012.235987194995,
+                6656.6750052834095,
+                7293.559411920072
+            ],
+            [
+                6884.349965229145,
+                7181.062142011451,
+                7477.249482366332
+            ],
+            [
+                7281.273993598669,
+                7428.102017622519,
+                7574.902148383071
+            ],
+            [
+                7515.397386511153,
+                7578.284798147799,
+                7641.16822106434
+            ],
+            [
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0
+            ]
+        ],
         "nMotorShiftOptimal": [
-            7212.5115147054685,
-            7750.49876777013,
-            7783.150409599619,
-            7772.536033505804,
-            7799.3579557892945,
+            7494.158570507458,
+            7672.06384240523,
+            7654.709965094097,
+            7662.968838073017,
+            7678.896360228616,
             99999,
             99999
         ],
         "nMotorShiftTarget": [
-            6116.139876340807,
-            7361.968511378869,
-            7598.978284210711,
-            7679.633258325671,
-            7756.547136980921,
+            6390.68046203712,
+            7293.559411920072,
+            7477.249482366332,
+            7574.902148383071,
+            7641.16822106434,
             99999,
             99999
         ],
         "vCarShiftOptimal": [
-            16.20175654188099,
-            30.14926528930664,
-            42.07395553588867,
-            53.39192199707031,
-            64.58866119384766,
+            16.81660099029541,
+            29.823699378967284,
+            41.422248458862306,
+            52.726554489135744,
+            63.75273399353027,
             99999,
             99999
         ],
         "vCarShiftTarget": [
-            13.556880031088484,
-            28.630522258081616,
-            41.07940696394686,
-            52.756017994086505,
-            64.23582256984497,
+            14.267440889351143,
+            28.332233691789636,
+            40.45453385824778,
+            52.119687922557915,
+            63.43929376838846,
             99999,
             99999
         ]
@@ -290,8 +334,8 @@
         7800.0
     ],
     "name": "Porsche 718 Cayman GT4",
-    "pBrakeFMax": 0.0,
-    "pBrakeRMax": 0.0,
+    "pBrakeFMax": 173.49397959988545,
+    "pBrakeRMax": 173.49395220470322,
     "rABSActivityMap": [
         -1,
         -10,
@@ -299,24 +343,25 @@
         -30
     ],
     "rGearRatios": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+        null,
+        6.739372569946892,
+        3.972912059124005,
+        2.8716588301006905,
+        2.264275059976884,
+        1.8790325963775425,
+        1.532107685119365
     ],
     "rSlipMapAcc": [
         4.5,
         7,
-        8.5
+        8.5,
+        10
     ],
     "rSlipMapBrk": [
         -4.5,
         -7,
-        -8.5
+        -8.5,
+        -10
     ],
     "tLap": {
         "cota gp": [

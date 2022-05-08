@@ -174,28 +174,14 @@ class ShiftToneThread(IDDUThread):
                                                        np.array(self.BlinkRPM)),
                                                       axis=None)
 
-            print(i)
-        print(self.nMotorLED)
-
         self.nMotorLED[self.db.car.NGearMax, :] = self.nMotorLED[self.db.car.NGearMax - 1, :]
 
         # avoid case where BlinkRPM < nMotorShift causes limiter to flash too early
         self.nMotorLED[:, -1] = np.maximum(self.nMotorLED[:, -1], self.nMotorLED[:, -2] + (self.nMotorLED[:, -2] - self.nMotorLED[:, -3]))
 
 
-        print('===========================')
-        print(self.nMotorLED)
-        print(len(self.nMotorLED))
-        print(np.size(self.nMotorLED))
-        print('===========================')
-
         for i in range(0, len(self.nMotorLED)):
             self.nMotorLEDLUT[i] = interp1d(np.concatenate((0, self.nMotorLED[i, :], 100000), axis=None), [0, 1, 2, 3, 4, 5, 6, 7, 8, 8], kind='previous')
-            print(i)
-            print(np.concatenate((0, self.nMotorLED[i, :], 100000), axis=None))
-
-        print('===========================')
-        print(self.nMotorLEDLUT)
 
 
         # self.nMotorLED[self.db.car.NGearMax, :] = np.concatenate((np.linspace(self.FirstRPM, self.ShiftRPM, 4)[0:3],

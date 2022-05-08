@@ -28,9 +28,9 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
 
     # imoport ibt file
     d, var_headers_names = importIBT.importIBT(ibtPath,
-                                               channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'dmFuel', 'RPM', 'SteeringWheelAngle', 'Gear', 'gLong', 'gLat', 'QFuel', 'rClutch', 'vWheelRL', 'vWheelRR', 'vCarX'],
+                                               channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'dmFuel', 'RPM', 'SteeringWheelAngle', 'Gear', 'gLong', 'gLat', 'QFuel', 'rClutch', 'vWheelRL',
+                                                         'vWheelRR', 'vCarX'],
                                                channelMapPath=dirPath + '/functionalities/libs/iRacingChannelMap.csv')
-
 
     # If car file exists, load it. Otherwise, create new car object TODO: whole section is duplicate with getShiftRPM
     car = Car(Driver=d['DriverInfo']['Drivers'][d['DriverInfo']['DriverCarIdx']])

@@ -401,6 +401,8 @@ calcData = {'startUp': False,
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
     'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['Off', 'On']],
+    'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
+    'BEnableSlipLEDs': ['Enable Slip LEDs', True, 0, True, None, None, None, ['Off', 'On']],
     'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
     'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
@@ -492,6 +494,5 @@ if __name__ == "__main__":
             iRRender = iDDURender.RenderScreen()
             myRTDB.DDUrunning = True
             # myRTDB.StartDDU = False
-
 
         time.sleep(0.001)

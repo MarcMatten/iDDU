@@ -88,7 +88,7 @@ class RenderScreen(RenderMain):
             # self.initJoystick('vJoy Device')
             self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
         else:
-            self.initJoystick('FANATEC ClubSport Wheel Base')
+            self.initJoystick('SteeringWheel')
 
         # frames
         self.frames = list()

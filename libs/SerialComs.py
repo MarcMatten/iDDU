@@ -18,7 +18,7 @@ class SerialComsThread(IDDUThread):
         self.COMPort = None
         self.serial = None
         for i in range(1, len(self.PortList)):
-            if self.PortList[i].description[0:16] == 'Arduino Leonardo':
+            if self.PortList[i].description[0:16] == 'Arduino Leonardo' and self.PortList[i].device == 'COM3':
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
 
@@ -49,30 +49,35 @@ class SerialComsThread(IDDUThread):
                     vCar = 0 #np.int8(min(max(3.06 * abs(self.db.Speed)-128, -128), 127))
                     BInitLEDs = 0
                     # ShiftLEDs = np.int8(max(min(RPMLEDPattern[self.db.Alarm[7]], 8), 0))
-                    ShiftLEDs = np.int8(max(min(self.db.NShiftLEDState, 8), 0))
-                    SlipLEDsFL = 0
-                    SlipLEDsFR = 0
-                    SlipLEDsRL = 0
-                    SlipLEDsRR = 0
+                    if self.db.config['BEnableShiftLEDs']:
+                        ShiftLEDs = np.int8(max(min(self.db.NShiftLEDState, 8), 0))
+                    else:
+                        ShiftLEDs = 0
 
                     if self.db.BLEDsInit:
                         BInitLEDs = 1
                         self.db.BLEDsInit = False
 
-                    # ABS Activation
-                    if 'dcABS' in self.db.car.dcList:
-                        SlipLEDsFL = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
-                        SlipLEDsFR = np.int8(min(max(self.db.rABSActivity[1], 0), 4))
-                        SlipLEDsRL = np.int8(min(max(self.db.rABSActivity[2], 0), 4))
-                        SlipLEDsRR = np.int8(min(max(self.db.rABSActivity[3], 0), 4))
-                    elif self.db.rRearLocking:
-                        SlipLEDsRL = np.int8(min(max(self.db.rRearLocking, 0), 4))
-                        SlipLEDsRR = np.int8(min(max(self.db.rRearLocking, 0), 4))
+                    SlipLEDsFL = 0
+                    SlipLEDsFR = 0
+                    SlipLEDsRL = 0
+                    SlipLEDsRR = 0
 
-                    # Wheel spin
-                    if self.db.rWheelSpin:
-                        SlipLEDsRL = np.int8(min(max(self.db.rWheelSpin, 0), 4))
-                        SlipLEDsRR = np.int8(min(max(self.db.rWheelSpin, 0), 4))
+                    # ABS Activation
+                    if self.db.config['BEnableSlipLEDs']:
+                        if 'dcABS' in self.db.car.dcList:
+                            SlipLEDsFL = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
+                            SlipLEDsFR = np.int8(min(max(self.db.rABSActivity[1], 0), 4))
+                            SlipLEDsRL = np.int8(min(max(self.db.rABSActivity[2], 0), 4))
+                            SlipLEDsRR = np.int8(min(max(self.db.rABSActivity[3], 0), 4))
+                        elif self.db.rRearLocking:
+                            SlipLEDsRL = np.int8(min(max(self.db.rRearLocking, 0), 4))
+                            SlipLEDsRR = np.int8(min(max(self.db.rRearLocking, 0), 4))
+
+                        # Wheel spin
+                        if self.db.rWheelSpin:
+                            SlipLEDsRL = np.int8(min(max(self.db.rWheelSpin, 0), 4))
+                            SlipLEDsRR = np.int8(min(max(self.db.rWheelSpin, 0), 4))
 
                     t2 = time.perf_counter()
                     msg = struct.pack('>bbbbbbb', ShiftLEDs, SlipLEDsFL, SlipLEDsFR, SlipLEDsRL, SlipLEDsRR, BInitLEDs, vCar)

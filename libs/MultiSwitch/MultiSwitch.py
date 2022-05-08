@@ -182,6 +182,7 @@ class MultiSwitch(MultiSwitchThread):
         self.mapDDUList = list(self.mapDDU.keys())
         self.mapIRList = list(self.mapIR.keys())
 
+
 class MultiSwitchMapDDUControl(MultiSwitchItem):
     def __init__(self, name, minValue , maxValue, step):
         MultiSwitchItem.__init__(self)
@@ -205,6 +206,7 @@ class MultiSwitchMapDDUControl(MultiSwitchItem):
             self.db.config[self.name] = newVal
         else:
             self.db.config[self.name] = not self.db.config[self.name]
+
 
 class MultiSwitchMapiRControl(MultiSwitchItem):
     def __init__(self, name, minValue , maxValue, step):

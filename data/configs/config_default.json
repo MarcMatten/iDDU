@@ -18,6 +18,8 @@
     "PitStopsRequired": 0,
     "RaceLaps": 37,
     "ShiftToneEnabled": true,
+    "BEnableShiftLEDs": true,
+    "BEnableSlipLEDs": true,
     "TelemPath": "M:/07 - SimRacing/Data",
     "MotecProjectPath": "C:/Users/marc/Documents/MoTeC/i2/Workspaces/Circuit 1",
     "UpshiftStrategy": 0,

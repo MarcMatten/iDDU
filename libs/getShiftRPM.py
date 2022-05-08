@@ -18,7 +18,7 @@ from libs.getGearRatios import getGearRatios
 def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
     tReaction = 0.3  # TODO: as input to tune from GUI
     tLEDs = np.array([1, 0.5, 0])
-    BUseMaxRPM = True
+    BUseMaxRPM = False
 
     root = tk.Tk()
     root.withdraw()
@@ -34,7 +34,7 @@ def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
     # imoport ibt file
     d, var_headers_names = importIBT.importIBT(ibtPath,
                                                channels=['gLat', 'rThrottle', 'rBrake', 'SteeringWheelAngle', 'gLong', 'Gear', 'RPM', 'EngineWarnings', 'SessionTime', 'vWheelRL', 'vWheelRR', 'vCarX'],
-                                               channelMapPath=dirPath+'/functionalities/libs/iRacingChannelMap.csv')
+                                               channelMapPath=dirPath+'/libs/auxiliaries/iRacingChannelMap.csv')
 
     # If car file exists, load it. Otherwise, create new car object TODO: whole section is duplicate with rollOut
     car = Car(Driver=d['DriverInfo']['Drivers'][d['DriverInfo']['DriverCarIdx']])
