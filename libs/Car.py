@@ -184,14 +184,21 @@ class Car:
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved car ' + filepath)
 
+
     def load(self, path):
         data = importExport.loadJson(path)
 
-        temp = list(data.items())
-        for i in range(0, len(data)):
-            self.__setattr__(temp[i][0], temp[i][1])
+        for i in data:
+            if isinstance(data[i], dict):
+                if hasattr(self, i):
+                    self.__getattribute__(i).update(data[i])
+                else:
+                    self.__setattr__(i, data[i])
+            else:
+                self.__setattr__(i, data[i])
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded car ' + path)
+
 
     def setpBrakeMax(self, pBrakeFMax, pBrakeRMax):
         self.pBrakeFMax = pBrakeFMax
@@ -247,6 +254,11 @@ class Car:
         # brake line pressure
         write2XML('pBrakeFMax', self.pBrakeFMax, 'bar')
         write2XML('pBrakeRMax', self.pBrakeRMax, 'bar')
+
+        # slip rations thresholds
+        write2XML('rSlipMapAcc', self.rSlipMapAcc, '%')
+        write2XML('rSlipMapBrk', self.rSlipMapBrk, '%')
+        write2XML('rABSActivityMap', self.rABSActivityMap, 'bar')
 
         # export xml
         xmlString = xmltodict.unparse(doc, pretty=True)

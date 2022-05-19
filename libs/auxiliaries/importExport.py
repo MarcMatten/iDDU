@@ -2,6 +2,7 @@ import json
 import csv
 import numpy as np
 import os, glob
+import collections
 
 class NumpyArrayEncoder(json.JSONEncoder):
     def default(self, obj):

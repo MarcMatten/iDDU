@@ -262,6 +262,8 @@ class RenderScreen(RenderMain):
                     self.page2()
                 elif self.db.NDDUPage == 3:
                     self.page3()
+                elif self.db.NDDUPage == 4:
+                    self.page4()
 
             else:
                 self.page0()
@@ -556,6 +558,17 @@ class RenderScreen(RenderMain):
         pygame.draw.rect(RenderMain.screen, self.green, [693, 241 + int(216*(1-FueledPct)), 50, int(216*FueledPct)], 0)
 
         pygame.draw.lines(RenderMain.screen, self.white, True, [[693, 241],  [743, 241],  [743, 457],  [693, 457]], 5)
+
+    def page4(self):
+
+        RenderMain.screen.fill(self.db.backgroundColour)
+
+        Label = self.fontMedium.render('Start Page ...', True, self.db.textColour)
+        LabelSize = self.fontMedium.size('tart Page ...')
+        Label2 = self.fontMedium.render(self.db.timeStr, True, self.db.textColour)
+        Label2Size = self.fontMedium.size(self.db.timeStr)
+        RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
+        RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
 
     def CarOnMap(self, Idx):
         CarIdxLapDistPct = self.ir['CarIdxLapDistPct']

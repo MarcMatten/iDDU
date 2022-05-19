@@ -18,7 +18,7 @@ class SerialComsThread(IDDUThread):
         self.COMPort = None
         self.serial = None
         for i in range(1, len(self.PortList)):
-            if self.PortList[i].description[0:16] == 'Arduino Leonardo' and self.PortList[i].device == 'COM3':
+            if self.PortList[i].description[0:16] == 'Arduino Leonardo' and self.PortList[i].device == 'COM4':
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
 

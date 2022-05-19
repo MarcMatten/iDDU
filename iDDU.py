@@ -2,7 +2,7 @@
 import time
 import numpy as np
 from libs.RTDB import RTDB
-from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger, SerialComs
+from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger, SerialComs, SteeringWheelComs
 from gui import iDDUgui
 import os
 from libs.MultiSwitch import MultiSwitch
@@ -396,7 +396,8 @@ calcData = {'startUp': False,
             'BLoadRaceSetupWarning': False,
             'LastSetup': {},
             'SessionTypeOld': None,
-            'BFuelTgtSet': False
+            'BFuelTgtSet': False,
+            'BStartMode': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -410,7 +411,8 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1],
     'NFuelConsumptionMethod': ['Fuel Consumption Method', True, 1, 0, 0, 2, 1, ['Avg', 'Last 3', 'Ref']],
     'NFuelTargetMethod': ['Fuel Management', True, 1, 0, 0, 3, 1, ['Off', 'Static', 'Finish', 'Stint']],
-    'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1]
+    'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1],
+    'rBitePoint': ['Bite Point', True, 1, 30.0, 10, 80, 0.5]
 }
 
 if __name__ == "__main__":
@@ -452,6 +454,7 @@ if __name__ == "__main__":
     shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
     guiThread = iDDUgui.iDDUGUIThread(0.02)
     serialComsThread = SerialComs.SerialComsThread(0.003)
+    steeringWheelComsThread = SteeringWheelComs.SteeringWheelComsThread(0.01)
     raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
     loggerThread = Logger.LoggerThread(0.02)
     ms = MultiSwitch.MultiSwitch(0.005)
@@ -471,6 +474,7 @@ if __name__ == "__main__":
     raceLapsEstimationThread.start()
     loggerThread.start()
     serialComsThread.start()
+    steeringWheelComsThread.start()
     ms.start()
 
     iRRender = None

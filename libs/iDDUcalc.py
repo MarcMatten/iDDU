@@ -211,7 +211,6 @@ class IDDUCalcThread(IDDUThread):
                         if not self.db.WasOnTrack:
                             self.db.WasOnTrack = True
                             self.db.StintLap = 0
-                            print(self.db.timeStr + ':\tIsOnTrack')
 
                         # self.db.Alarm = np.array([0] * 10)
                         self.db.Alarm[0:7] = 0
@@ -280,7 +279,6 @@ class IDDUCalcThread(IDDUThread):
                                     self.db.textColourJoker = self.green
 
                         if self.db.init:  # do when getting into the car
-                            print(self.db.timeStr + ':\tGetting into car')
                             self.db.init = False
                             self.db.OutLap = True
                             self.db.BMultiInitRequest = True
@@ -288,6 +286,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime
                             self.db.Run = self.db.Run + 1
+                            print(self.db.timeStr + ':\tStarting Run {}'.format(self.db.Run))
                             self.db.BLEDsInit = True
                             if self.db.config['BPitCommandControl']:
                                 self.ir.pit_command(0)
@@ -571,9 +570,8 @@ class IDDUCalcThread(IDDUThread):
 
                     else:
                         if self.db.WasOnTrack:
-                            print(self.db.timeStr + ':\tGetting out of car')
-                            print(self.db.timeStr + ': Run: ' + str(self.db.Run))
-                            print(self.db.timeStr + ':\tFuelAvgConsumption: ' + convertString.roundedStr2(self.db.FuelAvgConsumption))
+                            print(self.db.timeStr + ':\tEnding Run, {} laps completed, {} in total'.format(self.db.StintLap, self.db.Lap))
+                            print('{}:\tFuel Consumption - Avg: {} - Min: {} - Max: {}'.format(self.db.timeStr, convertString.roundedStr2(self.db.FuelAvgConsumption), min(self.db.FuelConsumptionList), max(self.db.FuelConsumptionList)))
                             self.db.NDDUPage = 1
                             self.db.WasOnTrack = False
                             self.db.init = True
@@ -678,9 +676,8 @@ class IDDUCalcThread(IDDUThread):
                     print(self.SError)
 
     def initSession(self):
-        print(self.db.timeStr + ': Initialising Session ==========================')
+        print(self.db.timeStr + ': ===== Initialising Session: {} =========================='.format(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']))
         time.sleep(0.3)
-        print(self.db.timeStr + ':\tNew Session: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
         self.trackList = importExport.getFiles(self.dir + '/data/track', 'json')
         self.carList = importExport.getFiles(self.dir + '/data/car', 'json')
         self.db.init = True
@@ -740,8 +737,6 @@ class IDDUCalcThread(IDDUThread):
                 print(self.db.timeStr + ':\tCreated Car ' + carName)
 
             print(self.db.timeStr + ':\tTrackName: ' + self.db.WeekendInfo['TrackDisplayName'])
-            print(self.db.timeStr + ':\tEventType: ' + self.db.WeekendInfo['EventType'])
-            print(self.db.timeStr + ':\tCategory: ' + self.db.WeekendInfo['Category'])
             print(self.db.timeStr + ':\tSessionType: ' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'])
 
             if self.db.WeekendInfo['Category'] == 'DirtRoad':
@@ -749,11 +744,9 @@ class IDDUCalcThread(IDDUThread):
                 self.db.__setattr__('JokerLapsRequired', self.db.WeekendInfo['WeekendOptions']['NumJokerLaps'])
                 self.db.config['MapHighlight'] = True
                 self.db.RenderLabel[17] = True
-                print(self.db.timeStr + ':\tDirt Racing')
             else:
                 self.db.__setattr__('RX', False)
                 self.db.RenderLabel[17] = False
-                print(self.db.timeStr + ':\tRoad Racing')
 
             self.db.config['PitStopsRequired'] = 0
             self.db.config['MapHighlight'] = False
@@ -764,7 +757,6 @@ class IDDUCalcThread(IDDUThread):
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
                 self.db.RenderLabel[21] = False
-                print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] + ' laps')
                 # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                 #     print(self.db.timeStr + ':\t' + 'RaceLaps: ' + str(self.db.config['RaceLaps']))
                 #     self.db.LapLimit = True
@@ -776,9 +768,6 @@ class IDDUCalcThread(IDDUThread):
                     self.db.RenderLabel[15] = False
                     self.db.RenderLabel[16] = True
                     self.db.TimeLimit = False
-                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                        'SessionTime'] + ' time')
-                    print(self.db.timeStr + ':\tRace mode 0')
                 # limited time
                 else:
                     self.db.RenderLabel[15] = True
@@ -790,9 +779,6 @@ class IDDUCalcThread(IDDUThread):
                         if self.db.SessionLength > 2100:
                             self.db.config['PitStopsRequired'] = 1
                             self.db.config['MapHighlight'] = True
-                    print(self.db.timeStr + ':\tRace mode 1')
-                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                        'SessionTime'])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         self.db.RenderLabel[21] = True
                         self.db.RenderLabel[20] = True
@@ -814,17 +800,11 @@ class IDDUCalcThread(IDDUThread):
                     self.db.TimeLimit = False
                     self.db.RenderLabel[15] = False
                     self.db.RenderLabel[16] = True
-                    print(self.db.timeStr + ':\tRace mode 4')
-                    print(self.db.timeStr + ':\t' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                        'SessionTime'] + ' time')
                 # limited time
                 else:
                     self.db.RenderLabel[15] = True
                     self.db.RenderLabel[16] = False
                     self.db.TimeLimit = True
-                    print(self.db.timeStr + ':\tRace mode 5')
-                    print(self.db.timeStr + ':\tSession length :' + self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                        'SessionTime'])
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and (not self.db.LapLimit) and self.db.TimeLimit:
                 self.db.config['BEnableRaceLapEstimation'] = True
@@ -851,9 +831,6 @@ class IDDUCalcThread(IDDUThread):
             self.db.CarIdxtLap = CarIdxtLap_temp
 
             self.db.BUpshiftToneInitRequest = True
-
-            print(self.db.timeStr + ':\tRaceLaps: ' + str(self.db.config['RaceLaps']))
-            print(self.db.timeStr + ':\tSessionLength: ' + str(self.db.SessionLength))
 
             # DRS
             if self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarPath'] in self.DRSList:
@@ -985,7 +962,7 @@ class IDDUCalcThread(IDDUThread):
         self.db.track = Track.Track(name)
         self.db.track.load("data/track/" + name + '.json')
 
-        print(self.db.timeStr + ':\tTrack has been loaded successfully.')
+        print(self.db.timeStr + ':\t\tsuccessfull')
 
     def loadCar(self, name, carPath):  # TODO: required?
         print(self.db.timeStr + ':\tLoading car: ' + r"car/" + name + '.json')
@@ -1000,10 +977,9 @@ class IDDUCalcThread(IDDUThread):
         else:
             self.db.config['UpshiftStrategy'] = self.db.car.UpshiftStrategy
 
-        time.sleep(0.2)
+        print(self.db.timeStr + ':\t\tSuccessful')
 
-        print(self.db.timeStr + ':\tUpshift strategy: ' + str(self.db.config['UpshiftStrategy']))
-        print(self.db.timeStr + ':\tCar has been loaded successfully.')
+        time.sleep(0.2)
 
     def newLap(self):
         # Lap Counting

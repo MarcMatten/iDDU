@@ -17,6 +17,7 @@
     "PitStopDelta": 61,
     "PitStopsRequired": 0,
     "RaceLaps": 37,
+    "rBitePoint": 30.0,
     "ShiftToneEnabled": true,
     "BEnableShiftLEDs": true,
     "BEnableSlipLEDs": true,
