@@ -15,6 +15,7 @@ class SteeringWheelComsThread(IDDUThread):
         self.COMPort = None
         self.serial = None
         self.rBitePointSent = 0
+
         for i in range(1, len(self.PortList)):
             if self.PortList[i].device == 'COM13':
                 self.COMPort = self.PortList[i].device
@@ -70,12 +71,10 @@ class SteeringWheelComsThread(IDDUThread):
                         else:
                             data = None
 
-                        if data == 1 and not self.db.BStartMode:
-                            self.db.BStartMode = True
-                            self.db.NDDUPage = 4
-                        elif data == 0 and self.db.BStartMode:
-                            self.db.BStartMode = False
-                            self.db.NDDUPage = 1
+                        if data == 1 and not self.db.BSteeringWheelStartMode:
+                            self.db.BSteeringWheelStartMode = True
+                        elif data == 0 and self.db.BSteeringWheelStartMode:
+                            self.db.BSteeringWheelStartMode = False
 
                 time.sleep(0.2)
 

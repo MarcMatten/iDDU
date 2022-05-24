@@ -21,6 +21,12 @@ class IDDUCalcThread(IDDUThread):
     PitStates = None
     PitStatesOld = None
     dpBrakeOld = np.array([0, 0, 0, 0])
+    BClutchRelased = False
+    BStartCompleted = True
+    tStart100Timer = -1
+    tStartCompleted = -1
+    tStartModeEnd = -1
+
 
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -568,13 +574,50 @@ class IDDUCalcThread(IDDUThread):
 
                             self.db.rRearLocking = temp
 
+                        # Start mode detection
+                        if self.db.BSteeringWheelStartMode and not self.db.BStartMode:
+                            self.db.BStartMode = True
+                            self.db.NDDUPage = 4
+                        elif self.db.BStartMode and not self.db.BSteeringWheelStartMode:
+                            if self.tStartModeEnd == -1:
+                                self.tStartModeEnd = self.db.SessionTime
+                            elif (self.tStartModeEnd > 0 or self.tStartCompleted > 0) \
+                                    and (self.db.SessionTime - self.tStartModeEnd > 5 or self.tStartCompleted - self.tStartCompleted > 5):
+                                self.db.BStartMode = False
+                                self.db.NDDUPage = 1
+                                self.tStartModeEnd = -1
+                                self.tStartCompleted = -1
+
+                        # start mode timing logics
+                        if self.db.BStartMode:
+                            if not self.BClutchRelased and not self.BStartCompleted:
+                                self.db.tStart100 = 0
+                                self.db.tStartReaction = 0
+                                self.BStartCompleted = False
+                                if self.db.Clutch > 0.1:
+                                    self.BClutchRelased = True
+                                    self.tStart100Timer = self.db.SessionTime
+                                    if self.db.SessionFlags & 0x80000000:
+                                        self.db.tStartReaction = self.db.SessionTime - self.db.GreenTime
+                            else:
+                                if self.db.Clutch > 0.05 and self.db.Speed > (100/3.6) and not self.BStartCompleted:
+                                    self.db.tStart100 = self.db.SessionTime - self.tStart100Timer
+                                    self.BStartCompleted = True
+                                    self.tStartCompleted = self.db.SessionTime
+
+                        elif self.BStartCompleted:
+                            self.BClutchRelased = False
+                            self.BStartCompleted = False
                     else:
                         if self.db.WasOnTrack:
-                            print(self.db.timeStr + ':\tEnding Run, {} laps completed, {} in total'.format(self.db.StintLap, self.db.Lap))
-                            print('{}:\tFuel Consumption - Avg: {} - Min: {} - Max: {}'.format(self.db.timeStr, convertString.roundedStr2(self.db.FuelAvgConsumption), min(self.db.FuelConsumptionList), max(self.db.FuelConsumptionList)))
                             self.db.NDDUPage = 1
                             self.db.WasOnTrack = False
                             self.db.init = True
+                            print(self.db.timeStr + ':\tEnding Run, {} laps completed, {} in total'.format(self.db.StintLap, self.db.Lap))
+                            if len(self.db.FuelConsumptionList) > 0:
+                                print('{}:\tFuel Consumption - Avg: {} - Min: {} - Max: {}'.format(self.db.timeStr, convertString.roundedStr2(self.db.FuelAvgConsumption),
+                                                                                                   np.min(self.db.FuelConsumptionList), np.max(self.db.FuelConsumptionList)))
+
                         # do if car is not on track but don't do if car is on track ------------------------------------------------
                         self.init = True
 

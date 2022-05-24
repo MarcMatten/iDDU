@@ -145,7 +145,8 @@ iRData = {'LapBestLapTime': 0,
           'LRbrakeLinePress': 0,
           'RFbrakeLinePress': 0,
           'RRbrakeLinePress': 0,
-          'CarSetup': None
+          'CarSetup': None,
+          'Clutch': 0
           }
 
 # calculated data
@@ -397,7 +398,10 @@ calcData = {'startUp': False,
             'LastSetup': {},
             'SessionTypeOld': None,
             'BFuelTgtSet': False,
-            'BStartMode': False
+            'BStartMode': False,
+            'BSteeringWheelStartMode': False,
+            'tStart100': 0,
+            'tStartReaction': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

@@ -156,6 +156,22 @@ class RenderScreen(RenderMain):
         self.frames3[0].addLabel('GearStr', SimpleValue(51, 275, 114, '-', self.fontLarge, 0, 7, 1), 26)
         self.frames3[0].addLabel('SpeedStr', SimpleValue(193, 275, 173, '-', self.fontLarge, 0, 0, 1), 27)
 
+        # Start Page
+        self.frames4 = list()
+
+        self.frames4.append(Frame('Gear', 343, 19, 114, 155, True))
+        self.frames4.append(Frame('Speed', 157, 104, 114, 73, True))
+        self.frames4.append(Frame('Clutch', 20, 220, 760, 80, True))
+        self.frames4.append(Frame('tStartReaction', 80, 340, 200, 120, True))
+        self.frames4.append(Frame('tStart100', 520, 340, 200, 120, True))
+
+        self.frames4[0].addLabel('GearStr', SimpleValue(354, 12, 92, '-', self.fontGear, 0, 7, 1), 22)
+        self.frames4[0].addLabel('SpeedStr', SimpleValue(168, 94, 92, '-', self.fontLarge, 0, 0, 0), 23)
+        self.frames4[0].addLabel('tStartReactionStr', SimpleValue(80, 340, 200, '-', self.fontLarge, 0, 0, 1), 27)
+        self.frames4[0].addLabel('tStart100Str', SimpleValue(520, 340, 200, '-', self.fontLarge, 0, 0, 1), 27)
+
+        self.frames4[0].addLabel('RemainingStr', LabeledValue2('Remaining', 442, 26, 220, '-', self.fontSmall, self.fontLarge, 0, 0), 15)
+
         # misc
         self.done = False
         self.db.NDDUPage = 1
@@ -264,7 +280,6 @@ class RenderScreen(RenderMain):
                     self.page3()
                 elif self.db.NDDUPage == 4:
                     self.page4()
-
             else:
                 self.page0()
 
@@ -293,7 +308,7 @@ class RenderScreen(RenderMain):
                 # for testing purposes....
                 SessionFlags = self.ir['SessionFlags']
                 if SessionFlags & 0x80:
-                    self.warningLabel('CROSSED', self.white, self.black, 0)
+                    self.warningLabel('CROSSED', self.white, self.black, 4)
                 # if SessionFlags & 0x100: # normal yellow
                 #     self.warningLabel('YELLOW WAVING', self.white, self.black)
                 # if SessionFlags & 0x400:
@@ -560,15 +575,31 @@ class RenderScreen(RenderMain):
         pygame.draw.lines(RenderMain.screen, self.white, True, [[693, 241],  [743, 241],  [743, 457],  [693, 457]], 5)
 
     def page4(self):
+        try:
+            RenderMain.screen.fill(self.db.backgroundColour)
 
-        RenderMain.screen.fill(self.db.backgroundColour)
+            self.db.SpeedStr = convertString.roundedStr0(max(0.0, self.db.Speed * 3.6))
+            self.db.tStartReactionStr = convertString.roundedStr2(max(0.0, self.db.tStartReaction), False)
+            self.db.tStart100Str = convertString.roundedStr2(max(0.0, self.db.tStart100), False)
+            self.db.RemainingStr = convertString.convertTimeHHMMSS(max(0, self.db.SessionTimeRemain))
 
-        Label = self.fontMedium.render('Start Page ...', True, self.db.textColour)
-        LabelSize = self.fontMedium.size('tart Page ...')
-        Label2 = self.fontMedium.render(self.db.timeStr, True, self.db.textColour)
-        Label2Size = self.fontMedium.size(self.db.timeStr)
-        RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 120))
-        RenderMain.screen.blit(Label2, (400 - Label2Size[0]/2, 240))
+            for i in range(0, len(self.frames4)):
+                self.frames4[i].setTextColour(self.db.textColour)
+                self.frames4[i].drawFrame()
+
+            # Clutch
+            pygame.draw.rect(RenderMain.screen, self.blue, [40, 240, int(720*(1-self.db.Clutch)), 40], 0)
+            pygame.draw.lines(RenderMain.screen, self.white, True, [[40, 240],  [760, 240],  [760, 280],  [40, 280]], 5)
+            pygame.draw.line(RenderMain.screen, self.yellow, [40+int(720*self.db.config['rBitePoint']/100), 240],  [40+int(720*self.db.config['rBitePoint']/100), 280], 5)
+
+            # Label = self.fontMedium.render('Clutch Bite Point ...', True, self.db.textColour)
+            # LabelSize = self.fontMedium.size('Clutch Bite Point ...')
+            # RenderMain.screen.blit(Label, (400 - LabelSize[0]/2, 40))
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
     def CarOnMap(self, Idx):
         CarIdxLapDistPct = self.ir['CarIdxLapDistPct']

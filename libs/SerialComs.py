@@ -46,9 +46,9 @@ class SerialComsThread(IDDUThread):
                 while self.BArduinoConnected and self.db.IsOnTrack:
                     t = time.perf_counter()
 
-                    vCar = 0 #np.int8(min(max(3.06 * abs(self.db.Speed)-128, -128), 127))
+                    vCar = 0  # np.int8(min(max(3.06 * abs(self.db.Speed)-128, -128), 127))
                     BInitLEDs = 0
-                    # ShiftLEDs = np.int8(max(min(RPMLEDPattern[self.db.Alarm[7]], 8), 0))
+
                     if self.db.config['BEnableShiftLEDs']:
                         ShiftLEDs = np.int8(max(min(self.db.NShiftLEDState, 8), 0))
                     else:
@@ -81,24 +81,8 @@ class SerialComsThread(IDDUThread):
 
                     t2 = time.perf_counter()
                     msg = struct.pack('>bbbbbbb', ShiftLEDs, SlipLEDsFL, SlipLEDsFR, SlipLEDsRL, SlipLEDsRR, BInitLEDs, vCar)
-                    # bits = bin(int(ShiftLEDs)) + bin(int(SlipLEDsFL))[2:] + bin(int(SlipLEDsFR))[2:] + bin(int(SlipLEDsRL))[2:] + bin(SlipLEDsRR)[2:] + bin(vCar)[2:] + bin(int(BInitLEDs))[2:]
-                    # RPM - format(8, '#006b')
-                    # slip - format(4, '#005b')
-                    # vcar - format(255, '#010b')
-                    # init - bin()
                     self.serial.write(msg)
-                    # self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 0))
                     self.db.tExecuteSerialComs2 = (time.perf_counter() - t2) * 1000
-                    # if self.db.tExecuteSerialComs2 >= 50:
-                    # self.logger.warning(msg)
-                    # self.logger.warning(ShiftLEDs)
-                    # self.logger.warning(SlipLEDsFL)
-                    # self.logger.warning(SlipLEDsFR)
-                    # self.logger.warning(SlipLEDsRL)
-                    # self.logger.warning(SlipLEDsRR)
-                    # self.logger.warning(vCar)
-                    # self.logger.warning(BInitLEDs)
-
 
                     self.db.tExecuteSerialComs = (time.perf_counter() - t) * 1000
                     time.sleep(self.rate)
