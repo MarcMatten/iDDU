@@ -736,8 +736,16 @@ class RenderScreen(RenderMain):
 
     def changeLabel(self, text, value):
         pygame.draw.rect(RenderMain.screen, self.black, [0, 0, 800, 480], 0)
-        LabelSize = self.fontLarge.size(text)
-        Label = self.fontLarge.render(text, True, self.white)
+        if len(text) < 7:
+            LabelSize = self.fontLarge.size(text)
+            Label = self.fontLarge.render(text, True, self.white)
+        elif len(text) < 11:
+            LabelSize = self.fontMedium.size(text)
+            Label = self.fontMedium.render(text, True, self.white)
+        else:
+            LabelSize = self.fontSmall.size(text)
+            Label = self.fontSmall.render(text, True, self.white)
+
         RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
         ValueSize = self.fontReallyLarge.size(value)
         Value = self.fontReallyLarge.render(value, True, self.white)

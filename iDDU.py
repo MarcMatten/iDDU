@@ -407,7 +407,7 @@ calcData = {'startUp': False,
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
     'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['Off', 'On']],
     'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
-    'BEnableSlipLEDs': ['Enable Slip LEDs', True, 0, True, None, None, None, ['Off', 'On']],
+    'NSlipLEDMode': ['Slip LED Mode', True, 0, 1, 0, 6, 1, ['Off', 'On', 'Traction + ABS', 'ABS only', 'Traction + Braking', 'Traction only', 'Braking only']],
     'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
     'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
