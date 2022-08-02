@@ -4,6 +4,7 @@ import irsdk
 from libs.auxiliaries import importExport
 import xmltodict
 from collections import OrderedDict
+from libs import IDDU
 
 
 class Car:
@@ -15,11 +16,11 @@ class Car:
             if 'name' in kwargs:
                 self.name = kwargs['name']
             else:
-                print('Error while creating car! No NAME provided.')
+                IDDU.IDDUItem.logger.error('Error while creating car! No NAME provided.')
             if 'carPath' in kwargs:
                 self.carPath = kwargs['carPath']
             else:
-                print('Error while creating car! No CARPATH provided.')
+                IDDU.IDDUItem.logger.error('Error while creating car! No CARPATH provided.')
 
         self.iRShiftRPM = []
         self.BDRS = False
@@ -164,11 +165,11 @@ class Car:
             elif '/' in args[0] or "\\" in args[0]:
                 filepath = args[0] + '/data/car/' + self.name + '.json'
             else:
-                print('I dont know how to save the car as: ', args[0])
+                IDDU.IDDUItem.logger.error('I dont know how to save the car as: ', args[0])
         elif len(args) == 2:
             filepath = args[0] + '/' + args[1] + '.json'
         else:
-            print('Invalid number if arguments. Max 2 arguments accepted!')
+            IDDU.IDDUItem.logger.error('Invalid number if arguments. Max 2 arguments accepted!')
             return
 
         # get list of track object properties
@@ -182,7 +183,7 @@ class Car:
 
         importExport.saveJson(data, filepath)
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved car ' + filepath)
+        IDDU.IDDUItem.logger.info('Saved car ' + filepath)
 
 
     def load(self, path):
@@ -197,7 +198,7 @@ class Car:
             else:
                 self.__setattr__(i, data[i])
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tLoaded car ' + path)
+        IDDU.IDDUItem.logger.info('Loaded car ' + path)
 
 
     def setpBrakeMax(self, pBrakeFMax, pBrakeRMax):
@@ -265,6 +266,6 @@ class Car:
         f = open(MotecPath + '/Maths/{}.xml'.format(self.name), "w")
         f.write(xmlString)
         f.close()
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tExported Motec XML file: {}.xml'.format(self.name))
+        IDDU.IDDUItem.logger.info('Exported Motec XML file: {}.xml'.format(self.name))
 
 

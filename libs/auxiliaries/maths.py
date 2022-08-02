@@ -157,3 +157,11 @@ def non_decreasing(L):
 
 def monotonic(L):
     return non_increasing(L) or non_decreasing(L)
+
+
+def makeMonotonic2D(xIn, yIn):
+    d = np.diff(xIn)
+    idx = [i+1 for i in range(len(d)) if d[i] <= 0]
+    xOut = np.delete(xIn, idx)
+    yOut = np.delete(yIn, idx)
+    return xOut, yOut

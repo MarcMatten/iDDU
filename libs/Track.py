@@ -3,6 +3,7 @@ from libs.auxiliaries import importExport, maths
 import matplotlib.pyplot as plt
 import numpy as np
 import time
+from libs import IDDU
 
 
 class Track:
@@ -17,6 +18,7 @@ class Track:
         self.ds = 10
         self.map = []
         self.SFLine = [[0, 0], [0, 0], [0, 0]]
+        self.tLap = {}
 
     def createTrack(self, x, y, LapDistPct, aNorth, sTrack):
         self.x = x
@@ -36,7 +38,7 @@ class Track:
         elif len(args) == 2:
             filepath = args[0] + '/' + args[1] + '.json'
         else:
-            print('Invalid number if arguments. Max 2 arguments accepted!')
+            IDDU.IDDUItem.logger.error('Invalid number if arguments. Max 2 arguments accepted!')
             return
 
         # get list of track object properties
@@ -54,8 +56,7 @@ class Track:
 
         importExport.saveJson(data, filepath)
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tSaved track ' + filepath)
-
+        IDDU.IDDUItem.logger.info('Saved track ' + filepath)
 
     def loadFromCSV(self, path):  # TODO: no longer used, put this in a library
 
@@ -125,7 +126,7 @@ class Track:
 
     def load(self, path):
         # TODO: error management
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\t\tAttempting to load track ' + path)
+        IDDU.IDDUItem.logger.info('Loading track ' + path)
 
         data = importExport.loadJson(path)
 
@@ -133,11 +134,11 @@ class Track:
         for i in range(0, len(data)):
             self.__setattr__(temp[i][0], temp[i][1])
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\t\tTrack loaded, creating map.')
+        IDDU.IDDUItem.logger.info('Track loaded, creating map.')
 
         self.createMap()
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\t\tLoaded track {} successfully.'.format(path))
+        IDDU.IDDUItem.logger.info('Loaded track {}'.format(path))
 
     def calcSFLine(self):
 
@@ -152,3 +153,10 @@ class Track:
         y3 = -0 * np.sin(a) - 15 * np.cos(a)
 
         self.SFLine = [[x1+self.x[0], y1+self.y[0]], [x2+self.x[0], y2+self.y[0]], [x3+self.x[0], y3+self.y[0]]]
+
+    def setLapTime(self, car, tLap):
+        if car in self.tLap:
+            if self.tLap[car] < tLap:
+                self.tLap[car] = tLap
+        else:
+            self.tLap[car] = tLap

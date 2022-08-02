@@ -207,7 +207,7 @@ calcData = {'startUp': False,
             'FuelAdd': 1,
             'time': [],
             'iRShiftRPM': [100000, 100000, 100000, 100000],
-            'StartDDU': True,
+            'StartDDU': False,
             'StopDDU': False,
             'DDUrunning': False,
             'SessionLength': 86400,
@@ -326,6 +326,7 @@ calcData = {'startUp': False,
             'tExecuteLogger': 0,
             'tExecuteRender': 0,
             'tExecuteCalc': 0,
+            'tExecuteMulti': 0,
             'tShiftReaction': float('nan'),
             'BPitCommandUpdate': False,
             'PlayerTrackSurfaceOld': 0,
@@ -401,13 +402,15 @@ calcData = {'startUp': False,
             'BStartMode': False,
             'BSteeringWheelStartMode': False,
             'tStart100': 0,
-            'tStartReaction': 0
+            'tStartReaction': 0,
+            'BThumbWheelErrorL': False,
+            'BThumbWheelErrorR': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
     'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['Off', 'On']],
     'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
-    'NSlipLEDMode': ['Slip LED Mode', True, 0, 1, 0, 6, 1, ['Off', 'On', 'Traction + ABS', 'ABS only', 'Traction + Braking', 'Traction only', 'Braking only']],
+    'NSlipLEDMode': ['Slip LED Mode', True, 0, 1, 0, 6, 1, ['Off', 'On', 'Traction + ABS', 'ABS only', 'Slip only', 'Traction only', 'Braking only']],
     'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
     'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
@@ -425,7 +428,7 @@ if __name__ == "__main__":
 
     if not os.path.exists(calcData['dir'] + '/data/configs/config.json'):
         copyfile(calcData['dir'] + '/data/configs/config_default.json', calcData['dir'] + '/data/configs/config.json')
-        print('No config.json found. Created new default config.json from config_default.json')
+        IDDU.IDDUItem.logger.info('No config.json found. Created new default config.json from config_default.json')
 
     config_default = importExport.loadJson(calcData['dir'] + '/data/configs/config_default.json')
     config_local = importExport.loadJson(calcData['dir'] + '/data/configs/config.json')
@@ -461,7 +464,7 @@ if __name__ == "__main__":
     steeringWheelComsThread = SteeringWheelComs.SteeringWheelComsThread(0.01)
     raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
     loggerThread = Logger.LoggerThread(0.02)
-    ms = MultiSwitch.MultiSwitch(0.005)
+    ms = MultiSwitch.MultiSwitch(0.02)
 
     for i in range(0, len(iDDUControlsName)):
         if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
@@ -492,13 +495,13 @@ if __name__ == "__main__":
                 myRTDB.StartDDU = False
 
             if myRTDB.StopDDU:
-                print(myRTDB.timeStr + ': Stopping DDU')
+                IDDU.IDDUItem.logger.info('Stopping DDU')
                 iRRender.stopRendering()
                 myRTDB.StopDDU = False
                 myRTDB.DDUrunning = False
 
         elif myRTDB.StartDDU:
-            print(myRTDB.timeStr + ': Starting DDU')
+            IDDU.IDDUItem.logger.info('Starting DDU')
             iRRender = iDDURender.RenderScreen()
             myRTDB.DDUrunning = True
             # myRTDB.StartDDU = False

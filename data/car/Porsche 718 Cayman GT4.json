@@ -3,6 +3,7 @@
     "BP2P": false,
     "Coasting": {
         "BValid": true,
+        "CarSetup": {},
         "NGear": [
             0.0,
             1.0,
@@ -49,6 +50,7 @@
                 -6.8485246434296e-05
             ]
         ],
+        "SetupName": "SetupName",
         "gLongCoastPolyFit": [
             [
                 -0.1492412132573708,

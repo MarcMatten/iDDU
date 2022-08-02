@@ -11,7 +11,7 @@ class RaceLapsEstimationThread(IDDUThread):
         IDDUThread.__init__(self, rate)
         self.snapshot = False
         self.BError = False
-        print(self.db.timeStr + ': Starting raceLapsEstimation')
+        self.logger.info('Starting raceLapsEstimation')
 
     def run(self):
         while 1:
@@ -163,7 +163,7 @@ class RaceLapsEstimationThread(IDDUThread):
                 except Exception as e:
                     exc_type, exc_obj, exc_tb = sys.exc_info()
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                    print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+                    self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
             self.db.tExecuteRaceLapsEstimation = (time.time() - t) * 1000
 

@@ -4,6 +4,7 @@ import os
 from libs.auxiliaries import importExport
 from libs.IDDU import IDDUThread
 import numpy as np
+from libs import IDDU
 
 
 class RTDB:
@@ -25,7 +26,7 @@ class RTDB:
         self.StopDDU = True
         self.StartDDU = False
         self.timeStr = time.strftime("%H:%M:%S", time.localtime())
-        print(timeStr + ': RTDB initialised!')
+        IDDU.IDDUItem.logger.info('RTDB initialised!')
 
     def initialise(self, data, BQueryData, BSnapshot):
         temp = list(data.items())
@@ -48,12 +49,12 @@ class RTDB:
         return self.__getattribute__(string)
 
     def reinitialise(self):
-        print(time.strftime("%H:%M:%S", time.localtime()) + ': reinitialise RTDB!')
+        IDDU.IDDUItem.logger.info('Reinitialise RTDB!')
         self.StopDDU = True
         for i in range(0, len(self.initData)):
             self.__setattr__(self.initData[i][0], self.initData[i][1])
         self.timeStr = time.strftime("%H:%M:%S", time.localtime())
-        print(time.strftime("%H:%M:%S", time.localtime()) + ': RTDB successfully reinitialised!')
+        IDDU.IDDUItem.logger.info('RTDB successfully reinitialised!')
         self.StartDDU = True
 
     def snapshot(self):
@@ -80,7 +81,7 @@ class RTDB:
 
         importExport.saveJson(data, nameStr + '.json')
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ': Saved snapshot: ' + nameStr+'.json')
+        IDDU.IDDUItem.logger.info('Saved snapshot: ' + nameStr+'.json')
 
     def loadSnapshot(self, name):
         self.StopDDU = True
@@ -108,7 +109,7 @@ class RTDB:
 
         self.initialise(data, False, True)
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ': Loaded RTDB snapshot: ' + name +'.json')
+        IDDU.IDDUItem.logger.info('Loaded RTDB snapshot: ' + name + '.json')
 
     def loadFuelTgt(self, path):  # TODO: does this need to live in here?
         data = importExport.loadJson(path)
@@ -127,7 +128,7 @@ class RTDB:
         self.init = True
         self.WasOnTrack = False
 
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tImported ' + path)
+        IDDU.IDDUItem.logger.info('Imported ' + path)
 
 
 # create thread to update RTDB

@@ -15,18 +15,18 @@ class SteeringWheelComsThread(IDDUThread):
         self.COMPort = None
         self.serial = None
         self.rBitePointSent = 0
+        self.tThumbWheelErrorL = 0
+        self.tThumbWheelErrorR = 0
 
-        for i in range(1, len(self.PortList)):
-            if self.PortList[i].device == 'COM13':
+        for i in range(0, len(self.PortList)):
+            if self.PortList[i].device == 'COM4':
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
 
         if self.BPortFound:
             try:
                 self.logger.info('Arduino found! Connecting to {}'.format(self.COMPort))
-
-                self.serial = serial.Serial(self.COMPort, 9600, timeout=0.1)
-                time.sleep(2)
+                self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
                 self.rBitePointSent = self.db.config['rBitePoint']/100
                 self.serial.write(struct.pack('<f', self.rBitePointSent))
 
@@ -43,11 +43,16 @@ class SteeringWheelComsThread(IDDUThread):
                         self.logger.error('Could not set Clutch Bite Point!')
 
                 self.BArduinoConnected = True
-
                 self.logger.info('Connection to Steering Wheel established on {}!'.format(self.COMPort))
+                self.BPortFound = True
+
             except:
                 self.BArduinoConnected = False
-                self.logger.error('Could not connect to Steering Wheel on {}!'.format(self.COMPort))
+                self.logger.error('Could not connect to Steering Wheel on COM4!')
+
+        else:
+            self.BArduinoConnected = False
+            self.logger.error('Could not connect to Steering Wheel on COM4!')
 
     def run(self):
         while True:
@@ -62,19 +67,52 @@ class SteeringWheelComsThread(IDDUThread):
 
                     msg = self.serial.readline()
                     if msg:
-                        if len(msg) == 1:
-                            data = struct.unpack('<b', msg)[0]
-                        elif len(msg) == 4:
-                            data = struct.unpack('<f', msg)[0]
-                            if not round(self.rBitePointSent, 3) == round(data, 3):
-                                self.logger.error('Could not set Clutch Bite Point!')
-                        else:
+                        try:
+                            if len(msg) == 1:
+                                data = struct.unpack('<b', msg)[0]
+                            elif len(msg) == 4:
+                                data = struct.unpack('<f', msg)[0]
+                                if not round(self.rBitePointSent, 3) == round(data, 3):
+                                    self.logger.error('Could not set Clutch Bite Point!')
+                            else:
+                                data = msg.decode().split('\r')[0]
+                                if data.startswith('TW'):
+                                    if data[3] == 'L':
+                                        self.db.BThumbWheelErrorL = True
+                                        self.tThumbWheelErrorL = self.db.SessionTime
+                                        self.logger.error('Thumb Wheel Error Left! {} values read.'.format(data[4:]))
+                                    if data[3] == 'R':
+                                        self.db.BThumbWheelErrorR = True
+                                        self.tThumbWheelErrorR = self.db.SessionTime
+                                        self.logger.error('Thumb Wheel Error Right! {} values read.'.format(data[4:]))
+                                    if data == 'TWOK':
+                                        self.db.BThumbWheelErrorL = False
+                                        self.db.BThumbWheelErrorR = False
+                                        self.logger.info('Thumb Wheel okay again')
+                                    if data == 'TWOFF':
+                                        self.db.BThumbWheelErrorL = True
+                                        self.db.BThumbWheelErrorR = True
+                                        self.logger.error('Thumb Wheels deactivated because of too many errors!')
+                                else:
+                                    print(msg)
+                                    data = None
+                        except:
+                            self.logger.error('Could not decode message: {}'.format(msg))
                             data = None
+                    else:
+                        data = None
 
-                        if data == 1 and not self.db.BSteeringWheelStartMode:
-                            self.db.BSteeringWheelStartMode = True
-                        elif data == 0 and self.db.BSteeringWheelStartMode:
-                            self.db.BSteeringWheelStartMode = False
+                    if self.db.BThumbWheelErrorL and self.db.SessionTime - self.tThumbWheelErrorL > 10:
+                        self.db.BThumbWheelErrorL = False
+                    if self.db.BThumbWheelErrorR and self.db.SessionTime - self.tThumbWheelErrorR > 10:
+                        self.db.BThumbWheelErrorR = False
+
+                    if data == 1 and not self.db.BSteeringWheelStartMode:
+                        self.db.BSteeringWheelStartMode = True
+                        self.logger.info('Start Mode ON')
+                    elif data == 0 and self.db.BSteeringWheelStartMode:
+                        self.db.BSteeringWheelStartMode = False
+                        self.logger.info('Start Mode OFF')
 
                 time.sleep(0.2)
 

@@ -425,6 +425,11 @@
     "ds": 10,
     "name": "indianapolis ovalindypit",
     "sTrack": 4040.0,
+    "tLap": {
+        "Mercedes AMG GT4": 70.36666666672056,
+        "Mercedes GT3 2020": 96.89999999991187,
+        "Radical SR10": 63.7943000793457
+    },
     "x": [
         493.6886074066744,
         498.31030924341036,

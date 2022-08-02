@@ -6,8 +6,103 @@ import time
 import ctypes
 import os
 from libs.MyLogger import MyLogger
+from cython_hidapi import hid
+import numpy as np
+
+import serial
+import struct
 
 ctypes.windll.kernel32.SetDllDirectoryW(None)
+
+state = [0, 0, 0, 0]
+
+
+class JoystickUpdater(threading.Thread):
+
+    def __init__(self, h,  *args, **kwargs):
+        super(JoystickUpdater, self).__init__(*args, **kwargs)
+        self._stop_event = threading.Event()
+        threading.Thread.__init__(self)
+        self.h = h
+
+    def run(self):
+        global state
+        while not self.stopped():
+            temp = self.h.read(64)
+            state = temp[1:4]
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+class Joystick:
+    NButton = 24
+
+    def __init__(self):
+        self.vid = 0
+        self.pid = 0
+        self.oldState = None
+        self.ButtonStates = np.array([0]*self.NButton)
+        self.BButtonReleased = np.array([0]*self.NButton)
+        self.BButtonPressed = np.array([0]*self.NButton)
+
+        # self.serial = serial.Serial('COM8', 9600, timeout=1)
+        #
+        # msg = struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 1, 0)
+        # self.serial.write(msg)
+
+        self.h = hid.device()
+
+
+    def connect(self, vid, pid):
+        self.vid = vid
+        self.pid = pid
+        self.h.open(self.vid, self.pid)
+        self.h.set_nonblocking(0)
+
+    def update(self):
+        global state
+        oldState = self.ButtonStates
+        self.ButtonStates = np.array([0]*self.NButton)
+
+        for i in range(len(state)):
+            x = state[i]
+            for k in range(0, 8):
+                n = i*8 + k
+                if x & np.power(2, k):
+                    self.ButtonStates[n] = 1
+
+        self.BButtonReleased = np.clip(oldState - self.ButtonStates, 0, 1)
+        self.BButtonPressed = np.clip(self.ButtonStates - oldState, 0, 1)
+
+    def isPressed(self, NButton:int):
+        return self.ButtonStates[NButton]
+
+    def ButtonPressedEvent(self, NButton:int):
+        if self.BButtonPressed[NButton]:
+            self.BButtonPressed[NButton] = 0
+            return 1
+        else:
+            return 0
+
+    def ButtonReleasedEvent(self, NButton: int):
+        if self.BButtonReleased[NButton]:
+            self.BButtonReleased[NButton] = 0
+            return 1
+        else:
+            return 0
+
+    def close(self):
+        self.h.close()
+        self.serial.close()
+
+    def Event(self):
+        if any(self.BButtonPressed) or any(self.BButtonReleased):
+            return True
+        else:
+            return False
 
 
 class IDDUItem:
@@ -17,6 +112,7 @@ class IDDUItem:
     pygame.init()
 
     myJoystick = None
+    MarcsJoystick = None
     joystickList = []
 
     white = (255, 255, 255)
@@ -40,6 +136,19 @@ class IDDUItem:
     LogFilePath = os.path.abspath(os.path.join((os.getcwd()).split('iDDU')[0], 'iDDU', 'data', 'iDDU.log'))
 
     logger = MyLogger()
+
+    vid = 9025
+    pid = 32822
+
+    J = Joystick()
+    J.connect(vid, pid)
+
+    ju = JoystickUpdater(J.h)
+    ju.start()
+
+    MarcsJoystick = J
+
+    print('ok')
 
     def __init__(self):
         pass
@@ -83,8 +192,11 @@ class IDDUItem:
         self.vjoy.set_button(ID, 0)
 
 
+
+
 class IDDUThread(IDDUItem, threading.Thread):
     def __init__(self, rate):
         IDDUItem.__init__(self)
         threading.Thread.__init__(self)
         self.rate = rate
+

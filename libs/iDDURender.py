@@ -5,6 +5,7 @@ import numpy as np
 import pygame
 from libs.auxiliaries import convertString
 from libs.IDDU import IDDUItem
+from libs.MyLogger import ExceptionHandler
 
 
 class RenderMain(IDDUItem):
@@ -35,7 +36,9 @@ class RenderMain(IDDUItem):
     fontSmall = pygame.font.Font("files/KhmerUI.ttf", 20)
     fontMedium = pygame.font.Font("files/KhmerUI.ttf", 40)
     fontLarge = pygame.font.Font("files/KhmerUI.ttf", 60)
+    fontChangeLabel2 = pygame.font.Font("files/KhmerUI.ttf", 100)
     fontGear = pygame.font.Font("files/KhmerUI.ttf", 163)
+    fontChangeLabel = pygame.font.Font("files/KhmerUI.ttf", 225)
     fontReallyLarge = pygame.font.Font("files/KhmerUI.ttf", 300)
     fontHuge = pygame.font.Font("files/KhmerUI.ttf", 480)
     SCLabel = fontHuge.render('SC', True, IDDUItem.black)
@@ -88,7 +91,7 @@ class RenderScreen(RenderMain):
             # self.initJoystick('vJoy Device')
             self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
         else:
-            self.initJoystick('SteeringWheel')
+            self.initJoystick('Arduino Leonardo')
 
         # frames
         self.frames = list()
@@ -182,6 +185,7 @@ class RenderScreen(RenderMain):
     def stopRendering():
         pygame.display.quit()
 
+    # @ExceptionHandler
     def render(self):
         try:
             t = time.perf_counter()
@@ -329,6 +333,11 @@ class RenderScreen(RenderMain):
                 if self.db.OnPitRoad and self.db.Speed > 5 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
                     self.warningLabel('PIT LIMITER OFF', self.red, self.white, 4)
 
+                # if self.db.BThumbWheelErrorL:
+                #     self.warningLabel('THMBWHL ERROR Left', self.red, self.white, 4)
+                # if self.db.BThumbWheelErrorR:
+                #     self.warningLabel('THMBWHL ERROR Right', self.red, self.white, 4)
+
                 # driver control change
                 if time.time() < self.db.dcChangeTime + 1:
                     if self.db.dcChangedItems[0] in self.db.car.dcList:
@@ -369,7 +378,7 @@ class RenderScreen(RenderMain):
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+            self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
     def page0(self):
 
@@ -599,7 +608,7 @@ class RenderScreen(RenderMain):
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+            self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
     def CarOnMap(self, Idx):
         CarIdxLapDistPct = self.ir['CarIdxLapDistPct']
@@ -736,19 +745,32 @@ class RenderScreen(RenderMain):
 
     def changeLabel(self, text, value):
         pygame.draw.rect(RenderMain.screen, self.black, [0, 0, 800, 480], 0)
-        if len(text) < 7:
-            LabelSize = self.fontLarge.size(text)
-            Label = self.fontLarge.render(text, True, self.white)
-        elif len(text) < 11:
-            LabelSize = self.fontMedium.size(text)
-            Label = self.fontMedium.render(text, True, self.white)
-        else:
-            LabelSize = self.fontSmall.size(text)
-            Label = self.fontSmall.render(text, True, self.white)
+        LabelSize = self.fontLarge.size(text)
+        Label = self.fontLarge.render(text, True, self.white)
+        # if len(text) < 7:
+        #     LabelSize = self.fontLarge.size(text)
+        #     Label = self.fontLarge.render(text, True, self.white)
+        # elif len(text) < 11:
+        #     LabelSize = self.fontMedium.size(text)
+        #     Label = self.fontMedium.render(text, True, self.white)
+        # else:
+        #     LabelSize = self.fontSmall.size(text)
+        #     Label = self.fontSmall.render(text, True, self.white)
 
         RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
-        ValueSize = self.fontReallyLarge.size(value)
-        Value = self.fontReallyLarge.render(value, True, self.white)
+        # ValueSize = self.fontReallyLarge.size(value)
+        # Value = self.fontReallyLarge.render(value, True, self.white)
+
+        if len(value) < 7:
+            ValueSize = self.fontReallyLarge.size(value)
+            Value = self.fontReallyLarge.render(value, True, self.white)
+        elif len(value) < 11:
+            ValueSize = self.fontGear.size(value)
+            Value = self.fontGear.render(value, True, self.white)
+        else:
+            ValueSize = self.fontChangeLabel2.size(value)
+            Value = self.fontChangeLabel2.render(value, True, self.white)
+
         RenderMain.screen.blit(Value, (400 - ValueSize[0] / 2, 270 - ValueSize[1] / 2))
 
 
@@ -975,3 +997,17 @@ class SimpleValue(RenderMain):
             RenderMain.screen.blit(self.ValLabel, (self.x + self.width/2 - self.ValSize[0]/2, self.y + 15))
         else:
             RenderMain.screen.blit(self.ValLabel, (self.x + self.width - self.ValSize[0], self.y + 15))
+
+
+class AlarmHandler:
+    def __init__(self):
+        pass
+
+    def registerAlarm(self, name, priority, text, colour, textcolour, f):
+        pass
+
+    def raiseAlarm(self):
+        pass
+
+    def suppressAlarm(self):
+        pass

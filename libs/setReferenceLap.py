@@ -32,7 +32,7 @@ def setReferenceLap(dirPath: str, TelemPath: str, ibtPath: str = None, ibtFile: 
             d, _ = importIBT.importIBT(ibtPath,
                                        lap='f',
                                        channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'YawNorth'],
-                                       channelMapPath=dirPath + '/functionalities/libs/iRacingChannelMap.csv')
+                                       channelMapPath=dirPath + '/libs/auxiliaries/iRacingChannelMap.csv')
         else:
             d = copy.deepcopy(ibtFile)
 
@@ -76,6 +76,7 @@ def setReferenceLap(dirPath: str, TelemPath: str, ibtPath: str = None, ibtFile: 
         track = Track.Track(TrackName)
         aNorth = d['YawNorth'][0]
         track.createTrack(d['x'], d['y'], d['LapDistPct'] * 100, aNorth, float(d['WeekendInfo']['TrackLength'].split(' ')[0]) * 1000)
+        track.setLapTime(carName, d['tLap'][-1])
         track.save(dirPath)
 
         print(time.strftime("%H:%M:%S", time.localtime()) + ':\t\tTrack {} has been successfully created.'.format(TrackName))

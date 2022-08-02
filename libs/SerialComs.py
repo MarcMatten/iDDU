@@ -17,25 +17,23 @@ class SerialComsThread(IDDUThread):
         self.BArduinoConnected = False
         self.COMPort = None
         self.serial = None
-        for i in range(1, len(self.PortList)):
-            if self.PortList[i].description[0:16] == 'Arduino Leonardo' and self.PortList[i].device == 'COM4':
+        for i in range(0, len(self.PortList)):
+            if self.PortList[i].device == 'COM8':  # self.PortList[i].description[0:16] == 'Serielles USB-Ge' and
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
 
         if self.BPortFound:
             try:
                 self.logger.info('Arduino found! Connecting to {}'.format(self.COMPort))
-
                 self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
-                time.sleep(2)
                 self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 1))
-
                 self.BArduinoConnected = True
-
-                self.logger.info('Connection to Arduino Leonardo established on {}!'.format(self.COMPort))
+                self.logger.info('Connection to Arduino Leonardo established on COM8!')
             except:
                 self.BArduinoConnected = False
-                self.logger.error('Could not connect to Arduino Leonardo established on {}!'.format(self.COMPort))
+                self.logger.error('Could not connect to COM8!')
+        else:
+            self.logger.error('Did not find Arduino Leonardo (COM8)!')
 
     def run(self):
         while True:
@@ -93,8 +91,8 @@ class SerialComsThread(IDDUThread):
                     self.db.tExecuteSerialComs = (time.perf_counter() - t) * 1000
                     time.sleep(self.rate)
 
-                msg = struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 0)
-                self.serial.write(msg)
+                    msg = struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 0)
+                    self.serial.write(msg)
                 time.sleep(0.2)
 
             time.sleep(1)
