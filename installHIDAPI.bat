@@ -1,3 +1,5 @@
+@echo off
+
 ECHO building HIDAPI for iDDU
 
 ECHO changing directory

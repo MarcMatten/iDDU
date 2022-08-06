@@ -55,6 +55,17 @@ class MultiSwitch(MultiSwitchThread):
             self.MarcsJoystick.update()
 
             if self.MarcsJoystick.Event():
+                if self.MarcsJoystick.isPressed(0) and self.MarcsJoystick.isPressed(6):
+                    self.db.AM.resetAll()
+
+                currentAlarm = self.db.AM.currentAlarm()
+                if currentAlarm in range(0, len(self.db.AM.alarms)):
+                    if self.MarcsJoystick.ButtonPressedEvent(0):
+                        self.db.AM.alarms[currentAlarm].surpress()
+
+                    if self.MarcsJoystick.ButtonPressedEvent(6):
+                        self.db.AM.alarms[currentAlarm].ignore()
+
                 if self.MarcsJoystick.ButtonPressedEvent(1):
                     if self.db.NDDUPage == 1:
                         self.db.NDDUPage = 2

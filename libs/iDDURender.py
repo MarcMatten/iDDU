@@ -295,48 +295,48 @@ class RenderScreen(RenderMain):
                 EngineWarnings = self.ir['EngineWarnings']
                 # warning and alarm messages
                 if EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                    self.warningLabel('PIT LIMITER', self.blue, self.white, 4)
+                    self.db.AM.PITLIMITERACTIVE.raiseAlert()
                 if EngineWarnings & 0x1:
                     self.warningLabel('WATER TEMP HIGH', self.red, self.white, 4)
                 if EngineWarnings & 0x2:
-                    self.warningLabel('LOW FUEL PRESSURE', self.red, self.white, 4)
+                    self.db.AM.FUELPRESSURE.raiseAlert()
                 if EngineWarnings & 0x4:
-                    self.warningLabel('LOW OIL PRESSURE', self.red, self.white, 4)
+                    self.db.AM.OILPRESSURE.raiseAlert()
                 if EngineWarnings & 0x8:
-                    self.warningLabel('ENGINE STALLED', self.yellow, self.black, 4)
+                    self.db.AM.ENGINESTALLED.raiseAlert()
 
                 if self.ir['SessionTime'] < self.db.tdcHeadlightFlash + 1:
                     if self.db.BdcHeadlightFlash:
-                        self.warningLabel('FLASH', self.green, self.white, 5)
+                        self.db.AM.FLASH.raiseAlert()
 
                 # for testing purposes....
                 SessionFlags = self.ir['SessionFlags']
                 if SessionFlags & 0x80:
-                    self.warningLabel('CROSSED', self.white, self.black, 4)
+                    self.db.AM.CROSSED.raiseAlert()
                 # if SessionFlags & 0x100: # normal yellow
                 #     self.warningLabel('YELLOW WAVING', self.white, self.black)
                 # if SessionFlags & 0x400:
                 #     self.warningLabel('GREEN HELD', self.white, self.black)
                 if SessionFlags & 0x2000:
-                    self.warningLabel('RANDOM WAVING', self.white, self.black, 0)
+                    self.db.AM.RANDOMWAVING.raiseAlert()
                 # if SessionFlags & 0x8000:
                 #     self.warningLabel('CAUTION WAVING', self.white, self.black)
                 # if SessionFlags & 0x10000:
                 #     self.warningLabel('BLACK', self.white, self.black)
                 if SessionFlags & 0x20000:
-                    self.warningLabel('DISQUALIFIED', self.white, self.black, 0)
+                    self.db.AM.DISQUALIFIED.raiseAlert()
                 # if SessionFlags & 0x80000:
                 #     self.warningLabel('FURLED', self.white, self.black)
                 # if SessionFlags & 0x100000:
                 #     self.warningLabel('REPAIR', self.white, self.black)
 
                 if self.db.OnPitRoad and self.db.Speed > 5 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
-                    self.warningLabel('PIT LIMITER OFF', self.red, self.white, 4)
+                    self.db.AM.PITLIMITEROFF.raiseAlert()
 
-                # if self.db.BThumbWheelErrorL:
-                #     self.warningLabel('THMBWHL ERROR Left', self.red, self.white, 4)
-                # if self.db.BThumbWheelErrorR:
-                #     self.warningLabel('THMBWHL ERROR Right', self.red, self.white, 4)
+                if self.db.BThumbWheelErrorL:
+                    self.db.AM.THUMBWHEELERRORL.raiseAlert()
+                if self.db.BThumbWheelErrorR:
+                    self.db.AM.THUMBWHEELERRORR.raiseAlert()
 
                 # driver control change
                 if time.time() < self.db.dcChangeTime + 1:
@@ -368,6 +368,11 @@ class RenderScreen(RenderMain):
                                     else:
                                         valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                                 self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
+
+            self.db.AM.update()
+            a = self.db.AM.display()
+            if a[0]:
+                self.warningLabel(a[0][0], a[0][1], a[0][2], a[0][3])
 
             pygame.display.flip()
             self.db.tExecuteRender = (time.perf_counter() - t) * 1000

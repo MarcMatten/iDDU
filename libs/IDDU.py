@@ -6,7 +6,7 @@ import time
 import ctypes
 import os
 from libs.MyLogger import MyLogger
-from cython_hidapi import hid
+from _cython_hidapi import hid
 import numpy as np
 
 import serial
