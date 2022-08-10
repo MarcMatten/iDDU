@@ -12,6 +12,7 @@ from libs.auxiliaries import importExport
 import numpy as np
 from libs.setReferenceLap import setReferenceLap
 from libs.MyLogger import MyLogger
+import iDDU
 
 
 def decorator(fn):
@@ -47,7 +48,8 @@ class Gui(IDDUItem):
         if reply == QMessageBox.Yes:
             print("Closing iDDU...")
             event.accept()
-            sys.exit(self.exec_())
+            # sys.exit(self.exec_())
+            self.db.done = True
         else:
             event.ignore()
 

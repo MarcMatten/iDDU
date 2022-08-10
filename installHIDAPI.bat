@@ -4,7 +4,7 @@ ECHO building HIDAPI for iDDU
 
 ECHO changing directory
 
-cd .\cython-hidapi
+cd .\cython_hidapi
 
 ECHO generating Python code
 

@@ -6,7 +6,7 @@ import time
 import ctypes
 import os
 from libs.MyLogger import MyLogger
-from _cython_hidapi import hid
+from cython_hidapi import hid
 import numpy as np
 
 import serial
@@ -19,23 +19,22 @@ state = [0, 0, 0, 0]
 
 class JoystickUpdater(threading.Thread):
 
+    running = False
+
     def __init__(self, h,  *args, **kwargs):
         super(JoystickUpdater, self).__init__(*args, **kwargs)
-        self._stop_event = threading.Event()
         threading.Thread.__init__(self)
         self.h = h
+        self.running = True
 
     def run(self):
         global state
-        while not self.stopped():
+        while self.running:
             temp = self.h.read(64)
             state = temp[1:4]
 
-    def stop(self):
-        self._stop_event.set()
+        self.h.close()
 
-    def stopped(self):
-        return self._stop_event.is_set()
 
 class Joystick:
     NButton = 24
@@ -148,8 +147,6 @@ class IDDUItem:
 
     MarcsJoystick = J
 
-    print('ok')
-
     def __init__(self):
         pass
 
@@ -190,13 +187,39 @@ class IDDUItem:
         self.vjoy.set_button(ID, 1)
         time.sleep(t)
         self.vjoy.set_button(ID, 0)
+    
+    def stopJU(self):
+        self.ju.running = False
 
 
 
 
 class IDDUThread(IDDUItem, threading.Thread):
-    def __init__(self, rate):
+    tStart = 0
+    tMin = 1000
+    tMax = 0
+    tAvg = 0
+    NCalls = np.uint64(0)
+    running = False
+    
+    def __init__(self, rate, *args, **kwargs):
         IDDUItem.__init__(self)
         threading.Thread.__init__(self)
+        super(IDDUThread, self).__init__(*args, **kwargs)
+        self._stop = threading.Event()
         self.rate = rate
+        self.running = True
 
+    def tic(self):
+        self.tStart = time.perf_counter()
+        self.NCalls = np.uint64(self.NCalls + 1)
+    
+    def toc(self):
+        tExec = time.perf_counter() - self.tStart
+        self.tMin = np.min([self.tMin, tExec])
+        self.tMax = np.max([self.tMax, tExec])
+        self.tAvg = (self.tAvg * (self.NCalls-1) + tExec) / (self.NCalls)
+        
+    def stop(self):
+        self.running = False
+        self.logger.info('{} - Avg: {} | Min: {} | Max: {}'.format(type(self).__name__, np.round(self.tAvg, 6), np.round(self.tMin, 6), np.round(self.tMax, 6)))

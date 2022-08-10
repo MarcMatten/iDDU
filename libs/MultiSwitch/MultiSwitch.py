@@ -42,8 +42,9 @@ class MultiSwitch(MultiSwitchThread):
         self.mapDDUList = list(self.mapDDU.keys())
         self.mapIRList = list(self.mapIR.keys())
 
-        while 1:
+        while self.running:
             t = time.perf_counter()
+            self.tic()
             if self.db.BMultiInitRequest:
                 self.initCar()
                 self.db.BMultiInitRequest = False
@@ -264,6 +265,7 @@ class MultiSwitch(MultiSwitchThread):
                         self.NMultiState = 0
 
             self.db.tExecuteMulti = time.perf_counter() - t
+            self.toc()
             time.sleep(self.rate)
 
     def addMapping(self, name='name', minValue=0 , maxValue= 1, step=1):

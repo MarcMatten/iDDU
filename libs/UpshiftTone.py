@@ -25,9 +25,10 @@ class ShiftToneThread(IDDUThread):
         self.AlarmToLED = interp1d([0, 1, 2, 3, 4], [0, 1, 4, 7, 8], kind='previous')
 
     def run(self):
-        while 1:
+        while self.running:
             # execute this loop while iRacing is running
             while self.ir.startup():
+                self.tic()
                 if not self.BInitialised or self.db.BUpshiftToneInitRequest:
                     self.initialise()
 
@@ -117,6 +118,7 @@ class ShiftToneThread(IDDUThread):
                         self.oldGear = self.ir['Gear']
 
                     self.db.tExecuteUpshiftTone = (time.perf_counter() - t) * 1000
+                    self.toc()
 
                     time.sleep(self.rate)
 

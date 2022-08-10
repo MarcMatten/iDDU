@@ -12,10 +12,14 @@ class RaceLapsEstimationThread(IDDUThread):
         self.snapshot = False
         self.BError = False
         self.logger.info('Starting raceLapsEstimation')
+    
+    def stop(self):
+        self.running = False
 
     def run(self):
-        while 1:
+        while self.running:
             t = time.time()
+            self.tic()
             if self.db.BDDUexecuting:
                 try:
                     # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'] and self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and self.db.TimeLimit and\
@@ -166,5 +170,6 @@ class RaceLapsEstimationThread(IDDUThread):
                     self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
             self.db.tExecuteRaceLapsEstimation = (time.time() - t) * 1000
+            self.toc()
 
             time.sleep(self.rate)

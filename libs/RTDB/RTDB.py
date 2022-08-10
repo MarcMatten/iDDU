@@ -140,8 +140,9 @@ class RTDBThread(IDDUThread):
         IDDUThread.__init__(self, rate)
 
     def run(self):
-        while 1:
+        while self.running:
             t = time.perf_counter()
+            self.tic()
             self.db.startUp = self.ir.startup()
             if self.db.startUp:
                 # self.ir.freeze_var_buffer_latest()
@@ -158,7 +159,13 @@ class RTDBThread(IDDUThread):
                 self.ir.shutdown()
             self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
             self.db.tExecuteRTDB = (time.perf_counter() - t) * 1000
+            self.toc()
             time.sleep(self.rate)
+
+    def stop(self):
+        self.running = False
+        self.logger.info('{} - Avg: {} | Min: {} | Max: {}'.format(type(self).__name__, np.round(self.tAvg, 6), np.round(self.tMin, 6), np.round(self.tMax, 6)))
+        self.stopJU()
 
 
 class AlertManager:

@@ -52,9 +52,10 @@ class LoggerThread(IDDUThread):
             os.mkdir("data/laplog/")
 
     def run(self):
-        while 1:
+        while self.running:
             while self.db.config['BLoggerActive']:
                 t = time.perf_counter()
+                self.tic()
                 if not self.init:
                     self.init = True
                     print('Logger active')
@@ -92,6 +93,7 @@ class LoggerThread(IDDUThread):
                         self.logging = True
 
                 self.db.tExecuteLogger = (time.perf_counter() - t) * 1000
+                self.toc()
 
                 time.sleep(self.rate)
 

@@ -36,13 +36,14 @@ class SerialComsThread(IDDUThread):
             self.logger.error('Did not find Arduino Leonardo (COM8)!')
 
     def run(self):
-        while True:
+        while self.running:
             # execute this loop while iRacing is running
             while self.ir.startup():
 
                 # execute this loop while player is on track
                 while self.BArduinoConnected and self.db.IsOnTrack:
                     t = time.perf_counter()
+                    self.tic()
 
                     # Shift LEDs
                     vCar = 0  # np.int8(min(max(3.06 * abs(self.db.Speed)-128, -128), 127))
@@ -89,6 +90,7 @@ class SerialComsThread(IDDUThread):
                     self.db.tExecuteSerialComs2 = (time.perf_counter() - t2) * 1000
 
                     self.db.tExecuteSerialComs = (time.perf_counter() - t) * 1000
+                    self.toc()
                     time.sleep(self.rate)
 
                     msg = struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 0)
@@ -96,3 +98,5 @@ class SerialComsThread(IDDUThread):
                 time.sleep(0.2)
 
             time.sleep(1)
+        
+        self.serial.close()

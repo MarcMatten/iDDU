@@ -55,12 +55,13 @@ class SteeringWheelComsThread(IDDUThread):
             self.logger.error('Could not connect to Steering Wheel on COM4!')
 
     def run(self):
-        while True:
+        while self.running:
             # execute this loop while iRacing is running
             while self.ir.startup():
 
                 # execute this loop while player is on track
-                while self.BArduinoConnected and self.db.IsOnTrack:
+                while self.BArduinoConnected and self.db.IsOnTrack:  
+                    self.tic()                  
                     if not self.rBitePointSent == self.db.config['rBitePoint'] / 100:
                         self.rBitePointSent = self.db.config['rBitePoint'] / 100
                         self.serial.write(struct.pack('<f', self.rBitePointSent))
@@ -113,7 +114,11 @@ class SteeringWheelComsThread(IDDUThread):
                     elif data == 0 and self.db.BSteeringWheelStartMode:
                         self.db.BSteeringWheelStartMode = False
                         self.logger.info('Start Mode OFF')
+                    
+                    self.toc()
 
                 time.sleep(0.2)
-
+            
             time.sleep(1)
+        
+        self.serial.close()

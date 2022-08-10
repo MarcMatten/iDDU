@@ -9,6 +9,7 @@ from libs.MultiSwitch import MultiSwitch
 from libs.auxiliaries import importExport
 from shutil import copyfile
 from libs import IDDU
+import sys
 
 
 nan = float('nan')
@@ -507,3 +508,15 @@ if __name__ == "__main__":
             # myRTDB.StartDDU = False
 
         time.sleep(0.001)
+
+    IDDU.IDDUItem.logger.info('############## Thread Execution Times ##############')
+    shiftToneThread.stop()
+    raceLapsEstimationThread.stop()
+    loggerThread.stop()
+    serialComsThread.stop()
+    steeringWheelComsThread.stop()
+    ms.stop()    
+    calcThread.stop()
+    guiThread.stop()
+    rtdbThread.stop()
+    quit()
