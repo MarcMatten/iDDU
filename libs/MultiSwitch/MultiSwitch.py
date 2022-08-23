@@ -73,7 +73,7 @@ class MultiSwitch(MultiSwitchThread):
                     else:
                         self.db.NDDUPage = 1
 
-                if self.MarcsJoystick.ButtonPressedEvent(12):
+                if self.MarcsJoystick.ButtonPressedEvent(14):
                     if self.NMultiState == 0:
                         self.NMultiState = 1
                         if len(self.mapIRList) > 0:
@@ -100,7 +100,7 @@ class MultiSwitch(MultiSwitchThread):
                     self.tMultiChange = time.time()
                     self.db.dcChangeTime = time.time()
 
-                elif self.MarcsJoystick.ButtonPressedEvent(13):
+                elif self.MarcsJoystick.ButtonPressedEvent(15):
                     if self.NMultiState == 0:
                         self.NMultiState = 2
                         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
@@ -126,7 +126,7 @@ class MultiSwitch(MultiSwitchThread):
                     self.tMultiChange = time.time()
                     self.db.dcChangeTime = time.time()
 
-                elif self.MarcsJoystick.ButtonPressedEvent(14):
+                elif self.MarcsJoystick.ButtonPressedEvent(12):
                     if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
                         self.mapIR['dcBrakeBias'].increase()
                     elif self.NMultiState == 1:
@@ -141,7 +141,7 @@ class MultiSwitch(MultiSwitchThread):
                     self.tMultiChange = time.time()
                     self.db.dcChangeTime = time.time()
 
-                elif self.MarcsJoystick.ButtonPressedEvent(15):
+                elif self.MarcsJoystick.ButtonPressedEvent(13):
                     if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
                         self.mapIR['dcBrakeBias'].decrease()
                     elif self.NMultiState == 1:

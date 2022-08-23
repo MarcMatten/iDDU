@@ -147,7 +147,8 @@ iRData = {'LapBestLapTime': 0,
           'RFbrakeLinePress': 0,
           'RRbrakeLinePress': 0,
           'CarSetup': None,
-          'Clutch': 0
+          'Clutch': 0,
+          'BrakeABSactive': False
           }
 
 # calculated data

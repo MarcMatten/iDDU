@@ -468,7 +468,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.PushToPass
 
                         # alarm
-                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4']:
+                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes AMG GT4']:
                             BTcToggle = True
                             BABSToggle = True
                         else:
@@ -482,7 +482,7 @@ class IDDUCalcThread(IDDUThread):
                             if not BTcToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
                                 self.db.Alarm[9] = 3
 
-                        if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled:
+                        if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled or self.db.BrakeABSactive:
                             self.db.Alarm[8] = 3
 
                         # Lift beeps

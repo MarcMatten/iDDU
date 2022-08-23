@@ -202,8 +202,10 @@ class Car:
 
 
     def setpBrakeMax(self, pBrakeFMax, pBrakeRMax):
-        self.pBrakeFMax = pBrakeFMax
-        self.pBrakeRMax = pBrakeRMax
+        if not pBrakeFMax == 0:
+            self.pBrakeFMax = pBrakeFMax
+        if not pBrakeRMax == 0:
+            self.pBrakeRMax = pBrakeRMax
 
     def MotecXMLexport(self, rootPath=str, MotecPath=str) -> None:
         """

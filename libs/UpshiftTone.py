@@ -83,7 +83,7 @@ class ShiftToneThread(IDDUThread):
                         self.db.NShiftLEDState = self.AlarmToLED(self.db.Alarm[7])
 
                     if self.db.config['ShiftToneEnabled']:
-                        if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.9 and self.ir['Speed'] > 20 and self.db.rSlipR < self.rSlipRMax:
+                        if self.ir['Gear'] > 0 and self.ir['Throttle'] > 0.5 and self.ir['Speed'] > 20 and self.db.rSlipR < self.rSlipRMax:
                             if self.db.config['UpshiftStrategy'] < 4:  # iRacing shift rpm
                                 if self.ir['RPM'] >= self.db.iRShiftRPM[self.db.config['UpshiftStrategy']] and self.db.config['UserShiftFlag'][self.ir['Gear'] - 1]:
                                     self.beep()
