@@ -35,16 +35,17 @@ class Car:
         self.UpshiftStrategy = 0
         self.UserShiftFlag = 0
         self.UpshiftSettings = {
-            'nMotorShiftOptimal': [0]*8,
-            'nMotorShiftTarget': [0]*8,
-            'vCarShiftOptimal': [0]*8,
-            'vCarShiftTarget': [0]*8,
-            'nMotorShiftLEDs': [[0, 0, 0]] * 8,
-            'BShiftTone': [False]*7,
-            'NGear': [1, 2, 3, 4, 5, 6, 7, 8],
-            'SetupName': 'SetupName',
-            'CarSetup': {},
-            'BValid': False
+            'base': {
+                'nMotorShiftOptimal': [0]*8,
+                'nMotorShiftTarget': [0]*8,
+                'vCarShiftOptimal': [0]*8,
+                'vCarShiftTarget': [0]*8,
+                'nMotorShiftLEDs': [[0, 0, 0]] * 8,
+                'BShiftTone': [False]*7,
+                'NGear': [1, 2, 3, 4, 5, 6, 7, 8],
+                'SetupName': 'SetupName',
+                'BValid': False
+            }
         }
         self.Coasting = {
             'gLongCoastPolyFit': np.repeat([[1.25, -0.099, 0]], 8, axis=0),
@@ -61,6 +62,9 @@ class Car:
         self.rSlipMapBrk = [-2.5, -4, -6.5, -9]
         self.rABSActivityMap = [-1, -5, -10, -15]
         self.NGearMax = 0
+
+        self.tempKey = []
+        self.tempVals = []
 
     def createCar(self, db, var_headers_names=None):
         DriverCarIdx = db.DriverInfo['DriverCarIdx']
@@ -125,19 +129,37 @@ class Car:
             self.UpshiftStrategy = db.config['UpshiftStrategy']
             self.UserShiftFlag = db.config['UserShiftFlag']
 
-    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup, NGearMax, nMotorShiftLEDs):
-        for i in range(0, len(NGear)):
-            self.UpshiftSettings['nMotorShiftOptimal'][i] = nMotorShiftOptimal[i]
-            self.UpshiftSettings['vCarShiftOptimal'][i] = vCarShiftOptimal[i]
-            self.UpshiftSettings['nMotorShiftTarget'][i] = nMotorShiftTarget[i]
-            self.UpshiftSettings['vCarShiftTarget'][i] = vCarShiftTarget[i]
-            self.UpshiftSettings['nMotorShiftLEDs'][i] = nMotorShiftLEDs[i]
-            self.UpshiftSettings['BShiftTone'][i] = True
+    def setShiftRPM(self, nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear, SetupName, CarSetup, NGearMax, nMotorShiftLEDs, GearID):
+        UpshiftSettings = {
+            'nMotorShiftOptimal': [0]*8,
+            'nMotorShiftTarget': [0]*8,
+            'vCarShiftOptimal': [0]*8,
+            'vCarShiftTarget': [0]*8,
+            'nMotorShiftLEDs': [[0, 0, 0]] * 8,
+            'BShiftTone': [False]*7,
+            'NGear': [1, 2, 3, 4, 5, 6, 7, 8],
+            'SetupName': 'SetupName',
+            'BValid': False
+            }
 
-        self.UpshiftSettings['SetupName'] = SetupName
-        self.UpshiftSettings['CarSetup'] = CarSetup
+        for i in range(0, len(NGear)):
+            UpshiftSettings['nMotorShiftOptimal'][i] = nMotorShiftOptimal[i]
+            UpshiftSettings['vCarShiftOptimal'][i] = vCarShiftOptimal[i]
+            UpshiftSettings['nMotorShiftTarget'][i] = nMotorShiftTarget[i]
+            UpshiftSettings['vCarShiftTarget'][i] = vCarShiftTarget[i]
+            UpshiftSettings['nMotorShiftLEDs'][i] = nMotorShiftLEDs[i]
+            UpshiftSettings['BShiftTone'][i] = True
+            UpshiftSettings['SetupName'] = SetupName
+            UpshiftSettings['BValid'] = True
+        
+        self.UpshiftSettings[GearID] = UpshiftSettings
+
+        if not self.UpshiftSettings['base']['BValid']:
+            self.UpshiftSettings['base'] = UpshiftSettings
+
+        #self.UpshiftSettings['SetupName'] = SetupName
+        #self.UpshiftSettings['CarSetup'] = CarSetup
         self.UpshiftStrategy = 5
-        self.UpshiftSettings['BValid'] = True
         self.NGearMax = NGearMax
 
     def setCoastingData(self, gLongPolyFit, QFuelPolyFit, NGear, SetupName, CarSetup):
@@ -192,11 +214,27 @@ class Car:
         for i in data:
             if isinstance(data[i], dict):
                 if hasattr(self, i):
-                    self.__getattribute__(i).update(data[i])
+                    try:
+                        self.__getattribute__(i).update(data[i])
+                    except:
+                        pass
                 else:
                     self.__setattr__(i, data[i])
             else:
                 self.__setattr__(i, data[i])
+
+        if 'BValid' in self.UpshiftSettings:
+            if self.UpshiftSettings['BValid']:
+                temp = {}
+                for i in self.UpshiftSettings:
+                    if not isinstance(self.UpshiftSettings[i], dict):
+                        temp[i] = self.UpshiftSettings[i]            
+                for i in temp:
+                    del self.UpshiftSettings[i]
+                if 'CarSetup' in self.UpshiftSettings:
+                    del self.UpshiftSettings['CarSetup']
+                self.UpshiftSettings['base'] = temp
+                self.save(path)
 
         IDDU.IDDUItem.logger.info('Loaded car ' + path)
 
@@ -240,11 +278,11 @@ class Car:
         doc['Maths']['@Condition'] = '\'Vehicle Id\' == "{}"'.format(self.carPath)
 
         # shift RPM
-        if self.UpshiftSettings['BValid']:
+        if self.UpshiftSettings['base']['BValid']:
             for i in range(0, self.NGearMax):
-                write2XML('nMotorShiftGear{}'.format(i+1), self.UpshiftSettings['nMotorShiftOptimal'][i], 'rpm')
+                write2XML('nMotorShiftGear{}'.format(i+1), self.UpshiftSettings['base']['nMotorShiftOptimal'][i], 'rpm')
         # gear ratios
-        if self.UpshiftSettings['BValid'] or self.Coasting['BValid']:
+        if self.UpshiftSettings['base']['BValid'] or self.Coasting['BValid']:
             for i in range(1, self.NGearMax + 1):
                 write2XML('rGear{}'.format(i), self.rGearRatios[i], 'ratio')
 
@@ -269,5 +307,42 @@ class Car:
         f.write(xmlString)
         f.close()
         IDDU.IDDUItem.logger.info('Exported Motec XML file: {}.xml'.format(self.name))
+
+    def getGearID(self, CarSetup):
+        self.tempKey = []
+        self.tempVals = []
+        try:
+            a, _ = self.myprint(CarSetup)
+            del self.tempKey, self.tempVals
+        except:
+            a = ''
+
+        return a
+
+    def myprint(self, setup, N=0):
+        if len(self.tempKey) <= N:
+            self.tempKey.append('')  
+
+        for k, v in setup.items():
+            if isinstance(v, dict):
+                self.tempKey[N] = k
+                _, _ = self.myprint(v, N+1)
+            else:
+                if 'Gear' in k or 'FinalDrive' in k or 'SpeedIn' in k:
+                    self.tempKey[N] = k
+                    self.tempVals.append(v)
+                    #print(v)
+                    #print(tempKey)
+        
+        val = ''
+        for i in self.tempVals:
+            val += ('|' + i.__str__())
+        
+        
+        key = ''
+        for i in self.tempKey:
+            key += ('.'+i)
+
+        return val[1:], key[1:]
 
 

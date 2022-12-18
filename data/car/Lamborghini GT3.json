@@ -202,213 +202,106 @@
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
     "UpshiftSettings": {
-        "BShiftTone": [
-            true,
-            true,
-            true,
-            true,
-            true,
-            false,
-            false
-        ],
-        "BValid": true,
-        "CarSetup": {
-            "Chassis": {
-                "Front": {
-                    "ArbBlades": "1-2",
-                    "ArbOuterDiameter": "Medium",
-                    "BrakePads": "Low friction",
-                    "CrossWeight": "50.0%",
-                    "FrontMasterCyl": "17.8 mm",
-                    "RearMasterCyl": "17.8 mm",
-                    "ToeIn": "-1.0 mm"
-                },
-                "InCarDials": {
-                    "AbsSetting": "10 (ABS)",
-                    "BrakePressureBias": "55.0%",
-                    "DisplayPage": "Day",
-                    "EnduranceLightPackage": "Not Fitted",
-                    "EngineMapSetting": "1 (MAP)",
-                    "LeftNightLedStrip": "Blue",
-                    "RightNightLedStrip": "Blue",
-                    "ThrottleShapeSetting": "1 (THR)",
-                    "TractionControlSetting": "4 (TC)"
-                },
-                "LeftFront": {
-                    "Camber": "-3.9 deg",
-                    "Caster": "+12.9 deg",
-                    "CompDamping": "-2 clicks",
-                    "CornerWeight": "3048 N",
-                    "RbdDamping": "-2 clicks",
-                    "RideHeight": "50.6 mm",
-                    "SpringPerchOffset": "36.5 mm",
-                    "SpringRate": "220 N/mm",
-                    "SpringSelected": 220
-                },
-                "LeftRear": {
-                    "Camber": "-3.3 deg",
-                    "CompDamping": "0 clicks",
-                    "CornerWeight": "3898 N",
-                    "RbdDamping": "0 clicks",
-                    "RideHeight": "71.5 mm",
-                    "SpringPerchOffset": "12.5 mm",
-                    "SpringRate": "250 N/mm",
-                    "SpringSelected": 250,
-                    "ToeIn": "+0.1 mm"
-                },
-                "Rear": {
-                    "ArbBlades": "2-2",
-                    "ArbOuterDiameter": "Small",
-                    "DiffPreload": "190 Nm",
-                    "FuelLevel": "60.0 L",
-                    "SixthGear": "IMSA Daytona",
-                    "WingSetting": "2 degrees"
-                },
-                "RightFront": {
-                    "Camber": "-3.9 deg",
-                    "Caster": "+12.9 deg",
-                    "CompDamping": "-2 clicks",
-                    "CornerWeight": "3048 N",
-                    "RbdDamping": "-2 clicks",
-                    "RideHeight": "50.6 mm",
-                    "SpringPerchOffset": "36.5 mm",
-                    "SpringRate": "220 N/mm",
-                    "SpringSelected": 220
-                },
-                "RightRear": {
-                    "Camber": "-3.3 deg",
-                    "CompDamping": "0 clicks",
-                    "CornerWeight": "3898 N",
-                    "RbdDamping": "0 clicks",
-                    "RideHeight": "71.5 mm",
-                    "SpringPerchOffset": "12.5 mm",
-                    "SpringRate": "250 N/mm",
-                    "SpringSelected": 250,
-                    "ToeIn": "+0.1 mm"
-                }
-            },
-            "TiresAero": {
-                "AeroBalanceCalc": {
-                    "FrontDownforce": "43.23%",
-                    "FrontRhAtSpeed": "50 mm",
-                    "RearRhAtSpeed": "68 mm",
-                    "WingSetting": "2 degrees"
-                },
-                "LeftFront": {
-                    "LastHotPressure": "148 kPa",
-                    "LastTempsOMI": "44C, 44C, 44C",
-                    "StartingPressure": "148 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                },
-                "LeftRear": {
-                    "LastHotPressure": "148 kPa",
-                    "LastTempsOMI": "44C, 44C, 44C",
-                    "StartingPressure": "148 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                },
-                "RightFront": {
-                    "LastHotPressure": "148 kPa",
-                    "LastTempsIMO": "44C, 44C, 44C",
-                    "StartingPressure": "148 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                },
-                "RightRear": {
-                    "LastHotPressure": "148 kPa",
-                    "LastTempsIMO": "44C, 44C, 44C",
-                    "StartingPressure": "148 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                }
-            },
-            "UpdateCount": 5
-        },
-        "NGear": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "SetupName": "Bathurst\\22S1\\22S1-GTSPRINT-Bathurst-Lambo-NL.sto",
-        "nMotorShiftLEDs": [
-            [
-                6092.532352517697,
-                6945.443214324196,
-                7772.018966531441
+        "base": {
+            "BShiftTone": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false
             ],
-            [
-                6845.982047763369,
-                7332.834293043573,
-                7815.328335273842
+            "BValid": true,
+            "NGear": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
             ],
-            [
-                7295.802852296649,
-                7588.8599030924715,
-                7881.248178426772
+            "SetupName": "Bathurst\\22S1\\22S1-GTSPRINT-Bathurst-Lambo-NL.sto",
+            "nMotorShiftLEDs": [
+                [
+                    6092.532352517697,
+                    6945.443214324196,
+                    7772.018966531441
+                ],
+                [
+                    6845.982047763369,
+                    7332.834293043573,
+                    7815.328335273842
+                ],
+                [
+                    7295.802852296649,
+                    7588.8599030924715,
+                    7881.248178426772
+                ],
+                [
+                    7551.015877024179,
+                    7722.730567775419,
+                    7894.200794304253
+                ],
+                [
+                    7932.589281931167,
+                    8013.45439529604,
+                    8094.260344641981
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
             ],
-            [
-                7551.015877024179,
-                7722.730567775419,
-                7894.200794304253
+            "nMotorShiftOptimal": [
+                8255.323565248147,
+                8102.732823148031,
+                8056.360131405824,
+                7996.965587394798,
+                8142.715515520455,
+                99999,
+                99999
             ],
-            [
-                7932.589281931167,
-                8013.45439529604,
-                8094.260344641981
+            "nMotorShiftTarget": [
+                7772.018966531441,
+                7815.328335273842,
+                7881.248178426772,
+                7894.200794304253,
+                8094.260344641981,
+                99999,
+                99999
             ],
-            [
-                0,
-                0,
-                0
+            "vCarShiftOptimal": [
+                29.66490421565613,
+                38.43000961914559,
+                47.3460277831056,
+                56.361147023398196,
+                66.74958345979601,
+                99999,
+                99999
             ],
-            [
-                0,
-                0,
-                0
-            ],
-            [
-                0,
-                0,
-                0
+            "vCarShiftTarget": [
+                27.790976033760384,
+                37.00948862629378,
+                46.29274183662943,
+                55.621817490060195,
+                66.34632307690958,
+                99999,
+                99999
             ]
-        ],
-        "nMotorShiftOptimal": [
-            8255.323565248147,
-            8102.732823148031,
-            8056.360131405824,
-            7996.965587394798,
-            8142.715515520455,
-            99999,
-            99999
-        ],
-        "nMotorShiftTarget": [
-            7772.018966531441,
-            7815.328335273842,
-            7881.248178426772,
-            7894.200794304253,
-            8094.260344641981,
-            99999,
-            99999
-        ],
-        "vCarShiftOptimal": [
-            29.66490421565613,
-            38.43000961914559,
-            47.3460277831056,
-            56.361147023398196,
-            66.74958345979601,
-            99999,
-            99999
-        ],
-        "vCarShiftTarget": [
-            27.790976033760384,
-            37.00948862629378,
-            46.29274183662943,
-            55.621817490060195,
-            66.34632307690958,
-            99999,
-            99999
-        ]
+        }
     },
     "UpshiftStrategy": 5,
     "UserShiftFlag": [
@@ -495,8 +388,8 @@
         8150.0
     ],
     "name": "Lamborghini GT3",
-    "pBrakeFMax": 137.03192633551518,
-    "pBrakeRMax": 137.03191521462432,
+    "pBrakeFMax": 147.78760043057528,
+    "pBrakeRMax": 147.78757731119794,
     "rABSActivityMap": [
         -1,
         -5,

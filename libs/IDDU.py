@@ -31,13 +31,13 @@ class JoystickUpdater(threading.Thread):
         global state
         while self.running:
             temp = self.h.read(64)
-            state = temp[1:4]
+            state = temp[1:6]
 
         self.h.close()
 
 
 class Joystick:
-    NButton = 24
+    NButton = 40
 
     def __init__(self):
         self.vid = 0

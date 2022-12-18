@@ -315,7 +315,7 @@ calcData = {'startUp': False,
             'dir': os.getcwd(),
             'track': None,
             'car': None,
-            'SubSessionIDOld': 0,
+            'SubSessionIDOld': -99,
             'NDDUPage': 1,
             'dc': {},
             'dcOld': {},
@@ -398,7 +398,10 @@ calcData = {'startUp': False,
             'BLEDsInit': False,
             'NShiftLEDState': 0,
             'BLoadRaceSetupWarning': False,
-            'LastSetup': {},
+            'LastSetup': {
+                'DriverSetupName': 'None',
+                'UpdateCount': None,
+                'FuelLevel': None},
             'SessionTypeOld': None,
             'BFuelTgtSet': False,
             'BStartMode': False,
@@ -406,23 +409,42 @@ calcData = {'startUp': False,
             'tStart100': 0,
             'tStartReaction': 0,
             'BThumbWheelErrorL': False,
-            'BThumbWheelErrorR': False
+            'BThumbWheelErrorR': False,
+            'BThumbWheelActive': True,
+            'NRotaryR': 0,
+            'NRotaryL': 0,
+            'NLapsTotal': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
     'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['Off', 'On']],
     'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
     'NSlipLEDMode': ['Slip LED Mode', True, 0, 1, 0, 6, 1, ['Off', 'On', 'Traction + ABS', 'ABS only', 'Slip only', 'Traction only', 'Braking only']],
-    'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
-    'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
-    'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
-    'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']],
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1],
+    'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1],
+    'BEnableRaceLapEstimation': ['Enable Race Lap Estimation', True, 0, True, None, None, None, ['Off', 'On']],
+    'NRaceLapsSource': ['Race Laps Source', True, 0, 0, 0, 1, 1, ['Calc', 'User']],
+    'VFuelTgt': ['VFuelTgt', True, 2, 0, 0, 50, 0.01],
     'NFuelConsumptionMethod': ['Fuel Consumption Method', True, 1, 0, 0, 2, 1, ['Avg', 'Last 3', 'Ref']],
     'NFuelTargetMethod': ['Fuel Management', True, 1, 0, 0, 3, 1, ['Off', 'Static', 'Finish', 'Stint']],
-    'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1],
+    'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'rBitePoint': ['Bite Point', True, 1, 30.0, 10, 80, 0.5]
 }
+
+inCarControls = [
+    'dcBrakeBias',
+    'dcTractionControl',
+    'dcTractionControl2',
+    'dcABS',
+    'dcAntiRollFront',
+    'dcAntiRollRear',
+    'dcFuelMixture',
+    'dcThrottleShape',
+    'dcBoostLevel',
+    'dcDiffPreload',
+    'dcWeightJackerRight',
+    None
+]
 
 if __name__ == "__main__":
 
@@ -452,6 +474,7 @@ if __name__ == "__main__":
     myRTDB.initialise(iRData, True, False)
     myRTDB.initialise(calcData, False, False)
     myRTDB.initialise({'iDDUControls': iDDUControls}, False, False)
+    myRTDB.initialise({'inCarControls': inCarControls}, False, False)
     myRTDB.initialise({'config': config}, False, False)
 
     dcList = list(myRTDB.car.dcList.keys())

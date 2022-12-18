@@ -23,9 +23,37 @@
         2,
         3
     ],
+    "dcBrakeBiasFine": [
+        34,
+        35
+    ],
+    "dcBrakeMisc": [
+        36,
+        37
+    ],
+    "dcDRSToggle": [
+        38,
+        39
+    ],
+    "dcDiffEntry": [
+        40,
+        41
+    ],
+    "dcDiffExit": [
+        42,
+        43
+    ],
+    "dcDiffMiddle": [
+        44,
+        45
+    ],
     "dcDiffPreload": [
         20,
         21
+    ],
+    "dcEngineBraking": [
+        46,
+        47
     ],
     "dcFuelMixture": [
         4,
@@ -35,9 +63,17 @@
         22,
         23
     ],
+    "dcMGUKDeployMode": [
+        48,
+        49
+    ],
     "dcPeakBrakeBias": [
         24,
         25
+    ],
+    "dcPowerSteering": [
+        32,
+        33
     ],
     "dcThrottleShape": [
         6,

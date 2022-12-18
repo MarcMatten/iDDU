@@ -1,8 +1,8 @@
 iRacingChannelName;iRacingUnit;ChannelName;Unit;ConverstionFactor
 Speed;m/s;vCar;m/s;1
 LapCurrentLapTime;s;tLap;s;1
-LatAccel;m/s�;gLat;m/s�;1
-LongAccel;m/s�;gLong;m/s�;1
+LatAccel;m/s/s;gLat;m/s/s;1
+LongAccel;m/s/s;gLong;m/s/s;1
 ThrottleRaw;1;rThrottle;1;1
 Brake;1;rBrake;1;1
 FuelUsePerHour;kg/h;dmFuel;g/s;0.277777777778

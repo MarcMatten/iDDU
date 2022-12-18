@@ -36,6 +36,7 @@ def importIBT(ibtPath, channels=None, lap=None, channelMapPath='iRacingChannelMa
 
     if channels is None:
         channelsExport = var_headers_names
+        channels = var_headers_names
     else:
         for i in range(0, len(channels)):
             if channels[i] in var_headers_names:

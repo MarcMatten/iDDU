@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime
 import numpy as np
+import traceback
 
 from libs.auxiliaries import importExport, convertString, maths
 from libs import Track, Car
@@ -289,7 +290,7 @@ class IDDUCalcThread(IDDUThread):
                                     self.db.textColourJoker = self.green
 
                         if self.db.init:  # do when getting into the car
-                            self.db.init = False
+                            self.db.init = False                            
                             self.db.OutLap = True
                             self.db.BMultiInitRequest = True
                             self.db.LastFuelLevel = self.db.FuelLevel
@@ -319,6 +320,9 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.car.setpBrakeMax((pBrakeLFMax + pBrakeRFMax)/2, (pBrakeLRMax+pBrakeRRMax)/2)
                                 self.db.car.save(self.db.dir)
                                 self.db.car.MotecXMLexport(rootPath=self.dir, MotecPath=self.db.config['MotecProjectPath'])
+                            
+                            if not self.db.LastSetup['DriverSetupName'] == self.db.DriverInfo['DriverSetupName'] or not self.db.LastSetup['UpdateCount'] == self.db.CarSetup['UpdateCount']:
+                                self.db.BUpshiftToneInitRequest = True
 
                             self.db.LastSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
                                                  'UpdateCount': self.db.CarSetup['UpdateCount'],
@@ -468,7 +472,8 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.PushToPass
 
                         # alarm
-                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes AMG GT4']:
+                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes AMG GT4', 'Mercedes GT3 2020', 'Toyota GR86',
+                                                'Lamborghini GT3']:
                             BTcToggle = True
                             BABSToggle = True
                         else:
@@ -664,56 +669,68 @@ class IDDUCalcThread(IDDUThread):
                 self.toc()
                 time.sleep(self.rate)
 
-            # except ValueError:
-            #     print(self.db.timeStr + ':\tVALUE ERROR in iDDUcalc')
-            #     self.db.Exception = 'VALUE ERROR in iDDUcalc'
-            #     if not self.BError:
-            #         self.db.snapshot()
-            #     self.BError = True
-            # except NameError:
-            #     print(self.db.timeStr + ':\tNAME ERROR in iDDUcalc')
-            #     self.db.Exception = 'NAME ERROR in iDDUcalc'
-            #     if not self.BError:
-            #         self.db.snapshot()
-            #     self.BError = True
-            # except TypeError as e:
-            #     print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc: ' + str(e))
-            #     self.db.Exception = 'TYPE ERROR in iDDUcalc'
-            #     if hasattr(e, 'message'):
-            #         print(e.message)
-            #     else:
-            #         print(e)
-            #     if not self.BError:
-            #         self.db.snapshot()
-            #     self.BError = True
-            # except KeyError:
-            #     print(self.db.timeStr + ':\tKEY ERROR in iDDUcalc')
-            #     self.db.Exception = 'KEY ERROR in iDDUcalc'
-            #     if not self.BError:
-            #         self.db.snapshot()
-            #     self.BError = True
-            # except IndexError:
-            #     print(self.db.timeStr + ':\tINDEX ERROR in iDDUcalc')
-            #     self.db.Exception = 'INDEX ERROR in iDDUcalc'
-            #     if not self.BError:
-            #         self.db.snapshot()
-            #     self.BError = True
-            # except Exception as e:  # TODO: find a way to handle this
-            #     print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc: ' + str(e))
-            #     self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc: ' + str(e)
-            #     if not self.BError:
-            #         self.db.snapshot()
-            #     self.BError = True
+            except Exception:
+                # exc_type, exc_obj, exc_tb = sys.exc_info()
+                # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                # self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
-            except Exception as e:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+                S = '\n'
+                for i in s:
+                    S = S + i
+                self.logger.error(S)
 
-                if not self.SError == ErrorString:
-                    self.logger.error(ErrorString)
-                    self.SError = ErrorString
-                    self.logger.error(self.SError)
+            # except Exception as e:
+            #     exc_type, exc_obj, exc_tb = sys.exc_info()
+            #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            #     ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
+            #
+            #     if not self.SError == ErrorString:
+            #         self.logger.error(ErrorString)
+            #         self.SError = ErrorString
+            #         self.logger.error(self.SError)
+
+                    # except ValueError:
+                    #     print(self.db.timeStr + ':\tVALUE ERROR in iDDUcalc')
+                    #     self.db.Exception = 'VALUE ERROR in iDDUcalc'
+                    #     if not self.BError:
+                    #         self.db.snapshot()
+                    #     self.BError = True
+                    # except NameError:
+                    #     print(self.db.timeStr + ':\tNAME ERROR in iDDUcalc')
+                    #     self.db.Exception = 'NAME ERROR in iDDUcalc'
+                    #     if not self.BError:
+                    #         self.db.snapshot()
+                    #     self.BError = True
+                    # except TypeError as e:
+                    #     print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc: ' + str(e))
+                    #     self.db.Exception = 'TYPE ERROR in iDDUcalc'
+                    #     if hasattr(e, 'message'):
+                    #         print(e.message)
+                    #     else:
+                    #         print(e)
+                    #     if not self.BError:
+                    #         self.db.snapshot()
+                    #     self.BError = True
+                    # except KeyError:
+                    #     print(self.db.timeStr + ':\tKEY ERROR in iDDUcalc')
+                    #     self.db.Exception = 'KEY ERROR in iDDUcalc'
+                    #     if not self.BError:
+                    #         self.db.snapshot()
+                    #     self.BError = True
+                    # except IndexError:
+                    #     print(self.db.timeStr + ':\tINDEX ERROR in iDDUcalc')
+                    #     self.db.Exception = 'INDEX ERROR in iDDUcalc'
+                    #     if not self.BError:
+                    #         self.db.snapshot()
+                    #     self.BError = True
+                    # except Exception as e:  # TODO: find a way to handle this
+                    #     print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc: ' + str(e))
+                    #     self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc: ' + str(e)
+                    #     if not self.BError:
+                    #         self.db.snapshot()
+                    #     self.BError = True
 
     def initSession(self):
         self.logger.info('===== Initialising Session: {} =========================='.format(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']))
@@ -729,6 +746,7 @@ class IDDUCalcThread(IDDUThread):
         self.db.FuelLastCons = 0
         self.db.newLapTime = 0
         self.db.oldLap = self.db.Lap
+        self.db.NLapsTotal = 0
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
         # self.db.JokerLapsRequired = 0
         # self.db.config['PitStopDelta'] = 0
@@ -1011,7 +1029,7 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.queryData.extend(list(self.db.car.dcList.keys()))
 
-        if self.db.car.UpshiftSettings['BValid']:
+        if self.db.car.UpshiftSettings['base']['BValid']:
             self.db.config['UpshiftStrategy'] = 5
         else:
             self.db.config['UpshiftStrategy'] = self.db.car.UpshiftStrategy
@@ -1127,6 +1145,7 @@ class IDDUCalcThread(IDDUThread):
             self.db.RenderLabel[29] = False
 
             self.db.StintLap = self.db.StintLap + 1
+            self.db.NLapsTotal += 1
 
             if (self.BCreateTrack or self.BRecordtLap) and self.Logging:
                 self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
@@ -1138,15 +1157,27 @@ class IDDUCalcThread(IDDUThread):
                     self.Logging = True
                     self.timeLogingStart = self.db.SessionTime
 
-        except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
+        except Exception:
+            # exc_type, exc_obj, exc_tb = sys.exc_info()
+            # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            # self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
 
-            if not self.SError == ErrorString:
-                self.logger.error(ErrorString)
-                self.SError = ErrorString
-                self.logger.error(self.SError)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+            S = '\n'
+            for i in s:
+                S = S + i
+            self.logger.error(S)
+
+        # except Exception as e:
+        #     exc_type, exc_obj, exc_tb = sys.exc_info()
+        #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        #     ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
+        #
+        #     if not self.SError == ErrorString:
+        #         self.logger.error(ErrorString)
+        #         self.SError = ErrorString
+        #         self.logger.error(self.SError)
 
     def createTrackFile(self, BCreateTrack, BRecordtLap):
 

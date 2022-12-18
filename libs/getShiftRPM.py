@@ -15,7 +15,9 @@ from libs.Car import Car
 from libs.getGearRatios import getGearRatios
 
 
-def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
+def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: str = None):
+
+
     tReaction = 0.3  # TODO: as input to tune from GUI
     tLEDs = np.array([1, 0.5, 0])
     BUseMaxRPM = False
@@ -23,13 +25,14 @@ def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
     root = tk.Tk()
     root.withdraw()
 
-    # get ibt path
-    ibtPath = filedialog.askopenfilename(initialdir=TelemPath, title="Select IBT file",
-                                         filetypes=(("IBT files", "*.ibt"), ("all files", "*.*")))
-
     if not ibtPath:
-        print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to ibt file provided...aborting!')
-        return
+        # get ibt path
+        ibtPath = filedialog.askopenfilename(initialdir=TelemPath, title="Select IBT file",
+                                            filetypes=(("IBT files", "*.ibt"), ("all files", "*.*")))
+
+        if not ibtPath:
+            print(time.strftime("%H:%M:%S", time.localtime()) + ':\tNo valid path to ibt file provided...aborting!')
+            return
 
     # imoport ibt file
     d, var_headers_names = importIBT.importIBT(ibtPath,
@@ -190,7 +193,10 @@ def getShiftRPM(dirPath=str, TelemPath=str, MotecProjectPath=str):
     rGearRatios = getGearRatios(d, resultsDirPath)
 
     # save so car file
-    car.setShiftRPM(nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear[0:-1], d['DriverInfo']['DriverSetupName'], d['CarSetup'], int(max(NGear)), nMotorShiftLEDs)
+    GearID = car.getGearID(d['CarSetup'])
+    if GearID == '':
+        GearID = 'base'
+    car.setShiftRPM(nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear[0:-1], d['DriverInfo']['DriverSetupName'], d['CarSetup'], int(max(NGear)), nMotorShiftLEDs, GearID)
     car.setGearRatios(rGearRatios)
     car.save(carFilePath)
     car.MotecXMLexport(dirPath, MotecProjectPath)

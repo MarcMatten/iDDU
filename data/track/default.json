@@ -81,6 +81,10 @@
     "name": "default",
     "sTrack": 590.0,
     "tLap": {
+        "Dallara P217 LMP2": 0.0,
+        "Ferrari 488 GT3 Evo 2020": 0.0,
+        "Formula IR-04": 0.0,
+        "Mercedes AMG GT4": 0.0,
         "Mercedes GT3 2020": 0.0
     },
     "x": [

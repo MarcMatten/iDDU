@@ -93,6 +93,7 @@ class SteeringWheelComsThread(IDDUThread):
                                     if data == 'TWOFF':
                                         self.db.BThumbWheelErrorL = True
                                         self.db.BThumbWheelErrorR = True
+                                        self.db.BThumbWheelActive = False
                                         self.logger.error('Thumb Wheels deactivated because of too many errors!')
                                 else:
                                     print(msg)

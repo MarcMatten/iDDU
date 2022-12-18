@@ -601,7 +601,9 @@
     "name": "sebring international",
     "sTrack": 5790.0,
     "tLap": {
-        "Radical SR10": 123.5010986328125
+        "Dallara P217 LMP2": 109.72830200195312,
+        "Radical SR10": 123.5010986328125,
+        "Toyota GR86": 147.64999999986577
     },
     "x": [
         335.91277352423253,

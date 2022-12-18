@@ -1,3 +1,6 @@
 [submodule "cython_hidapi"]
 	path = cython_hidapi
 	url = https://github.com/trezor/cython-hidapi.git
+[submodule "ldparser"]
+	path = ldparser
+	url = https://github.com/gotzl/ldparser.git

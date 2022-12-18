@@ -3,6 +3,7 @@ import os
 import time
 import numpy as np
 import pygame
+import traceback
 from libs.auxiliaries import convertString
 from libs.IDDU import IDDUItem
 from libs.MyLogger import ExceptionHandler
@@ -333,14 +334,17 @@ class RenderScreen(RenderMain):
                 if self.db.OnPitRoad and self.db.Speed > 5 and not self.db.EngineWarnings & 0x10 and 'dcPitSpeedLimiterToggle' in self.db.car.dcList:
                     self.db.AM.PITLIMITEROFF.raiseAlert()
 
-                if self.db.BThumbWheelErrorL:
-                    self.db.AM.THUMBWHEELERRORL.raiseAlert()
-                if self.db.BThumbWheelErrorR:
-                    self.db.AM.THUMBWHEELERRORR.raiseAlert()
+                if self.db.BThumbWheelActive:
+                    if self.db.BThumbWheelErrorL:
+                        self.db.AM.THUMBWHEELERRORL.raiseAlert()
+                    if self.db.BThumbWheelErrorR:
+                        self.db.AM.THUMBWHEELERRORR.raiseAlert()
+                else:
+                    self.db.AM.THUMBWHEELOFF.raiseAlert()
 
                 # driver control change
                 if time.time() < self.db.dcChangeTime + 1:
-                    if self.db.dcChangedItems[0] in self.db.car.dcList:
+                    if self.db.dcChangedItems[0] in self.db.car.dcList: #  self.db.car.dcList: ## self.db.inCarControls
                         if self.db.car.dcList[self.db.dcChangedItems[0]][1]:
                             if self.db.car.dcList[self.db.dcChangedItems[0]][2] == 0:
                                 valueStr = convertString.roundedStr0(self.db.get(self.db.dcChangedItems[0]))
@@ -350,10 +354,10 @@ class RenderScreen(RenderMain):
                                 valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr)
+                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr, self.red)
                     else:
                         if self.db.dcChangedItems[0] == 'Push':
-                            self.changeLabel('VFuelTgt', 'Push')
+                            self.changeLabel('VFuelTgt', 'Push', self.blue)
                         else:
                             if self.db.iDDUControls[self.db.dcChangedItems[0]][1]:
                                 if len(self.db.iDDUControls[self.db.dcChangedItems[0]]) == 8:
@@ -367,7 +371,9 @@ class RenderScreen(RenderMain):
                                         valueStr = convertString.roundedStr2(self.db.config[(self.db.dcChangedItems[0])])
                                     else:
                                         valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                                self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr)
+                                self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr, self.blue)
+
+                        self.db.backgroundColour = self.blue
 
             self.db.AM.update()
             a = self.db.AM.display()
@@ -380,10 +386,20 @@ class RenderScreen(RenderMain):
 
             return self.done
 
-        except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+        except Exception:
+            #exc_type, exc_obj, exc_tb = sys.exc_info()
+            #fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            #self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+            S = '\n'
+            for i in s:
+                S = S + i
+            self.logger.error(S)
+            self.db.tExecuteRender = (time.perf_counter() - t) * 1000
+            self.clocker.tick(30)
+            return self.done
 
     def page0(self):
 
@@ -447,9 +463,11 @@ class RenderScreen(RenderMain):
             RaceLapsDisplay = self.db.config['UserRaceLaps']
 
         if RaceLapsDisplay >= 100:
-            self.db.LapStr = str(max(0, self.ir['Lap']))
+            # self.db.LapStr = str(max(0, self.ir['Lap']))
+            self.db.LapStr = str(max(0, self.db.NLapsTotal))
         else:
-            self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+            # self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
+            self.db.LapStr = str(max(0, self.db.NLapsTotal)) + '/' + str(RaceLapsDisplay)
 
         self.db.ToGoStr = '0'
 
@@ -477,7 +495,8 @@ class RenderScreen(RenderMain):
                     #     self.db.LapStr = str(max(0, self.ir['Lap'])) + '/' + str(RaceLapsDisplay)
                     # self.db.ToGoStr = '0'
                 # else:
-                    self.db.LapStr = str(max(0, self.ir['Lap']))
+                #     self.db.LapStr = str(max(0, self.ir['Lap']))
+                    self.db.LapStr = str(max(0, self.db.NLapsTotal))
                     # self.db.ToGoStr = '0'
 
 
@@ -748,8 +767,8 @@ class RenderScreen(RenderMain):
             Label = self.fontLarge.render(text, True, textcolour)
             RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
 
-    def changeLabel(self, text, value):
-        pygame.draw.rect(RenderMain.screen, self.black, [0, 0, 800, 480], 0)
+    def changeLabel(self, text, value, color):
+        pygame.draw.rect(RenderMain.screen, color, [0, 0, 800, 480], 0)
         LabelSize = self.fontLarge.size(text)
         Label = self.fontLarge.render(text, True, self.white)
         # if len(text) < 7:

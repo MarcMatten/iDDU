@@ -2,6 +2,7 @@
     "BDRS": false,
     "BP2P": false,
     "Coasting": {
+        "BValid": false,
         "CarSetup": {
             "Chassis": {
                 "Front": {
@@ -218,195 +219,68 @@
         ]
     },
     "NABSDisabled": 0,
+    "NGearMax": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
     "UpshiftSettings": {
-        "BShiftTone": [
-            true,
-            true,
-            true,
-            true,
-            true,
-            false,
-            false
-        ],
-        "BValid": true,
-        "CarSetup": {
-            "Chassis": {
-                "Front": {
-                    "ArbBlades": "Thin",
-                    "ArbSetting": "4-4",
-                    "BrakePads": "Medium friction",
-                    "CrossWeight": "50.0%",
-                    "FrontMasterCyl": "19.1 mm",
-                    "FuelLevel": "74.0 L",
-                    "RearMasterCyl": "19.1 mm",
-                    "ToeIn": "-2.7 mm"
-                },
-                "InCarDials": {
-                    "BrakePressureBias": "53.0%",
-                    "DisplayPage": "Race",
-                    "EngineMapSetting": "0 (MAP)",
-                    "FuelUseTargetSetting": "0.13 L",
-                    "NightLedStrips": "Blue",
-                    "TractionControlSetting1": "4 (TC-CON)",
-                    "TractionControlSetting2": "4 (TCR)"
-                },
-                "LeftFront": {
-                    "Camber": "-4.9 deg",
-                    "Caster": "+8.2 deg",
-                    "CornerWeight": "3356 N",
-                    "HsCompDampSlope": "9 clicks",
-                    "HsCompDamping": "5 clicks",
-                    "HsRbdDamping": "7 clicks",
-                    "LsCompDamping": "7 clicks",
-                    "LsRbdDamping": "7 clicks",
-                    "RideHeight": "50.3 mm",
-                    "SpringPerchOffset": "55.5 mm",
-                    "SpringRate": "200 N/mm"
-                },
-                "LeftRear": {
-                    "Camber": "-3.1 deg",
-                    "CornerWeight": "3395 N",
-                    "HsCompDampSlope": "8 clicks",
-                    "HsCompDamping": "4 clicks",
-                    "HsRbdDamping": "7 clicks",
-                    "LsCompDamping": "8 clicks",
-                    "LsRbdDamping": "7 clicks",
-                    "RideHeight": "99.7 mm",
-                    "SpringPerchOffset": "34.0 mm",
-                    "SpringRate": "240 N/mm",
-                    "ToeIn": "+0.0 mm"
-                },
-                "Rear": {
-                    "ArbBlades": "Thick",
-                    "ArbSetting": "3-2",
-                    "WingSetting": "9.5 degrees"
-                },
-                "RightFront": {
-                    "Camber": "-4.9 deg",
-                    "Caster": "+8.2 deg",
-                    "CornerWeight": "3356 N",
-                    "HsCompDampSlope": "9 clicks",
-                    "HsCompDamping": "5 clicks",
-                    "HsRbdDamping": "7 clicks",
-                    "LsCompDamping": "7 clicks",
-                    "LsRbdDamping": "7 clicks",
-                    "RideHeight": "50.3 mm",
-                    "SpringPerchOffset": "55.5 mm",
-                    "SpringRate": "200 N/mm"
-                },
-                "RightRear": {
-                    "Camber": "-3.1 deg",
-                    "CornerWeight": "3395 N",
-                    "HsCompDampSlope": "8 clicks",
-                    "HsCompDamping": "4 clicks",
-                    "HsRbdDamping": "7 clicks",
-                    "LsCompDamping": "8 clicks",
-                    "LsRbdDamping": "7 clicks",
-                    "RideHeight": "99.7 mm",
-                    "SpringPerchOffset": "34.0 mm",
-                    "SpringRate": "240 N/mm",
-                    "ToeIn": "+0.0 mm"
-                }
-            },
-            "Drivetrain": {
-                "Diff": {
-                    "DiffClutchFrictionFaces": 10,
-                    "DiffCoastRampAngle": "55 deg",
-                    "DiffDriveRampAngle": "75 deg",
-                    "DiffPreload": "105 Nm"
-                },
-                "Drivetrain": {
-                    "FifthGear": "1.412, 251.6 Km/h",
-                    "FinalDrive": 3.556,
-                    "FirstGear": "2.857, 124.3 Km/h",
-                    "FourthGear": "1.579, 225.0 Km/h",
-                    "SecondGear": "2.235, 158.9 Km/h",
-                    "SixthGear": "1.238, 286.9 Km/h",
-                    "ThirdGear": "1.830, 194.1 Km/h"
-                }
-            },
-            "TiresAero": {
-                "AeroBalanceCalc": {
-                    "FrontDownforce": "39.02%",
-                    "FrontRhAtSpeed": "52 mm",
-                    "RearRhAtSpeed": "75 mm",
-                    "WingSetting": "9.5 degrees"
-                },
-                "LeftFront": {
-                    "LastHotPressure": "141 kPa",
-                    "LastTempsOMI": "44C, 44C, 44C",
-                    "StartingPressure": "141 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                },
-                "LeftRear": {
-                    "LastHotPressure": "141 kPa",
-                    "LastTempsOMI": "44C, 44C, 44C",
-                    "StartingPressure": "141 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                },
-                "RightFront": {
-                    "LastHotPressure": "141 kPa",
-                    "LastTempsIMO": "44C, 44C, 44C",
-                    "StartingPressure": "141 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                },
-                "RightRear": {
-                    "LastHotPressure": "141 kPa",
-                    "LastTempsIMO": "44C, 44C, 44C",
-                    "StartingPressure": "141 kPa",
-                    "TreadRemaining": "100%, 100%, 100%"
-                }
-            },
-            "UpdateCount": 2
-        },
-        "NGear": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "SetupName": "Motegi\\21S2\\21S2-ESS-Motegi-911RSR-DF.sto",
-        "nMotorShiftOptimal": [
-            9352.85310547333,
-            9233.450040986358,
-            9045.329116330975,
-            8849.161657495992,
-            8939.629683824143,
-            99999,
-            99999
-        ],
-        "nMotorShiftTarget": [
-            8872.716037723612,
-            8950.035739489133,
-            8874.992352182411,
-            8742.08029712119,
-            8882.887102997625,
-            99999,
-            99999
-        ],
-        "vCarShiftOptimal": [
-            32.768553776109606,
-            41.63421860166674,
-            50.00791945519859,
-            56.80388388232106,
-            64.28850139631344,
-            99999,
-            99999
-        ],
-        "vCarShiftTarget": [
-            30.961592200725807,
-            40.305712201414266,
-            49.04075582311778,
-            56.10495680894579,
-            63.87325432716073,
-            99999,
-            99999
-        ]
+        "base": {
+            "BShiftTone": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false
+            ],
+            "BValid": true,
+            "NGear": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+            ],
+            "SetupName": "Motegi\\21S2\\21S2-ESS-Motegi-911RSR-DF.sto",
+            "nMotorShiftOptimal": [
+                9352.85310547333,
+                9233.450040986358,
+                9045.329116330975,
+                8849.161657495992,
+                8939.629683824143,
+                99999,
+                99999
+            ],
+            "nMotorShiftTarget": [
+                8872.716037723612,
+                8950.035739489133,
+                8874.992352182411,
+                8742.08029712119,
+                8882.887102997625,
+                99999,
+                99999
+            ],
+            "vCarShiftOptimal": [
+                32.768553776109606,
+                41.63421860166674,
+                50.00791945519859,
+                56.80388388232106,
+                64.28850139631344,
+                99999,
+                99999
+            ],
+            "vCarShiftTarget": [
+                30.961592200725807,
+                40.305712201414266,
+                49.04075582311778,
+                56.10495680894579,
+                63.87325432716073,
+                99999,
+                99999
+            ]
+        }
     },
     "UpshiftStrategy": 5,
     "UserShiftFlag": [
@@ -430,6 +304,7 @@
     "VFuelLap": {
         "twinring fullrc": 2.8622398376464844
     },
+    "carPath": "porsche991rsr",
     "dcList": {
         "dcBrakeBias": [
             "BrakeBias",
@@ -4199,5 +4074,7 @@
             105.80356542377422,
             105.96666666657029
         ]
-    }
+    },
+    "tempKey": [],
+    "tempVals": []
 }

@@ -33,6 +33,8 @@ class MultiSwitch(MultiSwitchThread):
     tMultiChange = 0
     mapDDUList = []
     mapIRList = []
+    NRotaryOldL = 0
+    NRotaryOldR = 0
 
     def __init__(self, rate):
         MultiSwitchThread.__init__(self, rate)
@@ -40,8 +42,8 @@ class MultiSwitch(MultiSwitchThread):
 
     def run(self):
         self.mapDDUList = list(self.mapDDU.keys())
-        self.mapIRList = list(self.mapIR.keys())
-
+        # self.mapIRList = list(self.mapIR.keys())
+        
         while self.running:
             t = time.perf_counter()
             self.tic()
@@ -56,105 +58,169 @@ class MultiSwitch(MultiSwitchThread):
             self.MarcsJoystick.update()
 
             if self.MarcsJoystick.Event():
-                if self.MarcsJoystick.isPressed(0) and self.MarcsJoystick.isPressed(6):
+                if self.MarcsJoystick.isPressed(2) and self.MarcsJoystick.isPressed(6):
                     self.db.AM.resetAll()
 
                 currentAlarm = self.db.AM.currentAlarm()
                 if currentAlarm in range(0, len(self.db.AM.alarms)):
-                    if self.MarcsJoystick.ButtonPressedEvent(0):
+                    if self.MarcsJoystick.ButtonPressedEvent(2):
                         self.db.AM.alarms[currentAlarm].surpress()
 
                     if self.MarcsJoystick.ButtonPressedEvent(6):
                         self.db.AM.alarms[currentAlarm].ignore()
 
-                if self.MarcsJoystick.ButtonPressedEvent(1):
+                if self.MarcsJoystick.ButtonPressedEvent(0):
                     if self.db.NDDUPage == 1:
                         self.db.NDDUPage = 2
                     else:
                         self.db.NDDUPage = 1
 
-                if self.MarcsJoystick.ButtonPressedEvent(14):
-                    if self.NMultiState == 0:
+                if 'dcTractionControl' in self.db.car.dcList:
+                    if self.MarcsJoystick.ButtonPressedEvent(3):
+                        self.db.AM.TCOFF.raiseAlert()
+
+                if self.NMultiState == 1:
+                    if self.MarcsJoystick.ButtonPressedEvent(12):
+                        self.mapDDU[self.mapDDUList[self.db.NRotaryL]].decrease() 
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                    if self.MarcsJoystick.ButtonPressedEvent(13) :
+                        self.mapDDU[self.mapDDUList[self.db.NRotaryL]].increase()  
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                elif self.NMultiState == 2:
+                    if self.MarcsJoystick.ButtonPressedEvent(14) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
+                        self.mapIR[self.mapIRList[self.db.NRotaryR]].decrease() 
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
+                    if self.MarcsJoystick.ButtonPressedEvent(15) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
+                        self.mapIR[self.mapIRList[self.db.NRotaryR]].increase()  
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
+                elif self.NMultiState == 0:
+                    if any([self.MarcsJoystick.ButtonPressedEvent(12), self.MarcsJoystick.ButtonPressedEvent(13)]):
                         self.NMultiState = 1
-                        if len(self.mapIRList) > 0:
-                            self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                        else:
-                            self.NMultiState = 2
-                    else:
-                        if self.NMultiState == 1 and len(self.mapIRList) > 0:
-                            NCurrentMapIR = self.NCurrentMapIR + 1
-                            if NCurrentMapIR > len(self.mapIRList) - 1:
-                                NCurrentMapIR = NCurrentMapIR - len(self.mapIRList)
-
-                            self.NCurrentMapIR = NCurrentMapIR
-                            self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                        elif self.NMultiState == 2:
-                            NCurrentMapDDU = self.NCurrentMapDDU + 1
-                            if NCurrentMapDDU > len(self.mapDDUList) - 1:
-                                NCurrentMapDDU = NCurrentMapDDU - len(self.mapDDUList)
-
-                            self.NCurrentMapDDU = NCurrentMapDDU
-
-                            self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-
-                    self.tMultiChange = time.time()
-                    self.db.dcChangeTime = time.time()
-
-                elif self.MarcsJoystick.ButtonPressedEvent(15):
-                    if self.NMultiState == 0:
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                    elif any([self.MarcsJoystick.ButtonPressedEvent(14), self.MarcsJoystick.ButtonPressedEvent(15)]):
                         self.NMultiState = 2
-                        self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-                    else:
-                        if self.NMultiState == 1 and len(self.mapIRList) > 0:
-                            NCurrentMapIR = self.NCurrentMapIR - 1
-                            if NCurrentMapIR < 0:
-                                NCurrentMapIR = len(self.mapIRList) + NCurrentMapIR
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
 
-                            self.NCurrentMapIR = NCurrentMapIR
+                # if self.MarcsJoystick.ButtonPressedEvent(14):
+                #     if self.NMultiState == 0:
+                #         self.NMultiState = 1
+                #         if len(self.mapIRList) > 0:
+                #             self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
+                #         else:
+                #             self.NMultiState = 2
+                #     else:
+                #         if self.NMultiState == 1 and len(self.mapIRList) > 0:
+                #             NCurrentMapIR = self.NCurrentMapIR + 1
+                #             if NCurrentMapIR > len(self.mapIRList) - 1:
+                #                 NCurrentMapIR = NCurrentMapIR - len(self.mapIRList)
 
-                            self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
+                #             self.NCurrentMapIR = NCurrentMapIR
+                #             self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
+                #         elif self.NMultiState == 2:
+                #             NCurrentMapDDU = self.NCurrentMapDDU + 1
+                #             if NCurrentMapDDU > len(self.mapDDUList) - 1:
+                #                 NCurrentMapDDU = NCurrentMapDDU - len(self.mapDDUList)
 
-                        elif self.NMultiState == 2:
-                            NCurrentMapDDU = self.NCurrentMapDDU - 1
-                            if NCurrentMapDDU < 0:
-                                NCurrentMapDDU = len(self.mapDDUList) + NCurrentMapDDU
+                #             self.NCurrentMapDDU = NCurrentMapDDU
 
-                            self.NCurrentMapDDU = NCurrentMapDDU
+                #             self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
 
-                            self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
+                #     self.tMultiChange = time.time()
+                #     self.db.dcChangeTime = time.time()
 
+                # elif self.MarcsJoystick.ButtonPressedEvent(15):
+                #     if self.NMultiState == 0:
+                #         self.NMultiState = 2
+                #         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
+                #     else:
+                #         if self.NMultiState == 1 and len(self.mapIRList) > 0:
+                #             NCurrentMapIR = self.NCurrentMapIR - 1
+                #             if NCurrentMapIR < 0:
+                #                 NCurrentMapIR = len(self.mapIRList) + NCurrentMapIR
+
+                #             self.NCurrentMapIR = NCurrentMapIR
+
+                #             self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
+
+                #         elif self.NMultiState == 2:
+                #             NCurrentMapDDU = self.NCurrentMapDDU - 1
+                #             if NCurrentMapDDU < 0:
+                #                 NCurrentMapDDU = len(self.mapDDUList) + NCurrentMapDDU
+
+                #             self.NCurrentMapDDU = NCurrentMapDDU
+
+                #             self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
+
+                #     self.tMultiChange = time.time()
+                #     self.db.dcChangeTime = time.time()
+
+                # elif self.MarcsJoystick.ButtonPressedEvent(12):
+                #     if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
+                #         self.mapIR['dcBrakeBias'].increase()
+                #     elif self.NMultiState == 1:
+                #         self.mapIR[self.mapIRList[self.NCurrentMapIR]].increase()
+                #         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
+                #     elif self.NMultiState == 2:
+                #         self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].increase()
+                #         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
+                #     else:
+                #         break
+
+                #     self.tMultiChange = time.time()
+                #     self.db.dcChangeTime = time.time()
+
+                # elif self.MarcsJoystick.ButtonPressedEvent(13):
+                #     if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
+                #         self.mapIR['dcBrakeBias'].decrease()
+                #     elif self.NMultiState == 1:
+                #         self.mapIR[self.mapIRList[self.NCurrentMapIR]].decrease()
+                #         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
+                #     elif self.NMultiState == 2:
+                #         self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].decrease()
+                #         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
+                #     else:
+                #         break
+
+                #     self.tMultiChange = time.time()
+                #     self.db.dcChangeTime = time.time()
+
+            # Rotatries
+            BRotaryStates = self.MarcsJoystick.isPressed(range(16,40))
+            BRotaryStatesL = list(BRotaryStates[0:12])
+            BRotaryStatesR = list(BRotaryStates[12:24])
+
+            if sum(BRotaryStatesL) == 1:
+                self.db.NRotaryL = BRotaryStatesL.index(1)
+                if not self.db.NRotaryL == self.NRotaryOldL:
+                    self.NRotaryOldL = self.db.NRotaryL
+                    self.NMultiState = 1
+                    self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
                     self.tMultiChange = time.time()
                     self.db.dcChangeTime = time.time()
 
-                elif self.MarcsJoystick.ButtonPressedEvent(12):
-                    if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
-                        self.mapIR['dcBrakeBias'].increase()
-                    elif self.NMultiState == 1:
-                        self.mapIR[self.mapIRList[self.NCurrentMapIR]].increase()
-                        self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                    elif self.NMultiState == 2:
-                        self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].increase()
-                        self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-                    else:
-                        break
+            if sum(BRotaryStatesR) == 1:
+                self.db.NRotaryR = BRotaryStatesR.index(1)
+                if not self.db.NRotaryR == self.NRotaryOldR:
+                    if self.mapIRList[self.db.NRotaryR] in self.db.inCarControls:
+                        self.NRotaryOldR = self.db.NRotaryR
+                        self.NMultiState = 2
+                        self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
 
-                    self.tMultiChange = time.time()
-                    self.db.dcChangeTime = time.time()
-
-                elif self.MarcsJoystick.ButtonPressedEvent(13):
-                    if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
-                        self.mapIR['dcBrakeBias'].decrease()
-                    elif self.NMultiState == 1:
-                        self.mapIR[self.mapIRList[self.NCurrentMapIR]].decrease()
-                        self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                    elif self.NMultiState == 2:
-                        self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].decrease()
-                        self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-                    else:
-                        break
-
-                    self.tMultiChange = time.time()
-                    self.db.dcChangeTime = time.time()
+       
                 
             # if self.pygame.display.get_init() == 1:
             #
@@ -297,7 +363,8 @@ class MultiSwitch(MultiSwitchThread):
         importExport.saveJson(IDDUItem.dcConfig, self.db.dir + '/data/configs/multi.json')
 
         self.mapDDUList = list(self.mapDDU.keys())
-        self.mapIRList = list(self.mapIR.keys())
+        # self.mapIRList = list(self.mapIR.keys())
+        self.mapIRList = self.db.inCarControls
 
 
 class MultiSwitchMapDDUControl(MultiSwitchItem):

@@ -309,7 +309,7 @@ def optimise(dirPath, TelemPath):
     d, _ = importIBT.importIBT(ibtPath,
                                lap='f',
                                channels=['zTrack', 'LapDistPct', 'rThrottle', 'rBrake', 'QFuel', 'SessionTime', 'VelocityX', 'VelocityY', 'Yaw', 'Gear', 'VFuel', 'gLat', 'YawNorth'],
-                               channelMapPath=dirPath + '/functionalities/libs/iRacingChannelMap.csv')  # TODO: check if data is sufficient
+                               channelMapPath=dirPath+'/libs/auxiliaries/iRacingChannelMap.csv')  # TODO: check if data is sufficient
 
     # set as reference lap
     setReferenceLap(dirPath=dirPath, TelemPath=TelemPath, ibtFile=d)

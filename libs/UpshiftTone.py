@@ -23,6 +23,7 @@ class ShiftToneThread(IDDUThread):
         self.nMotorLEDLUT = [interp1d([0, 10000], [0, 1], kind='nearest')]*10
         self.LEDToAlarm = interp1d([0, 1, 4, 7, 8], [0, 1, 2, 3, 4], kind='previous')
         self.AlarmToLED = interp1d([0, 1, 2, 3, 4], [0, 1, 4, 7, 8], kind='previous')
+        self.GearID = 'base'
 
     def run(self):
         while self.running:
@@ -95,10 +96,10 @@ class ShiftToneThread(IDDUThread):
                                 # else:
                                     # self.db.Alarm[7] = 0
                             elif self.db.config['UpshiftStrategy'] == 5:  # optimised shift rpm from car file
-                                if self.db.car.UpshiftSettings['BShiftTone'][self.ir['Gear'] - 1] and \
-                                        self.ir['RPM'] >= self.db.car.UpshiftSettings['nMotorShiftTarget'][self.ir['Gear'] - 1] and \
-                                        (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] - 5) <= \
-                                        self.ir['Speed'] < (self.db.car.UpshiftSettings['vCarShiftTarget'][self.ir['Gear'] - 1] + 5):
+                                if self.db.car.UpshiftSettings[self.GearID]['BShiftTone'][self.ir['Gear'] - 1] and \
+                                        self.ir['RPM'] >= self.db.car.UpshiftSettings[self.GearID]['nMotorShiftTarget'][self.ir['Gear'] - 1] and \
+                                        (self.db.car.UpshiftSettings[self.GearID]['vCarShiftTarget'][self.ir['Gear'] - 1] - 1) <= \
+                                        self.ir['Speed'] < (self.db.car.UpshiftSettings[self.GearID]['vCarShiftTarget'][self.ir['Gear'] - 1] + 1):
                                     self.beep()
                                 # else:
                                     # self.db.Alarm[7] = 0
@@ -143,6 +144,12 @@ class ShiftToneThread(IDDUThread):
         time.sleep(0.1)
         self.tBeep = 0
 
+        GearID = self.db.car.getGearID(self.db.CarSetup)
+        if GearID == '' or GearID not in self.db.car.UpshiftSettings:
+            GearID = 'base'
+        self.GearID = GearID
+        self.logger.info('Loaded Upshift config: {}'.format(GearID))
+
         # get optimal shift RPM from iRacing and display message
         self.FirstRPM = self.db.DriverInfo['DriverCarSLFirstRPM']
         self.ShiftRPM = self.db.DriverInfo['DriverCarSLShiftRPM']
@@ -171,8 +178,8 @@ class ShiftToneThread(IDDUThread):
                                               axis=None)
 
         for i in range(0, self.db.car.NGearMax-1):
-            self.nMotorLED[i + 1, :] = np.concatenate((np.linspace(self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][0], self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][1], 4)[0:3],
-                                                       np.linspace(self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][1], self.db.car.UpshiftSettings['nMotorShiftLEDs'][i][2], 4),
+            self.nMotorLED[i + 1, :] = np.concatenate((np.linspace(self.db.car.UpshiftSettings[self.GearID]['nMotorShiftLEDs'][i][0], self.db.car.UpshiftSettings[self.GearID]['nMotorShiftLEDs'][i][1], 4)[0:3],
+                                                       np.linspace(self.db.car.UpshiftSettings[self.GearID]['nMotorShiftLEDs'][i][1], self.db.car.UpshiftSettings[self.GearID]['nMotorShiftLEDs'][i][2], 4),
                                                        np.array(self.BlinkRPM)),
                                                       axis=None)
 
