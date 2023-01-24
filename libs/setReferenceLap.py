@@ -1,5 +1,6 @@
 import time
 import copy
+import traceback
 from libs import Track, Car
 from libs.auxiliaries import importExport, importIBT, convertString, maths
 from tkinter import filedialog
@@ -89,11 +90,13 @@ def setReferenceLap(dirPath: str, TelemPath: str, ibtPath: str = None, ibtFile: 
 
         myLogger.info('Set reference lap for {} at {}: {} s'.format(carName, d['WeekendInfo']['TrackDisplayName'], convertString.convertTimeMMSSsss(d['tLap'][-1])))
 
-    except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        ErrorString = '{} in Line {} of {}:\n\t\t\t\t\t\t> {}'.format(exc_type, exc_tb.tb_lineno, fname, e.args[0])
-        myLogger.error(ErrorString)
+    except Exception:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+        S = '\n'
+        for i in s:
+            S = S + i
+        myLogger.error(S)
 
 
 

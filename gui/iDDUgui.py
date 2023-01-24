@@ -30,6 +30,9 @@ class iDDUGUIThread(IDDUThread):
 
     def run(self):
         Gui()
+    
+    def stop(self):
+        QtWidgets.QApplication.exit()
 
 
 class Stream(QtCore.QObject):

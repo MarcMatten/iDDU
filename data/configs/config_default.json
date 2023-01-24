@@ -55,6 +55,7 @@
     "fFuelBeep": 300,
     "fShiftBeep": 500,
     "iRPath": "",
+    "tSurpressSlipOnUpshift": 0.15,
     "rDDU": [
         0,
         0

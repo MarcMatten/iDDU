@@ -3,6 +3,26 @@ import time
 from libs.auxiliaries import importExport
 from libs.IDDU import IDDUItem, IDDUThread
 
+# Button Documentation
+# 00:  PAGE  - change dash page
+# 01:  P2P   - Cancel lift when Fuel saving active TODO: boost otherwise
+# 02:  ACK   - surpress Alarm
+# 03:  TC    - switch off Traction Control
+# 04:  PIT   - Pit speed Limiter
+# 05:  RADIO - not used
+# 06:  MARK  - Ignore Alarm when Alarm active, TODO: Telemetry Marker
+# 07:  WIPER - turn on / toggle wipers
+# 08:  
+# 09:  
+# 10:  
+# 11:  
+# 12:  Rotary left minus
+# 13:  Rotary left plus
+# 14:  Rotary right minus
+# 15:  Rotary right plus
+# 16 - 28:  Left rotary positions (1-12)
+# 29 - 40:  Right rotary positions (1-12)
+
 
 class MultiSwitchItem(IDDUItem):
     NButtonIncMap = 23
@@ -58,27 +78,41 @@ class MultiSwitch(MultiSwitchThread):
             self.MarcsJoystick.update()
 
             if self.MarcsJoystick.Event():
+                # P2P
+                if self.MarcsJoystick.isPressed(1):
+                    if self.db.config['NFuelTargetMethod'] and self.db.BInLiftZone:
+                        # Cancel Lift
+                        self.db.AM.CANCELLIFT.raiseAlert()
+                    else:
+                        # P2P
+                        pass
+
+                # ACK + MARK
                 if self.MarcsJoystick.isPressed(2) and self.MarcsJoystick.isPressed(6):
                     self.db.AM.resetAll()
 
                 currentAlarm = self.db.AM.currentAlarm()
                 if currentAlarm in range(0, len(self.db.AM.alarms)):
+                    # ACK
                     if self.MarcsJoystick.ButtonPressedEvent(2):
                         self.db.AM.alarms[currentAlarm].surpress()
-
+                    # MARK
                     if self.MarcsJoystick.ButtonPressedEvent(6):
                         self.db.AM.alarms[currentAlarm].ignore()
 
+                # PAGE
                 if self.MarcsJoystick.ButtonPressedEvent(0):
                     if self.db.NDDUPage == 1:
                         self.db.NDDUPage = 2
                     else:
                         self.db.NDDUPage = 1
 
+                # TC
                 if 'dcTractionControl' in self.db.car.dcList:
                     if self.MarcsJoystick.ButtonPressedEvent(3):
                         self.db.AM.TCOFF.raiseAlert()
 
+                # Thumbwheels
                 if self.NMultiState == 1:
                     if self.MarcsJoystick.ButtonPressedEvent(12):
                         self.mapDDU[self.mapDDUList[self.db.NRotaryL]].decrease() 
@@ -330,11 +364,11 @@ class MultiSwitch(MultiSwitchThread):
                     if not self.NMultiState == 0:
                         self.NMultiState = 0
 
-            self.db.tExecuteMulti = time.perf_counter() - t
+            self.db.tExecuteMulti = (time.perf_counter() - t) * 1000
             self.toc()
             time.sleep(self.rate)
 
-    def addMapping(self, name='name', minValue=0 , maxValue= 1, step=1):
+    def addMapping(self, name='name', minValue=0, maxValue=1, step=1):
         if name in self.db.car.dcList:
             self.mapIR[name] = MultiSwitchMapiRControl(name, minValue , maxValue, step)
         else:

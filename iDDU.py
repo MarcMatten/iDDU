@@ -2,7 +2,7 @@
 import time
 import numpy as np
 from libs.RTDB import RTDB
-from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger, SerialComs, SteeringWheelComs
+from libs import iDDURender, iDDUcalc, UpshiftTone, raceLapsEstimation, Logger, SerialComs, SteeringWheelComs, PedalController
 from gui import iDDUgui
 import os
 from libs.MultiSwitch import MultiSwitch
@@ -148,7 +148,8 @@ iRData = {'LapBestLapTime': 0,
           'RRbrakeLinePress': 0,
           'CarSetup': None,
           'Clutch': 0,
-          'BrakeABSactive': False
+          'BrakeABSactive': False,
+          'CarIdxP2P_Status': [False] * 64
           }
 
 # calculated data
@@ -263,7 +264,6 @@ calcData = {'startUp': False,
             'DRS': False,
             'LapLimit': False,
             'TimeLimit': False,
-            'P2PTime': 0,
             'DRSRemaining': 0,
             'dcFuelMixtureOld': 0,
             'dcThrottleShapeOld': 0,
@@ -413,7 +413,14 @@ calcData = {'startUp': False,
             'BThumbWheelActive': True,
             'NRotaryR': 0,
             'NRotaryL': 0,
-            'NLapsTotal': 0
+            'NLapsTotal': 0,
+            'rThrottleRead': 0,
+            'rClutchRead': 0,
+            'BForceLift': False,
+            'BForceClutch': False,
+            'BEnableAutoLift': True,
+            'BInLiftZone': False,
+            'BEnableAutoClutch': True
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -487,8 +494,9 @@ if __name__ == "__main__":
     guiThread = iDDUgui.iDDUGUIThread(0.02)
     serialComsThread = SerialComs.SerialComsThread(0.003)
     steeringWheelComsThread = SteeringWheelComs.SteeringWheelComsThread(0.01)
+    pedalControllerlThread = PedalController.PedalControllerThread(0.01)
     raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
-    loggerThread = Logger.LoggerThread(0.02)
+    loggerThread = Logger.LoggerThread(0.002)
     ms = MultiSwitch.MultiSwitch(0.02)
 
     for i in range(0, len(iDDUControlsName)):
@@ -507,6 +515,7 @@ if __name__ == "__main__":
     loggerThread.start()
     serialComsThread.start()
     steeringWheelComsThread.start()
+    pedalControllerlThread.start()
     ms.start()
 
     iRRender = None
@@ -539,8 +548,11 @@ if __name__ == "__main__":
     loggerThread.stop()
     serialComsThread.stop()
     steeringWheelComsThread.stop()
+    pedalControllerlThread.stop()
     ms.stop()    
     calcThread.stop()
     guiThread.stop()
+    if iRRender:
+        iRRender.stop()
     rtdbThread.stop()
     quit()

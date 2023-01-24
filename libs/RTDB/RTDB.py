@@ -164,7 +164,7 @@ class RTDBThread(IDDUThread):
 
     def stop(self):
         self.running = False
-        self.logger.info('{} - Avg: {} | Min: {} | Max: {}'.format(type(self).__name__, np.round(self.tAvg, 6), np.round(self.tMin, 6), np.round(self.tMax, 6)))
+        self.logger.info('{} - Avg: {} ms | Min: {} ms | Max: {} ms '.format(type(self).__name__, np.round(self.tAvg, 3), np.round(self.tMin, 3), np.round(self.tMax, 3)))
         self.stopJU()
 
 
@@ -186,7 +186,6 @@ class AlertManager:
         pass
 
     def initAlarms(self):
-
         self.PITLIMITERACTIVE = Alarm('PIT LIMITER', self.blue, self.white, 4, 59, -1)
         self.ENGINESTALLED = Alarm('ENGINE STALLED', self.yellow, self.black, 4, 89, -1)
         self.FLASH = Alarm('FLASH', self.green, self.white, 5, 99, 2)
@@ -201,6 +200,10 @@ class AlertManager:
         self.CROSSED = Alarm('CROSSED', self.white, self.black, 4, 9)
         self.RANDOMWAVING = Alarm('RANDOM WAVING', self.white, self.black, 0, 8)
         self.DISQUALIFIED = Alarm('DISQUALIFIED', self.white, self.black, 0, 94)
+        self.P2PON = Alarm('P2P ON', self.green, self.white, 1, 99, 1)
+        self.P2POFF = Alarm('P2P OFF', self.white, self.black, 1, 99, 1)
+        self.TCOFF = Alarm('TC OFF', self.red, self.white, 5, 99, 5)        
+        self.CANCELLIFT = Alarm('CANCEL LIFT', self.green, self.white, 0, 99, 1)
 
     def raiseAlert(self):
 
@@ -310,12 +313,12 @@ class Alarm(AlertManager):
                  textcolour: tuple,
                  f: float = 0,
                  priority: int = 0,
-                 tDuration:float = -1,              # how long to be active
-                 tRaised:float = 0,                 # when it became active
-                 tSurpress:float = 0,               # when it was surpressed
-                 tSurpressDuration:float = 90,       # for how long to surpress
-                 BIgnore: bool = False,             # ignore completely
-                 BSurpress: bool = False):          # surpress
+                 tDuration: float = -1,              # how long to be active
+                 tRaised: float = 0,                 # when it became active
+                 tSurpress: float = 0,               # when it was surpressed
+                 tSurpressDuration: float = 90,      # for how long to surpress
+                 BIgnore: bool = False,              # ignore completely
+                 BSurpress: bool = False):           # surpress
 
         AlertManager.__init__(self)
         self.name = name

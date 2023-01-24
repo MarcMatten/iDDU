@@ -28,6 +28,8 @@ class IDDUCalcThread(IDDUThread):
     tStart100Timer = -1
     tStartCompleted = -1
     tStartModeEnd = -1
+    NGearOld = 1
+    tUpshift = 0
 
 
     def __init__(self, rate):
@@ -61,6 +63,8 @@ class IDDUCalcThread(IDDUThread):
         self.x = None
         self.y = None
         self.snapshot = False
+
+        self.BRanQuali = False
 
         self.logger.info('Started iDDUcalc')
 
@@ -169,8 +173,12 @@ class IDDUCalcThread(IDDUThread):
                             self.db.FlagExceptionVal = 0
                             if self.db.SessionFlags & 0x80000000:  # startGo
                                 self.db.backgroundColour = self.green
-                                self.db.GreenTime = self.db.SessionTime
+                                if not self.db.GreenTime:
+                                    self.db.GreenTime = self.db.SessionTime
                                 self.db.CarIdxPitStops = [0] * 64
+                                if self.db.TimeLimit:
+                                    self.db.RenderLabel[15] = True  # 15 Remain
+                                    self.db.RenderLabel[16] = False  # 16 Elapsed
                             if self.db.SessionFlags & 0x2:  # white
                                 self.db.backgroundColour = self.white
                                 self.db.textColour = self.black
@@ -460,16 +468,21 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.textColourP2P = self.orange
                             else:
                                 self.db.textColourP2P = self.db.textColour
-                            if not self.db.PushToPass == self.db.old_PushToPass:
-                                if self.db.PushToPass:
-                                    self.db.P2PTime = self.db.SessionTime
-                                    self.db.Alarm[4] = 1
-                                    self.db.P2PCounter = self.db.P2PCounter + 1
 
-                            if self.db.SessionTime < self.db.P2PTime + 20:
+                            if self.db.CarIdxP2P_Status[self.db.DriverCarIdx]:
                                 self.db.Alarm[4] = 1
+                                if not self.db.old_PushToPass:
+                                    self.db.P2PTime = self.db.SessionTime
+                                    self.db.P2PCounter = self.db.P2PCounter + 1
+                                    self.db.AM.P2PON.raiseAlert()                            
+                            
+                            if not self.db.CarIdxP2P_Status[self.db.DriverCarIdx] and self.db.old_PushToPass:
+                                self.db.AM.P2POFF.raiseAlert()
 
-                            self.db.old_PushToPass = self.db.PushToPass
+                            #if self.db.SessionTime < self.db.P2PTime + 20:
+                            #   self.db.Alarm[4] = 1
+
+                            self.db.old_PushToPass = self.db.CarIdxP2P_Status[self.db.DriverCarIdx]  #self.db.PushToPass
 
                         # alarm
                         if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes AMG GT4', 'Mercedes GT3 2020', 'Toyota GR86',
@@ -487,7 +500,9 @@ class IDDUCalcThread(IDDUThread):
                             if not BTcToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
                                 self.db.Alarm[9] = 3
 
-                        if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled or self.db.BrakeABSactive:
+                        if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled or self.db.BrakeABSactive and self.db.Brake > 0:
+                            self.db.Alarm[8] = 1
+                        elif self.db.Brake > 0.75 and self.db.Speed > 10:
                             self.db.Alarm[8] = 3
 
                         # Lift beeps
@@ -524,7 +539,6 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.dcChangedItems = list(temp.keys())
                                 self.db.dcChangeTime = time.time()
                                 if 'VFuelTgt' in self.db.dcChangedItems or 'VFuelTgtOffset' in self.db.dcChangedItems:
-                                    # if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.VFuelTgt and 'VFuelTgt' in self.db.dcChangedItems:
                                     if np.max(self.db.FuelTGTLiftPoints['VFuelTGT']) == self.db.config['VFuelTgt'] and 'VFuelTgt' in self.db.dcChangedItems:
                                         self.db.dcChangedItems[self.db.dcChangedItems.index('VFuelTgt')] = 'Push'
                                     self.db.BFuelTgtSet = self.setFuelTgt(self.db.config['VFuelTgt'], np.float(self.db.VFuelTgtOffset))
@@ -539,8 +553,12 @@ class IDDUCalcThread(IDDUThread):
                             self.db.rSlipR = 0
 
                         # wheel spin
+                        if self.NGearOld < self.db.Gear and self.db.Gear > 0:
+                            self.tUpshift = self.db.SessionTime
+                        self.NGearOld = self.db.Gear
+
                         temp = 0
-                        if self.db.Throttle > 0.1:
+                        if self.db.Throttle > 0.1 and self.db.SessionTime > self.tUpshift + self.db.config['tSurpressSlipOnUpshift']:
                             for i in range(len(self.db.car.rSlipMapAcc)):
                                 if self.db.rSlipR >= self.db.car.rSlipMapAcc[i]:
                                     temp = i+1
@@ -556,7 +574,6 @@ class IDDUCalcThread(IDDUThread):
 
                             dpBrake = [self.db.LFbrakeLinePress - pBrakeFRef, self.db.RFbrakeLinePress - pBrakeFRef, self.db.LRbrakeLinePress - pBrakeRRef, self.db.RRbrakeLinePress - pBrakeRRef]
 
-                            # self.db.rABSActivity = list(map(self.mapABSActivity, dpBrake))
                             self.db.rABSActivity = list(map(self.mapABSActivity, np.array([dpBrake, self.dpBrakeOld]).max(axis=0)))
 
                             self.dpBrakeOld = dpBrake
@@ -670,67 +687,12 @@ class IDDUCalcThread(IDDUThread):
                 time.sleep(self.rate)
 
             except Exception:
-                # exc_type, exc_obj, exc_tb = sys.exc_info()
-                # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                # self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
-
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
                 S = '\n'
                 for i in s:
                     S = S + i
                 self.logger.error(S)
-
-            # except Exception as e:
-            #     exc_type, exc_obj, exc_tb = sys.exc_info()
-            #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            #     ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
-            #
-            #     if not self.SError == ErrorString:
-            #         self.logger.error(ErrorString)
-            #         self.SError = ErrorString
-            #         self.logger.error(self.SError)
-
-                    # except ValueError:
-                    #     print(self.db.timeStr + ':\tVALUE ERROR in iDDUcalc')
-                    #     self.db.Exception = 'VALUE ERROR in iDDUcalc'
-                    #     if not self.BError:
-                    #         self.db.snapshot()
-                    #     self.BError = True
-                    # except NameError:
-                    #     print(self.db.timeStr + ':\tNAME ERROR in iDDUcalc')
-                    #     self.db.Exception = 'NAME ERROR in iDDUcalc'
-                    #     if not self.BError:
-                    #         self.db.snapshot()
-                    #     self.BError = True
-                    # except TypeError as e:
-                    #     print(self.db.timeStr + ':\tTYPE ERROR in iDDUcalc: ' + str(e))
-                    #     self.db.Exception = 'TYPE ERROR in iDDUcalc'
-                    #     if hasattr(e, 'message'):
-                    #         print(e.message)
-                    #     else:
-                    #         print(e)
-                    #     if not self.BError:
-                    #         self.db.snapshot()
-                    #     self.BError = True
-                    # except KeyError:
-                    #     print(self.db.timeStr + ':\tKEY ERROR in iDDUcalc')
-                    #     self.db.Exception = 'KEY ERROR in iDDUcalc'
-                    #     if not self.BError:
-                    #         self.db.snapshot()
-                    #     self.BError = True
-                    # except IndexError:
-                    #     print(self.db.timeStr + ':\tINDEX ERROR in iDDUcalc')
-                    #     self.db.Exception = 'INDEX ERROR in iDDUcalc'
-                    #     if not self.BError:
-                    #         self.db.snapshot()
-                    #     self.BError = True
-                    # except Exception as e:  # TODO: find a way to handle this
-                    #     print(self.db.timeStr + ':\tUNEXPECTED ERROR in iDDUcalc: ' + str(e))
-                    #     self.db.Exception = 'UNEXPECTED ERROR in iDDUcalc: ' + str(e)
-                    #     if not self.BError:
-                    #         self.db.snapshot()
-                    #     self.BError = True
 
     def initSession(self):
         self.logger.info('===== Initialising Session: {} =========================='.format(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']))
@@ -748,11 +710,7 @@ class IDDUCalcThread(IDDUThread):
         self.db.oldLap = self.db.Lap
         self.db.NLapsTotal = 0
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
-        # self.db.JokerLapsRequired = 0
-        # self.db.config['PitStopDelta'] = 0
         self.db.config['MapHighlight'] = False
-        # self.db.Alarm[0:7] = 0
-        # self.db.Alarm[8:] = 0
         self.db.Alarm = np.array([0] * 10)
         self.db.BMultiInitRequest = True
 
@@ -809,16 +767,20 @@ class IDDUCalcThread(IDDUThread):
             self.db.config['PitStopsRequired'] = 0
             self.db.config['MapHighlight'] = False
 
+            tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
+            if not tempSessionLength == 'unlimited':
+                self.db.SessionLength = float(tempSessionLength.split(' ')[0])
+            if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
+                tLapEst = self.db.car.tLap[self.db.WeekendInfo['TrackName']][-1]
+            else:
+                tLapEst = None
+
             # unlimited laps
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
                 self.db.config['RaceLaps'] = self.db.config['UserRaceLaps']
                 self.db.LapLimit = False
                 self.db.RenderLabel[20] = False
                 self.db.RenderLabel[21] = False
-                # if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
-                #     print('' + 'RaceLaps: ' + str(self.db.config['RaceLaps']))
-                #     self.db.LapLimit = True
-                #     self.db.RenderLabel[20] = True
 
                 # unlimited time
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
@@ -828,11 +790,10 @@ class IDDUCalcThread(IDDUThread):
                     self.db.TimeLimit = False
                 # limited time
                 else:
-                    self.db.RenderLabel[15] = True
-                    self.db.RenderLabel[16] = False
+                    print('a')
+                    self.db.RenderLabel[15] = True # 15 Remain
+                    self.db.RenderLabel[16] = False # 16 Elapsed
                     self.db.TimeLimit = True
-                    tempSessionLength = self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime']
-                    self.db.SessionLength = float(tempSessionLength.split(' ')[0])
                     if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race':
                         if self.db.SessionLength > 2100:
                             self.db.config['PitStopsRequired'] = 1
@@ -856,13 +817,23 @@ class IDDUCalcThread(IDDUThread):
                 if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionTime'] == 'unlimited':
                     self.db.SessionLength = 86400
                     self.db.TimeLimit = False
-                    self.db.RenderLabel[15] = False
-                    self.db.RenderLabel[16] = True
+                    self.db.RenderLabel[15] = True
+                    self.db.RenderLabel[16] = False
+                    if tLapEst:
+                        if self.db.SessionLength > self.db.config['RaceLaps'] * 1.05 * tLapEst:
+                            self.db.RenderLabel[15] = False
+                            self.db.RenderLabel[16] = True
+                            self.db.TimeLimit = True
+
                 # limited time
                 else:
                     self.db.RenderLabel[15] = True
                     self.db.RenderLabel[16] = False
                     self.db.TimeLimit = True
+                    if tLapEst:
+                        if self.db.SessionLength > self.db.config['RaceLaps'] * 1.05 * tLapEst:
+                            self.db.RenderLabel[15] = False
+                            self.db.RenderLabel[16] = True
 
             if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and (not self.db.LapLimit) and self.db.TimeLimit:
                 self.db.config['BEnableRaceLapEstimation'] = True
@@ -1005,12 +976,15 @@ class IDDUCalcThread(IDDUThread):
             self.db.RenderLabel[32] = False
 
         # check if setup has changed since quali
+        if 'Qual' in self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']:
+            self.BRanQuali = True
+
         if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] == 'Race' and not self.db.WeekendInfo['WeekendOptions']['IsFixedSetup'] and self.db.LastSetup:
             CurrentSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
                             'UpdateCount': self.db.CarSetup['UpdateCount'],
                             'FuelLevel': self.db.FuelLevel}
 
-            if CurrentSetup == self.db.LastSetup or self.db.FuelLevel < 0.2 * self.db.DriverCarFuelMaxLtr:
+            if (CurrentSetup == self.db.LastSetup or self.db.FuelLevel < 0.2 * self.db.DriverCarFuelMaxLtr) and  self.BRanQuali:
                 self.db.BLoadRaceSetupWarning = True
 
     def loadTrack(self, name):
@@ -1042,7 +1016,6 @@ class IDDUCalcThread(IDDUThread):
         try:
             # Lap Counting
             self.db.newLapTime = self.db.SessionTime
-            # self.db.BLiftBeepPlayed = [0] * len(self.db.FuelTGTLiftPoints['LapDistPct'])
 
             self.PitStates = (self.db.config['BPitCommandControl'], self.db.config['BChangeTyres'], self.db.config['BBeginFueling'], self.db.config['NFuelSetMethod'], self.db.config['VUserFuelSet'])
 
@@ -1123,8 +1096,9 @@ class IDDUCalcThread(IDDUThread):
                 VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3)
             else:
                 VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3) / self.db.LapsToGo
-
-            VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / (self.db.config['NLapsStintPlanned'] - self.db.StintLap)
+            NLapStintRemaining = self.db.config['NLapsStintPlanned'] - self.db.StintLap
+            if NLapStintRemaining > 0:
+                VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / NLapStintRemaining
 
             if self.db.config['NFuelTargetMethod'] == 2:  # Finish
                 self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
@@ -1378,6 +1352,7 @@ class IDDUCalcThread(IDDUThread):
     #             self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
     def LiftTone(self):
+        # self.db.Alarm[7] = 4
 
         if not self.db.BFuelTgtSet:
             self.db.BFuelTgtSet = self.setFuelTgt(self.db.config['VFuelTgt'], np.float(self.db.VFuelTgtOffset))
@@ -1405,12 +1380,57 @@ class IDDUCalcThread(IDDUThread):
                 self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
                 # self.db.VFuelStartStraight = self.db.FuelLevel
                 self.db.BUpdateVFuelDelta = True
+                self.db.BForceLift = False
+                self.db.BCancelAutoLift = False
 
                 if self.db.SessionTime - self.db.newLapTime > self.db.config['tDisplayConsumption']:
                     self.db.RenderLabel[4] = False
                     self.db.RenderLabel[5] = False
                     self.db.RenderLabel[28] = True
                     self.db.RenderLabel[29] = True
+
+            
+            # check if in Lift Zone
+            LapDistPct = self.db.LapDistPct*100
+            if self.db.NNextLiftPoint == 0:
+                LapDistPctEnd = 100 + self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]
+                ds = 100 - self.db.FuelTGTLiftPoints['LapDistPctWOT'][-1] + self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]
+                LapDistPctStart = self.db.FuelTGTLiftPoints['LapDistPctWOT'][-1] + ds / 2
+                if LapDistPct < self.db.FuelTGTLiftPoints['LapDistPctWOT'][-1]:
+                    LapDistPct = LapDistPct + 100
+                BInLiftZone = LapDistPctStart < LapDistPct < LapDistPctEnd
+            else:                
+                LapDistPctEnd = self.db.FuelTGTLiftPoints['LapDistPctReference'][self.db.NNextLiftPoint]
+                LapDistPctWOT = self.db.FuelTGTLiftPoints['LapDistPctWOT'][self.db.NNextLiftPoint-1]
+                LapDistPctStart = LapDistPctWOT + (LapDistPctEnd-LapDistPctWOT)/2
+                BInLiftZone = LapDistPctStart < LapDistPct < LapDistPctEnd
+            
+            self.db.BInLiftZone = BInLiftZone
+
+
+            # Auto Lift and Clutch 
+            if BInLiftZone and self.db.Speed > 15:
+                # auto lift
+                if self.db.BEnableAutoLift and self.db.BLiftBeepPlayed[self.db.NNextLiftPoint] == 3 and not self.db.AM.CANCELLIFT.BActive:
+                    self.db.BForceLift = True
+                else:
+                    if self.db.Brake > 0:
+                        self.db.BForceLift = False
+                
+                # auto clutch
+                if self.db.BEnableAutoClutch and self.db.Throttle == 0 and self.db.Brake == 0:
+                    self.db.BForceClutch = True
+                else:
+                    self.db.BForceClutch = False
+            else:                
+                self.db.AM.CANCELLIFT.reset()
+                if self.db.BForceClutch:
+                    self.db.BForceClutch = False
+                if self.db.BForceLift:
+                    self.db.BForceLift = False
+            
+        
+
 
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:

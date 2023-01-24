@@ -12,34 +12,41 @@ class LoggerThread(IDDUThread):
         IDDUThread.__init__(self, rate)
         self.file = []
         self.rate = rate
+        # self.keys = ['SessionTime',
+        #              'Speed',
+        #              'ThrottleRaw',
+        #              'LongAccel',
+        #              'RPM',
+        #              'Gear',
+        #              'StintLap',
+        #              'Lap',
+        #              'tExecuteRTDB',
+        #              'tExecuteUpshiftTone',
+        #              'tExecuteRaceLapsEstimation',
+        #              'tExecuteSerialComs'
+        #              'tExecuteLogger',
+        #              'tExecuteRender',
+        #              'tExecuteCalc',
+        #              'tShiftReaction',
+        #              'FuelLevel',
+        #              'tNextLiftPoint',
+        #              'LapDistPct',
+        #              'BLiftToneRequest',
+        #              'NNextLiftPoint',
+        #              'VFuelTgtEffective',
+        #              'VFuelStartStraight',
+        #              'VFuelBudgetActive',
+        #              'dVFuelTgt',
+        #              'BUpdateVFuelDelta',
+        #              'VFuelReferenceActive',
+        #              'VFuelUsedLap']
+
         self.keys = ['SessionTime',
                      'Speed',
-                     'ThrottleRaw',
-                     'LongAccel',
-                     'RPM',
-                     'Gear',
-                     'StintLap',
-                     'Lap',
-                     'tExecuteRTDB',
-                     'tExecuteUpshiftTone',
-                     'tExecuteRaceLapsEstimation',
-                     'tExecuteSerialComs'
-                     'tExecuteLogger',
-                     'tExecuteRender',
-                     'tExecuteCalc',
-                     'tShiftReaction',
-                     'FuelLevel',
-                     'tNextLiftPoint',
-                     'LapDistPct',
-                     'BLiftToneRequest',
-                     'NNextLiftPoint',
-                     'VFuelTgtEffective',
-                     'VFuelStartStraight',
-                     'VFuelBudgetActive',
-                     'dVFuelTgt',
-                     'BUpdateVFuelDelta',
-                     'VFuelReferenceActive',
-                     'VFuelUsedLap']
+                     'ThrottleRaw',                    
+                     'rThrottleRead',
+                     'Throttle', 
+                     ]
 
         self.header = 'Time'
 

@@ -4,6 +4,7 @@ import time
 import numpy as np
 from libs.auxiliaries import convertString, maths
 from libs.IDDU import IDDUThread
+import traceback
 
 
 class RaceLapsEstimationThread(IDDUThread):
@@ -126,48 +127,14 @@ class RaceLapsEstimationThread(IDDUThread):
 
                         self.db.SOFMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['SOF']
                         self.db.NDriversMyClass = self.db.classStruct[str(self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarClassShortName'])]['NDrivers']
-
-                # except ValueError:
-                #     print(self.db.timeStr + ':\tVALUE ERROR in raceLapsEstimation')
-                #     self.db.Exception = 'VALUE ERROR in raceLapsEstimation'
-                #     if not self.BError:
-                #         self.db.snapshot()
-                #     self.BError = True
-                # except NameError:
-                #     print(self.db.timeStr + ':\tNAME ERROR in raceLapsEstimation')
-                #     self.db.Exception = 'NAME ERROR in raceLapsEstimation'
-                #     if not self.BError:
-                #         self.db.snapshot()
-                #     self.BError = True
-                # except TypeError:
-                #     print(self.db.timeStr + ':\tTYPE ERROR in raceLapsEstimation')
-                #     self.db.Exception = 'TYPE ERROR in raceLapsEstimation'
-                #     if not self.BError:
-                #         self.db.snapshot()
-                #     self.BError = True
-                # except KeyError:
-                #     print(self.db.timeStr + ':\tKEY ERROR in raceLapsEstimation')
-                #     self.db.Exception = 'KEY ERROR in raceLapsEstimation'
-                #     if not self.BError:
-                #         self.db.snapshot()
-                #     self.BError = True
-                # except IndexError:
-                #     print(self.db.timeStr + ':\tINDEX ERROR in raceLapsEstimation')
-                #     self.db.Exception = 'INDEX ERROR in raceLapsEstimation'
-                #     if not self.BError:
-                #         self.db.snapshot()
-                #     self.BError = True
-                # except:
-                #     print(self.db.timeStr + ':\tUNEXPECTED ERROR in raceLapsEstimation')
-                #     self.db.Exception = 'UNEXPECTED ERROR in raceLapsEstimation'
-                #     if not self.BError:
-                #         self.db.snapshot()
-                #     self.BError = True
-
-                except Exception as e:
-                    exc_type, exc_obj, exc_tb = sys.exc_info()
-                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                    self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+                        
+                except Exception:
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+                    S = '\n'
+                    for i in s:
+                        S = S + i
+                    self.logger.error(S)
 
             self.db.tExecuteRaceLapsEstimation = (time.time() - t) * 1000
             self.toc()

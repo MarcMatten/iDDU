@@ -715,6 +715,8 @@
     "name": "spa up",
     "sTrack": 6930.0,
     "tLap": {
+        "IR18": 122.18333333322221,
+        "Lamborghini GT3": 0.0,
         "Radical SR10": 136.41666666654265
     },
     "x": [

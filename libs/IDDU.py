@@ -136,6 +136,7 @@ class IDDUItem:
 
     logger = MyLogger()
 
+    # steeringwheel
     vid = 9025
     pid = 32822
 
@@ -146,6 +147,9 @@ class IDDUItem:
     ju.start()
 
     MarcsJoystick = J
+
+    Pedals =  Joystick()
+    Pedals.connect(12471, 4097)
 
     def __init__(self):
         pass
@@ -191,7 +195,20 @@ class IDDUItem:
     def stopJU(self):
         self.ju.running = False
 
+    def setAxis(self, ID, val):
+        self.vjoy.set_axis(ID, val)
 
+    def calibrateThrottle(self):
+        time.sleep(5)
+        self.vjoy.set_axis(48, 4095)
+        time.sleep(1)
+        self.vjoy.set_axis(48, 0)
+
+    def calibrateClutch(self):
+        time.sleep(5)
+        self.vjoy.set_axis(49, 4095)
+        time.sleep(1)
+        self.vjoy.set_axis(49, 0)
 
 
 class IDDUThread(IDDUItem, threading.Thread):
@@ -215,11 +232,13 @@ class IDDUThread(IDDUItem, threading.Thread):
         self.NCalls = np.uint64(self.NCalls + 1)
     
     def toc(self):
-        tExec = time.perf_counter() - self.tStart
+        tExec = (time.perf_counter() - self.tStart) * 1000
         self.tMin = np.min([self.tMin, tExec])
         self.tMax = np.max([self.tMax, tExec])
-        self.tAvg = (self.tAvg * (self.NCalls-1) + tExec) / (self.NCalls)
+        self.tAvg = (self.tAvg * (self.NCalls-1) + tExec) / self.NCalls
         
     def stop(self):
+        self.stopJU()
         self.running = False
-        self.logger.info('{} - Avg: {} | Min: {} | Max: {}'.format(type(self).__name__, np.round(self.tAvg, 6), np.round(self.tMin, 6), np.round(self.tMax, 6)))
+        if self.NCalls > 0:
+            self.logger.info('{} - Avg: {} ms | Min: {} ms | Max: {} ms'.format(type(self).__name__, np.round(self.tAvg, 3), np.round(self.tMin, 3), np.round(self.tMax, 3)))

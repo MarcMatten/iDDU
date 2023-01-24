@@ -21,7 +21,8 @@ def getGearRatios(d, resultsDirPath):
             rGearRatios[k] = None
         else:
             rGearRatios[k] = np.mean(rGearRatioList[k])
-            plt.scatter(vCarList[k], rGearRatioList[k], zorder=99, label='Gear {}: {}'.format(k, rGearRatios[k]), marker=".")
+            plt.scatter(vCarList[k], rGearRatioList[k], zorder=90, label='Gear {}: {}'.format(k, rGearRatios[k]), marker=".")
+            plt.plot([10, 100], [rGearRatios[k], rGearRatios[k]], zorder=95)
 
     plt.legend()
     plt.savefig(resultsDirPath + '/rGearRatio.png', dpi=300, orientation='landscape', progressive=True)

@@ -4,7 +4,6 @@ import serial
 import serial.tools.list_ports
 import struct
 
-
 class SteeringWheelComsThread(IDDUThread):
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -57,11 +56,13 @@ class SteeringWheelComsThread(IDDUThread):
     def run(self):
         while self.running:
             # execute this loop while iRacing is running
-            while self.ir.startup():
+            while self.db.startUp:
+
+                self.tic() 
 
                 # execute this loop while player is on track
-                while self.BArduinoConnected and self.db.IsOnTrack:  
-                    self.tic()                  
+                if self.BArduinoConnected and self.db.IsOnTrack:  
+                                     
                     if not self.rBitePointSent == self.db.config['rBitePoint'] / 100:
                         self.rBitePointSent = self.db.config['rBitePoint'] / 100
                         self.serial.write(struct.pack('<f', self.rBitePointSent))
@@ -114,11 +115,11 @@ class SteeringWheelComsThread(IDDUThread):
                         self.logger.info('Start Mode ON')
                     elif data == 0 and self.db.BSteeringWheelStartMode:
                         self.db.BSteeringWheelStartMode = False
-                        self.logger.info('Start Mode OFF')
+                        self.logger.info('Start Mode OFF')#
                     
-                    self.toc()
+                self.toc()
 
-                time.sleep(0.2)
+                # time.sleep(0.2)
             
             time.sleep(1)
         
