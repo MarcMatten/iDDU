@@ -158,8 +158,12 @@ def calcFuelConstraint(rLift, *args):
     return dVFuel - VFuelConsTGT
 
 
-def saveJson(x, path):
-    filename = 'fuelSavingConfig.json'
+def saveJson(x, path, BClutch=False):
+
+    if BClutch:
+        filename = 'fuelSavingConfigClutch.json'
+    else:
+        filename = 'fuelSavingConfig.json'
 
     filepath = filedialog.asksaveasfilename(initialdir=path,
                                             initialfile=filename,
@@ -522,6 +526,7 @@ def optimise(dirPath, TelemPath):
     c['NWOT'] = NWOT
 
     LiftGear = c['Gear'][NBrake]
+    LiftGearClutch = c['Gear'][NBrake]*0
 
     plt.figure(figsize=[16, 9], dpi=300)  # TODO: make plot nice
     plt.tight_layout()
@@ -582,6 +587,14 @@ def optimise(dirPath, TelemPath):
     VFuelRLift = np.zeros((len(NLiftEarliest), len(rLift))) + c['VFuel'][-1]
     tLapRLift = np.zeros((len(NLiftEarliest), len(rLift))) + c['tLap'][-1]
 
+    if car.Coasting['gLongCoastPolyFit'][0]:
+        BClutch = True
+    else:
+        BClutch = False
+
+    VFuelRLiftClutch = np.zeros((len(NLiftEarliest), len(rLift))) + c['VFuel'][-1]
+    tLapRLiftClutch = np.zeros((len(NLiftEarliest), len(rLift))) + c['tLap'][-1]
+
     for i in range(0, len(NLiftEarliest)):
         print('\t\tLift zone: {}/{}'.format(i + 1, len(NLiftEarliest)))
         if NApex[i] - NLiftEarliest[i] <= 40 or NBrake[i] - NLiftEarliest[i] <= 12:
@@ -590,20 +603,28 @@ def optimise(dirPath, TelemPath):
         for k in range(1, len(rLift)):
             # tLapRLift[i, k], VFuelRLift[i, k], R = costFcn([rLift[k]], car, copy.deepcopy(c), [NLiftEarliest[i]], [NBrake[i]], None, False, [LiftGear[i]], [NApex[i]])
             tLapRLift[i, k], VFuelRLift[i, k], R = costFcn(rLift=[rLift[k]], car=car, dct=copy.deepcopy(c), NLiftEarliest=[NLiftEarliest[i]], NBrake=[NBrake[i]], optim=False, LiftGear=[LiftGear[i]], NApex=[NApex[i]])
+            if BClutch:
+                tLapRLiftClutch[i, k], VFuelRLiftClutch[i, k], R = costFcn(rLift=[rLift[k]], car=car, dct=copy.deepcopy(c), NLiftEarliest=[NLiftEarliest[i]], NBrake=[NBrake[i]], optim=False, LiftGear=[0], NApex=[NApex[i]])
 
     # get fuel consumption and lap time differences compared to original lap
     tLapRLift = tLapRLift - c['tLap'][-1]
     VFuelRLift = VFuelRLift - c['VFuel'][-1]
+    tLapRLiftClutch = tLapRLiftClutch - c['tLap'][-1]
+    VFuelRLiftClutch = VFuelRLiftClutch - c['VFuel'][-1]
 
     # remove outliners
     # tLapRLift[:, 0] = 0
     # VFuelRLift[:, 0] = 0
     tLapRLift[tLapRLift < 0] = 0
     VFuelRLift[VFuelRLift > 0] = 0
+    tLapRLiftClutch[tLapRLift < 0] = 0
+    VFuelRLiftClutch[VFuelRLift > 0] = 0
 
     # fit lap time and fuel consumption polynomial for each lifting zone
     tLapPolyFit = np.zeros((len(NLiftEarliest), 6))
     VFuelPolyFit = np.zeros((len(NLiftEarliest), 3))
+    tLapPolyFitClutch = np.zeros((len(NLiftEarliest), 6))
+    VFuelPolyFitClutch = np.zeros((len(NLiftEarliest), 3))
 
 
     rLiftPlot = np.linspace(0, 1, 1000)
@@ -619,6 +640,14 @@ def optimise(dirPath, TelemPath):
         f = yFuel[~np.isnan(yTime)]
         t = yTime[~np.isnan(yTime)]
 
+        if BClutch:
+            yTimeClutch = tLapRLiftClutch[i, :]
+            yFuelClutch = VFuelRLiftClutch[i, :]
+            # rLiftClean = rLift[:]
+            xClutch = rLiftClean[~np.isnan(yTimeClutch)]
+            fClutch = yFuelClutch[~np.isnan(yTimeClutch)]
+            tClutch = yTimeClutch[~np.isnan(yTimeClutch)]
+
         sigmaV = np.ones(len(x))
         sigmaT = sigmaV
         sigmaT[0:5] = 0.01
@@ -629,14 +658,22 @@ def optimise(dirPath, TelemPath):
         tLapPolyFit[i, :], temp = scipy.optimize.curve_fit(maths.polyVal, x, t, [0] * 6, sigma=sigmaT)
         VFuelPolyFit[i, :], temp = scipy.optimize.curve_fit(maths.polyVal, x, f, [0] * 3)
 
+        if BClutch:
+            tLapPolyFitClutch[i, :], temp = scipy.optimize.curve_fit(maths.polyVal, xClutch, tClutch, [0] * 6, sigma=sigmaT)
+            VFuelPolyFitClutch[i, :], temp = scipy.optimize.curve_fit(maths.polyVal, xClutch, fClutch, [0] * 3)
+
         if BPlot:  # TODO: save these plots in a subdirectory
             plt.figure(figsize=[16, 9], dpi=300)  # TODO: make plot nice
             plt.tight_layout()
             plt.title('Lap Time Loss - Lift Zone ' + str(int(NZone[i])))
             plt.xlabel('rLift [-]')
             plt.ylabel('dtLap [s]')
-            plt.scatter(rLift, tLapRLift[i, :])
+            plt.scatter(rLift, tLapRLift[i, :], marker='o')
             plt.plot(rLiftPlot, maths.polyVal(rLiftPlot, tLapPolyFit[i, 0], tLapPolyFit[i, 1], tLapPolyFit[i, 2], tLapPolyFit[i, 3], tLapPolyFit[i, 4], tLapPolyFit[i, 5]))
+            if BClutch:
+                plt.scatter(rLift, tLapRLiftClutch[i, :], marker='x')
+                plt.plot(rLiftPlot, maths.polyVal(rLiftPlot, tLapPolyFitClutch[i, 0], tLapPolyFitClutch[i, 1], tLapPolyFitClutch[i, 2], tLapPolyFitClutch[i, 3], tLapPolyFitClutch[i, 4], tLapPolyFitClutch[i, 5]), '--')
+
             plt.grid()
             plt.savefig(resultsDirPath + '/timeLoss_LiftZone_' + str(int(NZone[i])) + '.png', dpi=300, orientation='landscape', progressive=True)
             plt.close()
@@ -646,9 +683,13 @@ def optimise(dirPath, TelemPath):
             plt.title('Fuel Save - Lift Zone ' + str(int(NZone[i])))
             plt.xlabel('rLift [-]')
             plt.ylabel('dVFuel [l]')
-            plt.scatter(rLift, VFuelRLift[i, :])
+            plt.scatter(rLift, VFuelRLift[i, :], marker='o')
             # plt.plot(rLiftPlot, maths.polyVal(rLiftPlot, VFuelPolyFit[i, 0], VFuelPolyFit[i, 1], VFuelPolyFit[i, 2], VFuelPolyFit[i, 3], VFuelPolyFit[i, 4], VFuelPolyFit[i, 5]))
             plt.plot(rLiftPlot, maths.polyVal(rLiftPlot, VFuelPolyFit[i, 0], VFuelPolyFit[i, 1], VFuelPolyFit[i, 2]))
+            if BClutch:
+                plt.scatter(rLift, VFuelRLift[i, :], marker='x')
+                plt.plot(rLiftPlot, maths.polyVal(rLiftPlot, VFuelPolyFitClutch[i, 0], VFuelPolyFitClutch[i, 1], VFuelPolyFitClutch[i, 2]), '--')
+
             plt.grid()
             plt.savefig(resultsDirPath + '/fuelSave_LiftZone_' + str(int(NZone[i])) + '.png', dpi=300, orientation='landscape', progressive=True)
             plt.close()
@@ -669,9 +710,12 @@ def optimise(dirPath, TelemPath):
     print('\n\tOptimising Fuel Saving...')
     bounds = [(0, 1)] * len(NLiftEarliest)
     LiftPointsVsFuelCons = {'VFuelTGT': np.empty((len(VFuelTGT), 1)), 'LiftPoints': np.empty((len(VFuelTGT), len(NLiftEarliest)))}
+    LiftPointsVsFuelConsClutch = {'VFuelTGT': np.empty((len(VFuelTGT), 1)), 'LiftPoints': np.empty((len(VFuelTGT), len(NLiftEarliest)))}
 
     result = []
     fun = []
+    resultClutch = []
+    funClutch = []
 
     for i in range(0, len(VFuelTGT)):  # optimisation loop
 
@@ -688,12 +732,26 @@ def optimise(dirPath, TelemPath):
 
         LiftPointsVsFuelCons['LiftPoints'][i, :] = result[i]['x']
 
+        if BClutch:
+            temp_resultClutch = scipy.optimize.minimize(objectiveLapTime, np.zeros(len(NLiftEarliest)), args=(tLapPolyFitClutch, VFuelPolyFitClutch), method='SLSQP', bounds=bounds, constraints=FuelConstraint,
+                                                  options={'maxiter': 10000, 'ftol': 1e-09, 'iprint': 1, 'disp': False})
+
+            resultClutch.append(temp_resultClutch)
+            funClutch.append(temp_resultClutch['fun'])
+
+            LiftPointsVsFuelConsClutch['LiftPoints'][i, :] = resultClutch[i]['x']
+
     LiftPointsVsFuelCons['VFuelTGT'] = VFuelTGT
     LiftPointsVsFuelCons['tLapDelta'] = fun
+    if BClutch:
+        LiftPointsVsFuelConsClutch['VFuelTGT'] = VFuelTGT
+        LiftPointsVsFuelConsClutch['tLapDelta'] = funClutch
 
     sigma = np.ones(len(fun))
     sigma[-25:] = 0.01
     tLapVFuelPolyFit, _ = scipy.optimize.curve_fit(maths.polyVal, LiftPointsVsFuelCons['VFuelTGT'], fun, [0] * 6, sigma=sigma)
+    if BClutch:
+        tLapVFuelPolyFitClutch, _ = scipy.optimize.curve_fit(maths.polyVal, LiftPointsVsFuelConsClutch['VFuelTGT'], funClutch, [0] * 6, sigma=sigma)
 
     plt.figure(figsize=[16, 9], dpi=300)  # TODO: make plot nice
     plt.tight_layout()
@@ -702,6 +760,9 @@ def optimise(dirPath, TelemPath):
     plt.ylabel('Delta tLap [s]')
     plt.plot(LiftPointsVsFuelCons['VFuelTGT'], fun, label='Simulation')
     plt.plot(LiftPointsVsFuelCons['VFuelTGT'], maths.polyVal(LiftPointsVsFuelCons['VFuelTGT'], tLapVFuelPolyFit), label='PolyFit')
+    if BClutch:
+        plt.plot(LiftPointsVsFuelConsClutch['VFuelTGT'], funClutch, label='Simulation Clutch')
+        plt.plot(LiftPointsVsFuelConsClutch['VFuelTGT'], maths.polyVal(LiftPointsVsFuelConsClutch['VFuelTGT'], tLapVFuelPolyFitClutch), '--', label='PolyFit Clutch')
     plt.grid()
     plt.legend()
     plt.savefig(resultsDirPath + '/DetlatLap_vs_VFuel.png', dpi=300, orientation='landscape', progressive=True)
@@ -719,6 +780,8 @@ def optimise(dirPath, TelemPath):
     plt.ylabel('rLift [-]')
     for k in range(0, len(NLiftEarliest)):
         plt.plot(LiftPointsVsFuelCons['VFuelTGT'], LiftPointsVsFuelCons['LiftPoints'][:, k], label='Lift Zone ' + str(int(NZone[k])))
+        if BClutch:
+            plt.plot(LiftPointsVsFuelConsClutch['VFuelTGT'], LiftPointsVsFuelConsClutch['LiftPoints'][:, k], '--',  label='Lift Zone ' + str(int(NZone[k])))
 
     plt.legend()
     plt.grid()
@@ -738,11 +801,23 @@ def optimise(dirPath, TelemPath):
     LiftPointsVsFuelCons['VFuelReference'] = np.empty(np.shape(LiftPointsVsFuelCons['LiftPoints']))
     LiftPointsVsFuelCons['VFuelBudget'] = np.empty(np.shape(LiftPointsVsFuelCons['LiftPoints']))
     LiftPointsVsFuelCons['LapDistPctLift'] = np.empty(np.shape(LiftPointsVsFuelCons['LiftPoints']))
+    LiftPointsVsFuelCons['VFuelBudgetUsedStartOfLap'] = np.empty(np.shape(LiftPointsVsFuelCons['LiftPoints']))
+
+    LiftPointsVsFuelConsClutch['VFuelLift'] = np.empty(np.shape(LiftPointsVsFuelConsClutch['LiftPoints']))
+    LiftPointsVsFuelConsClutch['VFuelReference'] = np.empty(np.shape(LiftPointsVsFuelConsClutch['LiftPoints']))
+    LiftPointsVsFuelConsClutch['VFuelBudget'] = np.empty(np.shape(LiftPointsVsFuelConsClutch['LiftPoints']))
+    LiftPointsVsFuelConsClutch['LapDistPctLift'] = np.empty(np.shape(LiftPointsVsFuelConsClutch['LiftPoints']))
+    LiftPointsVsFuelConsClutch['VFuelBudgetUsedStartOfLap'] = np.empty(np.shape(LiftPointsVsFuelConsClutch['LiftPoints']))
 
     checkVFuelBudget = np.array([])
     VFuelOffThrottle = np.array([])
     VFuelOnThrottle = np.array([])
-    
+
+    if BClutch:
+        checkVFuelBudgetClutch = np.array([])
+        VFuelOffThrottleClutch = np.array([])
+        VFuelOnThrottleClutch = np.array([])
+
     # Lift points/sections: 0 = approaching first corner
 
     for i in range(0, len(VFuelTGT)):
@@ -782,10 +857,54 @@ def optimise(dirPath, TelemPath):
         tempLapDistPctLift[-1] = tempLapDistPctLift[-1] - R['LapDistPct'][NCut]
         LiftPointsVsFuelCons['LapDistPctLift'][i] = np.roll(tempLapDistPctLift, 1)
 
+        # VFuelBudgetUsedStartOfLap
+        LiftPointsVsFuelCons['VFuelBudgetUsedStartOfLap'][i] = LiftPointsVsFuelCons['VFuelReference'][i][-1] + LiftPointsVsFuelCons['VFuelBudget'][i][0] - R['VFuel'][NCut]
+
         checkVFuelBudget = np.append(checkVFuelBudget, VFuelTGT[i] - np.sum(LiftPointsVsFuelCons['VFuelBudget'][i]))
 
         if i in NTempPlot:
             plt.plot(R['LapDistPct'], R['vCar'], label=str(round(VFuelTGT[i], 2)))
+
+        if BClutch:
+            _, _, RClutch = costFcn(rLift=LiftPointsVsFuelConsClutch['LiftPoints'][i], car=car, dct=c, NLiftEarliest=NLiftEarliest, NBrake=NBrake, optim=False, LiftGear=LiftGearClutch, NReference=NReference, NApex=NApex)
+
+            VFuelTGT[i] = (RClutch['VFuel'][-1] - RClutch['VFuel'][0])
+            VFuelCut2EndClutch = RClutch['VFuel'][-1] - RClutch['VFuel'][NCut]
+
+            # VFuel at lift points
+            tempVFuelLiftClutch = RClutch['VFuel'][RClutch['NLift']]
+            tempVFuelLiftClutch[:-1] = tempVFuelLiftClutch[:-1] + VFuelCut2EndClutch
+            tempVFuelLiftClutch[-1] = tempVFuelLiftClutch[-1] - RClutch['VFuel'][NCut]
+            LiftPointsVsFuelConsClutch['VFuelLift'][i] = np.roll(tempVFuelLiftClutch, 1)
+
+            # VFuel Budget
+            tempVFuelBudgetClutch = np.roll(RClutch['VFuel'][RClutch['NLift']], -1) - RClutch['VFuelReference']
+            tempVFuelBudgetClutch[-1] = VFuelTGT[i] - RClutch['VFuelReference'][-1] + RClutch['VFuel'][RClutch['NLift']][0]
+            LiftPointsVsFuelConsClutch['VFuelBudget'][i] = np.roll(tempVFuelBudgetClutch, 2)
+
+            # fuel consumed off throttle
+            VFuelOnThrottleClutch = np.append(VFuelOnThrottleClutch, np.sum(LiftPointsVsFuelConsClutch['VFuelBudget'][i]))
+            VFuelOffThrottleClutch = np.append(VFuelOffThrottleClutch, np.sum(RClutch['VFuelReference'] - RClutch['VFuel'][RClutch['NLift']]))
+
+            # VFuel at reference points
+            tempVFuelReferenceClutch = RClutch['VFuel'][NReference]
+            tempVFuelReferenceClutch[:-1] = tempVFuelReferenceClutch[:-1] + VFuelCut2End
+            tempVFuelReferenceClutch[-1] = tempVFuelReferenceClutch[-1] - RClutch['VFuel'][NCut]
+            LiftPointsVsFuelConsClutch['VFuelReference'][i] = np.roll(tempVFuelReferenceClutch, 1)
+
+            # LapDistPct at lift points
+            tempLapDistPctLiftClutch = RClutch['LapDistPct'][RClutch['NLift']]
+            tempLapDistPctLiftClutch[:-1] = tempLapDistPctLiftClutch[:-1] + (RClutch['LapDistPct'][-1] - RClutch['LapDistPct'][NCut])
+            tempLapDistPctLiftClutch[-1] = tempLapDistPctLiftClutch[-1] - RClutch['LapDistPct'][NCut]
+            LiftPointsVsFuelConsClutch['LapDistPctLift'][i] = np.roll(tempLapDistPctLiftClutch, 1)
+
+            # VFuelBudgetUsedStartOfLap
+            LiftPointsVsFuelConsClutch['VFuelBudgetUsedStartOfLap'][i] = LiftPointsVsFuelConsClutch['VFuelReference'][i][-1] + LiftPointsVsFuelConsClutch['VFuelBudget'][i][0] - R['VFuel'][NCut]
+
+            checkVFuelBudgetClutch = np.append(checkVFuelBudgetClutch, VFuelTGT[i] - np.sum(LiftPointsVsFuelConsClutch['VFuelBudget'][i]))
+
+            if i in NTempPlot:
+                plt.plot(RClutch['LapDistPct'], RClutch['vCar'], '--', label=str(round(VFuelTGT[i], 2)))
 
     plt.legend()
     plt.grid()
@@ -838,6 +957,8 @@ def optimise(dirPath, TelemPath):
     plt.savefig(resultsDirPath + '/resultsCheck.png', dpi=300, orientation='landscape', progressive=True)
     plt.close()
 
+    # TODO: results check with clutch
+
     plt.figure(figsize=[16, 9], dpi=300)  # TODO: make plot nice
     plt.tight_layout()
     plt.plot(d['x'], d['y'], label='Track')
@@ -876,6 +997,29 @@ def optimise(dirPath, TelemPath):
 
     # export data
     saveJson(LiftPointsVsFuelCons, resultsDirPath)
+
+    if BClutch:
+        LiftPointsVsFuelConsClutch['LapDistPctWOT'] = d['LapDistPct'][d['NWOT']] * 100
+        LiftPointsVsFuelConsClutch['LapDistPctApex'] = d['LapDistPct'][d['NApex']] * 100
+        LiftPointsVsFuelConsClutch['LapDistPctBrake'] = d['LapDistPct'][d['NBrake']] * 100
+        LiftPointsVsFuelConsClutch['LapDistPctReference'] = d['LapDistPct'][d['NReference']] * 100
+
+        LiftPointsVsFuelConsClutch['SetupName'] = d['DriverInfo']['DriverSetupName']
+        LiftPointsVsFuelConsClutch['CarSetup'] = d['CarSetup']
+        LiftPointsVsFuelConsClutch['ibtFileName'] = ibtPath
+        LiftPointsVsFuelConsClutch['tLapVFuelPolyFit'] = tLapVFuelPolyFit
+
+        LiftPointsVsFuelConsClutch['LapDistPctLift'] = LiftPointsVsFuelConsClutch['LapDistPctLift'].transpose() * 100
+        LiftPointsVsFuelConsClutch['VFuelBudget'] = LiftPointsVsFuelConsClutch['VFuelBudget'].transpose()
+        LiftPointsVsFuelConsClutch['VFuelLift'] = LiftPointsVsFuelConsClutch['VFuelLift'].transpose()
+        LiftPointsVsFuelConsClutch['VFuelReference'] = LiftPointsVsFuelConsClutch['VFuelReference'].transpose()
+        LiftPointsVsFuelConsClutch['LiftPoints'] = np.roll(LiftPointsVsFuelConsClutch['LiftPoints'], 1, axis=1).transpose()
+        # LiftPointsVsFuelConsClutch['LiftPoints'] = LiftPointsVsFuelConsClutch['LiftPoints'].transpose()
+        LiftPointsVsFuelConsClutch['SFuelConfigCarName'] = car.name
+        LiftPointsVsFuelConsClutch['SFuelConfigTrackName'] = d['WeekendInfo']['TrackName']
+
+        # export data
+        saveJson(LiftPointsVsFuelConsClutch, resultsDirPath, True)
 
     print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCompleted Fuel Saving Optimisation!')
 

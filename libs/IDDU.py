@@ -18,10 +18,9 @@ state = [0, 0, 0, 0]
 
 
 class JoystickUpdater(threading.Thread):
-
     running = False
 
-    def __init__(self, h,  *args, **kwargs):
+    def __init__(self, h, *args, **kwargs):
         super(JoystickUpdater, self).__init__(*args, **kwargs)
         threading.Thread.__init__(self)
         self.h = h
@@ -43,9 +42,9 @@ class Joystick:
         self.vid = 0
         self.pid = 0
         self.oldState = None
-        self.ButtonStates = np.array([0]*self.NButton)
-        self.BButtonReleased = np.array([0]*self.NButton)
-        self.BButtonPressed = np.array([0]*self.NButton)
+        self.ButtonStates = np.array([0] * self.NButton)
+        self.BButtonReleased = np.array([0] * self.NButton)
+        self.BButtonPressed = np.array([0] * self.NButton)
 
         # self.serial = serial.Serial('COM8', 9600, timeout=1)
         #
@@ -53,7 +52,6 @@ class Joystick:
         # self.serial.write(msg)
 
         self.h = hid.device()
-
 
     def connect(self, vid, pid):
         self.vid = vid
@@ -64,22 +62,22 @@ class Joystick:
     def update(self):
         global state
         oldState = self.ButtonStates
-        self.ButtonStates = np.array([0]*self.NButton)
+        self.ButtonStates = np.array([0] * self.NButton)
 
         for i in range(len(state)):
             x = state[i]
             for k in range(0, 8):
-                n = i*8 + k
+                n = i * 8 + k
                 if x & np.power(2, k):
                     self.ButtonStates[n] = 1
 
         self.BButtonReleased = np.clip(oldState - self.ButtonStates, 0, 1)
         self.BButtonPressed = np.clip(self.ButtonStates - oldState, 0, 1)
 
-    def isPressed(self, NButton:int):
+    def isPressed(self, NButton: int):
         return self.ButtonStates[NButton]
 
-    def ButtonPressedEvent(self, NButton:int):
+    def ButtonPressedEvent(self, NButton: int):
         if self.BButtonPressed[NButton]:
             self.BButtonPressed[NButton] = 0
             return 1
@@ -128,6 +126,8 @@ class IDDUItem:
     LMP1 = (255, 218, 89)
     LMP2 = (51, 206, 255)
 
+    CarsWithABS = ['MX-5 Cup']
+
     ir = irsdk.IRSDK()
 
     vjoy = pyvjoy.VJoyDevice(2)
@@ -148,7 +148,7 @@ class IDDUItem:
 
     MarcsJoystick = J
 
-    Pedals =  Joystick()
+    Pedals = Joystick()
     Pedals.connect(12471, 4097)
 
     def __init__(self):
@@ -165,7 +165,7 @@ class IDDUItem:
 
         for i in range(pygame.joystick.get_count()):
             self.joystickList.append(pygame.joystick.Joystick(i).get_name())
-            self.logger.info('Joystick {}: {}'. format(i, pygame.joystick.Joystick(i).get_name()))
+            self.logger.info('Joystick {}: {}'.format(i, pygame.joystick.Joystick(i).get_name()))
 
     def initJoystick(self, name):
         desiredJoystick = None
@@ -191,7 +191,7 @@ class IDDUItem:
         self.vjoy.set_button(ID, 1)
         time.sleep(t)
         self.vjoy.set_button(ID, 0)
-    
+
     def stopJU(self):
         self.ju.running = False
 
@@ -218,7 +218,7 @@ class IDDUThread(IDDUItem, threading.Thread):
     tAvg = 0
     NCalls = np.uint64(0)
     running = False
-    
+
     def __init__(self, rate, *args, **kwargs):
         IDDUItem.__init__(self)
         threading.Thread.__init__(self)
@@ -230,13 +230,13 @@ class IDDUThread(IDDUItem, threading.Thread):
     def tic(self):
         self.tStart = time.perf_counter()
         self.NCalls = np.uint64(self.NCalls + 1)
-    
+
     def toc(self):
         tExec = (time.perf_counter() - self.tStart) * 1000
         self.tMin = np.min([self.tMin, tExec])
         self.tMax = np.max([self.tMax, tExec])
-        self.tAvg = (self.tAvg * (self.NCalls-1) + tExec) / self.NCalls
-        
+        self.tAvg = (self.tAvg * (self.NCalls - 1) + tExec) / self.NCalls
+
     def stop(self):
         self.stopJU()
         self.running = False

@@ -57,7 +57,7 @@ class Car:
         }
         self.pBrakeFMax = 0
         self.pBrakeRMax = 0
-        self.rGearRatios = [0]*8
+        self.rGearRatios = {'base': [0]*8}
         self.rSlipMapAcc = [2.5, 4, 6.5, 9]
         self.rSlipMapBrk = [-2.5, -4, -6.5, -9]
         self.rABSActivityMap = [-1, -5, -10, -15]
@@ -170,8 +170,8 @@ class Car:
         self.Coasting['CarSetup'] = CarSetup
         self.Coasting['BValid'] = True
 
-    def setGearRatios(self, rGearRatios):
-        self.rGearRatios = rGearRatios
+    def setGearRatios(self, rGearRatios, GearID):
+        self.rGearRatios[GearID] = rGearRatios
 
     def addLapTime(self, trackName, tLap, LapDistPct, LapDistPctTrack, VFuelLap):
         self.tLap[trackName] = np.interp(LapDistPctTrack, LapDistPct, tLap).tolist()
@@ -234,8 +234,11 @@ class Car:
                 if 'CarSetup' in self.UpshiftSettings:
                     del self.UpshiftSettings['CarSetup']
                 self.UpshiftSettings['base'] = temp
-                self.save(path)
 
+        if not isinstance(self.rGearRatios, dict):
+            temp = self.rGearRatios
+            self.rGearRatios = {'base': temp}
+        self.save(path)
         IDDU.IDDUItem.logger.info('Loaded car ' + path)
 
 
@@ -245,12 +248,13 @@ class Car:
         if not pBrakeRMax == 0:
             self.pBrakeRMax = pBrakeRMax
 
-    def MotecXMLexport(self, rootPath=str, MotecPath=str) -> None:
+    def MotecXMLexport(self, rootPath=str, MotecPath=str, GearID=str) -> None:
         """
         Exports all calculated vehilce parameters to a Motec readable XML file
 
         :param rootPath: Path to project  directory
         :param MotecPath: Path to Motec project directory
+        :param GearID: String describing current gearbox configuration
         :return:
         """
 
@@ -278,13 +282,13 @@ class Car:
         doc['Maths']['@Condition'] = '\'Vehicle Id\' == "{}"'.format(self.carPath)
 
         # shift RPM
-        if self.UpshiftSettings['base']['BValid']:
+        if self.UpshiftSettings[GearID]['BValid']:
             for i in range(0, self.NGearMax):
-                write2XML('nMotorShiftGear{}'.format(i+1), self.UpshiftSettings['base']['nMotorShiftOptimal'][i], 'rpm')
+                write2XML('nMotorShiftGear{}'.format(i+1), self.UpshiftSettings[GearID]['nMotorShiftOptimal'][i], 'rpm')
         # gear ratios
-        if self.UpshiftSettings['base']['BValid'] or self.Coasting['BValid']:
+        if self.UpshiftSettings[GearID]['BValid'] or self.Coasting['BValid']:
             for i in range(1, self.NGearMax + 1):
-                write2XML('rGear{}'.format(i), self.rGearRatios[i], 'ratio')
+                write2XML('rGear{}'.format(i), self.rGearRatios[GearID][i], 'ratio')
 
         # coasting
         if self.Coasting['BValid']:

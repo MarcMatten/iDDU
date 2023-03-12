@@ -68,7 +68,7 @@ class SerialComsThread(IDDUThread):
                     SlipLEDsRR = 0
 
                     # ABS Activation
-                    if self.db.config['NSlipLEDMode'] in [1, 2, 3] and 'dcABS' in self.db.car.dcList:
+                    if self.db.config['NSlipLEDMode'] in [1, 2, 3] and ('dcABS' in self.db.car.dcList or self.db.car.name in self.CarsWithABS):
                         SlipLEDsFL = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
                         SlipLEDsFR = np.int8(min(max(self.db.rABSActivity[1], 0), 4))
                         SlipLEDsRL = np.int8(min(max(self.db.rABSActivity[2], 0), 4))

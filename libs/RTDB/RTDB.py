@@ -1,10 +1,12 @@
-import time
-from libs import Car, Track
 import os
-from libs.auxiliaries import importExport
-from libs.IDDU import IDDUThread
+import time
+
 import numpy as np
+
+from libs import Car, Track
 from libs import IDDU
+from libs.IDDU import IDDUThread
+from libs.auxiliaries import importExport
 
 
 class RTDB:
@@ -65,14 +67,14 @@ class RTDB:
         if not os.path.exists(snapshotDir):
             os.mkdir(snapshotDir)
 
-        nameStr = time.strftime(snapshotDir + "%Y_%m_%d-%H-%M-%S", time.localtime())+'_RTDBsnapshot'
+        nameStr = time.strftime(snapshotDir + "%Y_%m_%d-%H-%M-%S", time.localtime()) + '_RTDBsnapshot'
 
         variables = list(self.__dict__.keys())
         variables.remove('car')
         variables.remove('track')
 
-        self.car.save(self.dir, nameStr+'_car')
-        self.track.save(self.dir, nameStr+'_track')
+        self.car.save(self.dir, nameStr + '_car')
+        self.track.save(self.dir, nameStr + '_track')
 
         self.WeekendInfo['WeekendOptions']['Date'] = str(self.WeekendInfo['WeekendOptions']['Date'])
 
@@ -83,7 +85,7 @@ class RTDB:
 
         importExport.saveJson(data, nameStr + '.json')
 
-        IDDU.IDDUItem.logger.info('Saved snapshot: ' + nameStr+'.json')
+        IDDU.IDDUItem.logger.info('Saved snapshot: ' + nameStr + '.json')
 
     def loadSnapshot(self, name):
         self.StopDDU = True
@@ -102,8 +104,6 @@ class RTDB:
         self.track = Track.Track('default')
         self.track.load(trackPath)
         self.map = self.track.map
-
-
 
         data['DDUrunning'] = False
         data['StopDDU'] = True
@@ -151,7 +151,7 @@ class RTDBThread(IDDUThread):
                 # self.ir.unfreeze_var_buffer_latest()
 
                 # Mapping CarIdx for DriverInfo['Drivers']
-                self.db.CarIdxMap = [None]*64
+                self.db.CarIdxMap = [None] * 64
                 for i in range(0, len(self.db.DriverInfo['Drivers'])):
                     self.db.CarIdxMap[self.db.DriverInfo['Drivers'][i]['CarIdx']] = i
 
@@ -169,7 +169,6 @@ class RTDBThread(IDDUThread):
 
 
 class AlertManager:
-
     white = (255, 255, 255)
     red = (255, 0, 0)
     green = (0, 255, 0)
@@ -181,7 +180,7 @@ class AlertManager:
     cyan = (0, 255, 255)
     purple = (255, 0, 255)
     alarms = []
-    
+
     def __init__(self):
         pass
 
@@ -189,7 +188,7 @@ class AlertManager:
         self.PITLIMITERACTIVE = Alarm('PIT LIMITER', self.blue, self.white, 4, 59, -1)
         self.ENGINESTALLED = Alarm('ENGINE STALLED', self.yellow, self.black, 4, 89, -1)
         self.FLASH = Alarm('FLASH', self.green, self.white, 5, 99, 2)
-        self.PITLIMITEROFF = Alarm('PIT LIMITER OFF', self.red, self.white, 4, 83 , -1)
+        self.PITLIMITEROFF = Alarm('PIT LIMITER OFF', self.red, self.white, 4, 83, -1)
         self.OILPRESSURE = Alarm('LOW OIL PRESSURE', self.red, self.white, 4, 87, -1)
         self.FUELPRESSURE = Alarm('LOW FUEL PRESSURE', self.red, self.white, 4, 88, -1)
         self.WATERTEMP = Alarm('WATER TEMP HIGH', self.red, self.white, 4, 99, -1)
@@ -202,13 +201,13 @@ class AlertManager:
         self.DISQUALIFIED = Alarm('DISQUALIFIED', self.white, self.black, 0, 94)
         self.P2PON = Alarm('P2P ON', self.green, self.white, 1, 99, 1)
         self.P2POFF = Alarm('P2P OFF', self.white, self.black, 1, 99, 1)
-        self.TCOFF = Alarm('TC OFF', self.red, self.white, 5, 99, 5)        
-        self.CANCELLIFT = Alarm('CANCEL LIFT', self.green, self.white, 0, 99, 1)
+        self.TCOFF = Alarm('TC OFF', self.red, self.white, 5, 99, 5)
+        self.CANCELLIFT = Alarm('CANCEL LIFT', self.green, self.white, 0, 99, 10)
 
     def raiseAlert(self):
 
         self.tRaised = time.time()
-               
+
         if not self.BActive and not self.BIgnore and not self.BSurpress:
             self.BActive = True
 
@@ -233,7 +232,7 @@ class AlertManager:
         self.tRaised = 0
         self.tSurpress = 0
         self.cancelAlert()
-    
+
     def resetAll(self):
         for i in self.__dir__():
             if type(self.__getattribute__(i)) == Alarm:
@@ -261,7 +260,7 @@ class AlertManager:
                 if time.time() - AlertManager.alarms[i].tSurpress > AlertManager.alarms[i].tSurpressDuration:
                     AlertManager.alarms[i].BSurpress = False
                     AlertManager.alarms[i].tSurpress = 0
-        
+
             if AlertManager.alarms[i].tDuration:
                 if AlertManager.alarms[i].tDuration == -1:
                     if AlertManager.alarms[i].tRaised:
@@ -269,14 +268,14 @@ class AlertManager:
                     else:
                         AlertManager.alarms[i].BActive = False
                         AlertManager.alarms[i].cancelAlert()
-                        i = max(0,i-1)
+                        i = max(0, i - 1)
                     # return
                 else:
                     if time.time() - AlertManager.alarms[i].tRaised >= AlertManager.alarms[i].tDuration:
                         AlertManager.alarms[i].BActive = False
                         AlertManager.alarms[i].tRaised = 0
                         AlertManager.alarms[i].cancelAlert()
-                        i = max(0,i-1)
+                        i = max(0, i - 1)
             i += 1
 
     def display(self, n: int = 1):
@@ -304,7 +303,6 @@ class AlertManager:
 
 
 class Alarm(AlertManager):
-
     BActive = False
 
     def __init__(self,
@@ -313,12 +311,12 @@ class Alarm(AlertManager):
                  textcolour: tuple,
                  f: float = 0,
                  priority: int = 0,
-                 tDuration: float = -1,              # how long to be active
-                 tRaised: float = 0,                 # when it became active
-                 tSurpress: float = 0,               # when it was surpressed
-                 tSurpressDuration: float = 90,      # for how long to surpress
-                 BIgnore: bool = False,              # ignore completely
-                 BSurpress: bool = False):           # surpress
+                 tDuration: float = -1,  # how long to be active
+                 tRaised: float = 0,  # when it became active
+                 tSurpress: float = 0,  # when it was surpressed
+                 tSurpressDuration: float = 90,  # for how long to surpress
+                 BIgnore: bool = False,  # ignore completely
+                 BSurpress: bool = False):  # surpress
 
         AlertManager.__init__(self)
         self.name = name

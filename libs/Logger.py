@@ -43,9 +43,21 @@ class LoggerThread(IDDUThread):
 
         self.keys = ['SessionTime',
                      'Speed',
-                     'ThrottleRaw',                    
-                     'rThrottleRead',
                      'Throttle', 
+                     'LapDistPct',
+                     'Brake', 
+                     'Clutch', 
+                     'LapDistPct',
+                     'Lap',
+                     'NNextLiftPoint',
+                     'BInLiftZone',
+                     'BEnableAutoLift',
+                     'BForceLift',
+                     'BForceClutch',
+                     'VFuelBudgetActive',
+                     'VFuelStartStraight',
+                     'tNextLiftPoint',
+                     'BLiftToneRequest'
                      ]
 
         self.header = 'Time'

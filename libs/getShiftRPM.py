@@ -16,11 +16,12 @@ from libs.getGearRatios import getGearRatios
 
 
 def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: str = None):
-
-
-    tReaction = 0.3  # TODO: as input to tune from GUI
+    # TODO: as input to tune from GUI
+    tReaction = 0.3
     tLEDs = np.array([1, 0.5, 0])
     BUseMaxRPM = False
+    RPMLimits = None
+    # RPMLimits = (5200, 7050)
 
     root = tk.Tk()
     root.withdraw()
@@ -83,10 +84,16 @@ def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: st
     d['BShiftRPM'] = np.logical_and(d['BStraightLine'], d['BWOT'])
     if d['WeekendInfo']['Category'] == 'Oval':
         d['BShiftRPM'] = np.logical_and(d['BShiftRPM'], d['gLong'] > 0.01)
-        minRPM = 0.5 * car.iRShiftRPM[0]
+        if RPMLimits:
+            minRPM = RPMLimits[0]
+        else:
+            minRPM = 0.7 * car.iRShiftRPM[-1]
     else:
         d['BShiftRPM'] = np.logical_and(d['BShiftRPM'], d['gLong'] > 0.3)
-        minRPM = 0.7 * car.iRShiftRPM[0]
+        if RPMLimits:
+            minRPM = RPMLimits[0]
+        else:
+            minRPM = 0.7 * car.iRShiftRPM[-1]
     d['BShiftRPM'] = np.logical_and(d['BShiftRPM'], d['RPM'] > minRPM)
 
     plt.ioff()
@@ -114,7 +121,11 @@ def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: st
 
         d['BGear'].append(np.logical_and(d['BShiftRPM'], d['Gear'] == NGear[i]))
 
-        maxRPM.append(np.max(d['RPM'][d['BGear'][i]]))
+        if RPMLimits:
+            maxRPM.append(RPMLimits[1])
+        else:
+            maxRPM.append(np.max(d['RPM'][d['BGear'][i]]))
+
         vCarTemp = d['vCar'][d['BGear'][i]]
         vCarMaxgLong.append(vCarTemp[np.argmax(d['gLong'][d['BGear'][i]])])
         vCarMaxGear = np.max(d['vCar'][d['BGear'][i]])
@@ -126,6 +137,10 @@ def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: st
         tempBRPMRange = np.logical_and(tempBRPMRange, filters.movingAverage(d['EngineWarnings'], 6) < 1)
 
         d['BRPMRange'].append(tempBRPMRange)
+
+        # sigma = np.ones(len(tempBRPMRange))
+        # sigma[0:5] = 0.01
+        # sigma[-5:-1] = 0.01
 
         PolyFitTemp, temp = scipy.optimize.curve_fit(maths.polyVal, d['vCar'][d['BRPMRange'][i]], d['gLong'][d['BRPMRange'][i]], [0, 0, 0, 0])
         gLongPolyFit.append(PolyFitTemp)
@@ -197,9 +212,9 @@ def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: st
     if GearID == '':
         GearID = 'base'
     car.setShiftRPM(nMotorShiftOptimal, vCarShiftOptimal, nMotorShiftTarget, vCarShiftTarget, NGear[0:-1], d['DriverInfo']['DriverSetupName'], d['CarSetup'], int(max(NGear)), nMotorShiftLEDs, GearID)
-    car.setGearRatios(rGearRatios)
+    car.setGearRatios(rGearRatios, GearID)
     car.save(carFilePath)
-    car.MotecXMLexport(dirPath, MotecProjectPath)
+    car.MotecXMLexport(dirPath, MotecProjectPath, GearID)
 
     print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCompleted Upshift calculation!')
 

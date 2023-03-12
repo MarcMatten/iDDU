@@ -55,17 +55,53 @@
         46,
         47
     ],
+    "dcFCYToggle": [
+        50,
+        51
+    ],
+    "dcFuelCutPosition": [
+        52,
+        53
+    ],
     "dcFuelMixture": [
         4,
         5
+    ],
+    "dcFuelNoCutToggle": [
+        54,
+        55
+    ],
+    "dcHysBoostHold": [
+        56,
+        57
+    ],
+    "dcHysNoBoostToggle": [
+        58,
+        59
+    ],
+    "dcInLapToggle": [
+        60,
+        61
     ],
     "dcLaunchRPM": [
         22,
         23
     ],
+    "dcLowFuelAccept": [
+        62,
+        63
+    ],
+    "dcMGUKDeployFixed": [
+        64,
+        65
+    ],
     "dcMGUKDeployMode": [
         48,
         49
+    ],
+    "dcMGUKRegenGain": [
+        66,
+        67
     ],
     "dcPeakBrakeBias": [
         24,
@@ -90,6 +126,14 @@
     "dcTractionControl2": [
         10,
         11
+    ],
+    "dcTractionControl3": [
+        68,
+        69
+    ],
+    "dcTractionControl4": [
+        70,
+        71
     ],
     "dcTriggerWindshieldWipers": [
         28,

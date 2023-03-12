@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def getGearRatios(d, resultsDirPath):
+
     NGearMax = np.max(d['Gear'])
     rGearRatioList = [None] * (NGearMax + 1)
     vCarList = [None] * (NGearMax + 1)
@@ -21,7 +22,7 @@ def getGearRatios(d, resultsDirPath):
             rGearRatios[k] = None
         else:
             rGearRatios[k] = np.mean(rGearRatioList[k])
-            plt.scatter(vCarList[k], rGearRatioList[k], zorder=90, label='Gear {}: {}'.format(k, rGearRatios[k]), marker=".")
+            plt.scatter(vCarList[k], rGearRatioList[k], zorder=90, label='Gear {}: {}'.format(k, np.round(rGearRatios[k], 3)), marker=".")
             plt.plot([10, 100], [rGearRatios[k], rGearRatios[k]], zorder=95)
 
     plt.legend()

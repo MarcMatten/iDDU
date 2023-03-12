@@ -420,7 +420,8 @@ calcData = {'startUp': False,
             'BForceClutch': False,
             'BEnableAutoLift': True,
             'BInLiftZone': False,
-            'BEnableAutoClutch': True
+            'BEnableAutoClutch': True,
+            'GearID': 'base'
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

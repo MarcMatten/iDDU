@@ -73,6 +73,7 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     d['BCoasting'] = np.logical_and(d['BCoasting'], d['RPM'] < (maxRPM - 250))
     d['BCoasting'] = np.logical_and(d['BCoasting'], d['BStraightLine'])
     d['BCoastingInGear'] = np.logical_and(d['BCoasting'], d['rClutch'] > 0.5)
+    d['BCoastingClutch'] = np.logical_and(d['BCoasting'], d['rClutch'] == 0)
 
     cmap = plt.get_cmap("tab10")
 
@@ -94,12 +95,13 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     vCarList = [None] * (NGearMax + 1)
 
     for i in range(0, np.max(d['Gear'])+1):
-        d['BGear'][i] = np.logical_and(d['BCoastingInGear'], d['Gear'] == NGear[i])
 
         if i == 0:
-            gLongPolyFit[i] = np.array([0, 0, 0])
-            QFuelPolyFit[i] = np.array([0, 0, 0])
+            d['BGear'][i] = d['BCoastingClutch']
+            gLongPolyFit[i], _ = scipy.optimize.curve_fit(maths.polyVal, d['vCar'][d['BGear'][i]], d['gLong'][d['BGear'][i]], [0, 0, 0])
+            QFuelPolyFit[i], _ = scipy.optimize.curve_fit(maths.polyVal, d['vCar'][d['BGear'][i]], d['QFuel'][d['BGear'][i]], [0, 0, 0])
         else:
+            d['BGear'][i] = np.logical_and(d['BCoastingInGear'], d['Gear'] == NGear[i])
             gLongPolyFit[i], _ = scipy.optimize.curve_fit(maths.polyVal, d['vCar'][d['BGear'][i]], d['gLong'][d['BGear'][i]], [0, 0, 0])
             QFuelPolyFit[i], _ = scipy.optimize.curve_fit(maths.polyVal, d['vCar'][d['BGear'][i]], d['QFuel'][d['BGear'][i]], [0, 0, 0])
 
@@ -108,9 +110,8 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
             rGearRatioList[i] = [d['RPM'][d['BGear'][i]] / 60 * np.pi / ((d['vWheelRL'][d['BGear'][i]] + d['vWheelRR'][d['BGear'][i]]) / 2 / 0.3)]
 
         # plot gLong vs vCar
-        if i > 0:
-            plt.scatter(d['vCar'][d['BGear'][i]], d['gLong'][d['BGear'][i]], color=cmap(i), marker=".")
-            plt.plot(vCar, maths.polyVal(vCar, gLongPolyFit[i]), color=cmap(i + 1), label='Gear {}'.format(i))
+        plt.scatter(d['vCar'][d['BGear'][i]], d['gLong'][d['BGear'][i]], color='k', marker=".")
+        plt.plot(vCar, maths.polyVal(vCar, gLongPolyFit[i]), color=cmap(i), label='Gear {}'.format(i))
 
     plt.legend()
     plt.savefig(resultsDirPath + '/roll_out_curve.png', dpi=300, orientation='landscape', progressive=True)
@@ -125,8 +126,8 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     # plot QFuel vs vCar
     for i in range(0, NGearMax + 1):
         if i > 0 or any(d['BGear'][i]):
-            plt.scatter(d['vCar'][d['BGear'][i]], d['QFuel'][d['BGear'][i]], color=cmap(i), marker=".")
-            plt.plot(vCar, maths.polyVal(vCar, QFuelPolyFit[i]), color=cmap(i + 1), label='Gear {}'.format(i))
+            plt.scatter(d['vCar'][d['BGear'][i]], d['QFuel'][d['BGear'][i]], color='k', marker=".")
+            plt.plot(vCar, maths.polyVal(vCar, QFuelPolyFit[i]), color=cmap(i), label='Gear {}'.format(i))
 
     plt.legend()
     plt.savefig(resultsDirPath + '/coasting_fuel_consumption.png', dpi=300, orientation='landscape', progressive=True)
@@ -148,10 +149,13 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     plt.savefig(resultsDirPath + '/rGearRatio.png', dpi=300, orientation='landscape', progressive=True)
 
     # save so car file
+    GearID = car.getGearID(d['CarSetup'])
+    if GearID == '':
+        GearID = 'base'
     car.setCoastingData(gLongPolyFit, QFuelPolyFit, NGear, d['DriverInfo']['DriverSetupName'], d['CarSetup'])
-    car.setGearRatios(rGearRatios)
+    car.setGearRatios(rGearRatios, GearID)
     car.save(carFilePath)
-    car.MotecXMLexport(dirPath, MotecProjectPath)
+    car.MotecXMLexport(dirPath, MotecProjectPath, GearID)
 
     print(time.strftime("%H:%M:%S", time.localtime()) + ':\tCompleted roll-out calculation!')
 

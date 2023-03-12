@@ -75,6 +75,10 @@ class RaceLapsEstimationThread(IDDUThread):
                         else:
                             self.db.config['RaceLaps'] = self.db.config['UserRaceLaps']
 
+                    # elif self.db.config['BEnableRaceLapEstimation']:
+                    #     if self.db.WeekendInfo['TrackName'] in self.db.car.tLap:
+
+
                     if self.db.NClasses > 1:
                         temp = 'SOF: ' + convertString.roundedStr0(self.db.SOF) + ' ('
                         keys = list(self.db.classStruct.keys())

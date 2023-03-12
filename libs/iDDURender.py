@@ -280,7 +280,8 @@ class RenderScreen(RenderMain):
                 self.page0()    
 
             if self.db.BLoadRaceSetupWarning:
-                self.warningLabel('LOAD RACE SETUP!', self.yellow, self.black, 3)
+                # self.warningLabel('LOAD RACE SETUP!', self.yellow, self.black, 3)
+                self.db.AM.LOADRACESETUP.raiseAlert()
 
             if self.db.startUp and self.db.IsOnTrack:
 

@@ -132,10 +132,10 @@ class ShiftToneThread(IDDUThread):
     def beep(self):
         # self.db.Alarm[7] = 3
         if time.time() > (self.tBeep + 0.75):
-            self.vjoy.set_button(63, 1)
+            self.vjoy.set_button(64, 1)
             winsound.Beep(self.db.config['fShiftBeep'], self.db.config['tShiftBeep'])
             self.tBeep = time.time()
-            self.vjoy.set_button(63, 0)
+            self.vjoy.set_button(64, 0)
 
             if (not self.BShiftTone) and self.oldGear == self.db.Gear:
                 self.BShiftTone = True
@@ -183,7 +183,17 @@ class ShiftToneThread(IDDUThread):
                                                        np.array(self.BlinkRPM)),
                                                       axis=None)
 
-        self.nMotorLED[self.db.car.NGearMax, :] = self.nMotorLED[self.db.car.NGearMax - 1, :]
+        # self.nMotorLED[self.db.car.NGearMax, :] = self.nMotorLED[self.db.car.NGearMax - 1, :]
+        # self.nMotorLED[self.db.car.NGearMax, :] = np.concatenate((np.linspace(self.db.iRShiftRPM[0], self.db.iRShiftRPM[1], 4)[0:3],
+        #                                                           np.linspace(self.db.iRShiftRPM[1], self.db.iRShiftRPM[2], 4),
+        #                                                           np.array(self.BlinkRPM)),
+        #                                                          axis=None)
+        self.nMotorLED[self.db.car.NGearMax, :] = np.concatenate((np.linspace((self.FirstRPM+self.ShiftRPM)/2, self.ShiftRPM, 4)[0:3],
+                                                                  np.linspace(self.ShiftRPM, (self.LastRPM+self.BlinkRPM)/2, 4),
+                                                                  np.array(self.BlinkRPM)),
+                                                                 axis=None)
+
+
 
         # avoid case where BlinkRPM < nMotorShift causes limiter to flash too early
         self.nMotorLED[:, -1] = np.maximum(self.nMotorLED[:, -1], self.nMotorLED[:, -2] + (self.nMotorLED[:, -2] - self.nMotorLED[:, -3]))

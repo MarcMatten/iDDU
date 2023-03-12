@@ -91,6 +91,13 @@ class MultiSwitch(MultiSwitchThread):
                 if self.MarcsJoystick.isPressed(2) and self.MarcsJoystick.isPressed(6):
                     self.db.AM.resetAll()
 
+                # forward Driver Marker
+                if self.MarcsJoystick.ButtonPressedEvent(6):
+                    self.vjoy.set_button(64, 1)
+                if self.MarcsJoystick.ButtonReleasedEvent(6):
+                    self.vjoy.set_button(64, 0)
+
+
                 currentAlarm = self.db.AM.currentAlarm()
                 if currentAlarm in range(0, len(self.db.AM.alarms)):
                     # ACK
@@ -119,7 +126,7 @@ class MultiSwitch(MultiSwitchThread):
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
-                    if self.MarcsJoystick.ButtonPressedEvent(13) :
+                    if self.MarcsJoystick.ButtonPressedEvent(13):
                         self.mapDDU[self.mapDDUList[self.db.NRotaryL]].increase()  
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
@@ -231,7 +238,7 @@ class MultiSwitch(MultiSwitchThread):
                 #     self.db.dcChangeTime = time.time()
 
             # Rotatries
-            BRotaryStates = self.MarcsJoystick.isPressed(range(16,40))
+            BRotaryStates = self.MarcsJoystick.isPressed(range(16, 40))
             BRotaryStatesL = list(BRotaryStates[0:12])
             BRotaryStatesR = list(BRotaryStates[12:24])
 
