@@ -1,0 +1,222 @@
+{
+    "BDRS": false,
+    "BP2P": false,
+    "Coasting": {
+        "CarSetup": {},
+        "NGear": [],
+        "QFuelCoastPolyFit": [],
+        "SetupName": "SetupName",
+        "gLongCoastPolyFit": []
+    },
+    "NABSDisabled": 0,
+    "NGearMax": 4,
+    "NTC1Disabled": 0,
+    "NTC2Disabled": 0,
+    "UpshiftSettings": {
+        "BShiftTone": [
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false
+        ],
+        "BValid": true,
+        "CarSetup": {
+            "Chassis": {
+                "Front": {
+                    "ArbDiameter": "19.05 mm",
+                    "BrakePressureBias": "64.6%",
+                    "ScreenColor": "Yellow",
+                    "SpringPreload": "0.0 Turns"
+                },
+                "LeftFront": {
+                    "Camber": "-1.5 deg",
+                    "CornerWeight": "1082 N",
+                    "RideHeight": "51.1 mm",
+                    "ShockSetting": "1 clicks",
+                    "ToeIn": "-1.0 mm"
+                },
+                "LeftRear": {
+                    "Camber": "-2.1 deg",
+                    "CornerWeight": "1264 N",
+                    "ToeIn": "+0.0 mm"
+                },
+                "Rear": {
+                    "FuelLevel": "7.0 L",
+                    "PushrodOffset": "31.7 mm",
+                    "RideHeight": "129.9 mm",
+                    "ShockSetting": "5 clicks",
+                    "SpringPerchOffset": "76.8 mm",
+                    "SpringRate": "26 N/mm"
+                },
+                "RightFront": {
+                    "Camber": "-1.5 deg",
+                    "CornerWeight": "1082 N",
+                    "RideHeight": "51.1 mm",
+                    "ShockSetting": "1 clicks",
+                    "ToeIn": "-1.0 mm"
+                },
+                "RightRear": {
+                    "Camber": "-2.1 deg",
+                    "CornerWeight": "1264 N",
+                    "ToeIn": "+0.0 mm"
+                }
+            },
+            "Tires": {
+                "LeftFront": {
+                    "ColdPressure": "117 kPa",
+                    "LastHotPressure": "117 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "LeftRear": {
+                    "ColdPressure": "117 kPa",
+                    "LastHotPressure": "117 kPa",
+                    "LastTempsOMI": "44C, 44C, 44C",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightFront": {
+                    "ColdPressure": "117 kPa",
+                    "LastHotPressure": "117 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
+                    "TreadRemaining": "100%, 100%, 100%"
+                },
+                "RightRear": {
+                    "ColdPressure": "117 kPa",
+                    "LastHotPressure": "117 kPa",
+                    "LastTempsIMO": "44C, 44C, 44C",
+                    "TreadRemaining": "100%, 100%, 100%"
+                }
+            },
+            "UpdateCount": 1
+        },
+        "NGear": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "SetupName": "baseline.sto",
+        "nMotorShiftOptimal": [
+            6625.488047114135,
+            6651.809838239187,
+            6501.275002249814,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "nMotorShiftTarget": [
+            5819.979121994155,
+            6416.860535582418,
+            6453.216144717287,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vCarShiftOptimal": [
+            11.911026094464678,
+            22.20201893248735,
+            36.84553563399691,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vCarShiftTarget": [
+            10.408033392883684,
+            21.370621312559976,
+            36.56828553386719,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "UpshiftStrategy": 5,
+    "UserShiftFlag": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+    ],
+    "UserShiftRPM": [
+        4000,
+        4000,
+        4000,
+        4000,
+        4000,
+        4000,
+        4000
+    ],
+    "VFuelLap": {},
+    "carPath": "formulavee",
+    "dcList": {
+        "dcBrakeBias": [
+            "BrakeBias",
+            true,
+            1
+        ],
+        "dcDashPage": [
+            "DashPage",
+            false,
+            0
+        ],
+        "dcStarter": [
+            "Starter",
+            false,
+            0
+        ],
+        "dcTearOffVisor": [
+            "TearOffVisor",
+            false,
+            0
+        ]
+    },
+    "iRShiftRPM": [
+        6000.0,
+        6500.0,
+        7000.0,
+        7500.0
+    ],
+    "name": "Formula Vee",
+    "pBrakeFMax": 0,
+    "pBrakeRMax": 0,
+    "rABSActivityMap": [
+        -2,
+        -10,
+        -15
+    ],
+    "rGearRatios": [
+        null,
+        8.539447792886763,
+        4.640900211147124,
+        2.746288868373802,
+        2.006910267550365
+    ],
+    "rSlipMapAcc": [
+        4.5,
+        7,
+        8.5
+    ],
+    "rSlipMapBrk": [
+        -4.5,
+        -7,
+        -8.5
+    ],
+    "tLap": {}
+}
