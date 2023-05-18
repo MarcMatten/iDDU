@@ -103,6 +103,9 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.NPosition = self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions'][i]['Position']
                                 self.db.BResults = True
 
+                    if self.db.IsInGarage:
+                        self.db.FuelLevelDisp = self.db.FuelLevel
+
                     if self.db.BLoadRaceSetupWarning:
                         # CurrentSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
                         #                 'UpdateCount': self.db.CarSetup['UpdateCount'],
@@ -114,7 +117,7 @@ class IDDUCalcThread(IDDUThread):
                         #     if CurrentSetup['FuelLevel'] > self.db.LastSetup['FuelLevel']:
                         #         self.db.BLoadRaceSetupWarning = False
 
-                        if (not self.db.DriverInfo['DriverSetupName'] == self.db.LastSetup['DriverSetupName']) or (self.db.FuelLevel > self.db.LastSetup['FuelLevel'] + 0.5):
+                        if (not self.db.DriverInfo['DriverSetupName'] == self.db.LastSetup['DriverSetupName']) or (self.db.FuelLevelDisp > self.db.LastSetup['FuelLevel'] + 0.5):
                             self.db.BLoadRaceSetupWarning = False
 
                     if self.db.BResults:
@@ -180,7 +183,6 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.backgroundColour = self.green
                                 if not self.db.GreenTime:
                                     self.db.GreenTime = self.db.SessionTime
-                                    print('GREEN FLAG')
                                     self.db.BLoadRaceSetupWarning = False
                                     self.db.AM.LOADRACESETUP.cancelAlert()
                                 self.db.CarIdxPitStops = [0] * 64
@@ -248,6 +250,8 @@ class IDDUCalcThread(IDDUThread):
                         self.blueFlag()
                         # self.yellowFlag()
 
+                        self.db.FuelLevelDisp = self.db.FuelLevel
+
                         if self.db.RX:
                             self.db.JokerLapsRequired = self.db.WeekendInfo['WeekendOptions']['NumJokerLaps']
                             NumDrivers = len(self.db.DriverInfo['Drivers'])
@@ -288,6 +292,9 @@ class IDDUCalcThread(IDDUThread):
                             if self.db.config['BPitCommandControl']:
                                 self.ir.pit_command(0)
 
+                            # get GearID
+                            self.db.GearID = self.db.car.getGearID(self.db.CarSetup)
+
                             if self.db.FuelTGTLiftPoints['SFuelConfigCarName'] == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'] \
                                     and self.db.FuelTGTLiftPoints['SFuelConfigTrackName'] == self.db.WeekendInfo['TrackName']:
                                 self.db.BFuelSavingConfigLoaded = True
@@ -312,7 +319,7 @@ class IDDUCalcThread(IDDUThread):
 
                                 self.db.car.setpBrakeMax((pBrakeLFMax + pBrakeRFMax) / 2, (pBrakeLRMax + pBrakeRRMax) / 2)
                                 self.db.car.save(self.db.dir)
-                                self.db.car.MotecXMLexport(rootPath=self.dir, MotecPath=self.db.config['MotecProjectPath'])
+                                self.db.car.MotecXMLexport(rootPath=self.dir, MotecPath=self.db.config['MotecProjectPath'], GearID=self.db.GearID)
 
                             if not self.db.LastSetup['DriverSetupName'] == self.db.DriverInfo['DriverSetupName'] or not self.db.LastSetup['UpdateCount'] == self.db.CarSetup['UpdateCount']:
                                 self.db.BUpshiftToneInitRequest = True
@@ -320,9 +327,6 @@ class IDDUCalcThread(IDDUThread):
                             self.db.LastSetup = {'DriverSetupName': self.db.DriverInfo['DriverSetupName'],
                                                  'UpdateCount': self.db.CarSetup['UpdateCount'],
                                                  'FuelLevel': self.db.FuelLevel}
-
-                            # get GearID
-                            self.db.GearID = self.db.car.getGearID(self.db.CarSetup)
 
                         if self.db.OnPitRoad:  # do when on pit road
                             self.db.BWasOnPitRoad = True
@@ -474,7 +478,7 @@ class IDDUCalcThread(IDDUThread):
 
                         # alarm
                         if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes AMG GT4', 'Mercedes GT3 2020', 'Toyota GR86',
-                                                'Lamborghini GT3']:
+                                                'Lamborghini GT3', 'C6R', 'AM DBR9 GT1']:
                             BTcToggle = True
                             BABSToggle = True
                         else:
@@ -673,6 +677,11 @@ class IDDUCalcThread(IDDUThread):
                         self.db.oldSessionNum = -1
                         self.db.SessionNum = 0
                         self.db.StopDDU = True
+                        self.loadTrack('default')
+                        self.loadCar('default', 'default')  # TODO: required?
+                        # self.db.car = Car.Car(Driver=self.db.DriverInfo['Drivers'][self.db.DriverCarIdx])
+                        # self.db.car.createCar(self.db)
+                        # self.db.car.save(self.db.dir)
                         self.logger.info('Lost connection to iRacing')
 
                 self.db.tExecuteCalc = (time.perf_counter() - t) * 1000
@@ -836,6 +845,12 @@ class IDDUCalcThread(IDDUThread):
             else:
                 self.db.config['BEnableRaceLapEstimation'] = False
 
+            # # Fuel to finish
+            # if (self.db.WeekendInfo['TrackName'] in self.db.car.tLap or self.db.LapLimit) and self.db.WeekendInfo['TrackName'] in self.db.car.VFuelLap:
+            #     self.db.config['RaceLaps']
+
+
+
             CarNumber = len(self.db.DriverInfo['Drivers']) + 2
             if not self.db.LapLimit:
                 LapNumber = int(self.db.SessionLength / (self.db.TrackLength * 13)) + 2
@@ -976,8 +991,11 @@ class IDDUCalcThread(IDDUThread):
                             'UpdateCount': self.db.CarSetup['UpdateCount'],
                             'FuelLevel': self.db.FuelLevel}
 
-            if (self.db.DriverInfo['DriverSetupName'] == self.db.LastSetup['DriverSetupName'] or self.db.FuelLevel < 0.1 * self.db.DriverCarFuelMaxLtr) and self.BRanQuali:
+            if (self.db.DriverInfo['DriverSetupName'] == self.db.LastSetup['DriverSetupName'] or self.db.FuelLevelDisp < 0.1 * self.db.DriverCarFuelMaxLtr) and self.BRanQuali:
                 self.db.BLoadRaceSetupWarning = True
+
+            # if self.db.FuelLevelDisp < 0.99 * self.db.DriverCarFuelMaxLtr and self.db.FuelLevelDisp:
+            #     self.db.BLowRaceFuelWarning = True
 
     def loadTrack(self, name):
         self.logger.info('Loading track: ' + r"track/" + name + '.json')

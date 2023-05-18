@@ -38,7 +38,7 @@ iRData = {'LapBestLapTime': 0,
           'dcABS': 0,
           'dcABSToggle': 0,
           'dcBrakeBias': 0,
-          'FuelLevel': 96.2345,
+          'FuelLevel': 0,
           'FuelUsePerHour': 0,
           'Lap': 0,
           'IsInGarage': 0,
@@ -398,6 +398,7 @@ calcData = {'startUp': False,
             'BLEDsInit': False,
             'NShiftLEDState': 0,
             'BLoadRaceSetupWarning': False,
+            'BLowRaceFuelWarning': False,
             'LastSetup': {
                 'DriverSetupName': 'None',
                 'UpdateCount': None,
@@ -421,7 +422,8 @@ calcData = {'startUp': False,
             'BEnableAutoLift': True,
             'BInLiftZone': False,
             'BEnableAutoClutch': True,
-            'GearID': 'base'
+            'GearID': 'base',
+            'FuelLevelDisp': 0
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -451,7 +453,7 @@ inCarControls = [
     'dcBoostLevel',
     'dcDiffPreload',
     'dcWeightJackerRight',
-    None
+    'dcPeakBrakeBias'
 ]
 
 if __name__ == "__main__":

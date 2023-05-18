@@ -27,10 +27,8 @@
 /data/fuelSaving/porsche718gt4_indianapolis ovalindypit 2020-08-03 23-19-36/*.db
 /*.db
 /config.json
-/data/car
 /data/fuelSaving
 /data/shiftTone
-/data/track
 /data/rollOut
 /libs/*.pyo
 /libs/*.bak

@@ -207,7 +207,6 @@ class Car:
 
         IDDU.IDDUItem.logger.info('Saved car ' + filepath)
 
-
     def load(self, path):
         data = importExport.loadJson(path)
 
@@ -238,7 +237,8 @@ class Car:
         if not isinstance(self.rGearRatios, dict):
             temp = self.rGearRatios
             self.rGearRatios = {'base': temp}
-        self.save(path)
+
+        # self.save(path)
         IDDU.IDDUItem.logger.info('Loaded car ' + path)
 
 
@@ -319,7 +319,10 @@ class Car:
             a, _ = self.myprint(CarSetup)
             del self.tempKey, self.tempVals
         except:
-            a = ''
+            a = 'base'
+
+        if a == '':
+            a = 'base'
 
         return a
 

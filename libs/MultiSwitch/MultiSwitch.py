@@ -10,7 +10,7 @@ from libs.IDDU import IDDUItem, IDDUThread
 # 03:  TC    - switch off Traction Control
 # 04:  PIT   - Pit speed Limiter
 # 05:  RADIO - not used
-# 06:  MARK  - Ignore Alarm when Alarm active, TODO: Telemetry Marker
+# 06:  MARK  - Ignore Alarm when Alarm active, Telemetry Marker otherwise
 # 07:  WIPER - turn on / toggle wipers
 # 08:  
 # 09:  
@@ -96,7 +96,6 @@ class MultiSwitch(MultiSwitchThread):
                     self.vjoy.set_button(64, 1)
                 if self.MarcsJoystick.ButtonReleasedEvent(6):
                     self.vjoy.set_button(64, 0)
-
 
                 currentAlarm = self.db.AM.currentAlarm()
                 if currentAlarm in range(0, len(self.db.AM.alarms)):
@@ -398,8 +397,11 @@ class MultiSwitch(MultiSwitchThread):
                     n = len(IDDUItem.dcConfig)
                     IDDUItem.dcConfig[dcList[i]] = [2*n, 2*n+1]
 
-                if self.db.car.dcList[dcList[i]][1]:
-                    self.addMapping(dcList[i])
+                try:
+                    if self.db.car.dcList[dcList[i]][1]:
+                        self.addMapping(dcList[i])
+                except:
+                    pass
 
         importExport.saveJson(IDDUItem.dcConfig, self.db.dir + '/data/configs/multi.json')
 

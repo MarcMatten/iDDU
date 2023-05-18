@@ -443,7 +443,7 @@ class RenderScreen(RenderMain):
         self.db.dcRARBStr = convertString.roundedStr0(self.db.dcAntiRollRear)
         self.db.dcWeightJackerStr = convertString.roundedStr0(self.db.dcWeightJackerRight)
 
-        self.db.FuelLevelStr = convertString.roundedStr1(self.db.FuelLevel, 3)
+        self.db.FuelLevelStr = convertString.roundedStr1(self.db.FuelLevelDisp, 3)
         self.db.FuelAvgConsStr = convertString.roundedStr2(max(0, self.db.FuelAvgConsumption))
         self.db.VFuelTgtStr = convertString.roundedStr2(self.db.config['VFuelTgt'])
         self.db.FuelLastConsStr = convertString.roundedStr2(max(0, self.db.FuelLastCons))

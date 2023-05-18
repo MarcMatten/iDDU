@@ -196,6 +196,7 @@ class AlertManager:
         self.THUMBWHEELERRORR = Alarm('THMBWHL ERROR Right', self.red, self.white, 4, 90, 10)
         self.THUMBWHEELOFF = Alarm('THUMMBWHEELS OFF', self.red, self.white, 4, 90, 10)
         self.LOADRACESETUP = Alarm('LOAD RACE SETUP!', self.yellow, self.black, 3, 99, -1)
+        self.LOWFUEL = Alarm('LOW FUEL!', self.yellow, self.black, 3, 99, -1)
         self.CROSSED = Alarm('CROSSED', self.white, self.black, 4, 9)
         self.RANDOMWAVING = Alarm('RANDOM WAVING', self.white, self.black, 0, 8)
         self.DISQUALIFIED = Alarm('DISQUALIFIED', self.white, self.black, 0, 94)
