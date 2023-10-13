@@ -28,12 +28,12 @@ class SerialComsThread(IDDUThread):
                 self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
                 self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 1))
                 self.BArduinoConnected = True
-                self.logger.info('Connection to Arduino Leonardo established on COM8!')
+                self.logger.info('Connection to DDU established on COM8!')
             except:
                 self.BArduinoConnected = False
-                self.logger.error('Could not connect to COM8!')
+                self.logger.error('Could not connect to COM8 (DDU)!')
         else:
-            self.logger.error('Did not find Arduino Leonardo (COM8)!')
+            self.logger.error('Did not find DDU (COM8)!')
 
     def run(self):
         while self.running:

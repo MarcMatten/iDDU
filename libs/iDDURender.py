@@ -92,11 +92,11 @@ class RenderScreen(RenderMain):
         RenderMain.__init__(self)
 
         # initialize joystick
-        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            # self.initJoystick('vJoy Device')
-            self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
-        else:
-            self.initJoystick('Arduino Leonardo')
+        # if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
+        #     # self.initJoystick('vJoy Device')
+        #     self.initJoystick('Controller (Xbox 360 Wireless Receiver for Windows)')
+        # else:
+        #     self.initJoystick('Arduino Leonardo')
 
         # frames
         self.frames = list()
@@ -351,7 +351,7 @@ class RenderScreen(RenderMain):
                     else:
                         if self.db.dcChangedItems[0] == 'Push':
                             self.changeLabel('VFuelTgt', 'Push', self.blue)
-                        else:
+                        elif self.db.dcChangedItems[0] in self.db.iDDUControls:
                             if self.db.iDDUControls[self.db.dcChangedItems[0]]:
                                 if self.db.iDDUControls[self.db.dcChangedItems[0]][1]:
                                     if len(self.db.iDDUControls[self.db.dcChangedItems[0]]) == 8:

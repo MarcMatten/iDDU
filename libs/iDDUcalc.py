@@ -1141,8 +1141,8 @@ class IDDUCalcThread(IDDUThread):
                     self.Logging = True
                     self.timeLogingStart = self.db.SessionTime
 
-            self.logger.info('Fuel Budget used up to Timing Line: {}'.format(np.round(self.db.VFuelStartStraight - self.db.FuelLevel , 3)))
-            self.logger.info('Fuel Budget up to Timing Line: {}'.format(np.round(self.db.VFuelBudgetActive , 3)))         
+            # self.logger.info('Fuel Budget used up to Timing Line: {}'.format(np.round(self.db.VFuelStartStraight - self.db.FuelLevel , 3)))
+            # self.logger.info('Fuel Budget up to Timing Line: {}'.format(np.round(self.db.VFuelBudgetActive , 3)))
 
         except Exception:
             # exc_type, exc_obj, exc_tb = sys.exc_info()

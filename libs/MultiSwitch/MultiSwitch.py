@@ -120,23 +120,23 @@ class MultiSwitch(MultiSwitchThread):
 
                 # Thumbwheels
                 if self.NMultiState == 1:
-                    if self.MarcsJoystick.ButtonPressedEvent(12):
+                    if self.MarcsJoystick.ButtonPressedEvent(13):
                         self.mapDDU[self.mapDDUList[self.db.NRotaryL]].decrease() 
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
-                    if self.MarcsJoystick.ButtonPressedEvent(13):
+                    if self.MarcsJoystick.ButtonPressedEvent(12):
                         self.mapDDU[self.mapDDUList[self.db.NRotaryL]].increase()  
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
                 elif self.NMultiState == 2:
-                    if self.MarcsJoystick.ButtonPressedEvent(14) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
+                    if self.MarcsJoystick.ButtonPressedEvent(15) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
                         self.mapIR[self.mapIRList[self.db.NRotaryR]].decrease() 
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
-                    if self.MarcsJoystick.ButtonPressedEvent(15) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
+                    if self.MarcsJoystick.ButtonPressedEvent(14) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
                         self.mapIR[self.mapIRList[self.db.NRotaryR]].increase()  
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()

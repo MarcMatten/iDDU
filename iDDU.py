@@ -10,6 +10,7 @@ from libs.auxiliaries import importExport
 from shutil import copyfile
 from libs import IDDU
 import sys
+import ntp_update_time
 
 
 nan = float('nan')
@@ -459,6 +460,8 @@ inCarControls = [
 if __name__ == "__main__":
 
     IDDU.IDDUItem.logger.info('Starting iDDU')
+
+    # ntp_update_time.updateWindowsTime()
 
     if not os.path.exists(calcData['dir'] + '/data/configs/config.json'):
         copyfile(calcData['dir'] + '/data/configs/config_default.json', calcData['dir'] + '/data/configs/config.json')

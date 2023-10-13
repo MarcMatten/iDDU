@@ -207,7 +207,12 @@ class AlertManager:
 
     def raiseAlert(self):
 
-        self.tRaised = time.time()
+        tRaised = time.time()
+
+        if (tRaised - self.tRaised) < 5:
+            return
+        else:
+            self.tRaised = tRaised
 
         if not self.BActive and not self.BIgnore and not self.BSurpress:
             self.BActive = True

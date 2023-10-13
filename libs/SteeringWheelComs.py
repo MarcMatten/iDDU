@@ -18,13 +18,13 @@ class SteeringWheelComsThread(IDDUThread):
         self.tThumbWheelErrorR = 0
 
         for i in range(0, len(self.PortList)):
-            if self.PortList[i].device == 'COM4':
+            if self.PortList[i].device == 'COM11':  # was COM4
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
 
         if self.BPortFound:
             try:
-                self.logger.info('Arduino found! Connecting to {}'.format(self.COMPort))
+                self.logger.info('Steering Wheel found! Connecting to {}'.format(self.COMPort))
                 self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
                 self.rBitePointSent = self.db.config['rBitePoint']/100
                 self.serial.write(struct.pack('<f', self.rBitePointSent))
@@ -47,11 +47,11 @@ class SteeringWheelComsThread(IDDUThread):
 
             except:
                 self.BArduinoConnected = False
-                self.logger.error('Could not connect to Steering Wheel on COM4!')
+                self.logger.error('Could not connect to Steering Wheel on {}!'.format(self.COMPort))
 
         else:
             self.BArduinoConnected = False
-            self.logger.error('Could not connect to Steering Wheel on COM4!')
+            self.logger.error('Could not connect to Steering Wheel on {}!'.format(self.COMPort))
 
     def run(self):
         while self.running:

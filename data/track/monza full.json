@@ -597,6 +597,7 @@
     "name": "monza full",
     "sTrack": 5750.0,
     "tLap": {
+        "Dallara F3": 108.86666666805286,
         "Formula IR-04": 119.74999999989114
     },
     "x": [

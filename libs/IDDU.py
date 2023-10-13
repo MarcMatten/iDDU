@@ -138,7 +138,7 @@ class IDDUItem:
 
     # steeringwheel
     vid = 9025
-    pid = 32822
+    pid = 8967 #  32822
 
     J = Joystick()
     J.connect(vid, pid)
