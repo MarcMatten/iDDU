@@ -133,9 +133,9 @@ class RenderScreen(RenderMain):
         self.frames[4].addLabel('dcABSStr', LabeledValue2('ABS', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 8), 8)
         self.frames[4].addLabel('dcFARBStr', LabeledValue2('FARB', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 30)
         self.frames[4].addLabel('dcTractionControlStr', LabeledValue2('TC1', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 11)
-        self.frames[4].addLabel('dcWeightJackerStr', LabeledValue2('Jacker', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 32)
+        self.frames[4].addLabel('dcWeightJackerStr', LabeledValue2('Jacker', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 32)
         self.frames[4].addLabel('dcTractionControl2Str', LabeledValue2('TC2', 120, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 9), 12)
-        self.frames[4].addLabel('dcRARBStr', LabeledValue2('RARB', 219, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 31)
+        self.frames[4].addLabel('dcRARBStr', LabeledValue2('RARB', 219, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 31)
         self.frames[4].addLabel('DRSStr', LabeledValue2('DRS', 219, 387, 67, '0', self.fontSmall, self.fontLarge, 2, 5), 18)
         self.frames[4].addLabel('P2PStr', LabeledValue2('P2P', 21, 387, 67, '0', self.fontSmall, self.fontLarge, 3, 4), 19)
 
@@ -347,7 +347,10 @@ class RenderScreen(RenderMain):
                                 valueStr = convertString.roundedStr2(self.db.get(self.db.dcChangedItems[0]))
                             else:
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
-                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr, self.red)
+                            commentList = self.db.car.dcList[self.db.dcChangedItems[0]][3]
+                            NComment = int(self.db.get(self.db.dcChangedItems[0])) - 1
+                            commentText = self.db.car.dcList[self.db.dcChangedItems[0]][3][min(len(commentList)-1, NComment)]                        
+                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr, self.red, commentText)
                     else:
                         if self.db.dcChangedItems[0] == 'Push':
                             self.changeLabel('VFuelTgt', 'Push', self.blue)
@@ -754,7 +757,7 @@ class RenderScreen(RenderMain):
             Label = self.fontLarge.render(text, True, textcolour)
             RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
 
-    def changeLabel(self, text, value, color):
+    def changeLabel(self, text, value, color, comment=None):
         pygame.draw.rect(RenderMain.screen, color, [0, 0, 800, 480], 0)
         LabelSize = self.fontLarge.size(text)
         Label = self.fontLarge.render(text, True, self.white)
@@ -783,6 +786,12 @@ class RenderScreen(RenderMain):
             Value = self.fontChangeLabel2.render(value, True, self.white)
 
         RenderMain.screen.blit(Value, (400 - ValueSize[0] / 2, 270 - ValueSize[1] / 2))
+
+        if comment:
+            CommentSize = self.fontMedium.size(comment)
+            Comment = self.fontMedium.render(comment, True, self.white)
+            RenderMain.screen.blit(Comment, (400 - CommentSize[0] / 2, 420 - CommentSize[1] / 2)) 
+
 
     def stop(self):
         if self.NCalls > 0:

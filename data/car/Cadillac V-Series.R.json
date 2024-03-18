@@ -1,0 +1,344 @@
+{
+    "BDRS": false,
+    "BP2P": false,
+    "Coasting": {
+        "BValid": false,
+        "CarSetup": {},
+        "NGear": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "QFuelCoastPolyFit": [
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ],
+            [
+                0.001,
+                0.0,
+                0.0
+            ]
+        ],
+        "SetupName": "SetupName",
+        "gLongCoastPolyFit": [
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ],
+            [
+                1.25,
+                -0.099,
+                0.0
+            ]
+        ]
+    },
+    "NABSDisabled": null,
+    "NGearMax": 0,
+    "NTC1Disabled": null,
+    "NTC2Disabled": null,
+    "UpshiftSettings": {
+        "base": {
+            "BShiftTone": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            "BValid": false,
+            "NGear": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ],
+            "SetupName": "SetupName",
+            "nMotorShiftLEDs": [
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "nMotorShiftOptimal": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "nMotorShiftTarget": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "vCarShiftOptimal": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "vCarShiftTarget": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        }
+    },
+    "UpshiftStrategy": 0,
+    "UserShiftFlag": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+    ],
+    "UserShiftRPM": [
+        4000,
+        4000,
+        4000,
+        4000,
+        4000,
+        4000,
+        4000
+    ],
+    "VFuelLap": {},
+    "carPath": "cadillacvseriesrgtp",
+    "dcList": {
+        "dcAntiRollFront": [
+            "AntiRollFront",
+            true,
+            0
+        ],
+        "dcAntiRollRear": [
+            "AntiRollRear",
+            true,
+            0
+        ],
+        "dcBrakeBias": [
+            "BrakeBias",
+            true,
+            1
+        ],
+        "dcHeadlightFlash": [
+            "HeadlightFlash",
+            false,
+            0
+        ],
+        "dcLowFuelAccept": [
+            "LowFuelAccept",
+            true,
+            0
+        ],
+        "dcMGUKDeployMode": [
+            "MGUKDeployMode",
+            true,
+            0
+        ],
+        "dcPitSpeedLimiterToggle": [
+            "PitSpeedLimiterToggle",
+            false,
+            0
+        ],
+        "dcStarter": [
+            "Starter",
+            false,
+            0
+        ],
+        "dcToggleWindshieldWipers": [
+            "ToggleWindshieldWipers",
+            false,
+            0
+        ],
+        "dcTractionControl": [
+            "TractionControl",
+            true,
+            0
+        ],
+        "dcTractionControl2": [
+            "TractionControl2",
+            true,
+            0
+        ],
+        "dcTractionControlToggle": [
+            "TractionControlToggle",
+            false,
+            0
+        ],
+        "dcTriggerWindshieldWipers": [
+            "TriggerWindshieldWipers",
+            false,
+            0
+        ]
+    },
+    "iRShiftRPM": [
+        8300.0,
+        8550.0,
+        8650.0,
+        8725.0
+    ],
+    "name": "Cadillac V-Series.R",
+    "pBrakeFMax": 0,
+    "pBrakeRMax": 0,
+    "rABSActivityMap": [
+        -1,
+        -5,
+        -10,
+        -15
+    ],
+    "rGearRatios": {
+        "base": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "rSlipMapAcc": [
+        2.5,
+        4,
+        6.5,
+        9
+    ],
+    "rSlipMapBrk": [
+        -2.5,
+        -4,
+        -6.5,
+        -9
+    ],
+    "tLap": {},
+    "tempKey": [],
+    "tempVals": []
+}

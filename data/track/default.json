@@ -81,6 +81,8 @@
     "name": "default",
     "sTrack": 590.0,
     "tLap": {
+        "Acura ARX-06": 0.0,
+        "Cadillac V-Series.R": 0.0,
         "Dallara P217 LMP2": 0.0,
         "FIA F4": 0.0,
         "Ferrari 488 GT3 Evo 2020": 0.0,
@@ -88,9 +90,11 @@
         "MX-5 Cup": 0.0,
         "Mercedes AMG GT4": 0.0,
         "Mercedes GT3 2020": 0.0,
+        "Porsche 963": 0.0,
         "RT2000": 0.0,
         "Ray Formula 1600": 0.0,
-        "Renault Clio R.S. V": 0.0
+        "Renault Clio R.S. V": 0.0,
+        "default": 0.0
     },
     "x": [
         495.6090993623851,

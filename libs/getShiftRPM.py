@@ -19,7 +19,7 @@ def getShiftRPM(dirPath: str, TelemPath: str, MotecProjectPath: str, ibtPath: st
     # TODO: as input to tune from GUI
     tReaction = 0.3
     tLEDs = np.array([1, 0.5, 0])
-    BUseMaxRPM = None
+    BUseMaxRPM = False
     RPMLimits = None
     # RPMLimits = (5200, 7050)
 

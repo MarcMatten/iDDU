@@ -92,14 +92,14 @@
         "SteeringWheel": {
             "Name": "SteeringWheel",
             "COM": "COM11",
-            "vid": 9025,
-            "pid": 8967
+            "vid": 2341,
+            "pid": 2307
         },
         "DDU": {
             "Name": "DDU",
-            "COM": "COM8",
+            "COM": "COM15",
             "vid": 2341,
-            "pid": 1334
+            "pid": 8037
         },
         "Pedals": {
             "Name": "Heusinkveld Sim Pedals Sprint",

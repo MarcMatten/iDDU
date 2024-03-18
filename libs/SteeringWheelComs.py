@@ -18,13 +18,13 @@ class SteeringWheelComsThread(IDDUThread):
         self.tThumbWheelErrorR = 0
 
         for i in range(0, len(self.PortList)):
-            if self.PortList[i].device == 'COM11':  # was COM4
+            if self.PortList[i].device == self.db.config['USBDevices']['SteeringWheel']['COM']:
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
 
         if self.BPortFound:
             try:
-                self.logger.info('Steering Wheel found! Connecting to {}'.format(self.COMPort))
+                self.logger.info('{} found! Connecting to {}'.format(self.db.config['USBDevices']['SteeringWheel']['Name'], self.db.config['USBDevices']['SteeringWheel']['COM']))
                 self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
                 self.rBitePointSent = self.db.config['rBitePoint']/100
                 self.serial.write(struct.pack('<f', self.rBitePointSent))
@@ -42,16 +42,16 @@ class SteeringWheelComsThread(IDDUThread):
                         self.logger.error('Could not set Clutch Bite Point!')
 
                 self.BArduinoConnected = True
-                self.logger.info('Connection to Steering Wheel established on {}!'.format(self.COMPort))
+                self.logger.info('Connection to {} established on {}!'.format(self.db.config['USBDevices']['SteeringWheel']['Name'], self.db.config['USBDevices']['SteeringWheel']['COM']))
                 self.BPortFound = True
 
             except:
                 self.BArduinoConnected = False
-                self.logger.error('Could not connect to Steering Wheel on {}!'.format(self.COMPort))
+                self.logger.error('Could not connect to {} on {}!'.format(self.db.config['USBDevices']['SteeringWheel']['Name'], self.db.config['USBDevices']['SteeringWheel']['COM']))
 
         else:
             self.BArduinoConnected = False
-            self.logger.error('Could not connect to Steering Wheel on {}!'.format(self.COMPort))
+            self.logger.error('Could not connect to {} on {}!'.format(self.db.config['USBDevices']['SteeringWheel']['Name'], self.db.config['USBDevices']['SteeringWheel']['COM']))
 
     def run(self):
         while self.running:
@@ -66,16 +66,23 @@ class SteeringWheelComsThread(IDDUThread):
                     if not self.rBitePointSent == self.db.config['rBitePoint'] / 100:
                         self.rBitePointSent = self.db.config['rBitePoint'] / 100
                         self.serial.write(struct.pack('<f', self.rBitePointSent))
+                        self.logger.info('Setting Clutch Bite Point: {}'.format(self.rBitePointSent))
 
                     msg = self.serial.readline()
                     if msg:
                         try:
                             if len(msg) == 1:
                                 data = struct.unpack('<b', msg)[0]
+                                if data == 1:
+                                    self.logger.info('Entering Dual Clutch Paddle Mode')
+                                elif data == 0:                                    
+                                    self.logger.info('Leaving Dual Clutch Paddle Mode')
                             elif len(msg) == 4:
                                 data = struct.unpack('<f', msg)[0]
                                 if not round(self.rBitePointSent, 3) == round(data, 3):
                                     self.logger.error('Could not set Clutch Bite Point!')
+                                else:
+                                    self.logger.info('Set Clutch Bite Point: {}'.format(round(data, 3)))
                             else:
                                 data = msg.decode().split('\r')[0]
                                 if data.startswith('TW'):

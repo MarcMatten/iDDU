@@ -110,12 +110,12 @@ class Car:
                 if not (temp.endswith('Change') or temp.endswith('Old') or temp.endswith('Str') or temp.endswith('Time')):
                     if not keys[i] is None:
                         if keys[i] in dcIgnoreList:
-                            self.dcList[keys[i]] = (keys[i].split('dc')[1], False, 0)
+                            self.dcList[keys[i]] = (keys[i].split('dc')[1], False, 0, [None]*12)
                         else:
                             if any(keys[i] in s for s in dcNotInt):
-                                self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 1)
+                                self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 1, [None]*12)
                             else:
-                                self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 0)
+                                self.dcList[keys[i]] = (keys[i].split('dc')[1], True, 0, [None]*12)
 
         self.setUserShiftRPM(db)
 
@@ -209,6 +209,7 @@ class Car:
 
     def load(self, path):
         data = importExport.loadJson(path)
+        BSafeAfterLoading = False
 
         for i in data:
             if isinstance(data[i], dict):
@@ -238,7 +239,15 @@ class Car:
             temp = self.rGearRatios
             self.rGearRatios = {'base': temp}
 
-        # self.save(path)
+        if self.dcList:
+            for i in self.dcList:
+                if len(self.dcList[i]) < 4:
+                    BSafeAfterLoading = True
+                    self.dcList[i].append([None]*16)
+                
+
+        if BSafeAfterLoading:
+            self.save(path)
         IDDU.IDDUItem.logger.info('Loaded car ' + path)
 
 

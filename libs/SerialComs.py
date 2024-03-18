@@ -18,22 +18,23 @@ class SerialComsThread(IDDUThread):
         self.COMPort = None
         self.serial = None
         for i in range(0, len(self.PortList)):
-            if self.PortList[i].device == 'COM8':  # self.PortList[i].description[0:16] == 'Serielles USB-Ge' and
+            if self.PortList[i].device == self.db.config['USBDevices']['DDU']['COM']:
                 self.COMPort = self.PortList[i].device
                 self.BPortFound = True
+                break
 
         if self.BPortFound:
             try:
-                self.logger.info('Arduino found! Connecting to {}'.format(self.COMPort))
+                self.logger.info('Arduino found! Connecting to {} on {}'.format(self.db.config['USBDevices']['DDU']['Name'], self.db.config['USBDevices']['DDU']['COM']))
                 self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
                 self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 1))
                 self.BArduinoConnected = True
-                self.logger.info('Connection to DDU established on COM8!')
+                self.logger.info('Connection to {} established on {}!'.format(self.db.config['USBDevices']['DDU']['Name'], self.db.config['USBDevices']['DDU']['COM']))
             except:
                 self.BArduinoConnected = False
-                self.logger.error('Could not connect to COM8 (DDU)!')
+                self.logger.error('Could not connect to {} on {}!'.format(self.db.config['USBDevices']['DDU']['Name'], self.db.config['USBDevices']['DDU']['COM']))
         else:
-            self.logger.error('Did not find DDU (COM8)!')
+            self.logger.error('Did not find {} on {}!'.format(self.db.config['USBDevices']['DDU']['Name'], self.db.config['USBDevices']['DDU']['COM']))
 
     def run(self):
         while self.running:

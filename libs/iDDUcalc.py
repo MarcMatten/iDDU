@@ -5,6 +5,7 @@ import traceback
 from datetime import datetime
 
 import numpy as np
+from scipy import interpolate
 
 from libs import Track, Car
 from libs.IDDU import IDDUThread
@@ -31,6 +32,11 @@ class IDDUCalcThread(IDDUThread):
     tStartModeEnd = -1
     NGearOld = 1
     tUpshift = 0
+    tABSLastActivated = None
+    ABSActivationMap = interpolate.interp1d([0, 0.13, 0.3, 0.45, 99999999999], [0, 1, 2, 3, 4], kind='next')
+    NPitApproachBeepsPlayed = 0
+    vPitSpeedDeltaBeep = [50, 25, 3]
+    BPitSpeedBeepsEnabled = False
 
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -127,6 +133,7 @@ class IDDUCalcThread(IDDUThread):
 
                     if self.db.PlayerTrackSurface == 3:  # on track
                         self.db.BEnteringPits = False
+                        self.NPitApproachBeepsPlayed = 0
                     elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:  # entering pit entry event
                         self.db.BEnteringPits = True
 
@@ -135,10 +142,10 @@ class IDDUCalcThread(IDDUThread):
                     if self.db.OnPitRoad and self.db.BEnteringPits and not self.db.PlayerCarPitSvStatus == 2:  # from pit entry end of pit stop
                         self.db.NDDUPage = 3
 
-                    if self.db.OnPitRoad or self.db.BEnteringPits:  # do when in pit entry or in pit lane but not on track
-                        pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
-                        deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
+                    pitSpeedLimit = self.db.WeekendInfo['TrackPitSpeedLimit']
+                    deltaSpeed = [self.db.Speed * 3.6 - float(pitSpeedLimit.split(' ')[0])]
 
+                    if self.db.OnPitRoad or self.db.BEnteringPits:  # do when in pit entry or in pit lane but not on track                        
                         #                            k   k   b   c  g    g    y    o   r   r
                         r = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 0.7, 1.2, 1.6, 20, 40],
                                       [self.black[0], self.black[0], self.blue[0], self.cyan[0], self.green[0], self.green[0], self.yellow[0], self.orange[0], self.red[0], self.red[0]])
@@ -146,10 +153,18 @@ class IDDUCalcThread(IDDUThread):
                                       [self.black[1], self.black[1], self.blue[1], self.cyan[1], self.green[1], self.green[1], self.yellow[1], self.orange[1], self.red[1], self.red[1]])
                         b = np.interp(deltaSpeed, [-10, -5, -2, -1, 0, 0.7, 1.2, 1.6, 20, 40],
                                       [self.black[2], self.black[2], self.blue[2], self.cyan[2], self.green[2], self.green[2], self.yellow[2], self.orange[2], self.red[2], self.red[2]])
-
+                            
                         self.db.backgroundColour = tuple([r, g, b])
                         self.db.textColour = self.white
                         self.distance2PitStall()
+
+                        # play beeps to countdown to speed limit
+                        if self.BPitSpeedBeepsEnabled:
+                            if self.NPitApproachBeepsPlayed < 3:
+                                if deltaSpeed[0] <= self.vPitSpeedDeltaBeep[self.NPitApproachBeepsPlayed]:
+                                    self.logger.info('Pit Approach Beep {} at {} kph delta'.format(self.NPitApproachBeepsPlayed, deltaSpeed[0]))
+                                    self.db.BRequestPitSpeedBeep = True
+                                    self.NPitApproachBeepsPlayed = self.NPitApproachBeepsPlayed + 1
 
                         if not self.db.PitstopActive:  # during pitstop
                             if self.db.PitSvFlags & 0x01:
@@ -289,6 +304,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.Run = self.db.Run + 1
                             self.logger.info('Starting Run {}'.format(self.db.Run))
                             self.db.BLEDsInit = True
+                            self.BPitSpeedBeepsEnabled = False
                             if self.db.config['BPitCommandControl']:
                                 self.ir.pit_command(0)
 
@@ -340,6 +356,7 @@ class IDDUCalcThread(IDDUThread):
                                 if (not self.db.BPitstopCompleted) and self.db.PlayerCarPitSvStatus == 2:  # pit stop completed event
                                     self.db.BPitstopCompleted = True
                                     self.db.NDDUPage = 2
+                                    self.BPitSpeedBeepsEnabled = False
 
                         elif (not self.db.OnPitRoad) and self.db.BWasOnPitRoad:  # pit exit event
                             self.db.OutLap = True
@@ -356,6 +373,8 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BTyreChangeCompleted = [False, False, False, False]
                             self.db.BWasOnPitRoad = False
                             self.db.BPitCommandUpdate = True
+                            self.NPitApproachBeepsPlayed = 0
+                            self.BPitSpeedBeepsEnabled = True
 
                         # check if new lap
                         if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:
@@ -486,10 +505,10 @@ class IDDUCalcThread(IDDUThread):
                             BABSToggle = self.db.dcABSToggle
 
                         if not self.db.dcTractionControl == None:
-                            if not BTcToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled:
+                            if BTcToggle or self.db.dcTractionControl == self.db.car.NTC1Disabled or self.db.AM.TCOFF.BActive:
                                 self.db.Alarm[1] = 3
                                 self.db.Alarm[9] = 3
-                            if not BTcToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
+                            if BTcToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
                                 self.db.Alarm[9] = 3
 
                         if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled or self.db.BrakeABSactive and self.db.Brake > 0:
@@ -561,7 +580,7 @@ class IDDUCalcThread(IDDUThread):
 
                         # ABS Activity
                         if 'dcABS' in self.db.car.dcList or self.db.car.name in self.CarsWithABS:
-                            if self.db.dcBrakeBias:
+                            '''if self.db.dcBrakeBias:
                                 pBrakeFRef = self.db.car.pBrakeFMax * self.db.dcBrakeBias / 100 * self.Brake
                                 pBrakeRRef = self.db.car.pBrakeFMax * (1 - self.db.dcBrakeBias / 100) * self.Brake
                             else:
@@ -572,7 +591,23 @@ class IDDUCalcThread(IDDUThread):
 
                             self.db.rABSActivity = list(map(self.mapABSActivity, np.array([dpBrake, self.dpBrakeOld]).max(axis=0)))
 
-                            self.dpBrakeOld = dpBrake
+                            self.dpBrakeOld = dpBrake'''
+
+                            tABSActive = 0
+                            if self.db.BrakeABSactive:
+                                if self.tABSLastActivated:
+                                    tABSActive = self.db.SessionTime - self.tABSLastActivated
+                                    self.db.rABSActivity = self.ABSActivationMap(tABSActive) * [1, 1, 1, 1]
+                                else:
+                                    self.tABSLastActivated = self.db.SessionTime
+                                    self.db.rABSActivity = [0, 0, 0, 0]
+                            else:
+                                self.tABSLastActivated = None
+                                self.db.rABSActivity = [0, 0, 0, 0]
+
+                            
+
+
                         else:  # rear locking
                             temp = 0
                             if self.db.Brake > 0.1:
