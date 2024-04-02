@@ -103,6 +103,14 @@ class SteeringWheelComsThread(IDDUThread):
                                         self.db.BThumbWheelErrorR = True
                                         self.db.BThumbWheelActive = False
                                         self.logger.error('Thumb Wheels deactivated because of too many errors!')
+                                elif data.startswith('PSL'):
+                                    if data == 'PSL armed':
+                                        self.logger.info('PSL armed')
+                                        self.db.AM.PSLARMED.raiseAlert()
+                                    if data == 'PSL disarmed':
+                                        self.logger.info('PSL disarmed')
+                                        self.db.AM.PSLDISARMED.raiseAlert()
+                                        self.db.AM.PSLARMED.cancelAlert()
                                 else:
                                     print(msg)
                                     data = None
@@ -117,7 +125,7 @@ class SteeringWheelComsThread(IDDUThread):
                     if self.db.BThumbWheelErrorR and self.db.SessionTime - self.tThumbWheelErrorR > 10:
                         self.db.BThumbWheelErrorR = False
 
-                    if data == 1 and not self.db.BSteeringWheelStartMode:
+                    if data == 1 and not self.db.BSteeringWheelStartMode and not self.db.OnPitRoad:
                         self.db.BSteeringWheelStartMode = True
                         self.logger.info('Start Mode ON')
                     elif data == 0 and self.db.BSteeringWheelStartMode:

@@ -425,7 +425,7 @@ calcData = {'startUp': False,
             'BEnableAutoClutch': True,
             'GearID': 'base',
             'FuelLevelDisp': 0,
-            'BRequestPitSpeedBeep':False
+            'BRequestPitSpeedBeep': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

@@ -1,0 +1,268 @@
+ChannelName,type,offset,count,count_as_time,name,desc,unit
+SessionTime,5,0,1,False,SessionTime,Seconds since session start,s
+SessionTick,2,8,1,False,SessionTick,Current update number,
+SessionNum,2,12,1,False,SessionNum,Session number,
+SessionState,2,16,1,False,SessionState,Session state,irsdk_SessionState
+SessionUniqueID,2,20,1,False,SessionUniqueID,Session ID,
+SessionFlags,3,24,1,False,SessionFlags,Session flags,irsdk_Flags
+SessionTimeRemain,5,28,1,False,SessionTimeRemain,Seconds left till session ends,s
+SessionLapsRemain,2,36,1,False,SessionLapsRemain,Old laps left till session ends use SessionLapsRemainEx,
+SessionLapsRemainEx,2,40,1,False,SessionLapsRemainEx,New improved laps left till session ends,
+SessionTimeTotal,5,44,1,False,SessionTimeTotal,Total number of seconds in session,s
+SessionLapsTotal,2,52,1,False,SessionLapsTotal,Total number of laps in session,
+SessionJokerLapsRemain,2,56,1,False,SessionJokerLapsRemain,Joker laps remaining to be taken,
+SessionOnJokerLap,1,60,1,False,SessionOnJokerLap,Player is currently completing a joker lap,
+SessionTimeOfDay,4,61,1,False,SessionTimeOfDay,Time of day in seconds,s
+DriverMarker,1,65,1,False,DriverMarker,Driver activated flag,
+PushToPass,1,66,1,False,PushToPass,Push to pass button state,
+ManualBoost,1,67,1,False,ManualBoost,Hybrid manual boost state,
+ManualNoBoost,1,68,1,False,ManualNoBoost,Hybrid manual no boost state,
+IsOnTrack,1,69,1,False,IsOnTrack,1=Car on track physics running with player in car,
+FrameRate,4,70,1,False,FrameRate,Average frames per second,fps
+CpuUsageFG,4,74,1,False,CpuUsageFG,Percent of available tim fg thread took with a 1 sec avg,%
+GpuUsage,4,78,1,False,GpuUsage,Percent of available tim gpu took with a 1 sec avg,%
+ChanAvgLatency,4,82,1,False,ChanAvgLatency,Communications average latency,s
+ChanLatency,4,86,1,False,ChanLatency,Communications latency,s
+ChanQuality,4,90,1,False,ChanQuality,Communications quality,%
+ChanPartnerQuality,4,94,1,False,ChanPartnerQuality,Partner communications quality,%
+CpuUsageBG,4,98,1,False,CpuUsageBG,Percent of available tim bg thread took with a 1 sec avg,%
+ChanClockSkew,4,102,1,False,ChanClockSkew,Communications server clock skew,s
+MemPageFaultSec,4,106,1,False,MemPageFaultSec,Memory page faults per second,
+MemSoftPageFaultSec,4,110,1,False,MemSoftPageFaultSec,Memory soft page faults per second,
+PlayerCarPosition,2,114,1,False,PlayerCarPosition,Players position in race,
+PlayerCarClassPosition,2,118,1,False,PlayerCarClassPosition,Players class position in race,
+PlayerCarClass,2,122,1,False,PlayerCarClass,Player car class id,
+PlayerTrackSurface,2,126,1,False,PlayerTrackSurface,Players car track surface type,irsdk_TrkLoc
+PlayerTrackSurfaceMaterial,2,130,1,False,PlayerTrackSurfaceMaterial,Players car track surface material type,irsdk_TrkSurf
+PlayerCarIdx,2,134,1,False,PlayerCarIdx,Players carIdx,
+PlayerCarTeamIncidentCount,2,138,1,False,PlayerCarTeamIncidentCount,Players team incident count for this session,
+PlayerCarMyIncidentCount,2,142,1,False,PlayerCarMyIncidentCount,Players own incident count for this session,
+PlayerCarDriverIncidentCount,2,146,1,False,PlayerCarDriverIncidentCount,Teams current drivers incident count for this session,
+PlayerCarWeightPenalty,4,150,1,False,PlayerCarWeightPenalty,Players weight penalty,kg
+PlayerCarPowerAdjust,4,154,1,False,PlayerCarPowerAdjust,Players power adjust,%
+PlayerCarDryTireSetLimit,2,158,1,False,PlayerCarDryTireSetLimit,Players dry tire set limit,
+PlayerCarTowTime,4,162,1,False,PlayerCarTowTime,Players car is being towed if time is greater than zero,s
+PlayerCarInPitStall,1,166,1,False,PlayerCarInPitStall,Players car is properly in there pitstall,
+PlayerCarPitSvStatus,2,167,1,False,PlayerCarPitSvStatus,Players car pit service status bits,irsdk_PitSvStatus
+PlayerTireCompound,2,171,1,False,PlayerTireCompound,Players car current tire compound,
+PlayerFastRepairsUsed,2,175,1,False,PlayerFastRepairsUsed,Players car number of fast repairs used,
+PaceMode,2,179,1,False,PaceMode,Are we pacing or not,irsdk_PaceMode
+OnPitRoad,1,183,1,False,OnPitRoad,Is the player car on pit road between the cones,
+SteeringWheelAngle,4,184,1,False,SteeringWheelAngle,Steering wheel angle,rad
+Throttle,4,188,1,False,Throttle,0=off throttle to 1=full throttle,%
+Brake,4,192,1,False,Brake,0=brake released to 1=max pedal force,%
+Clutch,4,196,1,False,Clutch,0=disengaged to 1=fully engaged,%
+Gear,2,200,1,False,Gear,-1=reverse  0=neutral  1..n=current gear,
+RPM,4,204,1,False,RPM,Engine rpm,revs/min
+Lap,2,208,1,False,Lap,Laps started count,
+LapCompleted,2,212,1,False,LapCompleted,Laps completed count,
+LapDist,4,216,1,False,LapDist,Meters traveled from S/F this lap,m
+LapDistPct,4,220,1,False,LapDistPct,Percentage distance around lap,%
+LapBestLap,2,224,1,False,LapBestLap,Players best lap number,
+LapBestLapTime,4,228,1,False,LapBestLapTime,Players best lap time,s
+LapLastLapTime,4,232,1,False,LapLastLapTime,Players last lap time,s
+LapCurrentLapTime,4,236,1,False,LapCurrentLapTime,Estimate of players current lap time as shown in F3 box,s
+LapLasNLapSeq,2,240,1,False,LapLasNLapSeq,Player num consecutive clean laps completed for N average,
+LapLastNLapTime,4,244,1,False,LapLastNLapTime,Player last N average lap time,s
+LapBestNLapLap,2,248,1,False,LapBestNLapLap,Player last lap in best N average lap time,
+LapBestNLapTime,4,252,1,False,LapBestNLapTime,Player best N average lap time,s
+LapDeltaToBestLap,4,256,1,False,LapDeltaToBestLap,Delta time for best lap,s
+LapDeltaToBestLap_DD,4,260,1,False,LapDeltaToBestLap_DD,Rate of change of delta time for best lap,s/s
+LapDeltaToBestLap_OK,1,264,1,False,LapDeltaToBestLap_OK,Delta time for best lap is valid,
+LapDeltaToOptimalLap,4,265,1,False,LapDeltaToOptimalLap,Delta time for optimal lap,s
+LapDeltaToOptimalLap_DD,4,269,1,False,LapDeltaToOptimalLap_DD,Rate of change of delta time for optimal lap,s/s
+LapDeltaToOptimalLap_OK,1,273,1,False,LapDeltaToOptimalLap_OK,Delta time for optimal lap is valid,
+LapDeltaToSessionBestLap,4,274,1,False,LapDeltaToSessionBestLap,Delta time for session best lap,s
+LapDeltaToSessionBestLap_DD,4,278,1,False,LapDeltaToSessionBestLap_DD,Rate of change of delta time for session best lap,s/s
+LapDeltaToSessionBestLap_OK,1,282,1,False,LapDeltaToSessionBestLap_OK,Delta time for session best lap is valid,
+LapDeltaToSessionOptimalLap,4,283,1,False,LapDeltaToSessionOptimalLap,Delta time for session optimal lap,s
+LapDeltaToSessionOptimalLap_DD,4,287,1,False,LapDeltaToSessionOptimalLap_DD,Rate of change of delta time for session optimal lap,s/s
+LapDeltaToSessionOptimalLap_OK,1,291,1,False,LapDeltaToSessionOptimalLap_OK,Delta time for session optimal lap is valid,
+LapDeltaToSessionLastlLap,4,292,1,False,LapDeltaToSessionLastlLap,Delta time for session last lap,s
+LapDeltaToSessionLastlLap_DD,4,296,1,False,LapDeltaToSessionLastlLap_DD,Rate of change of delta time for session last lap,s/s
+LapDeltaToSessionLastlLap_OK,1,300,1,False,LapDeltaToSessionLastlLap_OK,Delta time for session last lap is valid,
+Speed,4,301,1,False,Speed,GPS vehicle speed,m/s
+Yaw,4,305,1,False,Yaw,Yaw orientation,rad
+YawNorth,4,309,1,False,YawNorth,Yaw orientation relative to north,rad
+Pitch,4,313,1,False,Pitch,Pitch orientation,rad
+Roll,4,317,1,False,Roll,Roll orientation,rad
+EnterExitReset,2,321,1,False,EnterExitReset,Indicate action the reset key will take 0 enter 1 exit 2 reset,
+Lat,5,325,1,False,Lat,Latitude in decimal degrees,deg
+Lon,5,333,1,False,Lon,Longitude in decimal degrees,deg
+Alt,4,341,1,False,Alt,Altitude in meters,m
+TrackTemp,4,345,1,False,TrackTemp,Deprecated  set to TrackTempCrew,C
+TrackTempCrew,4,349,1,False,TrackTempCrew,Temperature of track measured by crew around track,C
+AirTemp,4,353,1,False,AirTemp,Temperature of air at start/finish line,C
+WeatherType,2,357,1,False,WeatherType,Weather type (0=constant  1=dynamic),
+Skies,2,361,1,False,Skies,Skies (0=clear/1=p cloudy/2=m cloudy/3=overcast),
+AirDensity,4,365,1,False,AirDensity,Density of air at start/finish line,kg/m^3
+AirPressure,4,369,1,False,AirPressure,Pressure of air at start/finish line,Hg
+WindVel,4,373,1,False,WindVel,Wind velocity at start/finish line,m/s
+WindDir,4,377,1,False,WindDir,Wind direction at start/finish line,rad
+RelativeHumidity,4,381,1,False,RelativeHumidity,Relative Humidity,%
+FogLevel,4,385,1,False,FogLevel,Fog level,%
+SolarAltitude,4,389,1,False,SolarAltitude,Sun angle above horizon in radians,rad
+SolarAzimuth,4,393,1,False,SolarAzimuth,Sun angle clockwise from north in radians,rad
+PitsOpen,1,397,1,False,PitsOpen,True if pit stop is allowed for the current player,
+PitRepairLeft,4,398,1,False,PitRepairLeft,Time left for mandatory pit repairs if repairs are active,s
+PitOptRepairLeft,4,402,1,False,PitOptRepairLeft,Time left for optional repairs if repairs are active,s
+PitstopActive,1,406,1,False,PitstopActive,Is the player getting pit stop service,
+FastRepairUsed,2,407,1,False,FastRepairUsed,How many fast repairs used so far,
+FastRepairAvailable,2,411,1,False,FastRepairAvailable,How many fast repairs left  255 is unlimited,
+LFTiresUsed,2,415,1,False,LFTiresUsed,How many left front tires used so far,
+RFTiresUsed,2,419,1,False,RFTiresUsed,How many right front tires used so far,
+LRTiresUsed,2,423,1,False,LRTiresUsed,How many left rear tires used so far,
+RRTiresUsed,2,427,1,False,RRTiresUsed,How many right rear tires used so far,
+LeftTireSetsUsed,2,431,1,False,LeftTireSetsUsed,How many left tire sets used so far,
+RightTireSetsUsed,2,435,1,False,RightTireSetsUsed,How many right tire sets used so far,
+FrontTireSetsUsed,2,439,1,False,FrontTireSetsUsed,How many front tire sets used so far,
+RearTireSetsUsed,2,443,1,False,RearTireSetsUsed,How many rear tire sets used so far,
+TireSetsUsed,2,447,1,False,TireSetsUsed,How many tire sets used so far,
+LFTiresAvailable,2,451,1,False,LFTiresAvailable,How many left front tires are remaining  255 is unlimited,
+RFTiresAvailable,2,455,1,False,RFTiresAvailable,How many right front tires are remaining  255 is unlimited,
+LRTiresAvailable,2,459,1,False,LRTiresAvailable,How many left rear tires are remaining  255 is unlimited,
+RRTiresAvailable,2,463,1,False,RRTiresAvailable,How many right rear tires are remaining  255 is unlimited,
+LeftTireSetsAvailable,2,467,1,False,LeftTireSetsAvailable,How many left tire sets are remaining  255 is unlimited,
+RightTireSetsAvailable,2,471,1,False,RightTireSetsAvailable,How many right tire sets are remaining  255 is unlimited,
+FrontTireSetsAvailable,2,475,1,False,FrontTireSetsAvailable,How many front tire sets are remaining  255 is unlimited,
+RearTireSetsAvailable,2,479,1,False,RearTireSetsAvailable,How many rear tire sets are remaining  255 is unlimited,
+TireSetsAvailable,2,483,1,False,TireSetsAvailable,How many tire sets are remaining  255 is unlimited,
+IsOnTrackCar,1,487,1,False,IsOnTrackCar,1=Car on track physics running,
+SteeringWheelAngleMax,4,488,1,False,SteeringWheelAngleMax,Steering wheel max angle,rad
+ShiftPowerPct,4,492,1,False,ShiftPowerPct,Friction torque applied to gears when shifting or grinding,%
+ShiftGrindRPM,4,496,1,False,ShiftGrindRPM,RPM of shifter grinding noise,RPM
+ThrottleRaw,4,500,1,False,ThrottleRaw,Raw throttle input 0=off throttle to 1=full throttle,%
+BrakeRaw,4,504,1,False,BrakeRaw,Raw brake input 0=brake released to 1=max pedal force,%
+HandbrakeRaw,4,508,1,False,HandbrakeRaw,Raw handbrake input 0=handbrake released to 1=max force,%
+BrakeABSactive,1,512,1,False,BrakeABSactive,true if abs is currently reducing brake force pressure,
+EngineWarnings,3,513,1,False,EngineWarnings,Bitfield for warning lights,irsdk_EngineWarnings
+FuelLevelPct,4,517,1,False,FuelLevelPct,Percent fuel remaining,%
+PitSvFlags,3,521,1,False,PitSvFlags,Bitfield of pit service checkboxes,irsdk_PitSvFlags
+PitSvLFP,4,525,1,False,PitSvLFP,Pit service left front tire pressure,kPa
+PitSvRFP,4,529,1,False,PitSvRFP,Pit service right front tire pressure,kPa
+PitSvLRP,4,533,1,False,PitSvLRP,Pit service left rear tire pressure,kPa
+PitSvRRP,4,537,1,False,PitSvRRP,Pit service right rear tire pressure,kPa
+PitSvFuel,4,541,1,False,PitSvFuel,Pit service fuel add amount,l or kWh
+PitSvTireCompound,2,545,1,False,PitSvTireCompound,Pit service pending tire compound,
+SteeringWheelPctTorque,4,549,1,False,SteeringWheelPctTorque,Force feedback % max torque on steering shaft unsigned,%
+SteeringWheelPctTorqueSign,4,553,1,False,SteeringWheelPctTorqueSign,Force feedback % max torque on steering shaft signed,%
+SteeringWheelPctTorqueSignStops,4,557,1,False,SteeringWheelPctTorqueSignStops,Force feedback % max torque on steering shaft signed stops,%
+SteeringWheelPctSmoothing,4,561,1,False,SteeringWheelPctSmoothing,Force feedback % max smoothing,%
+SteeringWheelPctDamper,4,565,1,False,SteeringWheelPctDamper,Force feedback % max damping,%
+SteeringWheelLimiter,4,569,1,False,SteeringWheelLimiter,Force feedback limiter strength limits impacts and oscillation,%
+SteeringWheelMaxForceNm,4,573,1,False,SteeringWheelMaxForceNm,Value of strength or max force slider in Nm for FFB,N*m
+SteeringWheelUseLinear,1,577,1,False,SteeringWheelUseLinear,True if steering wheel force is using linear mode,
+ShiftIndicatorPct,4,578,1,False,ShiftIndicatorPct,DEPRECATED use DriverCarSLBlinkRPM instead,%
+TireLF_RumblePitch,4,582,1,False,TireLF_RumblePitch,Players LF Tire Sound rumblestrip pitch,Hz
+TireRF_RumblePitch,4,586,1,False,TireRF_RumblePitch,Players RF Tire Sound rumblestrip pitch,Hz
+TireLR_RumblePitch,4,590,1,False,TireLR_RumblePitch,Players LR Tire Sound rumblestrip pitch,Hz
+TireRR_RumblePitch,4,594,1,False,TireRR_RumblePitch,Players RR Tire Sound rumblestrip pitch,Hz
+SteeringWheelTorque_ST,4,598,6,True,SteeringWheelTorque_ST,Output torque on steering shaft at 360 Hz,N*m
+SteeringWheelTorque,4,622,1,False,SteeringWheelTorque,Output torque on steering shaft,N*m
+VelocityZ,4,626,1,False,VelocityZ,Z velocity,m/s
+VelocityY,4,630,1,False,VelocityY,Y velocity,m/s
+VelocityX,4,634,1,False,VelocityX,X velocity,m/s
+YawRate,4,638,1,False,YawRate,Yaw rate,rad/s
+PitchRate,4,642,1,False,PitchRate,Pitch rate,rad/s
+RollRate,4,646,1,False,RollRate,Roll rate,rad/s
+VertAccel,4,650,1,False,VertAccel,Vertical acceleration (including gravity),m/s^2
+LatAccel,4,654,1,False,LatAccel,Lateral acceleration (including gravity),m/s^2
+LongAccel,4,658,1,False,LongAccel,Longitudinal acceleration (including gravity),m/s^2
+dcStarter,1,662,1,False,dcStarter,In car trigger car starter,
+dcPitSpeedLimiterToggle,1,663,1,False,dcPitSpeedLimiterToggle,In car traction control active,
+dcTractionControlToggle,1,664,1,False,dcTractionControlToggle,In car traction control active,
+dcHeadlightFlash,1,665,1,False,dcHeadlightFlash,In car headlight flash control active,
+dpRFTireChange,4,666,1,False,dpRFTireChange,Pitstop rf tire change request,
+dpLFTireChange,4,670,1,False,dpLFTireChange,Pitstop lf tire change request,
+dpRRTireChange,4,674,1,False,dpRRTireChange,Pitstop rr tire change request,
+dpLRTireChange,4,678,1,False,dpLRTireChange,Pitstop lr tire change request,
+dpFuelFill,4,682,1,False,dpFuelFill,Pitstop fuel fill flag,
+dpWindshieldTearoff,4,686,1,False,dpWindshieldTearoff,Pitstop windshield tearoff,
+dpFuelAddKg,4,690,1,False,dpFuelAddKg,Pitstop fuel add amount,kg
+dpFastRepair,4,694,1,False,dpFastRepair,Pitstop fast repair set,
+dcDashPage,4,698,1,False,dcDashPage,In car dash display page adjustment,
+dcThrottleShape,4,702,1,False,dcThrottleShape,In car throttle shape adjustment,
+dcBrakeBias,4,706,1,False,dcBrakeBias,In car brake bias adjustment,
+dpLFTireColdPress,4,710,1,False,dpLFTireColdPress,Pitstop lf tire cold pressure adjustment,Pa
+dpRFTireColdPress,4,714,1,False,dpRFTireColdPress,Pitstop rf cold tire pressure adjustment,Pa
+dpLRTireColdPress,4,718,1,False,dpLRTireColdPress,Pitstop lr tire cold pressure adjustment,Pa
+dpRRTireColdPress,4,722,1,False,dpRRTireColdPress,Pitstop rr cold tire pressure adjustment,Pa
+dcTractionControl,4,726,1,False,dcTractionControl,In car traction control adjustment,
+dcTractionControl2,4,730,1,False,dcTractionControl2,In car traction control 2 adjustment,
+dcABS,4,734,1,False,dcABS,In car abs adjustment,
+dcFuelMixture,4,738,1,False,dcFuelMixture,In car fuel mixture adjustment,
+RFbrakeLinePress,4,742,1,False,RFbrakeLinePress,RF brake line pressure,bar
+RFspeed,4,746,1,False,RFspeed,RF wheel speed,m/s
+RFpressure,4,750,1,False,RFpressure,RF tire pressure,kPa
+RFcoldPressure,4,754,1,False,RFcoldPressure,RF tire cold pressure  as set in the garage,kPa
+RFtempL,4,758,1,False,RFtempL,RF tire left surface temperature,C
+RFtempM,4,762,1,False,RFtempM,RF tire middle surface temperature,C
+RFtempR,4,766,1,False,RFtempR,RF tire right surface temperature,C
+RFtempCL,4,770,1,False,RFtempCL,RF tire left carcass temperature,C
+RFtempCM,4,774,1,False,RFtempCM,RF tire middle carcass temperature,C
+RFtempCR,4,778,1,False,RFtempCR,RF tire right carcass temperature,C
+RFwearL,4,782,1,False,RFwearL,RF tire left percent tread remaining,%
+RFwearM,4,786,1,False,RFwearM,RF tire middle percent tread remaining,%
+RFwearR,4,790,1,False,RFwearR,RF tire right percent tread remaining,%
+LFbrakeLinePress,4,794,1,False,LFbrakeLinePress,LF brake line pressure,bar
+LFspeed,4,798,1,False,LFspeed,LF wheel speed,m/s
+LFpressure,4,802,1,False,LFpressure,LF tire pressure,kPa
+LFcoldPressure,4,806,1,False,LFcoldPressure,LF tire cold pressure  as set in the garage,kPa
+LFtempL,4,810,1,False,LFtempL,LF tire left surface temperature,C
+LFtempM,4,814,1,False,LFtempM,LF tire middle surface temperature,C
+LFtempR,4,818,1,False,LFtempR,LF tire right surface temperature,C
+LFtempCL,4,822,1,False,LFtempCL,LF tire left carcass temperature,C
+LFtempCM,4,826,1,False,LFtempCM,LF tire middle carcass temperature,C
+LFtempCR,4,830,1,False,LFtempCR,LF tire right carcass temperature,C
+LFwearL,4,834,1,False,LFwearL,LF tire left percent tread remaining,%
+LFwearM,4,838,1,False,LFwearM,LF tire middle percent tread remaining,%
+LFwearR,4,842,1,False,LFwearR,LF tire right percent tread remaining,%
+FuelUsePerHour,4,846,1,False,FuelUsePerHour,Engine fuel used instantaneous,kg/h
+Voltage,4,850,1,False,Voltage,Engine voltage,V
+WaterTemp,4,854,1,False,WaterTemp,Engine coolant temp,C
+WaterLevel,4,858,1,False,WaterLevel,Engine coolant level,l
+FuelPress,4,862,1,False,FuelPress,Engine fuel pressure,bar
+OilTemp,4,866,1,False,OilTemp,Engine oil temperature,C
+OilPress,4,870,1,False,OilPress,Engine oil pressure,bar
+OilLevel,4,874,1,False,OilLevel,Engine oil level,l
+ManifoldPress,4,878,1,False,ManifoldPress,Engine manifold pressure,bar
+FuelLevel,4,882,1,False,FuelLevel,Liters of fuel remaining,l
+Engine0_RPM,4,886,1,False,Engine0_RPM,Engine0Engine rpm,revs/min
+RRbrakeLinePress,4,890,1,False,RRbrakeLinePress,RR brake line pressure,bar
+RRspeed,4,894,1,False,RRspeed,RR wheel speed,m/s
+RRpressure,4,898,1,False,RRpressure,RR tire pressure,kPa
+RRcoldPressure,4,902,1,False,RRcoldPressure,RR tire cold pressure  as set in the garage,kPa
+RRtempL,4,906,1,False,RRtempL,RR tire left surface temperature,C
+RRtempM,4,910,1,False,RRtempM,RR tire middle surface temperature,C
+RRtempR,4,914,1,False,RRtempR,RR tire right surface temperature,C
+RRtempCL,4,918,1,False,RRtempCL,RR tire left carcass temperature,C
+RRtempCM,4,922,1,False,RRtempCM,RR tire middle carcass temperature,C
+RRtempCR,4,926,1,False,RRtempCR,RR tire right carcass temperature,C
+RRwearL,4,930,1,False,RRwearL,RR tire left percent tread remaining,%
+RRwearM,4,934,1,False,RRwearM,RR tire middle percent tread remaining,%
+RRwearR,4,938,1,False,RRwearR,RR tire right percent tread remaining,%
+LRbrakeLinePress,4,942,1,False,LRbrakeLinePress,LR brake line pressure,bar
+LRspeed,4,946,1,False,LRspeed,LR wheel speed,m/s
+LRpressure,4,950,1,False,LRpressure,LR tire pressure,kPa
+LRcoldPressure,4,954,1,False,LRcoldPressure,LR tire cold pressure  as set in the garage,kPa
+LRtempL,4,958,1,False,LRtempL,LR tire left surface temperature,C
+LRtempM,4,962,1,False,LRtempM,LR tire middle surface temperature,C
+LRtempR,4,966,1,False,LRtempR,LR tire right surface temperature,C
+LRtempCL,4,970,1,False,LRtempCL,LR tire left carcass temperature,C
+LRtempCM,4,974,1,False,LRtempCM,LR tire middle carcass temperature,C
+LRtempCR,4,978,1,False,LRtempCR,LR tire right carcass temperature,C
+LRwearL,4,982,1,False,LRwearL,LR tire left percent tread remaining,%
+LRwearM,4,986,1,False,LRwearM,LR tire middle percent tread remaining,%
+LRwearR,4,990,1,False,LRwearR,LR tire right percent tread remaining,%
+RRshockDefl,4,994,1,False,RRshockDefl,RR shock deflection,m
+RRshockVel,4,998,1,False,RRshockVel,RR shock velocity,m/s
+LRshockDefl,4,1002,1,False,LRshockDefl,LR shock deflection,m
+LRshockVel,4,1006,1,False,LRshockVel,LR shock velocity,m/s
+RFshockDefl,4,1010,1,False,RFshockDefl,RF shock deflection,m
+RFshockVel,4,1014,1,False,RFshockVel,RF shock velocity,m/s
+LFshockDefl,4,1018,1,False,LFshockDefl,LF shock deflection,m
+LFshockVel,4,1022,1,False,LFshockVel,LF shock velocity,m/s
+LFrideHeight,4,1026,1,False,LFrideHeight,LF ride height,m
+RFrideHeight,4,1030,1,False,RFrideHeight,RF ride height,m
+LRrideHeight,4,1034,1,False,LRrideHeight,LR ride height,m
+RRrideHeight,4,1038,1,False,RRrideHeight,RR ride height,m

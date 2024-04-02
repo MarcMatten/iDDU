@@ -189,6 +189,8 @@ class AlertManager:
         self.ENGINESTALLED = Alarm('ENGINE STALLED', self.yellow, self.black, 4, 89, -1)
         self.FLASH = Alarm('FLASH', self.green, self.white, 5, 99, 2)
         self.PITLIMITEROFF = Alarm('PIT LIMITER OFF', self.red, self.white, 4, 83, -1)
+        self.PSLARMED = Alarm('PSL ARMED', self.red, self.white, 5, 81, 10)
+        self.PSLDISARMED = Alarm('PSL DISARMED', self.green, self.white, 0, 85, 1)
         self.OILPRESSURE = Alarm('LOW OIL PRESSURE', self.red, self.white, 4, 87, -1)
         self.FUELPRESSURE = Alarm('LOW FUEL PRESSURE', self.red, self.white, 4, 88, -1)
         self.WATERTEMP = Alarm('WATER TEMP HIGH', self.red, self.white, 4, 99, -1)

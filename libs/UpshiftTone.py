@@ -37,6 +37,11 @@ class ShiftToneThread(IDDUThread):
                     self.tic()
                     t = time.perf_counter()
 
+                    # pit speed approch beeps
+                    if self.db.BRequestPitSpeedBeep:
+                        self.beepQuick()
+                        self.db.BRequestPitSpeedBeep = False
+
                     if self.db.config['NFuelTargetMethod'] and self.db.Throttle > 0.9:
                         if self.db.BLiftToneRequest:
                             self.vjoy.set_button(63, 1)
@@ -118,10 +123,10 @@ class ShiftToneThread(IDDUThread):
                     if self.db.Gear > 0:
                         self.oldGear = self.db.Gear
 
-                    # pit speed approch beeps
-                    if self.db.BRequestPitSpeedBeep:
-                        self.beepQuick()
-                        self.db.BRequestPitSpeedBeep = False
+                    # # pit speed approch beeps
+                    # if self.db.BRequestPitSpeedBeep:
+                    #     self.beepQuick()
+                    #     self.db.BRequestPitSpeedBeep = False
 
 
                     self.db.tExecuteUpshiftTone = (time.perf_counter() - t) * 1000
@@ -137,7 +142,7 @@ class ShiftToneThread(IDDUThread):
 
     def beep(self):
         # self.db.Alarm[7] = 3
-        if time.time() > (self.tBeep + 0.75):
+        if not self.db.AM.PSLARMED.BActive and not self.db.BEnteringPits and time.time() > (self.tBeep + 0.75):
             self.vjoy.set_button(64, 1)
             winsound.Beep(self.db.config['fShiftBeep'], self.db.config['tShiftBeep'])
             self.tBeep = time.time()

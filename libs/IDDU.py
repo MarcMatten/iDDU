@@ -137,8 +137,8 @@ class IDDUItem:
     logger = MyLogger()
 
     # steeringwheel
-    vid = 9025
-    pid = 8967 #  32822
+    vid = 9025 # hex: 2341
+    pid = 8968 # hex: 2308
 
     J = Joystick()
     J.connect(vid, pid)
