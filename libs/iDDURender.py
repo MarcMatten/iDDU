@@ -80,10 +80,7 @@ class RenderMain(IDDUItem):
         IDDUItem.__init__(self)
 
         # display
-        if os.environ['COMPUTERNAME'] == 'MARC-SURFACE':
-            os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (self.db.config['rDDU'][0], self.db.config['rDDU'][1])
-        else:
-            os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 1080)
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (self.db.config['rDDU'][0], self.db.config['rDDU'][1])
 
 
 class RenderScreen(RenderMain):

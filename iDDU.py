@@ -10,7 +10,7 @@ from libs.auxiliaries import importExport
 from shutil import copyfile
 from libs import IDDU
 import sys
-import ntp_update_time
+#import ntp_update_time
 
 
 nan = float('nan')

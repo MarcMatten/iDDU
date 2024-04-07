@@ -1,3 +1,5 @@
+Python 3.7.9
+
 pip install pyirdk
 pip install pyqt5
 pip install numpy
