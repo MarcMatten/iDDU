@@ -94,9 +94,7 @@ class IDDUCalcThread(IDDUThread):
                     if not self.db.BDDUexecuting:
                         self.logger.info('Connecting to iRacing')
 
-                    if self.db.oldSessionNum < self.db.SessionNum or not self.db.WeekendInfo['SubSessionID'] == self.db.SubSessionIDOld or not self.db.SessionTypeOld == \
-                                                                                                                                               self.db.SessionInfo['Sessions'][self.db.SessionNum][
-                                                                                                                                                   'SessionType']:
+                    if not self.db.WeekendInfo['SubSessionID'] == self.db.SubSessionIDOld or not self.db.SessionTypeOld == self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']: # self.db.oldSessionNum < self.db.SessionNum or 
                         self.initSession()
 
                     if self.db.SessionTime < 10 + self.db.GreenTime:
@@ -298,6 +296,8 @@ class IDDUCalcThread(IDDUThread):
                             self.db.init = False
                             self.db.OutLap = True
                             self.db.BMultiInitRequest = True
+                            self.db.BTyreChoiceWarning = 0
+                            self.db.AM.CHECKTIRES.cancelAlert()
                             self.db.LastFuelLevel = self.db.FuelLevel
                             self.db.FuelConsumptionList = []
                             self.db.RunStartTime = self.db.SessionTime
@@ -671,6 +671,17 @@ class IDDUCalcThread(IDDUThread):
 
                         # do if car is not on track but don't do if car is on track ------------------------------------------------
                         self.init = True
+                        
+                        if self.db.CarSetup and 'TireType' in self.db.CarSetup['TiresAero']:
+                            if (self.db.TrackWetness > 0 or self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Dry':
+                                self.db.BTyreChoiceWarning = 1
+                                self.db.AM.CHECKTIRES.raiseAlert()
+                            elif (self.db.TrackWetness == 0 or not self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Wet':
+                                self.db.BTyreChoiceWarning = 2
+                                self.db.AM.CHECKTIRES.raiseAlert()
+                            else:
+                                self.db.BTyreChoiceWarning = 0
+                                self.db.AM.CHECKTIRES.cancelAlert()
 
                     # do if sim is running after updating data ---------------------------------------------------------------------
                     if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':

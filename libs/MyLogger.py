@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import RotatingFileHandler
 import os
 import sys
 import traceback
@@ -12,7 +13,8 @@ class MyLogger:
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s | %(funcName)s || %(message)s')
 
-    file_handler = logging.FileHandler(LogFilePath)
+    # file_handler = logging.FileHandler(LogFilePath)
+    file_handler = RotatingFileHandler(LogFilePath, mode='a', maxBytes=5*1024*1024, backupCount=2, encoding=None, delay=0)
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)

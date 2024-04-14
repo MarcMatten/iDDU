@@ -150,7 +150,9 @@ iRData = {'LapBestLapTime': 0,
           'CarSetup': None,
           'Clutch': 0,
           'BrakeABSactive': False,
-          'CarIdxP2P_Status': [False] * 64
+          'CarIdxP2P_Status': [False] * 64,
+          'TrackWetness': 0,
+          'WeatherDeclaredWet': False
           }
 
 # calculated data
@@ -399,6 +401,7 @@ calcData = {'startUp': False,
             'BLEDsInit': False,
             'NShiftLEDState': 0,
             'BLoadRaceSetupWarning': False,
+            'BTyreChoiceWarning': 0,
             'BLowRaceFuelWarning': False,
             'LastSetup': {
                 'DriverSetupName': 'None',
@@ -499,11 +502,11 @@ if __name__ == "__main__":
     calcThread = iDDUcalc.IDDUCalcThread(0.017)
     shiftToneThread = UpshiftTone.ShiftToneThread(0.01)
     guiThread = iDDUgui.iDDUGUIThread(0.02)
-    serialComsThread = SerialComs.SerialComsThread(0.003)
+    serialComsThread = SerialComs.SerialComsThread(0.016)
     steeringWheelComsThread = SteeringWheelComs.SteeringWheelComsThread(0.01)
     pedalControllerlThread = PedalController.PedalControllerThread(0.01)
     raceLapsEstimationThread = raceLapsEstimation.RaceLapsEstimationThread(15)
-    loggerThread = Logger.LoggerThread(0.002)
+    loggerThread = Logger.LoggerThread(0.016)
     ms = MultiSwitch.MultiSwitch(0.02)
 
     for i in range(0, len(iDDUControlsName)):
@@ -522,7 +525,7 @@ if __name__ == "__main__":
     loggerThread.start()
     serialComsThread.start()
     steeringWheelComsThread.start()
-    pedalControllerlThread.start()
+    #pedalControllerlThread.start()
     ms.start()
 
     iRRender = None

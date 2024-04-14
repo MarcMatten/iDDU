@@ -39,7 +39,7 @@ class SerialComsThread(IDDUThread):
     def run(self):
         while self.running:
             # execute this loop while iRacing is running
-            while self.ir.startup():
+            while self.db.startUp:
 
                 # execute this loop while player is on track
                 while self.BArduinoConnected and self.db.IsOnTrack:

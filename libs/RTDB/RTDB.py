@@ -136,6 +136,9 @@ class RTDB:
 # create thread to update RTDB
 class RTDBThread(IDDUThread):
 
+    NTickNoComms = 100
+    ir_connected = False
+
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
 
@@ -143,21 +146,50 @@ class RTDBThread(IDDUThread):
         while self.running:
             t = time.perf_counter()
             self.tic()
-            self.db.startUp = self.ir.startup()
+            # self.db.startUp = self.ir.startup()
+            # if self.db.startUp:
+            #     self.tLastComms = time.perf_counter()
+            #     # self.ir.freeze_var_buffer_latest()
+            #     for i in range(0, len(self.db.queryData)):
+            #         self.db.__setattr__(self.db.queryData[i], self.ir[self.db.queryData[i]])
+            #     # self.ir.unfreeze_var_buffer_latest()
+
+            #     # Mapping CarIdx for DriverInfo['Drivers']
+            #     self.db.CarIdxMap = [None] * 64
+            #     for i in range(0, len(self.db.DriverInfo['Drivers'])):
+            #         self.db.CarIdxMap[self.db.DriverInfo['Drivers'][i]['CarIdx']] = i
+
+            # elif time.perf_counter() - self.tLastComms > 500:
+            #     self.logger.warning('iR Shutdown {}'.format(self.tLastComms))
+            #     self.ir.shutdown()
+            # self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
+            
+            if self.ir_connected and not (self.ir.is_initialized and self.ir.is_connected):
+                if self.NTickNoComms > 100:
+                    self.ir_connected = False
+                    self.db.startUp = False
+                    self.ir.shutdown()
+                    self.logger.info('IRSDK shut down! | NTickNoComms:{} | is_initialized:{} | is_connected:{}'.format(self.logger.error(self.NTickNoComms), self.ir.is_initialized, self.ir.is_connected))
+                else:
+                    self.NTickNoComms = self.NTickNoComms + 1
+            elif self.ir.is_initialized and self.ir.is_connected:
+                self.NTickNoComms = 0
+            if self.NTickNoComms >= 100 and not self.ir_connected and self.ir.startup():
+                self.ir_connected = True
+                self.db.startUp = True
+                self.logger.info('IRSDK intialised!')
+            
             if self.db.startUp:
-                # self.ir.freeze_var_buffer_latest()
                 for i in range(0, len(self.db.queryData)):
                     self.db.__setattr__(self.db.queryData[i], self.ir[self.db.queryData[i]])
-                # self.ir.unfreeze_var_buffer_latest()
 
                 # Mapping CarIdx for DriverInfo['Drivers']
                 self.db.CarIdxMap = [None] * 64
                 for i in range(0, len(self.db.DriverInfo['Drivers'])):
                     self.db.CarIdxMap[self.db.DriverInfo['Drivers'][i]['CarIdx']] = i
 
-            else:
-                self.ir.shutdown()
             self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
+                        
             self.db.tExecuteRTDB = (time.perf_counter() - t) * 1000
             self.toc()
             time.sleep(self.rate)
@@ -197,7 +229,8 @@ class AlertManager:
         self.THUMBWHEELERRORL = Alarm('THMBWHL ERROR Left', self.red, self.white, 4, 90, 10)
         self.THUMBWHEELERRORR = Alarm('THMBWHL ERROR Right', self.red, self.white, 4, 90, 10)
         self.THUMBWHEELOFF = Alarm('THUMMBWHEELS OFF', self.red, self.white, 4, 90, 10)
-        self.LOADRACESETUP = Alarm('LOAD RACE SETUP!', self.yellow, self.black, 3, 99, -1)
+        self.LOADRACESETUP = Alarm('LOAD RACE SETUP!', self.yellow, self.black, 3, 98, -1)
+        self.CHECKTIRES = Alarm('CHECK TIRE CHOICE!', self.yellow, self.black, 3, 97, -1)
         self.LOWFUEL = Alarm('LOW FUEL!', self.yellow, self.black, 3, 99, -1)
         self.CROSSED = Alarm('CROSSED', self.white, self.black, 4, 9)
         self.RANDOMWAVING = Alarm('RANDOM WAVING', self.white, self.black, 0, 8)

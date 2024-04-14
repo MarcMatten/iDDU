@@ -133,8 +133,7 @@ class SteeringWheelComsThread(IDDUThread):
                         self.logger.info('Start Mode OFF')#
                     
                 self.toc()
-
-                # time.sleep(0.2)
+                time.sleep(self.rate)
             
             time.sleep(1)
         
