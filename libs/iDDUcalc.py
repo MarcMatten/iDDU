@@ -189,7 +189,7 @@ class IDDUCalcThread(IDDUThread):
 
                     else:  # do when on track but not when in pits
 
-                        if not (self.db.SessionFlags == self.db.oldSessionFlags):
+                        if (not self.db.SessionFlags == self.db.oldSessionFlags) or (not self.db.TrackWetnessOld == self.db.TrackWetness):
                             self.FlagCallTime = self.db.SessionTime
                             self.db.FlagExceptionVal = 0
                             if self.db.SessionFlags & 0x80000000:  # startGo
@@ -236,8 +236,26 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.slipFlagExceptionVal = 3
                             if self.db.SessionFlags & 0x10:  # red
                                 self.db.backgroundColour = self.red
+                            if not self.db.TrackWetnessOld == self.db.TrackWetness:
+                                self.FlagCallTime = self.db.SessionTime
+                                self.db.FlagException = True
+                                if self.db.TrackWetness == 1:
+                                    self.db.FlagExceptionVal = 11
+                                elif self.db.TrackWetness == 2:
+                                    self.db.FlagExceptionVal = 12
+                                elif self.db.TrackWetness == 3:
+                                    self.db.FlagExceptionVal = 13
+                                elif self.db.TrackWetness == 4:
+                                    self.db.FlagExceptionVal = 14
+                                elif self.db.TrackWetness == 5:
+                                    self.db.FlagExceptionVal = 15
+                                elif self.db.TrackWetness == 6:
+                                    self.db.FlagExceptionVal = 16
+                                elif self.db.TrackWetness == 7:
+                                    self.db.FlagExceptionVal = 17
+                                    
 
-                        elif self.db.SessionTime > (self.FlagCallTime + 3):
+                        elif self.db.SessionTime > (self.FlagCallTime + 4):
                             self.db.backgroundColour = self.black
 
                             if len(self.db.NLappingCars) > 0 and (self.db.PlayerTrackSurface == 1 or self.db.PlayerTrackSurface == 3) and self.db.IsOnTrack:
@@ -248,7 +266,9 @@ class IDDUCalcThread(IDDUThread):
                             self.db.FlagExceptionVal = 0
 
                     self.db.oldSessionFlags = self.db.SessionFlags
-
+                    self.db.TrackWetnessOld = self.db.TrackWetness
+                    self.db.WeatherDeclaredWetOld = self.db.WeatherDeclaredWet
+                    
                     if self.db.IsOnTrack:
                         # do if car is on track #############################################################################################
                         if not self.db.WasOnTrack:
@@ -672,16 +692,20 @@ class IDDUCalcThread(IDDUThread):
                         # do if car is not on track but don't do if car is on track ------------------------------------------------
                         self.init = True
                         
-                        if self.db.CarSetup and 'TireType' in self.db.CarSetup['TiresAero']:
-                            if (self.db.TrackWetness > 0 or self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Dry':
-                                self.db.BTyreChoiceWarning = 1
-                                self.db.AM.CHECKTIRES.raiseAlert()
-                            elif (self.db.TrackWetness == 0 or not self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Wet':
-                                self.db.BTyreChoiceWarning = 2
-                                self.db.AM.CHECKTIRES.raiseAlert()
-                            else:
-                                self.db.BTyreChoiceWarning = 0
-                                self.db.AM.CHECKTIRES.cancelAlert()
+                        if self.db.car.BWetTiresAvailable and self.db.CarSetup:
+                            if  'TireType' in self.db.CarSetup['TiresAero']:
+                                if (# The code `self.db.TrackWetness` is likely trying to access a
+                                # property or attribute named `TrackWetness` from the `db` object
+                                # within a class or module.
+                                self.db.TrackWetness > 1 or self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Dry':
+                                    self.db.BTyreChoiceWarning = 1
+                                    self.db.AM.CHECKTIRES.raiseAlert()
+                                elif (self.db.TrackWetness == 0 or not self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Wet':
+                                    self.db.BTyreChoiceWarning = 2
+                                    self.db.AM.CHECKTIRES.raiseAlert()
+                                else:
+                                    self.db.BTyreChoiceWarning = 0
+                                    self.db.AM.CHECKTIRES.cancelAlert()
 
                     # do if sim is running after updating data ---------------------------------------------------------------------
                     if not self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionLaps'] == 'unlimited':
@@ -749,9 +773,13 @@ class IDDUCalcThread(IDDUThread):
         self.carList = importExport.getFiles(self.dir + '/data/car', 'json')
         self.db.init = True
         self.db.BResults = False
-        self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
-            self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
-            self.db.AirDensity) + ' kg/m³     vWind: '
+        if self.db.WeatherDeclaredWet:
+            tempWetnessStr = 'Wet (Level {})'.format(self.db.TrackWetness)
+        else:
+            tempWetnessStr = 'Dry'
+        self.db.weatherStr = ['TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C (' + tempWetnessStr + ')     pAir: ' + convertString.roundedStr2(
+            self.db.AirPressure/100000) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
+            self.db.AirDensity) + ' kg/m³', 'vWind: ']
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.newLapTime = 0
@@ -1164,9 +1192,13 @@ class IDDUCalcThread(IDDUThread):
                 else:
                     self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetStint, 0)
 
-            self.db.weatherStr = 'TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C     pAir: ' + convertString.roundedStr2(
-                self.db.AirPressure * 0.0338639 * 1.02) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
-                self.db.AirDensity) + ' kg/m³     vWind: '
+            if self.db.WeatherDeclaredWet:
+                tempWetnessStr = 'Wet (Level {})'.format(self.db.TrackWetness)
+            else:
+                tempWetnessStr = 'Dry'
+            self.db.weatherStr = ['TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C (' + tempWetnessStr + ')     pAir: ' + convertString.roundedStr2(
+                self.db.AirPressure/100000) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
+                self.db.AirDensity) + ' kg/m³', 'vWind: ']
 
             # display fuel consumption information
             self.db.RenderLabel[4] = True

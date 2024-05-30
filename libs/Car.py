@@ -62,6 +62,7 @@ class Car:
         self.rSlipMapBrk = [-2.5, -4, -6.5, -9]
         self.rABSActivityMap = [-1, -5, -10, -15]
         self.NGearMax = 0
+        self.BWetTiresAvailable = False
 
         self.tempKey = []
         self.tempVals = []

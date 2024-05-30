@@ -67,6 +67,13 @@ class RenderMain(IDDUItem):
     gas_white = pygame.image.load("files/gas_white.gif")
     gas_green = pygame.image.load("files/gas_green.gif")
     gas_orange = pygame.image.load("files/gas_orange.gif")
+    sun = pygame.image.load("files/sun.png")
+    rain1 = pygame.image.load("files/rain1.png")
+    rain2 = pygame.image.load("files/rain2.png")
+    rain3 = pygame.image.load("files/rain2.png")
+    rain4 = pygame.image.load("files/rain4.png")
+    rain5 = pygame.image.load("files/rain5.png")
+    rain6 = pygame.image.load("files/rain6.png")
 
     BError = False
 
@@ -232,6 +239,20 @@ class RenderScreen(RenderMain):
                         RenderMain.screen.blit(self.debry, [0, 0])
                     elif self.db.FlagExceptionVal == 6:
                         RenderMain.screen.blit(self.warning, [0, 0])
+                    elif self.db.FlagExceptionVal == 11:
+                        RenderMain.screen.blit(self.sun, [0, 0])
+                    elif self.db.FlagExceptionVal == 12:
+                        RenderMain.screen.blit(self.rain1, [0, 0])
+                    elif self.db.FlagExceptionVal == 13:
+                        RenderMain.screen.blit(self.rain2, [0, 0])
+                    elif self.db.FlagExceptionVal == 14:
+                        RenderMain.screen.blit(self.rain3, [0, 0])
+                    elif self.db.FlagExceptionVal == 15:
+                        RenderMain.screen.blit(self.rain4, [0, 0])
+                    elif self.db.FlagExceptionVal == 16:
+                        RenderMain.screen.blit(self.rain5, [0, 0])
+                    elif self.db.FlagExceptionVal == 17:
+                        RenderMain.screen.blit(self.rain6, [0, 0])
 
                 if self.db.IsOnTrack:
                     # Radar Incicators
@@ -525,12 +546,14 @@ class RenderScreen(RenderMain):
                 self.frames2[i].setTextColour(self.db.textColour)
                 self.frames2[i].drawFrame()
 
-        Label = self.fontTiny2.render(self.db.weatherStr + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
+        Label = self.fontTiny2.render(self.db.weatherStr[0], True, self.db.textColour)
+        Label2 = self.fontTiny2.render(self.db.weatherStr[1] + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
         RenderMain.screen.blit(Label, (5, 1))
+        RenderMain.screen.blit(Label2, (5, 23))
 
-        Label2 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
+        Label3 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
 
-        RenderMain.screen.blit(Label2, (5, 458))
+        RenderMain.screen.blit(Label3, (5, 458))
 
     def page3(self):
 

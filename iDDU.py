@@ -151,8 +151,9 @@ iRData = {'LapBestLapTime': 0,
           'Clutch': 0,
           'BrakeABSactive': False,
           'CarIdxP2P_Status': [False] * 64,
-          'TrackWetness': 0,
-          'WeatherDeclaredWet': False
+          'TrackWetness': 1,
+          'WeatherDeclaredWet': False,
+          'Percipitation': 0
           }
 
 # calculated data
@@ -428,7 +429,9 @@ calcData = {'startUp': False,
             'BEnableAutoClutch': True,
             'GearID': 'base',
             'FuelLevelDisp': 0,
-            'BRequestPitSpeedBeep': False
+            'BRequestPitSpeedBeep': False,            
+            'TrackWetnessOld': 1,
+            'WeatherDeclaredWetOld': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
