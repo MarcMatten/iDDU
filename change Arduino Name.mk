@@ -7,3 +7,8 @@ SteeringWheel
     "Name": "SteeringWheel",
     "pid": 2308,
     "vid": 2341
+
+
+    # steeringwheel
+    vid = 9025 # hex: 2341
+    pid = 8968 # hex: 2308
