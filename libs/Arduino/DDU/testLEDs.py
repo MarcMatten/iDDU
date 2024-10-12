@@ -2,7 +2,7 @@ import serial
 import struct
 import time
 
-ser = serial.Serial('COM15', 9600, timeout=1)
+ser = serial.Serial('COM6', 9600, timeout=1)
 
 print('===================')
 print('INIT')
@@ -56,6 +56,13 @@ print('RR')
 
 for i in range(0,5):
     ser.write(struct.pack('>bbbbbbb', 0,0,0,0,i,0,0))
+    time.sleep(0.33)
+
+print('===================')
+print('ABS')
+
+for i in range(0,5):
+    ser.write(struct.pack('>bbbbbbb', 0,0,0,0,0,0,i))
     time.sleep(0.33)
 
 time.sleep(1)

@@ -468,7 +468,9 @@
     "name": "fuji nochicane",
     "sTrack": 4460.0,
     "tLap": {
-        "Ferrari 488 GT3 Evo 2020": 98.24999999991064
+        "Ferrari 296 GT3": 110.14999999839893,
+        "Ferrari 488 GT3 Evo 2020": 98.24999999991064,
+        "Ford Mustang GT3": 99.76666666793517
     },
     "x": [
         417.23538015198164,

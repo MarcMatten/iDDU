@@ -8,10 +8,16 @@ import numpy as np
 import scipy.optimize
 import scipy.signal
 
+import sys
+sys.path.insert(1, 'C:/Users/marc/Documents/iDDU')
+
 from libs.RTDB import RTDB
 from libs.auxiliaries import importExport, filters, importIBT, maths
 from libs.Car import Car
+
 from datetime import datetime
+
+NGearMin = 0  # use 0 if data contains clutch roll out
 
 
 def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
@@ -66,12 +72,24 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
         os.mkdir(resultsDirPath)
 
     maxRPM = np.max(d['RPM'])
+    
 
     d['BStraightLine'] = np.logical_and(np.abs(d['gLat']) < 1, np.abs(d['SteeringWheelAngle']) < 10)
     d['BStraightLine'] = np.logical_and(d['BStraightLine'], d['vCar'] > 10)
     d['BCoasting'] = np.logical_and(filters.movingAverage(d['rThrottle'], 25) == 0, filters.movingAverage(d['rBrake'], 25) == 0)
+    NDataPoints = len(d['BCoasting'])
     d['BCoasting'] = np.logical_and(d['BCoasting'], d['RPM'] < (maxRPM - 250))
     d['BCoasting'] = np.logical_and(d['BCoasting'], d['BStraightLine'])
+    
+    _, b = scipy.signal.find_peaks(d['BCoasting']*1,  height=1, plateau_size=110)
+    
+    d['BCoasting'] = [False]*NDataPoints
+
+    for i in range(0, len(b['left_edges'])):
+        d['BCoasting'][(b['left_edges'][i]+ 0):(b['right_edges'][i]-107)] = [True] * ((b['right_edges'][i]-107) - (b['left_edges'][i]+ 0))
+    
+    d['BCoasting'][(b['right_edges'][i] + 1):NDataPoints] = [False]*(NDataPoints - (b['right_edges'][i] + 1))
+    
     d['BCoastingInGear'] = np.logical_and(d['BCoasting'], d['rClutch'] > 0.5)
     d['BCoastingClutch'] = np.logical_and(d['BCoasting'], d['rClutch'] == 0)
 
@@ -94,7 +112,7 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     rGearRatioList = [None] * (NGearMax + 1)
     vCarList = [None] * (NGearMax + 1)
 
-    for i in range(0, np.max(d['Gear'])+1):
+    for i in range(NGearMin, np.max(d['Gear'])+1):
 
         if i == 0:
             d['BGear'][i] = d['BCoastingClutch']
@@ -124,7 +142,7 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     plt.ylim(0, np.max(d['QFuel'][d['BCoasting']]) * 1.5)
 
     # plot QFuel vs vCar
-    for i in range(0, NGearMax + 1):
+    for i in range(NGearMin, NGearMax + 1):
         if i > 0 or any(d['BGear'][i]):
             plt.scatter(d['vCar'][d['BGear'][i]], d['QFuel'][d['BGear'][i]], color='k', marker=".")
             plt.plot(vCar, maths.polyVal(vCar, QFuelPolyFit[i]), color=cmap(i), label='Gear {}'.format(i))

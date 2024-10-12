@@ -450,6 +450,7 @@
     "name": "spielberg gp",
     "sTrack": 4280.0,
     "tLap": {
+        "Formula IR-04": 229.0333333368847,
         "Porsche 911 GT3 Cup (992)": 1668.5167399085833,
         "Radical SR10": 87.78333333445107,
         "Renault Clio R.S. V": 108.78333333471801

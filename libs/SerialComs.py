@@ -67,6 +67,7 @@ class SerialComsThread(IDDUThread):
                     SlipLEDsFR = 0
                     SlipLEDsRL = 0
                     SlipLEDsRR = 0
+                    rABSActivity = 0
 
                     # ABS Activation
                     if self.db.config['NSlipLEDMode'] in [1, 2, 3] and ('dcABS' in self.db.car.dcList or self.db.car.name in self.CarsWithABS):
@@ -74,6 +75,7 @@ class SerialComsThread(IDDUThread):
                         SlipLEDsFR = np.int8(min(max(self.db.rABSActivity[1], 0), 4))
                         SlipLEDsRL = np.int8(min(max(self.db.rABSActivity[2], 0), 4))
                         SlipLEDsRR = np.int8(min(max(self.db.rABSActivity[3], 0), 4))
+                        rABSActivity = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
 
                     # rear locking
                     if self.db.config['NSlipLEDMode'] in [1, 4, 6] and self.db.rRearLocking:
@@ -86,7 +88,7 @@ class SerialComsThread(IDDUThread):
                         SlipLEDsRR = np.int8(min(max(self.db.rWheelSpin, 0), 4))
 
                     t2 = time.perf_counter()
-                    msg = struct.pack('>bbbbbbb', ShiftLEDs, SlipLEDsFL, SlipLEDsFR, SlipLEDsRL, SlipLEDsRR, BInitLEDs, vCar)
+                    msg = struct.pack('>bbbbbbb', ShiftLEDs, SlipLEDsFL, SlipLEDsFR, SlipLEDsRL, SlipLEDsRR, BInitLEDs, rABSActivity)
                     self.serial.write(msg)
                     self.db.tExecuteSerialComs2 = (time.perf_counter() - t2) * 1000
 

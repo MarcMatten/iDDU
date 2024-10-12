@@ -636,6 +636,7 @@
     "name": "bathurst",
     "sTrack": 6140.0,
     "tLap": {
+        "Mercedes AMG GT4": 183.16666666899846,
         "Mercedes GT3 2020": 126.32710266113281
     },
     "x": [

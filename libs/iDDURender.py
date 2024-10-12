@@ -121,7 +121,7 @@ class RenderScreen(RenderMain):
         self.frames[0].addLabel('DeltaBestStr', LabeledValue2('DBest', 21, 194, 265, '+00:00.000', self.fontSmall, self.fontLarge, 0, 0), 2)
 
         self.frames[1].addLabel('ClockStr', SimpleValue(318, -10, 92, '-', self.fontSmall, 0, 0, 1), 14)
-        self.frames[1].addLabel('GearStr', SimpleValue(318, 12, 92, '-', self.fontGear, 0, 0, 1), 22)
+        self.frames[1].addLabel('GearStr', SimpleValue(318, 12, 92, '-', self.fontGear, 0, 10, 1), 22) # here color
 
         self.frames[2].addLabel('SpeedStr', SimpleValue(318, 194, 92, '-', self.fontLarge, 0, 0, 0), 23)
 
@@ -367,7 +367,7 @@ class RenderScreen(RenderMain):
                                 valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                             commentList = self.db.car.dcList[self.db.dcChangedItems[0]][3]
                             NComment = int(self.db.get(self.db.dcChangedItems[0])) - 1
-                            commentText = self.db.car.dcList[self.db.dcChangedItems[0]][3][min(len(commentList)-1, NComment)]                        
+                            commentText = self.db.car.dcList[self.db.dcChangedItems[0]][3][min(len(commentList)-1, abs(NComment))]                        
                             self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr, self.red, commentText)
                     else:
                         if self.db.dcChangedItems[0] == 'Push':

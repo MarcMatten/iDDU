@@ -1,6 +1,7 @@
 {
     "BDRS": false,
     "BP2P": false,
+    "BWetTiresAvailable": true,
     "Coasting": {
         "BValid": false,
         "CarSetup": {},

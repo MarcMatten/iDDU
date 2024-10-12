@@ -169,7 +169,7 @@ class RTDBThread(IDDUThread):
                     self.ir_connected = False
                     self.db.startUp = False
                     self.ir.shutdown()
-                    self.logger.info('IRSDK shut down! | NTickNoComms:{} | is_initialized:{} | is_connected:{}'.format(self.logger.error(self.NTickNoComms), self.ir.is_initialized, self.ir.is_connected))
+                    self.logger.info('IRSDK shut down! | NTickNoComms:{} | is_initialized:{} | is_connected:{}'.format(self.NTickNoComms, self.ir.is_initialized, self.ir.is_connected))
                 else:
                     self.NTickNoComms = self.NTickNoComms + 1
             elif self.ir.is_initialized and self.ir.is_connected:

@@ -240,12 +240,48 @@
         "dcBrakeBias": [
             "BrakeBias",
             true,
-            1
+            1,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcPitSpeedLimiterToggle": [
             "PitSpeedLimiterToggle",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ]
     },
     "iRShiftRPM": [
@@ -1489,5 +1525,7 @@
             97.54415401637534,
             97.69999999994002
         ]
-    }
+    },
+    "tempKey": [],
+    "tempVals": []
 }

@@ -516,9 +516,12 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.CarIdxP2P_Status[self.db.DriverCarIdx]  # self.db.PushToPass
 
                         # alarm
-                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes AMG GT4', 'Mercedes GT3 2020', 'Toyota GR86',
+                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes GT3 2020', 'Toyota GR86',
                                                 'Lamborghini GT3', 'C6R', 'AM DBR9 GT1']:
                             BTcToggle = True
+                            BABSToggle = True
+                        elif self.db.car.name in ['Ford Mustang GT3', 'Mercedes AMG GT4', 'Ferrari 296 GT3']:
+                            BTcToggle = False
                             BABSToggle = True
                         else:
                             BTcToggle = self.db.dcTractionControlToggle
@@ -531,10 +534,12 @@ class IDDUCalcThread(IDDUThread):
                             if BTcToggle or self.db.dcTractionControl2 == self.db.car.NTC2Disabled:
                                 self.db.Alarm[9] = 3
 
-                        if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled or self.db.BrakeABSactive and self.db.Brake > 0:
-                            self.db.Alarm[8] = 1
-                        elif self.db.Brake > 0.75 and self.db.Speed > 10:
+                        if (not BABSToggle and self.db.dcABS) or self.db.dcABS == self.db.car.NABSDisabled :
                             self.db.Alarm[8] = 3
+                        elif self.db.Brake > 0.75 and self.db.Speed > 10:
+                            self.db.Alarm[8] = 2
+                        # elif self.db.BrakeABSactive and self.db.Brake > 0:
+                            # self.db.Alarm[8] = 1
 
                         # Lift beeps
                         if self.db.config['NFuelTargetMethod'] and self.db.BFuelSavingConfigLoaded and self.db.Speed > 10:
@@ -626,8 +631,6 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.rABSActivity = [0, 0, 0, 0]
 
                             
-
-
                         else:  # rear locking
                             temp = 0
                             if self.db.Brake > 0.1:
@@ -675,6 +678,17 @@ class IDDUCalcThread(IDDUThread):
                         elif self.BStartCompleted:
                             self.BClutchRelased = False
                             self.BStartCompleted = False
+                        
+                        # Oval Downshift Logic
+                        if True:  #self.db.WeekendInfo['Category'] == 'Oval':
+                            if self.db.Gear > 1 and self.db.Gear <= self.db.car.NGearMax:
+                                if (self.db.RPM / self.db.car.rGearRatios[self.db.GearID][self.db.Gear] * self.db.car.rGearRatios[self.db.GearID][self.db.Gear-1]) < self.db.car.UpshiftSettings[self.db.GearID]['nMotorShiftLEDs'][self.db.Gear-2][0]:
+                                    self.db.Alarm[10] = 1
+                                else:
+                                    self.db.Alarm[10] = 0
+                            else:
+                                self.db.Alarm[10] = 0
+                        
                     else:
                         if self.db.WasOnTrack:
                             self.db.NDDUPage = 1
@@ -691,16 +705,20 @@ class IDDUCalcThread(IDDUThread):
 
                         # do if car is not on track but don't do if car is on track ------------------------------------------------
                         self.init = True
+                        TireType = None
                         
                         if self.db.car.BWetTiresAvailable and self.db.CarSetup:
-                            if  'TireType' in self.db.CarSetup['TiresAero']:
-                                if (# The code `self.db.TrackWetness` is likely trying to access a
-                                # property or attribute named `TrackWetness` from the `db` object
-                                # within a class or module.
-                                self.db.TrackWetness > 1 or self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Dry':
+                            if 'TiresAero' in self.db.CarSetup:
+                                if  'TireType' in self.db.CarSetup['TiresAero']:
+                                    TireType = self.db.CarSetup['TiresAero']['TireType']['TireType']
+                            if 'Tires' in self.db.CarSetup:
+                                if  'TireType' in self.db.CarSetup['Tires']:
+                                    TireType = self.db.CarSetup['Tires']['TireType']['TireType']
+                            if TireType:
+                                if (self.db.TrackWetness > 1 or self.db.WeatherDeclaredWet) and TireType == 'Dry':
                                     self.db.BTyreChoiceWarning = 1
                                     self.db.AM.CHECKTIRES.raiseAlert()
-                                elif (self.db.TrackWetness == 0 or not self.db.WeatherDeclaredWet) and self.db.CarSetup['TiresAero']['TireType']['TireType'] == 'Wet':
+                                elif (self.db.TrackWetness == 0 or not self.db.WeatherDeclaredWet) and TireType == 'Wet':
                                     self.db.BTyreChoiceWarning = 2
                                     self.db.AM.CHECKTIRES.raiseAlert()
                                 else:
@@ -787,7 +805,7 @@ class IDDUCalcThread(IDDUThread):
         self.db.NLapsTotal = 0
         self.db.TrackLength = float(self.db.WeekendInfo['TrackLength'].split(' ')[0])
         self.db.config['MapHighlight'] = False
-        self.db.Alarm = np.array([0] * 10)
+        self.db.Alarm = np.array([0] * 11)
         self.db.BMultiInitRequest = True
 
         if self.db.startUp:
@@ -896,8 +914,8 @@ class IDDUCalcThread(IDDUThread):
                     self.db.RenderLabel[16] = False
                     if tLapEst:
                         if self.db.SessionLength > self.db.config['RaceLaps'] * 1.05 * tLapEst:
-                            self.db.RenderLabel[15] = False
-                            self.db.RenderLabel[16] = True
+                            self.db.RenderLabel[15] = False  # remain
+                            self.db.RenderLabel[16] = True  # elapsed
                             self.db.TimeLimit = True
 
                 # limited time

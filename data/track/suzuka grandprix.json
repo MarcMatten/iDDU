@@ -597,6 +597,7 @@
     "name": "suzuka grandprix",
     "sTrack": 5750.0,
     "tLap": {
+        "Mercedes AMG GT4": 129.7570037841797,
         "Porsche 963": 105.1697998046875
     },
     "x": [
