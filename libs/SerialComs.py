@@ -27,7 +27,7 @@ class SerialComsThread(IDDUThread):
             try:
                 self.logger.info('Arduino found! Connecting to {} on {}'.format(self.db.config['USBDevices']['DDU']['Name'], self.db.config['USBDevices']['DDU']['COM']))
                 self.serial = serial.Serial(self.COMPort, 9600, timeout=1)
-                self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 0, 1))
+                self.serial.write(struct.pack('>bbbbbbb', 0, 0, 0, 0, 0, 1, 0))
                 self.BArduinoConnected = True
                 self.logger.info('Connection to {} established on {}!'.format(self.db.config['USBDevices']['DDU']['Name'], self.db.config['USBDevices']['DDU']['COM']))
             except:
@@ -71,10 +71,10 @@ class SerialComsThread(IDDUThread):
 
                     # ABS Activation
                     if self.db.config['NSlipLEDMode'] in [1, 2, 3] and ('dcABS' in self.db.car.dcList or self.db.car.name in self.CarsWithABS):
-                        SlipLEDsFL = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
-                        SlipLEDsFR = np.int8(min(max(self.db.rABSActivity[1], 0), 4))
-                        SlipLEDsRL = np.int8(min(max(self.db.rABSActivity[2], 0), 4))
-                        SlipLEDsRR = np.int8(min(max(self.db.rABSActivity[3], 0), 4))
+                        SlipLEDsFL = 0 # np.int8(min(max(self.db.rABSActivity[0], 0), 4))
+                        SlipLEDsFR = 0 #  np.int8(min(max(self.db.rABSActivity[1], 0), 4))
+                        SlipLEDsRL = 0 #  np.int8(min(max(self.db.rABSActivity[2], 0), 4))
+                        SlipLEDsRR = 0 #  np.int8(min(max(self.db.rABSActivity[3], 0), 4))
                         rABSActivity = np.int8(min(max(self.db.rABSActivity[0], 0), 4))
 
                     # rear locking

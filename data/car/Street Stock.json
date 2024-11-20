@@ -1,7 +1,9 @@
 {
     "BDRS": false,
     "BP2P": false,
+    "BWetTiresAvailable": false,
     "Coasting": {
+        "BValid": false,
         "CarSetup": {},
         "NGear": [],
         "QFuelCoastPolyFit": [],
@@ -9,6 +11,7 @@
         "gLongCoastPolyFit": []
     },
     "NABSDisabled": 0,
+    "NGearMax": 0,
     "NTC1Disabled": 0,
     "NTC2Disabled": 0,
     "UpshiftSettings": {
@@ -33,6 +36,111 @@
             7
         ],
         "SetupName": "SetupName",
+        "base": {
+            "BShiftTone": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            "BValid": false,
+            "NGear": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ],
+            "SetupName": "SetupName",
+            "nMotorShiftLEDs": [
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            "nMotorShiftOptimal": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "nMotorShiftTarget": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "vCarShiftOptimal": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "vCarShiftTarget": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
         "nMotorShiftOptimal": [
             99999,
             99999,
@@ -89,21 +197,77 @@
         4000,
         4000
     ],
+    "VFuelLap": {},
+    "carPath": "streetstock",
     "dcList": {
         "dcBrakeBias": [
             "BrakeBias",
             true,
-            1
+            1,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcStarter": [
             "Starter",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcTearOffVisor": [
             "TearOffVisor",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ]
     },
     "iRShiftRPM": [
@@ -113,6 +277,38 @@
         6800.0
     ],
     "name": "Street Stock",
+    "pBrakeFMax": 0,
+    "pBrakeRMax": 0,
+    "rABSActivityMap": [
+        -1,
+        -5,
+        -10,
+        -15
+    ],
+    "rGearRatios": {
+        "base": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "rSlipMapAcc": [
+        2.5,
+        4,
+        6.5,
+        9
+    ],
+    "rSlipMapBrk": [
+        -2.5,
+        -4,
+        -6.5,
+        -9
+    ],
     "tLap": {
         "lanier dirt": [
             0.0,
@@ -170,5 +366,7 @@
             53.92553445688757,
             29.97319984436035
         ]
-    }
+    },
+    "tempKey": [],
+    "tempVals": []
 }

@@ -41,23 +41,31 @@ class LoggerThread(IDDUThread):
         #              'VFuelReferenceActive',
         #              'VFuelUsedLap']
 
+        # self.keys = ['SessionTime',
+        #              'Speed',
+        #              'Throttle', 
+        #              'LapDistPct',
+        #              'Brake', 
+        #              'Clutch', 
+        #              'LapDistPct',
+        #              'Lap',
+        #              'NNextLiftPoint',
+        #              'BInLiftZone',
+        #              'BEnableAutoLift',
+        #              'BForceLift',
+        #              'BForceClutch',
+        #              'VFuelBudgetActive',
+        #              'VFuelStartStraight',
+        #              'tNextLiftPoint',
+        #              'BLiftToneRequest'
+        #              ]
+
         self.keys = ['SessionTime',
                      'Speed',
-                     'Throttle', 
                      'LapDistPct',
-                     'Brake', 
-                     'Clutch', 
-                     'LapDistPct',
-                     'Lap',
-                     'NNextLiftPoint',
-                     'BInLiftZone',
-                     'BEnableAutoLift',
-                     'BForceLift',
-                     'BForceClutch',
-                     'VFuelBudgetActive',
-                     'VFuelStartStraight',
-                     'tNextLiftPoint',
-                     'BLiftToneRequest'
+                     'SpeedTest',
+                     'BYellow',
+                     'DriverCarIdx'
                      ]
 
         self.header = 'Time'

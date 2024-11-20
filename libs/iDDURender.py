@@ -74,6 +74,8 @@ class RenderMain(IDDUItem):
     rain4 = pygame.image.load("files/rain4.png")
     rain5 = pygame.image.load("files/rain5.png")
     rain6 = pygame.image.load("files/rain6.png")
+    yellow1 = pygame.image.load("files/yellow1.gif")
+    yellow2 = pygame.image.load("files/yellow2.gif")
 
     BError = False
 
@@ -82,6 +84,7 @@ class RenderMain(IDDUItem):
     tMin = 1000
     tMax = 0
     tAvg = 0
+    tYellow = 0
 
     def __init__(self):
         IDDUItem.__init__(self)
@@ -253,6 +256,17 @@ class RenderScreen(RenderMain):
                         RenderMain.screen.blit(self.rain5, [0, 0])
                     elif self.db.FlagExceptionVal == 17:
                         RenderMain.screen.blit(self.rain6, [0, 0])
+                
+                if self.db.BYellow:
+                    f = 0.25 
+                    if self.db.tYellow == 0:
+                        self.db.tYellow = time.time()
+                                           
+                    
+                    if (time.time() - self.db.tYellow) % f < f/2:
+                        RenderMain.screen.blit(self.yellow1, [0, 0]) 
+                    elif (time.time() - self.db.tYellow) % f >= f/2:
+                        RenderMain.screen.blit(self.yellow2, [0, 0]) 
 
                 if self.db.IsOnTrack:
                     # Radar Incicators
@@ -422,7 +436,7 @@ class RenderScreen(RenderMain):
     def page0(self):
 
         RenderMain.screen.fill(self.db.backgroundColour)
-
+        
         Label = self.fontMedium.render('Waiting for iRacing ...', True, self.db.textColour)
         LabelSize = self.fontMedium.size('Waiting for iRacing ...')
         Label2 = self.fontMedium.render(self.db.timeStr, True, self.db.textColour)

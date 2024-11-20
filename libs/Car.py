@@ -302,7 +302,7 @@ class Car:
 
         # coasting
         if self.Coasting['BValid']:
-            for i in range(0, self.NGearMax + 1):
+            for i in range(1, self.NGearMax + 1):
                 for k in range(0, len(self.Coasting['gLongCoastPolyFit'][i])):
                     write2XML('gLongCoastGear{}Poly{}'.format(i, k), self.Coasting['gLongCoastPolyFit'][i][k], '')
 

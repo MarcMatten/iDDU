@@ -545,7 +545,7 @@
     "VFuelLap": {
         "indianapolis 2022 oval": 1.9971466064453125,
         "jerez gp": 2.95330810546875,
-        "roadatlanta full": 2.5620880126953125
+        "roadatlanta full": 2.5617648741846675
     },
     "carPath": "c6r",
     "dcList": {
@@ -2001,7 +2001,5 @@
             75.1493591380431,
             75.29999999890424
         ]
-    },
-    "tempKey": [],
-    "tempVals": []
+    }
 }

@@ -480,6 +480,7 @@
     "name": "algarve gp",
     "sTrack": 4580.0,
     "tLap": {
+        "Mercedes AMG GT4": 124.94180297851562,
         "Porsche 963": 92.21666666532474
     },
     "x": [

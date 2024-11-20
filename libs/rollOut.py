@@ -18,6 +18,8 @@ from libs.Car import Car
 from datetime import datetime
 
 NGearMin = 0  # use 0 if data contains clutch roll out
+NNeglectStartSteps = 0
+NNeglectEndSteps = 0
 
 
 def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
@@ -81,12 +83,12 @@ def getRollOutCurve(dirPath, TelemPath, MotecProjectPath):
     d['BCoasting'] = np.logical_and(d['BCoasting'], d['RPM'] < (maxRPM - 250))
     d['BCoasting'] = np.logical_and(d['BCoasting'], d['BStraightLine'])
     
-    _, b = scipy.signal.find_peaks(d['BCoasting']*1,  height=1, plateau_size=110)
+    _, b = scipy.signal.find_peaks(d['BCoasting']*1,  height=1, plateau_size= 1 + NNeglectStartSteps + NNeglectEndSteps)
     
     d['BCoasting'] = [False]*NDataPoints
 
     for i in range(0, len(b['left_edges'])):
-        d['BCoasting'][(b['left_edges'][i]+ 0):(b['right_edges'][i]-107)] = [True] * ((b['right_edges'][i]-107) - (b['left_edges'][i]+ 0))
+        d['BCoasting'][(b['left_edges'][i]+ NNeglectStartSteps):(b['right_edges'][i]-NNeglectEndSteps)] = [True] * ((b['right_edges'][i]-NNeglectEndSteps) - (b['left_edges'][i] + NNeglectStartSteps))
     
     d['BCoasting'][(b['right_edges'][i] + 1):NDataPoints] = [False]*(NDataPoints - (b['right_edges'][i] + 1))
     

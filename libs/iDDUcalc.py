@@ -37,7 +37,13 @@ class IDDUCalcThread(IDDUThread):
     NPitApproachBeepsPlayed = 0
     vPitSpeedDeltaBeep = [50, 25, 3]
     BPitSpeedBeepsEnabled = False
-
+    SessionTick = 0
+    SessionTickOld = 0
+    x0 = 0
+    x1 = 0
+    t0 = 0
+    t1 = 0
+ 
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
 
@@ -58,6 +64,7 @@ class IDDUCalcThread(IDDUThread):
         self.timeLogingStart = 0
         self.BCreateTrack = False
         self.BRecordtLap = False
+        self.GearID = 'base'
 
         self.DRSList = ['formularenault35', 'mclarenmp430']  # TODO: still required?
         self.P2PList = ['dallaradw12', 'dallarair18']  # TODO: still required?
@@ -280,8 +287,9 @@ class IDDUCalcThread(IDDUThread):
                         self.db.Alarm[8:] = 0
 
                         # my flags
-                        self.blueFlag()
-                        # self.yellowFlag()
+                        if self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType'] in ['Practice', 'Race']:
+                            self.blueFlag()
+                            self.yellowFlag()
 
                         self.db.FuelLevelDisp = self.db.FuelLevel
 
@@ -330,6 +338,10 @@ class IDDUCalcThread(IDDUThread):
 
                             # get GearID
                             self.db.GearID = self.db.car.getGearID(self.db.CarSetup)
+                            if self.db.GearID in self.db.car.rGearRatios:
+                                pass
+                            else:
+                                self.GearID = 'base'
 
                             if self.db.FuelTGTLiftPoints['SFuelConfigCarName'] == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort'] \
                                     and self.db.FuelTGTLiftPoints['SFuelConfigTrackName'] == self.db.WeekendInfo['TrackName']:
@@ -516,11 +528,11 @@ class IDDUCalcThread(IDDUThread):
                             self.db.old_PushToPass = self.db.CarIdxP2P_Status[self.db.DriverCarIdx]  # self.db.PushToPass
 
                         # alarm
-                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Porsche 718 Cayman GT4', 'Mercedes GT3 2020', 'Toyota GR86',
+                        if self.db.car.name in ['Dallara P217 LMP2', 'Porsche 911 GT3.R', 'Ferrari 488 GT3 Evo 2020', 'Mercedes GT3 2020', 'Toyota GR86',
                                                 'Lamborghini GT3', 'C6R', 'AM DBR9 GT1']:
                             BTcToggle = True
                             BABSToggle = True
-                        elif self.db.car.name in ['Ford Mustang GT3', 'Mercedes AMG GT4', 'Ferrari 296 GT3']:
+                        elif self.db.car.name in ['Ford Mustang GT3', 'Mercedes AMG GT4', 'Ferrari 296 GT3', 'Porsche 718 Cayman GT4']:
                             BTcToggle = False
                             BABSToggle = True
                         else:
@@ -583,8 +595,8 @@ class IDDUCalcThread(IDDUThread):
 
                         # rear slip ratio
                         if self.db.VelocityX > 10 and not self.db.WeekendInfo['Category'] == 'Oval':
-                            if self.db.Gear > 0 and self.db.car.rGearRatios[self.db.GearID][self.db.Gear] > 0:
-                                self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.db.GearID][self.db.Gear] * 0.3 / self.db.VelocityX - 1) * 100
+                            if self.db.Gear > 0 and self.db.car.rGearRatios[self.GearID][self.db.Gear] > 0:
+                                self.db.rSlipR = (self.db.RPM / 60 * np.pi / self.db.car.rGearRatios[self.GearID][self.db.Gear] * 0.3 / self.db.VelocityX - 1) * 100
                         else:
                             self.db.rSlipR = 0
 
@@ -680,9 +692,9 @@ class IDDUCalcThread(IDDUThread):
                             self.BStartCompleted = False
                         
                         # Oval Downshift Logic
-                        if True:  #self.db.WeekendInfo['Category'] == 'Oval':
+                        if True : # self.db.WeekendInfo['Category'] == 'Oval':
                             if self.db.Gear > 1 and self.db.Gear <= self.db.car.NGearMax:
-                                if (self.db.RPM / self.db.car.rGearRatios[self.db.GearID][self.db.Gear] * self.db.car.rGearRatios[self.db.GearID][self.db.Gear-1]) < self.db.car.UpshiftSettings[self.db.GearID]['nMotorShiftLEDs'][self.db.Gear-2][0]:
+                                if (self.db.RPM / self.db.car.rGearRatios[self.GearID][self.db.Gear] * self.db.car.rGearRatios[self.GearID][self.db.Gear-1]) < self.db.car.UpshiftSettings[self.GearID]['nMotorShiftLEDs'][self.db.Gear-2][0]:
                                     self.db.Alarm[10] = 1
                                 else:
                                     self.db.Alarm[10] = 0
@@ -1597,6 +1609,71 @@ class IDDUCalcThread(IDDUThread):
             return 1
         else:
             return 0
+    
+    
+    def yellowFlag(self):
+        
+        # vCar calculation
+        if not self.db.SessionTick == self.db.SessionTickOld:
+            # self.SessionTickOld = self.SessionTick
+            # self.SessionTick = self.db.SessionTick
+            
+            # self.x0 = self.x1
+            # self.x1 = np.array(self.db.CarIdxLapDistPct)
+            
+            # self.t0 = self.t1
+            # self.t1 = self.db.SessionTime
+            
+            # dt = self.t1 - self.t0
+            dt = self.db.SessionTime - self.db.SessionTimeOld
+            
+            if dt <= 0 or dt > 0.1:
+                return
+            
+            dx = np.array(self.db.CarIdxLapDistPct) - np.array(self.db.CarIdxLapDistPctOld)
+            
+            # CarIdxSpeed = np.mod(self.x1-self.db.x0, 1)*self.db.TrackLength*1000/dt*3.6
+            CarIdxSpeed = np.sign(dx)*np.mod(np.abs(dx), 1)*self.db.TrackLength*1000/dt*3.6            
+            
+            self.db.CarIdxSpeed = np.where(CarIdxSpeed<0, self.db.CarIdxSpeed, np.where(CarIdxSpeed>400, self.db.CarIdxSpeed, CarIdxSpeed))
+            
+            # if abs(self.x1-self.x0) > 0.9: 
+            #     # crossing finish line
+            #     self.db.CarIdxSpeed = np.mod(self.x1-self.x0, 1)*self.db.TrackLength*1000/dt*3.6
+            # else:
+            #     if self.x1 >= self.x0:
+            #         # forwards
+            #         self.db.CarIdxSpeed = np.mod(self.x1-self.x0, 1)*self.db.TrackLength*1000/dt*3.6
+            #     else:
+            #         # reverse
+            #         self.db.CarIdxSpeed = np.mod(self.x1-self.x0, 1)*self.db.TrackLength*1000/dt*3.6
+                    
+            
+        # filter cars: only on track, not in pitlane, within x meter in front 
+        # CarIdxInRange = np.logical_and.reduce(np.logical_xor(np.array(self.db.CarIdxTrackSurface) == 0, np.array(self.db.CarIdxTrackSurface) == 3), 
+        #                                       np.logical_not(self.db.CarIdxOnPitRoad), 
+        #                                       np.mod(np.array(self.db.CarIdxLapDistPct) - np.array(self.db.LapDistPct), 1) * self.db.TrackLength * 1000 <= 250)
+        
+        CarIdxInRange = np.logical_and(np.logical_and(np.logical_xor(np.array(self.db.CarIdxTrackSurface) == 0, np.array(self.db.CarIdxTrackSurface) == 3), np.logical_not(self.db.CarIdxOnPitRoad)), np.mod(np.array(self.db.CarIdxLapDistPct) - np.array(self.db.LapDistPct), 1) * self.db.TrackLength * 1000 <= 250)
+        
+        CarIdxInRange[self.db.DriverCarIdx] = False
+        
+        self.db.SpeedTest = self.db.CarIdxSpeed[self.db.DriverCarIdx] /3.6
+        
+        if self.db.SessionState == 4 and self.db.IsOnTrack and not self.db.OnPitRoad:
+            # if not self.db.track.name == 'default' and self.db.car.name in self.db.track.tLap:
+            #     # it speed profile take this as reference
+            #     pass
+            # else:
+            #    # if not speed profile take minimum speed as reference
+            #    # check for too slow cars
+            if np.any(np.logical_and(CarIdxInRange, self.db.CarIdxSpeed < 30)):
+                self.db.BYellow = True
+            else:
+                self.db.BYellow = False
+        else:
+            self.db.BYellow = False
+        
 
     def blueFlag(self):
         if self.db.WeekendInfo['NumCarClasses'] > 1:

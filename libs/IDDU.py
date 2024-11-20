@@ -8,6 +8,8 @@ import os
 from libs.MyLogger import MyLogger
 from cython_hidapi import hid
 import numpy as np
+import traceback
+import sys
 
 import serial
 import struct
@@ -58,6 +60,7 @@ class Joystick:
         self.pid = pid
         self.h.open(self.vid, self.pid)
         self.h.set_nonblocking(0)
+
 
     def update(self):
         global state
@@ -138,18 +141,35 @@ class IDDUItem:
 
     # steeringwheel
     vid = 9025 # hex: 2341
-    pid = 8968 # hex: 2308
+    pid = 32823 # hex: 8037
 
-    J = Joystick()
-    J.connect(vid, pid)
-
-    ju = JoystickUpdater(J.h)
-    ju.start()
+    try:
+        J = Joystick()
+        J.connect(vid, pid)
+        ju = JoystickUpdater(J.h)
+        ju.start()
+    except Exception:
+        J = None
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+        S = '\n'
+        for i in s:
+            S = S + i
+        logger.error(S)
 
     MarcsJoystick = J
 
-    Pedals = Joystick()
-    Pedals.connect(12471, 4097)
+    try:
+        Pedals = Joystick()
+        Pedals.connect(12471, 4097)        
+    except Exception:
+        Pedals = None
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+        S = '\n'
+        for i in s:
+            S = S + i
+        logger.error(S)
 
     def __init__(self):
         pass

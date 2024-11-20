@@ -20,6 +20,7 @@ class RTDB:
     map = None
     init = True
     WasOnTrack = False
+    StartRequest = False
 
     def __init__(self):
         timeStr = time.strftime("%H:%M:%S", time.localtime())
@@ -164,10 +165,13 @@ class RTDBThread(IDDUThread):
             #     self.ir.shutdown()
             # self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
             
+            # self.ir.freeze_var_buffer_latest()
+            
             if self.ir_connected and not (self.ir.is_initialized and self.ir.is_connected):
                 if self.NTickNoComms > 100:
                     self.ir_connected = False
                     self.db.startUp = False
+                    self.db.StartRequest = False
                     self.ir.shutdown()
                     self.logger.info('IRSDK shut down! | NTickNoComms:{} | is_initialized:{} | is_connected:{}'.format(self.NTickNoComms, self.ir.is_initialized, self.ir.is_connected))
                 else:
@@ -176,18 +180,32 @@ class RTDBThread(IDDUThread):
                 self.NTickNoComms = 0
             if self.NTickNoComms >= 100 and not self.ir_connected and self.ir.startup():
                 self.ir_connected = True
-                self.db.startUp = True
+                self.db.StartRequest = True
                 self.logger.info('IRSDK intialised!')
             
-            if self.db.startUp:
-                for i in range(0, len(self.db.queryData)):
-                    self.db.__setattr__(self.db.queryData[i], self.ir[self.db.queryData[i]])
+            if self.db.StartRequest:
+                self.ir.freeze_var_buffer_latest()
+                
+                # only update when new SessionTick
+                if not self.ir['SessionTick'] == self.db.SessionTick:
+                    # self.db.__setattr__(self.db.queryData[i], self.ir[self.db.queryData[i]])
+                
+                    for i in range(0, len(self.db.queryData)):
+                        if self.db.queryData[i] in ['CarIdxLapDistPct', 'SessionTime', 'SessionTick']:
+                            self.db.__setattr__(self.db.queryData[i] + 'Old', self.db.__getattribute__(self.db.queryData[i]))
+                        
+                        self.db.__setattr__(self.db.queryData[i], self.ir[self.db.queryData[i]])
+                        
 
-                # Mapping CarIdx for DriverInfo['Drivers']
-                self.db.CarIdxMap = [None] * 64
-                for i in range(0, len(self.db.DriverInfo['Drivers'])):
-                    self.db.CarIdxMap[self.db.DriverInfo['Drivers'][i]['CarIdx']] = i
-
+                    # Mapping CarIdx for DriverInfo['Drivers']
+                    self.db.CarIdxMap = [None] * 64
+                    for i in range(0, len(self.db.DriverInfo['Drivers'])):
+                        self.db.CarIdxMap[self.db.DriverInfo['Drivers'][i]['CarIdx']] = i
+                    
+                    self.db.startUp = True
+                
+                self.ir.unfreeze_var_buffer_latest()
+            
             self.db.timeStr = time.strftime("%H:%M:%S", time.localtime())
                         
             self.db.tExecuteRTDB = (time.perf_counter() - t) * 1000

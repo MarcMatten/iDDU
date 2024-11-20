@@ -29,6 +29,7 @@ helpData = {'done': False,
             }
 # data from iRacing
 iRData = {'LapBestLapTime': 0,
+          'SessionTick': 0,
           'LapLastLapTime': 0,
           'LapDeltaToSessionBestLap': 0,
           'dcFuelMixture': 0,
@@ -69,7 +70,7 @@ iRData = {'LapBestLapTime': 0,
                    'IRating': 1, 'LicLevel': 1, 'LicSubLevel': 1, 'LicString': 'R 0.01', 'LicColor': 87003, 'IsSpectator': 0, 'CarDesignStr': '1,fd7704,000000,ffffff',
                    'HelmetDesignStr': '14,000000,000000,FFFFFF', 'SuitDesignStr': '0,000000,6D6E71,6D6E71', 'CarNumberDesignStr': '1,fd7704,000000,ffffff', 'CarSponsor_1': 107, 'CarSponsor_2': 2,
                    'CurDriverIncidentCount': 0, 'TeamIncidentCount': 0}]},
-          'CarIdxLapDistPct': [0],
+          'CarIdxLapDistPct': np.array([0] * 64),
           'CarIdxOnPitRoad': [True] * 64,
           'SessionInfo':
               {
@@ -153,7 +154,7 @@ iRData = {'LapBestLapTime': 0,
           'CarIdxP2P_Status': [False] * 64,
           'TrackWetness': 1,
           'WeatherDeclaredWet': False,
-          'Percipitation': 0
+          'Precipitation': 0
           }
 
 # calculated data
@@ -431,7 +432,14 @@ calcData = {'startUp': False,
             'FuelLevelDisp': 0,
             'BRequestPitSpeedBeep': False,            
             'TrackWetnessOld': 1,
-            'WeatherDeclaredWetOld': False
+            'WeatherDeclaredWetOld': False,
+            'BYellow': False,
+            'tYellow': 0,
+            'SpeedTest': 0,
+            'CarIdxSpeed': np.array([0] * 64),
+            'SessionTickOld': 0,
+            'SessionTimeOld': 0,
+            'CarIdxLapDistPctOld': np.array([0] * 64) 
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

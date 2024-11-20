@@ -83,7 +83,7 @@ class Gui(IDDUItem):
         # start timer
         iDDU.qTimer.start()
 
-        self.getJoystickList()
+        # self.getJoystickList()
 
         sys.exit(app.exec_())
 
@@ -1299,7 +1299,7 @@ class Gui(IDDUItem):
     def getJoystickControl(self):
         WaitingForEvent = True
         t = time.time()
-        self.initJoystick(self.joystickList[self.comboBox_JoystickSelection.currentIndex()])
+        # self.initJoystick(self.joystickList[self.comboBox_JoystickSelection.currentIndex()])
 
         self.pygame.display.get_init()
 
@@ -1316,7 +1316,7 @@ class Gui(IDDUItem):
         else:
             print(time.strftime("%H:%M:%S", time.localtime()) + ':\tAssigned button {} of Joystick {}!'.format(event.button, event.joy))
 
-        return self.pygame.joystick.Joystick(event.joy).get_name(), event.button
+        # return self.pygame.joystick.Joystick(event.joy).get_name(), event.button
 
     def assignButtonPreviousMulti(self):
         self.assignButton('PreviousMulti')
@@ -1334,10 +1334,11 @@ class Gui(IDDUItem):
         self.assignButton('DDUPage')
 
     def assignButton(self, name):
-        joyID, joyButton = self.getJoystickControl()
-        self.db.config['ButtonAssignments'][name]['Joystick'] = joyID
-        self.db.config['ButtonAssignments'][name]['Button'] = joyButton
-        self.SaveConfig()
+        pass
+        # joyID, joyButton = self.getJoystickControl()
+        # self.db.config['ButtonAssignments'][name]['Joystick'] = joyID
+        # self.db.config['ButtonAssignments'][name]['Button'] = joyButton
+        # self.SaveConfig()
 
     def LoadConfig(self):
         config = importExport.loadJson(self.db.dir + '/data/configs/config.json')
