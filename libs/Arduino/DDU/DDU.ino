@@ -35,6 +35,7 @@ int SlipFL = 0;
 int SlipFR = 0;
 int SlipRL = 0;
 int SlipRR = 0;
+int ABS = 0;
 
 const int BUFFER_SIZE = 7;
 byte buf[BUFFER_SIZE];
@@ -77,6 +78,7 @@ void loop() {
     SlipRL = min(buf[3], 4);
     SlipRR = min(buf[4], 4);
     BInit = min(buf[5], 1);
+    ABS = min(buf[6], 4);
     rlen = 0;
   }
   else {
@@ -105,7 +107,7 @@ void loop() {
     pixels.fill(blue, 8, 16);
   }
 
-  // Slip Lights
+  // Slip Lights  
   if (SlipFL > 0) {
     pixels.fill(yellow, 24, SlipFL);
   }
@@ -117,6 +119,26 @@ void loop() {
   }
   if (SlipRR > 0) {
     pixels.fill(blue, 0, SlipRR);
+  }
+
+  // ABS  
+  if (ABS > 0) {
+    if (ABS == 1) {
+      pixels.fill(green, 0, 2);
+      pixels.fill(green, 30, 31);
+    }
+    if (ABS == 2) {
+      pixels.fill(yellow, 0, 4);
+      pixels.fill(yellow, 28, 31);
+    }
+    if (ABS == 3) {
+      pixels.fill(red, 0, 6);
+      pixels.fill(red, 26, 31);
+    }
+    if (ABS == 4) {
+      pixels.fill(blue, 0, 8);
+      pixels.fill(blue, 24, 31);
+    }
   }
   
   pixels.show();   // Send the updated pixel colors to the hardware.
