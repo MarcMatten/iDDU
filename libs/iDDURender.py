@@ -560,10 +560,8 @@ class RenderScreen(RenderMain):
                 self.frames2[i].setTextColour(self.db.textColour)
                 self.frames2[i].drawFrame()
 
-        Label = self.fontTiny2.render(self.db.weatherStr[0], True, self.db.textColour)
-        Label2 = self.fontTiny2.render(self.db.weatherStr[1] + convertString.roundedStr0(self.db.WindVel * 3.6) + ' km/h', True, self.db.textColour)
+        Label = self.fontTiny2.render(self.db.weatherStr, True, self.db.textColour)
         RenderMain.screen.blit(Label, (5, 1))
-        RenderMain.screen.blit(Label2, (5, 23))
 
         Label3 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)
 

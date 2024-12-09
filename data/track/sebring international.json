@@ -581,6 +581,10 @@
         99.82728842832469,
         100.0
     ],
+    "LapDistPctPitIn": 96.0233986377716,
+    "LapDistPctPitOut": 4.812376946210861,
+	"LapDistPctPitRemerged": 8.635578583765112,
+	"LapDistPctPitDepart": 92.9188255613126,
     "SFLine": [
         [
             350.9100083287579,

@@ -63,7 +63,6 @@ class LoggerThread(IDDUThread):
         self.keys = ['SessionTime',
                      'Speed',
                      'LapDistPct',
-                     'SpeedTest',
                      'BYellow',
                      'DriverCarIdx'
                      ]

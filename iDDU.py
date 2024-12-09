@@ -311,7 +311,7 @@ calcData = {'startUp': False,
             'NPosition': 1,
             'BResults': False,
             'aOffsetTrack': 0,
-            'weatherStr': 'TAir: 25°C     TTrack: 40°C     pAir: 1.01 bar    rHum: 50 %     rhoAir: 1.25 kg/m³     vWind: ',
+            'weatherStr': 'TAir: -°C     TTrack: -°C     Wetness: -     vWind: - km/h',
             'SOFstr': 'SOF: 0',
             'BdcHeadlightFlash': False,
             'tdcHeadlightFlash': 0,
@@ -439,7 +439,8 @@ calcData = {'startUp': False,
             'CarIdxSpeed': np.array([0] * 64),
             'SessionTickOld': 0,
             'SessionTimeOld': 0,
-            'CarIdxLapDistPctOld': np.array([0] * 64) 
+            'CarIdxLapDistPctOld': np.array([0] * 64),
+            'BSpeedProfile': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map

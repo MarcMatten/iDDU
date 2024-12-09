@@ -19,6 +19,11 @@ class Track:
         self.map = []
         self.SFLine = [[0, 0], [0, 0], [0, 0]]
         self.tLap = {}
+        self.LapDistPctPitIn = None
+        self.LapDistPctPitOut = None
+        self.LapDistPctPitDepart = None
+        self.LapDistPctPitRemerged = None
+        self.path = None
 
     def createTrack(self, x, y, LapDistPct, aNorth, sTrack):
         self.x = x
@@ -33,7 +38,9 @@ class Track:
         self.createMap()
 
     def save(self, *args):
-        if len(args) == 1:
+        if len(args) == 0:
+            filepath = self.path
+        elif len(args) == 1:
             filepath = args[0] + '/data/track/' + self.name + '.json'
         elif len(args) == 2:
             filepath = args[0] + '/' + args[1] + '.json'
@@ -44,6 +51,7 @@ class Track:
         # get list of track object properties
         variables = list(self.__dict__.keys())
         variables.remove('map')
+        variables.remove('path')
 
         # create dict of track object properties
         data = {}
@@ -129,6 +137,8 @@ class Track:
         IDDU.IDDUItem.logger.info('Loading track ' + path)
 
         data = importExport.loadJson(path)
+        
+        self.path = path
 
         temp = list(data.items())
         for i in range(0, len(data)):
@@ -137,7 +147,7 @@ class Track:
         IDDU.IDDUItem.logger.info('Track loaded, creating map.')
 
         self.createMap()
-
+        
         IDDU.IDDUItem.logger.info('Loaded track {}'.format(path))
 
     def calcSFLine(self):
@@ -160,3 +170,13 @@ class Track:
                 self.tLap[car] = tLap
         else:
             self.tLap[car] = tLap
+
+    def setPitIn(self, LapDistPctPitIn):
+        if not self.LapDistPctPitIn:
+            self.LapDistPctPitIn = LapDistPctPitIn
+            self.save()
+
+    def setPitOut(self, LapDistPctPitOut):
+        if not self.LapDistPctPitOut:
+            self.LapDistPctPitOut = LapDistPctPitOut
+            self.save()
