@@ -43,6 +43,7 @@ class IDDUCalcThread(IDDUThread):
     x1 = 0
     t0 = 0
     t1 = 0
+    vYellowFlag = None
  
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
@@ -141,6 +142,7 @@ class IDDUCalcThread(IDDUThread):
                         self.NPitApproachBeepsPlayed = 0
                     elif self.db.PlayerTrackSurfaceOld == 3 and not self.db.BEnteringPits and self.db.PlayerTrackSurface == 2:  # entering pit entry event
                         self.db.BEnteringPits = True
+                        self.db.track.setPitIn(self.db.LapDistPct * 100)
 
                     self.db.PlayerTrackSurfaceOld = self.db.PlayerTrackSurface
 
@@ -407,6 +409,7 @@ class IDDUCalcThread(IDDUThread):
                             self.db.BPitCommandUpdate = True
                             self.NPitApproachBeepsPlayed = 0
                             self.BPitSpeedBeepsEnabled = True
+                            self.db.track.setPitOut(self.db.LapDistPct * 100)
 
                         # check if new lap
                         if self.db.Lap > self.db.oldLap and self.db.SessionState == 4 and self.db.SessionTime > self.db.newLapTime + 10:
@@ -804,12 +807,13 @@ class IDDUCalcThread(IDDUThread):
         self.db.init = True
         self.db.BResults = False
         if self.db.WeatherDeclaredWet:
-            tempWetnessStr = 'Wet (Level {})'.format(self.db.TrackWetness)
+            tempWetnessStr = 'Wetness: {}     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
         else:
-            tempWetnessStr = 'Dry'
-        self.db.weatherStr = ['TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C (' + tempWetnessStr + ')     pAir: ' + convertString.roundedStr2(
-            self.db.AirPressure/100000) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
-            self.db.AirDensity) + ' kg/m³', 'vWind: ']
+            tempWetnessStr = 'Wetness: Dry'
+        self.db.weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
+                                                                                            convertString.roundedStr0(self.db.TrackTemp), 
+                                                                                            tempWetnessStr, 
+                                                                                            convertString.roundedStr0(self.db.WindVel * 3.6))
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.newLapTime = 0
@@ -1100,6 +1104,8 @@ class IDDUCalcThread(IDDUThread):
 
             # if self.db.FuelLevelDisp < 0.99 * self.db.DriverCarFuelMaxLtr and self.db.FuelLevelDisp:
             #     self.db.BLowRaceFuelWarning = True
+        
+        self.initSpeedProfile()
 
     def loadTrack(self, name):
         self.logger.info('Loading track: ' + r"track/" + name + '.json')
@@ -1223,12 +1229,14 @@ class IDDUCalcThread(IDDUThread):
                     self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetStint, 0)
 
             if self.db.WeatherDeclaredWet:
-                tempWetnessStr = 'Wet (Level {})'.format(self.db.TrackWetness)
+                tempWetnessStr = 'Wetness: {}     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
             else:
-                tempWetnessStr = 'Dry'
-            self.db.weatherStr = ['TAir: ' + convertString.roundedStr0(self.db.AirTemp) + '°C     TTrack: ' + convertString.roundedStr0(self.db.TrackTemp) + '°C (' + tempWetnessStr + ')     pAir: ' + convertString.roundedStr2(
-                self.db.AirPressure/100000) + ' bar    rHum: ' + convertString.roundedStr0(self.db.RelativeHumidity * 100) + ' %     rhoAir: ' + convertString.roundedStr2(
-                self.db.AirDensity) + ' kg/m³', 'vWind: ']
+                tempWetnessStr = 'Wetness: Dry'
+                
+            self.db.weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
+                                                                                                convertString.roundedStr0(self.db.TrackTemp), 
+                                                                                                tempWetnessStr, 
+                                                                                                convertString.roundedStr0(self.db.WindVel * 3.6))
 
             # display fuel consumption information
             self.db.RenderLabel[4] = True
@@ -1633,10 +1641,14 @@ class IDDUCalcThread(IDDUThread):
             dx = np.array(self.db.CarIdxLapDistPct) - np.array(self.db.CarIdxLapDistPctOld)
             
             # CarIdxSpeed = np.mod(self.x1-self.db.x0, 1)*self.db.TrackLength*1000/dt*3.6
-            CarIdxSpeed = np.sign(dx)*np.mod(np.abs(dx), 1)*self.db.TrackLength*1000/dt*3.6            
+            CarIdxSpeed = np.sign(dx)*np.mod(np.abs(dx), 1)*self.db.TrackLength*1000/dt*3.6      
+            CarIdxSpeed = np.where(np.isnan(CarIdxSpeed), 0, CarIdxSpeed)
+            CarIdxSpeed = np.where(CarIdxSpeed<0, self.db.CarIdxSpeed[:, 1], np.where(CarIdxSpeed>400, self.db.CarIdxSpeed[:, 1], CarIdxSpeed))
             
-            self.db.CarIdxSpeed = np.where(CarIdxSpeed<0, self.db.CarIdxSpeed, np.where(CarIdxSpeed>400, self.db.CarIdxSpeed, CarIdxSpeed))
-            
+            self.db.CarIdxSpeed[:, 0] = self.db.CarIdxSpeed[:, 1]
+            self.db.CarIdxSpeed[:, 1] = self.db.CarIdxSpeed[:, 2]
+            self.db.CarIdxSpeed[:, 2] = CarIdxSpeed
+                        
             # if abs(self.x1-self.x0) > 0.9: 
             #     # crossing finish line
             #     self.db.CarIdxSpeed = np.mod(self.x1-self.x0, 1)*self.db.TrackLength*1000/dt*3.6
@@ -1654,23 +1666,41 @@ class IDDUCalcThread(IDDUThread):
         #                                       np.logical_not(self.db.CarIdxOnPitRoad), 
         #                                       np.mod(np.array(self.db.CarIdxLapDistPct) - np.array(self.db.LapDistPct), 1) * self.db.TrackLength * 1000 <= 250)
         
-        CarIdxInRange = np.logical_and(np.logical_and(np.logical_xor(np.array(self.db.CarIdxTrackSurface) == 0, np.array(self.db.CarIdxTrackSurface) == 3), np.logical_not(self.db.CarIdxOnPitRoad)), np.mod(np.array(self.db.CarIdxLapDistPct) - np.array(self.db.LapDistPct), 1) * self.db.TrackLength * 1000 <= 250)
+        CarIdxInRange = np.logical_and(
+                            np.logical_and(
+                                np.logical_xor(
+                                    np.array(self.db.CarIdxTrackSurface) == 0, 
+                                    np.array(self.db.CarIdxTrackSurface) == 3), 
+                                np.logical_not(self.db.CarIdxOnPitRoad)), 
+                            np.mod(np.array(self.db.CarIdxLapDistPct) - np.array(self.db.LapDistPct), 1) * self.db.TrackLength * 1000 <= 250)
+        
         
         CarIdxInRange[self.db.DriverCarIdx] = False
-        
-        self.db.SpeedTest = self.db.CarIdxSpeed[self.db.DriverCarIdx] /3.6
-        
-        if self.db.SessionState == 4 and self.db.IsOnTrack and not self.db.OnPitRoad:
+        CarIdxInRange[self.db.DriverInfo['PaceCarIdx']] = False
+                
+        if self.db.SessionState == 4 and self.db.IsOnTrack and not self.db.OnPitRoad and self.db.SessionTime > 5 + self.db.GreenTime:
             # if not self.db.track.name == 'default' and self.db.car.name in self.db.track.tLap:
             #     # it speed profile take this as reference
             #     pass
             # else:
             #    # if not speed profile take minimum speed as reference
             #    # check for too slow cars
-            if np.any(np.logical_and(CarIdxInRange, self.db.CarIdxSpeed < 30)):
-                self.db.BYellow = True
+            
+            if self.db.WeatherDeclaredWet:
+                rWeatherGain = 0.55
             else:
-                self.db.BYellow = False
+                rWeatherGain = 1
+            
+            if self.db.BSpeedProfile:
+                if np.any(np.logical_and(CarIdxInRange, np.logical_or(np.max(self.db.CarIdxSpeed, axis=1) < rWeatherGain * self.vYellowFlag(np.array(self.db.CarIdxLapDistPct, dtype=float)*100), np.max(self.db.CarIdxSpeed, axis=1) < 30))):
+                    self.db.BYellow = True
+                else:
+                    self.db.BYellow = False
+            else:
+                if np.any(np.logical_and(CarIdxInRange, np.max(self.db.CarIdxSpeed, axis=1) < 30)):
+                    self.db.BYellow = True
+                else:
+                    self.db.BYellow = False                
         else:
             self.db.BYellow = False
         
@@ -1709,3 +1739,42 @@ class IDDUCalcThread(IDDUThread):
 
         else:
             self.db.NLappingCars = []
+    
+    def initSpeedProfile(self):
+        try:
+            if self.db.track.LapDistPctPitIn and \
+                self.db.track.LapDistPctPitOut and \
+                self.db.track.LapDistPctPitDepart and \
+                self.db.track.LapDistPctPitRemerged and \
+                self.db.track.name in self.db.car.tLap and \
+                self.db.WeekendInfo['TrackName']     == self.db.track.name and \
+                self.db.car.name == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']:
+                
+                vPSL = float(self.db.WeekendInfo['TrackPitSpeedLimit'].split(' ')[0])
+                
+                dt = np.diff(self.db.car.tLap[self.db.track.name])
+                ds = np.diff(np.array(self.db.track.LapDistPct)/100) * self.db.track.sTrack
+                vRaw = ds / dt * 3.6
+                vRaw[[0,1,-2,-1]] = np.mean(vRaw[[2, 3, -4, -3]])
+                
+                v = 0.95 * vRaw - 10
+                
+                NIdxPitIn = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitIn)
+                NIdxPitOut = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitOut)-1
+                NIdxPitDepart = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitDepart)-1
+                NIdxPitRemerged = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitRemerged)
+
+                v[NIdxPitDepart:NIdxPitIn] = vPSL + np.linspace(1,0,NIdxPitIn - NIdxPitDepart)* (v[NIdxPitDepart] - vPSL)
+                v[NIdxPitOut:NIdxPitRemerged] = vPSL + np.linspace(0,1,NIdxPitRemerged - NIdxPitOut)* (v[NIdxPitRemerged] - vPSL)
+                
+                
+                self.vYellowFlag = interpolate.interp1d(self.db.track.LapDistPct[:-1], v, fill_value="extrapolate")
+                self.db.BSpeedProfile = True
+                
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+            S = '\n'
+            for i in s:
+                S = S + i
+            self.logger.error(S)
