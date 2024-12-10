@@ -8,8 +8,10 @@ import numpy as np
 from scipy import interpolate
 
 from libs import Track, Car
-from libs.IDDU import IDDUThread
+from libs.IDDU import IDDUThread, IDDUItem
 from libs.auxiliaries import importExport, convertString, maths
+from functools import wraps
+
 
 nan = float('nan')  # TODO: add to IDDu object?
 
@@ -17,6 +19,21 @@ nan = float('nan')  # TODO: add to IDDu object?
 # TODO: add more comments
 # TODO: try to spread into more nested functions, i.e. approachingPits, inPitStall, exitingPits, ...
 
+
+def a_new_decorator(a_func, *args, **kwargs):
+    @wraps(a_func)
+    def wrapTheFunction(*args, **kwargs):
+        try:
+            a_func(*args, **kwargs)
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
+            S = '\n'
+            for i in s:
+                S = S + i
+            IDDUItem.logger.error(S)
+            
+    return wrapTheFunction
 
 class IDDUCalcThread(IDDUThread):
     BError = False
@@ -45,6 +62,7 @@ class IDDUCalcThread(IDDUThread):
     t1 = 0
     vYellowFlag = None
  
+    @a_new_decorator
     def __init__(self, rate):
         IDDUThread.__init__(self, rate)
 
@@ -82,7 +100,12 @@ class IDDUCalcThread(IDDUThread):
 
         self.logger.info('Started iDDUcalc')
 
+    @a_new_decorator
     def run(self):
+        
+        
+        self.loadTrack('default')
+        
         while self.running:
             self.tic()
             try:
@@ -799,6 +822,7 @@ class IDDUCalcThread(IDDUThread):
                     S = S + i
                 self.logger.error(S)
 
+    @a_new_decorator
     def initSession(self):
         self.logger.info('===== Initialising Session: {} =========================='.format(self.db.SessionInfo['Sessions'][self.db.SessionNum]['SessionType']))
         time.sleep(0.3)
@@ -1107,14 +1131,16 @@ class IDDUCalcThread(IDDUThread):
         
         self.initSpeedProfile()
 
+    @a_new_decorator
     def loadTrack(self, name):
         self.logger.info('Loading track: ' + r"track/" + name + '.json')
-
+        
         self.db.track = Track.Track(name)
         self.db.track.load("data/track/" + name + '.json')
 
         self.logger.info('successfull')
 
+    @a_new_decorator
     def loadCar(self, name, carPath):  # TODO: required?
         self.logger.info('Loading car: ' + r"car/" + name + '.json')
 
@@ -1132,156 +1158,135 @@ class IDDUCalcThread(IDDUThread):
 
         time.sleep(0.2)
 
+    @a_new_decorator
     def newLap(self):
-        try:
-            # Lap Counting
-            self.db.newLapTime = self.db.SessionTime
+        # Lap Counting
+        self.db.newLapTime = self.db.SessionTime
 
-            self.PitStates = (self.db.config['BPitCommandControl'], self.db.config['BChangeTyres'], self.db.config['BBeginFueling'], self.db.config['NFuelSetMethod'], self.db.config['VUserFuelSet'])
+        self.PitStates = (self.db.config['BPitCommandControl'], self.db.config['BChangeTyres'], self.db.config['BBeginFueling'], self.db.config['NFuelSetMethod'], self.db.config['VUserFuelSet'])
 
-            if not self.PitStates == self.PitStatesOld or self.db.BPitCommandUpdate:
-                self.setPitCommands()
-                self.PitStatesOld = self.PitStates
+        if not self.PitStates == self.PitStatesOld or self.db.BPitCommandUpdate:
+            self.setPitCommands()
+            self.PitStatesOld = self.PitStates
 
-            if self.db.config['BEnableLapLogging']:  # TODO: still required?
-                now = datetime.now()
-                date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+        if self.db.config['BEnableLapLogging']:  # TODO: still required?
+            now = datetime.now()
+            date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-                LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
-                f = open('data/laplog/' + LapStr, 'x')  # TODO: better sturcture of this
-                f.write('Lap = ' + repr(self.db.Lap) + '\n')
-                f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
-                f.write('RaceLaps = ' + repr(self.db.config['RaceLaps']) + '\n')
-                f.write('FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
-                f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
-                f.write('SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
-                f.write('SessionTime = ' + repr(self.db.SessionTime) + '\n')
-                f.write('GreenTime = ' + repr(self.db.GreenTime) + '\n')
-                f.write('SessionTimeRemain = ' + repr(self.db.SessionTimeRemain) + '\n')
-                f.write('DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
-                f.write('CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
-                f.write('LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
-                f.write('PitStopsRequired = ' + repr(self.db.config['PitStopsRequired']) + '\n')
-                f.write('CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
-                f.write('SessionNum = ' + repr(self.db.SessionNum) + '\n')
-                f.write('ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
-                f.write('DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
-                f.write('CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
-                f.write('NLapRaceTime = ' + repr(self.db.NLapRaceTime) + '\n')
-                f.write('NLapWinnerRaceTime = ' + repr(self.db.NLapWinnerRaceTime) + '\n')
-                f.write('TFinishPredicted = ' + repr(self.db.TFinishPredicted) + '\n')
-                f.write('WinnerCarIdx = ' + repr(self.db.WinnerCarIdx) + '\n')
-                f.write('NLapDriver = ' + repr(self.db.NLapDriver) + '\n')
-                f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
-                f.write('LapLimit = ' + repr(self.db.LapLimit) + '\n')
-                f.write('SessionLength = ' + repr(self.db.SessionLength) + '\n')
-                f.write('PitStopDelta = ' + repr(self.db.config['PitStopDelta']) + '\n')
-                f.write('CarIdxOnPitRoad = ' + repr(self.db.CarIdxOnPitRoad) + '\n')
-                f.write('CarIdxLapDistPct = ' + repr(self.db.CarIdxLapDistPct) + '\n')
-                f.write('PaceCarIdx = ' + repr(self.db.DriverInfo['PaceCarIdx']) + '\n')
-                f.write('FuelLevel = ' + repr(self.db.FuelLevel) + '\n')
-                f.write('SessionFlags = ' + repr(self.db.SessionFlags) + '\n')
-                f.write('BEnableRaceLapEstimation = ' + repr(self.db.config['BEnableRaceLapEstimation']) + '\n')
-                f.write('tNextLiftPoint = ' + repr(self.db.tNextLiftPoint) + '\n')
-                f.write('LapDistPct = ' + repr(self.db.LapDistPct) + '\n')
-                f.write('BLiftToneRequest = ' + repr(self.db.BLiftToneRequest) + '\n')
-                f.write('BLiftBeepPlayed = ' + repr(self.db.BLiftBeepPlayed) + '\n')
-                f.close()
+            LapStr = date_time + '_Run_'"{:02d}".format(self.db.Run) + '_Lap_'"{:03d}".format(self.db.StintLap) + '.laplog'
+            f = open('data/laplog/' + LapStr, 'x')  # TODO: better sturcture of this
+            f.write('Lap = ' + repr(self.db.Lap) + '\n')
+            f.write('StintLap = ' + repr(self.db.StintLap) + '\n')
+            f.write('RaceLaps = ' + repr(self.db.config['RaceLaps']) + '\n')
+            f.write('FuelConsumptionList = ' + repr(self.db.FuelConsumptionList) + '\n')
+            f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
+            f.write('SessionInfo = ' + repr(self.db.SessionInfo) + '\n')
+            f.write('SessionTime = ' + repr(self.db.SessionTime) + '\n')
+            f.write('GreenTime = ' + repr(self.db.GreenTime) + '\n')
+            f.write('SessionTimeRemain = ' + repr(self.db.SessionTimeRemain) + '\n')
+            f.write('DriverCarIdx = ' + repr(self.db.DriverCarIdx) + '\n')
+            f.write('CarIdxF2Time = ' + repr(self.db.CarIdxF2Time) + '\n')
+            f.write('LapLastLapTime = ' + repr(self.db.LapLastLapTime) + '\n')
+            f.write('PitStopsRequired = ' + repr(self.db.config['PitStopsRequired']) + '\n')
+            f.write('CarIdxPitStops = ' + repr(self.db.CarIdxPitStops) + '\n')
+            f.write('SessionNum = ' + repr(self.db.SessionNum) + '\n')
+            f.write('ResultsPositions = ' + repr(self.db.SessionInfo['Sessions'][self.db.SessionNum]['ResultsPositions']) + '\n')
+            f.write('DriverInfo = ' + repr(self.db.DriverInfo) + '\n')
+            f.write('CarIdxtLap = ' + repr(self.db.CarIdxtLap) + '\n')
+            f.write('NLapRaceTime = ' + repr(self.db.NLapRaceTime) + '\n')
+            f.write('NLapWinnerRaceTime = ' + repr(self.db.NLapWinnerRaceTime) + '\n')
+            f.write('TFinishPredicted = ' + repr(self.db.TFinishPredicted) + '\n')
+            f.write('WinnerCarIdx = ' + repr(self.db.WinnerCarIdx) + '\n')
+            f.write('NLapDriver = ' + repr(self.db.NLapDriver) + '\n')
+            f.write('TimeLimit = ' + repr(self.db.TimeLimit) + '\n')
+            f.write('LapLimit = ' + repr(self.db.LapLimit) + '\n')
+            f.write('SessionLength = ' + repr(self.db.SessionLength) + '\n')
+            f.write('PitStopDelta = ' + repr(self.db.config['PitStopDelta']) + '\n')
+            f.write('CarIdxOnPitRoad = ' + repr(self.db.CarIdxOnPitRoad) + '\n')
+            f.write('CarIdxLapDistPct = ' + repr(self.db.CarIdxLapDistPct) + '\n')
+            f.write('PaceCarIdx = ' + repr(self.db.DriverInfo['PaceCarIdx']) + '\n')
+            f.write('FuelLevel = ' + repr(self.db.FuelLevel) + '\n')
+            f.write('SessionFlags = ' + repr(self.db.SessionFlags) + '\n')
+            f.write('BEnableRaceLapEstimation = ' + repr(self.db.config['BEnableRaceLapEstimation']) + '\n')
+            f.write('tNextLiftPoint = ' + repr(self.db.tNextLiftPoint) + '\n')
+            f.write('LapDistPct = ' + repr(self.db.LapDistPct) + '\n')
+            f.write('BLiftToneRequest = ' + repr(self.db.BLiftToneRequest) + '\n')
+            f.write('BLiftBeepPlayed = ' + repr(self.db.BLiftBeepPlayed) + '\n')
+            f.close()
 
-            self.db.oldLap = self.db.Lap
-            if self.db.config['NRaceLapsSource'] == 0:
-                self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1
-            elif self.db.config['NRaceLapsSource'] == 1:
-                self.db.LapsToGo = self.db.config['UserRaceLaps'] - self.db.Lap + 1
+        self.db.oldLap = self.db.Lap
+        if self.db.config['NRaceLapsSource'] == 0:
+            self.db.LapsToGo = self.db.config['RaceLaps'] - self.db.Lap + 1
+        elif self.db.config['NRaceLapsSource'] == 1:
+            self.db.LapsToGo = self.db.config['UserRaceLaps'] - self.db.Lap + 1
 
-            # Fuel Calculations
-            self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
-            if (not self.db.OutLap) and (not self.db.OnPitRoad):
-                self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
-            else:
-                self.db.OutLap = False
+        # Fuel Calculations
+        self.db.FuelLastCons = self.db.LastFuelLevel - self.db.FuelLevel
+        if (not self.db.OutLap) and (not self.db.OnPitRoad):
+            self.db.FuelConsumptionList.extend([self.db.FuelLastCons])
+        else:
+            self.db.OutLap = False
 
-            FuelLapConsDelta = np.round(self.db.FuelLastCons - self.db.config['VFuelTgt'], 2)
+        FuelLapConsDelta = np.round(self.db.FuelLastCons - self.db.config['VFuelTgt'], 2)
 
-            if FuelLapConsDelta > 0.0 and self.db.config['NFuelTargetMethod'] > 0:
-                self.db.textColourLapCons = self.red
-            elif FuelLapConsDelta < 0.0 and self.db.config['NFuelTargetMethod'] > 0:
-                self.db.textColourLapCons = self.green
-            else:
-                self.db.textColourLapCons = self.db.textColour
+        if FuelLapConsDelta > 0.0 and self.db.config['NFuelTargetMethod'] > 0:
+            self.db.textColourLapCons = self.red
+        elif FuelLapConsDelta < 0.0 and self.db.config['NFuelTargetMethod'] > 0:
+            self.db.textColourLapCons = self.green
+        else:
+            self.db.textColourLapCons = self.db.textColour
 
-            self.db.LastFuelLevel = self.db.FuelLevel
+        self.db.LastFuelLevel = self.db.FuelLevel
 
-            if self.db.LapsToGo == 0:
-                VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3)
-            else:
-                VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3) / self.db.LapsToGo
-            NLapStintRemaining = self.db.config['NLapsStintPlanned'] - self.db.StintLap
-            if NLapStintRemaining > 0:
-                VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / NLapStintRemaining
+        if self.db.LapsToGo == 0:
+            VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3)
+        else:
+            VFuelConsumptionTargetFinish = (self.db.FuelLevel - 0.3) / self.db.LapsToGo
+        NLapStintRemaining = self.db.config['NLapsStintPlanned'] - self.db.StintLap
+        if NLapStintRemaining > 0:
+            VFuelConsumptionTargetStint = (self.db.FuelLevel - 0.3) / NLapStintRemaining
 
-            if self.db.config['NFuelTargetMethod'] == 2:  # Finish
+        if self.db.config['NFuelTargetMethod'] == 2:  # Finish
+            self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
+        elif self.db.config['NFuelTargetMethod'] == 3:  # Stint
+            if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] <= self.db.CarIdxPitStops[self.db.DriverCarIdx]:
                 self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
-            elif self.db.config['NFuelTargetMethod'] == 3:  # Stint
-                if self.db.config['PitStopsRequired'] > 0 and self.db.config['PitStopsRequired'] <= self.db.CarIdxPitStops[self.db.DriverCarIdx]:
-                    self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
-                else:
-                    self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetStint, 0)
-
-            if self.db.WeatherDeclaredWet:
-                tempWetnessStr = 'Wetness: {}     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
             else:
-                tempWetnessStr = 'Wetness: Dry'
-                
-            self.db.weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
-                                                                                                convertString.roundedStr0(self.db.TrackTemp), 
-                                                                                                tempWetnessStr, 
-                                                                                                convertString.roundedStr0(self.db.WindVel * 3.6))
+                self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetStint, 0)
 
-            # display fuel consumption information
-            self.db.RenderLabel[4] = True
-            self.db.RenderLabel[5] = True
-            self.db.RenderLabel[28] = False
-            self.db.RenderLabel[29] = False
+        if self.db.WeatherDeclaredWet:
+            tempWetnessStr = 'Wetness: {}     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
+        else:
+            tempWetnessStr = 'Wetness: Dry'
+            
+        self.db.weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
+                                                                                            convertString.roundedStr0(self.db.TrackTemp), 
+                                                                                            tempWetnessStr, 
+                                                                                            convertString.roundedStr0(self.db.WindVel * 3.6))
 
-            self.db.StintLap = self.db.StintLap + 1
-            self.db.NLapsTotal += 1
+        # display fuel consumption information
+        self.db.RenderLabel[4] = True
+        self.db.RenderLabel[5] = True
+        self.db.RenderLabel[28] = False
+        self.db.RenderLabel[29] = False
 
-            if (self.BCreateTrack or self.BRecordtLap) and self.Logging:
-                self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
+        self.db.StintLap = self.db.StintLap + 1
+        self.db.NLapsTotal += 1
 
-            if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
-                # Logging track data
-                if not self.Logging:
-                    self.logLap = self.db.Lap
-                    self.Logging = True
-                    self.timeLogingStart = self.db.SessionTime
+        if (self.BCreateTrack or self.BRecordtLap) and self.Logging:
+            self.createTrackFile(self.BCreateTrack, self.BRecordtLap)
 
-            # self.logger.info('Fuel Budget used up to Timing Line: {}'.format(np.round(self.db.VFuelStartStraight - self.db.FuelLevel , 3)))
-            # self.logger.info('Fuel Budget up to Timing Line: {}'.format(np.round(self.db.VFuelBudgetActive , 3)))
+        if (self.BCreateTrack or self.BRecordtLap) and not self.db.OutLap and self.db.StintLap > 0:
+            # Logging track data
+            if not self.Logging:
+                self.logLap = self.db.Lap
+                self.Logging = True
+                self.timeLogingStart = self.db.SessionTime
 
-        except Exception:
-            # exc_type, exc_obj, exc_tb = sys.exc_info()
-            # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            # self.logger.error('{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname))
+        # self.logger.info('Fuel Budget used up to Timing Line: {}'.format(np.round(self.db.VFuelStartStraight - self.db.FuelLevel , 3)))
+        # self.logger.info('Fuel Budget up to Timing Line: {}'.format(np.round(self.db.VFuelBudgetActive , 3)))
 
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
-            S = '\n'
-            for i in s:
-                S = S + i
-            self.logger.error(S)
-
-        # except Exception as e:
-        #     exc_type, exc_obj, exc_tb = sys.exc_info()
-        #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        #     ErrorString = '{} in Line {} of {}'.format(exc_type, exc_tb.tb_lineno, fname)
-        #
-        #     if not self.SError == ErrorString:
-        #         self.logger.error(ErrorString)
-        #         self.SError = ErrorString
-        #         self.logger.error(self.SError)
-
+    @a_new_decorator
     def createTrackFile(self, BCreateTrack, BRecordtLap):
 
         index = np.unique(self.time, return_index=True)[1]
@@ -1362,6 +1367,7 @@ class IDDUCalcThread(IDDUThread):
         self.BRecordtLap = False
         self.Logging = False
 
+    @a_new_decorator
     def SOFstring(self):
         if self.db.NClasses > 1:
             temp = 'SOF: ' + convertString.roundedStr0(self.db.SOFMyClass) + '('
@@ -1372,6 +1378,7 @@ class IDDUCalcThread(IDDUThread):
         else:
             self.db.SOFstr = 'SOF: ' + convertString.roundedStr0(self.db.SOF)
 
+    @a_new_decorator
     def setPitCommands(self):
         # clear = 0  # Clear all pit checkboxes
         # ws = 1  # Clean the windshield, using one tear off
@@ -1405,6 +1412,7 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.BPitCommandUpdate = False
 
+    @a_new_decorator
     def pitStop(self):
         # lf_tire_change = 0x01
         # rf_tire_change = 0x02
@@ -1427,6 +1435,7 @@ class IDDUCalcThread(IDDUThread):
         if PitSvFlagsCompleted & 0x10:
             self.db.BFuelCompleted = True
 
+    @a_new_decorator
     def distance2PitStall(self):
         if self.db.DriverInfo['DriverPitTrkPct'] > 0.5:
             if self.db.LapDistPct < 0.5:
@@ -1440,6 +1449,7 @@ class IDDUCalcThread(IDDUThread):
                 self.db.sToPitStall = (self.db.DriverInfo['DriverPitTrkPct'] - self.db.LapDistPct) * self.db.TrackLength * 1000
 
     @staticmethod
+    @a_new_decorator
     def bit2RBG(bitColor):
         hexColor = format(bitColor, '06x')
         return int('0x' + hexColor[0:2], 0), int('0x' + hexColor[2:4], 0), int('0x' + hexColor[4:6], 0)
@@ -1480,6 +1490,7 @@ class IDDUCalcThread(IDDUThread):
     #         if not self.db.NNextLiftPoint == NNextLiftPointOld:
     #             self.db.BLiftBeepPlayed[NNextLiftPointOld] = 0
 
+    @a_new_decorator
     def LiftTone(self):
         # self.db.Alarm[7] = 4
 
@@ -1558,6 +1569,7 @@ class IDDUCalcThread(IDDUThread):
                 if self.db.BForceLift:
                     self.db.BForceLift = False
 
+    @a_new_decorator
     def setFuelTgt(self, tgt, offset):
         if self.db.BFuelSavingConfigLoaded:
             BTGTSet = False
@@ -1593,6 +1605,7 @@ class IDDUCalcThread(IDDUThread):
         else:
             return False
 
+    @a_new_decorator
     def getNStraight(self):
         # 0 = approaching first corner
         d = np.array(self.db.FuelTGTLiftPoints['LapDistPctApex']) / 100 - self.db.LapDistPct
@@ -1606,6 +1619,7 @@ class IDDUCalcThread(IDDUThread):
 
         self.db.NNextLiftPoint = np.min(d)
 
+    @a_new_decorator
     def mapABSActivity(self, pBrake):
         if pBrake < self.db.car.rABSActivityMap[3]:
             return 4
@@ -1618,7 +1632,7 @@ class IDDUCalcThread(IDDUThread):
         else:
             return 0
     
-    
+    @a_new_decorator
     def yellowFlag(self):
         
         # vCar calculation
@@ -1704,7 +1718,7 @@ class IDDUCalcThread(IDDUThread):
         else:
             self.db.BYellow = False
         
-
+    @a_new_decorator
     def blueFlag(self):
         if self.db.WeekendInfo['NumCarClasses'] > 1:
             if self.db.LapDistPct < 0.1:
@@ -1740,41 +1754,34 @@ class IDDUCalcThread(IDDUThread):
         else:
             self.db.NLappingCars = []
     
+    @a_new_decorator
     def initSpeedProfile(self):
-        try:
-            if self.db.track.LapDistPctPitIn and \
-                self.db.track.LapDistPctPitOut and \
-                self.db.track.LapDistPctPitDepart and \
-                self.db.track.LapDistPctPitRemerged and \
-                self.db.track.name in self.db.car.tLap and \
-                self.db.WeekendInfo['TrackName']     == self.db.track.name and \
-                self.db.car.name == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']:
-                
-                vPSL = float(self.db.WeekendInfo['TrackPitSpeedLimit'].split(' ')[0])
-                
-                dt = np.diff(self.db.car.tLap[self.db.track.name])
-                ds = np.diff(np.array(self.db.track.LapDistPct)/100) * self.db.track.sTrack
-                vRaw = ds / dt * 3.6
-                vRaw[[0,1,-2,-1]] = np.mean(vRaw[[2, 3, -4, -3]])
-                
-                v = 0.95 * vRaw - 10
-                
-                NIdxPitIn = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitIn)
-                NIdxPitOut = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitOut)-1
-                NIdxPitDepart = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitDepart)-1
-                NIdxPitRemerged = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitRemerged)
+        if self.db.track.LapDistPctPitIn and \
+            self.db.track.LapDistPctPitOut and \
+            self.db.track.LapDistPctPitDepart and \
+            self.db.track.LapDistPctPitRemerged and \
+            self.db.track.name in self.db.car.tLap and \
+            self.db.WeekendInfo['TrackName']     == self.db.track.name and \
+            self.db.car.name == self.db.DriverInfo['Drivers'][self.db.DriverCarIdx]['CarScreenNameShort']:
+            
+            vPSL = float(self.db.WeekendInfo['TrackPitSpeedLimit'].split(' ')[0])
+            
+            dt = np.diff(self.db.car.tLap[self.db.track.name])
+            ds = np.diff(np.array(self.db.track.LapDistPct)/100) * self.db.track.sTrack
+            vRaw = ds / dt * 3.6
+            vRaw[[0,1,-2,-1]] = np.mean(vRaw[[2, 3, -4, -3]])
+            
+            v = 0.95 * vRaw - 10
+            
+            NIdxPitIn = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitIn)
+            NIdxPitOut = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitOut)-1
+            NIdxPitDepart = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitDepart)-1
+            NIdxPitRemerged = next(i for i, x in enumerate(self.db.track.LapDistPct) if x > self.db.track.LapDistPctPitRemerged)
 
-                v[NIdxPitDepart:NIdxPitIn] = vPSL + np.linspace(1,0,NIdxPitIn - NIdxPitDepart)* (v[NIdxPitDepart] - vPSL)
-                v[NIdxPitOut:NIdxPitRemerged] = vPSL + np.linspace(0,1,NIdxPitRemerged - NIdxPitOut)* (v[NIdxPitRemerged] - vPSL)
-                
-                
-                self.vYellowFlag = interpolate.interp1d(self.db.track.LapDistPct[:-1], v, fill_value="extrapolate")
-                self.db.BSpeedProfile = True
-                
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
-            S = '\n'
-            for i in s:
-                S = S + i
-            self.logger.error(S)
+            v[NIdxPitDepart:NIdxPitIn] = vPSL + np.linspace(1,0,NIdxPitIn - NIdxPitDepart)* (v[NIdxPitDepart] - vPSL)
+            v[NIdxPitOut:NIdxPitRemerged] = vPSL + np.linspace(0,1,NIdxPitRemerged - NIdxPitOut)* (v[NIdxPitRemerged] - vPSL)
+            
+            
+            self.vYellowFlag = interpolate.interp1d(self.db.track.LapDistPct[:-1], v, fill_value="extrapolate")
+            self.db.BSpeedProfile = True
+
