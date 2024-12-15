@@ -143,6 +143,8 @@ iRData = {'LapBestLapTime': 0,
           'dcWeightJackerRight': 0,
           'dcAntiRollFront': 0,
           'dcAntiRollRear': 0,
+          'dcPitSpeedLimiterToggle': False,
+          'dcStarter': False,
           'Brake': 0,
           'LFbrakeLinePress': 0,
           'LRbrakeLinePress': 0,
@@ -348,20 +350,7 @@ calcData = {'startUp': False,
             'VFuelPitStopStart': 0,
             'BPitstop': False,
             'BPitstopCompleted': False,
-            'NLappingCars': [
-                {
-                 'Class': 'LMP1',
-                 'NCars': 2,
-                 'Color': (255, 218, 89),
-                 'sDiff': -10
-                },
-                {
-                 'Class': 'HPD',
-                 'NCars': 1,
-                 'Color': (255, 218, 89),
-                 'sDiff': -50
-                }
-            ],
+            'NLappingCars': [],
             'PlayerCarClassRelSpeed': 0,
             'Exception': None,
             'CarIdxMap': np.linspace(0, 63, 64).astype(int).tolist(),

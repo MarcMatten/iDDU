@@ -24,7 +24,8 @@ def a_new_decorator(a_func, *args, **kwargs):
     @wraps(a_func)
     def wrapTheFunction(*args, **kwargs):
         try:
-            a_func(*args, **kwargs)
+            result = a_func(*args, **kwargs)
+            return result
         except Exception:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             s = traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2, chain=True)
@@ -378,7 +379,7 @@ class IDDUCalcThread(IDDUThread):
                                                                                                                                         self.db.DriverInfo['Drivers'][self.db.DriverCarIdx][
                                                                                                                                             'CarScreenNameShort'],
                                                                                                                                         self.db.WeekendInfo['TrackDisplayShortName']))
-                            if 'dcABS' in self.db.car.dcList or self.db.car.name in self.CarsWithABS:
+                            if 'dcABS' in self.db.car.dcList or self.db.car.name in self.CarsWithABS and self.db.Brake:
                                 if self.db.dcBrakeBias:
                                     pBrakeLFMax = self.db.LFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
                                     pBrakeRFMax = self.db.RFbrakeLinePress / (self.db.dcBrakeBias / 100) / self.db.Brake
@@ -1352,7 +1353,7 @@ class IDDUCalcThread(IDDUThread):
             while not maths.strictly_increasing(self.LapDistPct):
                 self.LapDistPct, self.time = maths.makeMonotonic2D(self.LapDistPct, self.time)
 
-            self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct, self.db.FuelConsumptionList[-1])
+            self.db.car.addLapTime(self.db.WeekendInfo['TrackName'], self.time, self.LapDistPct, self.db.track.LapDistPct, self.db.FuelConsumptionList[-1] if self.db.FuelConsumptionList else 0)
             self.db.car.save(self.db.dir)
             self.db.time = self.db.car.tLap[self.db.WeekendInfo['TrackName']]
 

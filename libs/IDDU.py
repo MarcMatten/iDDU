@@ -129,7 +129,7 @@ class IDDUItem:
     LMP1 = (255, 218, 89)
     LMP2 = (51, 206, 255)
 
-    CarsWithABS = ['MX-5 Cup']
+    CarsWithABS = ['MX-5 Cup', 'BMW M2 CS Racing']
 
     ir = irsdk.IRSDK()
 

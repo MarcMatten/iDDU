@@ -76,6 +76,8 @@ class RenderMain(IDDUItem):
     rain6 = pygame.image.load("files/rain6.png")
     yellow1 = pygame.image.load("files/yellow1.gif")
     yellow2 = pygame.image.load("files/yellow2.gif")
+    blue1 = pygame.image.load("files/blue1.gif")
+    blue2 = pygame.image.load("files/blue2.gif")
 
     BError = False
 
@@ -84,7 +86,7 @@ class RenderMain(IDDUItem):
     tMin = 1000
     tMax = 0
     tAvg = 0
-    tYellow = 0
+    tBlue = 0
 
     def __init__(self):
         IDDUItem.__init__(self)
@@ -260,8 +262,7 @@ class RenderScreen(RenderMain):
                 if self.db.BYellow:
                     f = 0.25 
                     if self.db.tYellow == 0:
-                        self.db.tYellow = time.time()
-                                           
+                        self.db.tYellow = time.time()                                           
                     
                     if (time.time() - self.db.tYellow) % f < f/2:
                         RenderMain.screen.blit(self.yellow1, [0, 0]) 
@@ -281,6 +282,17 @@ class RenderScreen(RenderMain):
                             pygame.draw.polygon(RenderMain.screen, self.orange, self.ArrowRight2, 0)
 
                     # my blue flag
+                    if self.db.NLappingCars:
+                        if any(np.array([i['sDiff'] for i in self.db.NLappingCars]) > -40):                        
+                            f = 0.25 
+                            if self.tBlue == 0:
+                                self.tBlue = time.time()                                           
+                            
+                            if (time.time() - self.tBlue) % f < f/2:
+                                RenderMain.screen.blit(self.blue1, [0, 0]) 
+                            elif (time.time() - self.tBlue) % f >= f/2:
+                                RenderMain.screen.blit(self.blue2, [0, 0]) 
+                    
                     if self.db.WeekendInfo['NumCarClasses'] > 1 and self.db.PlayerTrackSurface == 3 and not self.db.FlagException:
                         if len(self.db.NLappingCars) == 1:
                             text = str(self.db.NLappingCars[0]['NCars']) + " x " + self.db.NLappingCars[0]['Class']
@@ -299,6 +311,7 @@ class RenderScreen(RenderMain):
 
                             RenderMain.screen.blit(Label0, (400 - LabelSize0[0] / 2, gap))
                             RenderMain.screen.blit(Label1, (400 - LabelSize1[0] / 2, 2 * gap + LabelSize0[1]))
+                    
 
                 if self.db.NDDUPage == 1:
                     self.page1()
