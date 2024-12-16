@@ -359,6 +359,10 @@
         99.71988795518207,
         100.0
     ],
+    "LapDistPctPitDepart": 84.8199188709259,
+    "LapDistPctPitIn": 88.44410181045532,
+    "LapDistPctPitOut": 1.3679306954145432,
+    "LapDistPctPitRemerged": 16.86655580997467,
     "SFLine": [
         [
             309.9364834897474,
@@ -379,6 +383,7 @@
     "name": "lagunaseca",
     "sTrack": 3570.0,
     "tLap": {
+        "BMW M2 CS Racing": 93.2156982421875,
         "Formula IR-04": 89.04999999991901,
         "Mercedes AMG GT4": 2980.1999186212724,
         "Porsche 718 Cayman GT4": 93.28333333324849,

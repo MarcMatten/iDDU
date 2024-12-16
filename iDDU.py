@@ -432,7 +432,7 @@ calcData = {'startUp': False,
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
-    'ShiftToneEnabled': ['Enable Shift Tones', True, 0, True, None, None, None, ['Off', 'On']],
+    'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
     'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
     'NSlipLEDMode': ['Slip LED Mode', True, 0, 1, 0, 6, 1, ['Off', 'On', 'Traction + ABS', 'ABS only', 'Slip only', 'Traction only', 'Braking only']],
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1],
@@ -444,6 +444,12 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
     'NFuelTargetMethod': ['Fuel Management', True, 1, 0, 0, 3, 1, ['Off', 'Static', 'Finish', 'Stint']],
     'BPitCommandControl': ['Enable Pit Control', True, 0, True, None, None, None, ['Off', 'On']],
     'rBitePoint': ['Bite Point', True, 1, 30.0, 10, 80, 0.5]
+}
+
+iDDUControls2 = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
+    'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
+    'tReactionLift': ['Lift Reaction Time', True, 2, 0.15, 0, 1, 0.05],
+    'fShiftBeep': ['Shift Beep Frequency', True, 0, 1100, 0, 2000, 50]
 }
 
 inCarControls = [
@@ -479,11 +485,12 @@ if __name__ == "__main__":
     iDDUControlsNameInit = {}
 
     iDDUControlsName = list(iDDUControls.keys())
-    for i in range(0, len(iDDUControlsName)):
-        if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
-            iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]]
-        else:
-            iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]][0]
+    iDDUControlsName2 = list(iDDUControls2.keys())
+    # for i in range(0, len(iDDUControlsName)):
+    #     if type(iDDUControls[iDDUControlsName[i]][3]) is bool:
+    #         iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]]
+    #     else:
+    #         iDDUControlsNameInit[iDDUControlsName[i]] = iDDUControls[iDDUControlsName[i]][0]
 
     # Create RTDB and initialise with
     myRTDB = RTDB.RTDB()
@@ -491,6 +498,7 @@ if __name__ == "__main__":
     myRTDB.initialise(iRData, True, False)
     myRTDB.initialise(calcData, False, False)
     myRTDB.initialise({'iDDUControls': iDDUControls}, False, False)
+    myRTDB.initialise({'iDDUControls2': iDDUControls2}, False, False)
     myRTDB.initialise({'inCarControls': inCarControls}, False, False)
     myRTDB.initialise({'config': config}, False, False)
 
@@ -514,6 +522,12 @@ if __name__ == "__main__":
             ms.addMapping(iDDUControlsName[i])
         else:
             ms.addMapping(iDDUControlsName[i], minValue=iDDUControls[iDDUControlsName[i]][4], maxValue=iDDUControls[iDDUControlsName[i]][5], step=iDDUControls[iDDUControlsName[i]][6])
+    
+    for i in range(0, len(iDDUControlsName2)):
+        if type(iDDUControls2[iDDUControlsName2[i]][3]) is bool:
+            ms.addMapping(iDDUControlsName2[i], level=2)
+        else:
+            ms.addMapping(iDDUControlsName2[i], minValue=iDDUControls2[iDDUControlsName2[i]][4], maxValue=iDDUControls2[iDDUControlsName2[i]][5], step=iDDUControls2[iDDUControlsName2[i]][6], level=2)
 
     ms.initCar()
 
@@ -523,7 +537,7 @@ if __name__ == "__main__":
     shiftToneThread.start()
     raceLapsEstimationThread.start()
     loggerThread.start()
-    serialComsThread.start()
+    # serialComsThread.start()
     steeringWheelComsThread.start()
     #pedalControllerlThread.start()
     ms.start()
@@ -557,7 +571,7 @@ if __name__ == "__main__":
     raceLapsEstimationThread.stop()
     loggerThread.stop()
     serialComsThread.stop()
-    steeringWheelComsThread.stop()
+    # steeringWheelComsThread.stop()
     pedalControllerlThread.stop()
     ms.stop()    
     calcThread.stop()

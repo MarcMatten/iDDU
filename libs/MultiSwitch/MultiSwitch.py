@@ -16,10 +16,10 @@ from libs.IDDU import IDDUItem, IDDUThread
 # 09:  
 # 10:  
 # 11:  
-# 12:  Rotary left minus
-# 13:  Rotary left plus
-# 14:  Rotary right minus
-# 15:  Rotary right plus
+# 12:  Rotary left plus
+# 13:  Rotary left minus
+# 14:  Rotary right plus
+# 15:  Rotary right minus
 # 16 - 28:  Left rotary positions (1-12)
 # 29 - 40:  Right rotary positions (1-12)
 
@@ -46,15 +46,19 @@ class MultiSwitchThread(MultiSwitchItem, IDDUThread):
 
 class MultiSwitch(MultiSwitchThread):
     mapDDU = {}
+    mapDDU2 = {}
     mapIR = {}
     NCurrentMapDDU = 0
+    NCurrentMapDDU2 = 0
     NCurrentMapIR = 0
     NMultiState = 0
     tMultiChange = 0
     mapDDUList = []
+    mapDDU2List = []
     mapIRList = []
     NRotaryOldL = 0
     NRotaryOldR = 0
+    NPositionMapDDU2 = 0
 
     def __init__(self, rate):
         MultiSwitchThread.__init__(self, rate)
@@ -62,6 +66,7 @@ class MultiSwitch(MultiSwitchThread):
 
     def run(self):
         self.mapDDUList = list(self.mapDDU.keys())
+        self.mapDDU2List = list(self.mapDDU2.keys())
         # self.mapIRList = list(self.mapIR.keys())
         
         while self.running:
@@ -70,10 +75,6 @@ class MultiSwitch(MultiSwitchThread):
             if self.db.BMultiInitRequest:
                 self.initCar()
                 self.db.BMultiInitRequest = False
-
-                # if self.pygame.display.get_init() == 1:
-
-                    # observe input controller
 
             self.MarcsJoystick.update()
 
@@ -94,6 +95,11 @@ class MultiSwitch(MultiSwitchThread):
                 # forward Driver Marker
                 if self.MarcsJoystick.ButtonPressedEvent(6):
                     self.vjoy.set_button(64, 1)
+                    if self.db.OutLap and self.db.LapDistPct < 0.5:
+                        self.db.track.setPitRemerged(self.db.LapDistPct * 100)
+                    elif self.db.AM.PSLARMED.BActive:
+                        self.db.track.setPitDepart(self.db.LapDistPct * 100)
+                        
                 if self.MarcsJoystick.ButtonReleasedEvent(6):
                     self.vjoy.set_button(64, 0)
 
@@ -130,6 +136,27 @@ class MultiSwitch(MultiSwitchThread):
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                elif self.NMultiState == 3:
+                    if self.MarcsJoystick.ButtonPressedEvent(13):  # L-
+                        self.NPositionMapDDU2 = np.mod(self.NPositionMapDDU2 - 1, len(self.mapDDU2List))
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
+                    if self.MarcsJoystick.ButtonPressedEvent(12):  # L+
+                        self.NPositionMapDDU2 = np.mod(self.NPositionMapDDU2 + 1, len(self.mapDDU2List))
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
+                    if self.MarcsJoystick.ButtonPressedEvent(15):  # R-
+                        self.mapDDU2[self.mapDDU2List[self.NPositionMapDDU2]].decrease() 
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
+                    if self.MarcsJoystick.ButtonPressedEvent(14):  # R+
+                        self.mapDDU2[self.mapDDU2List[self.NPositionMapDDU2]].increase()  
+                        self.tMultiChange = time.time()
+                        self.db.dcChangeTime = time.time()
+                        self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
                 elif self.NMultiState == 2:
                     if self.MarcsJoystick.ButtonPressedEvent(15) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
                         self.mapIR[self.mapIRList[self.db.NRotaryR]].decrease() 
@@ -153,89 +180,6 @@ class MultiSwitch(MultiSwitchThread):
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
 
-                # if self.MarcsJoystick.ButtonPressedEvent(14):
-                #     if self.NMultiState == 0:
-                #         self.NMultiState = 1
-                #         if len(self.mapIRList) > 0:
-                #             self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                #         else:
-                #             self.NMultiState = 2
-                #     else:
-                #         if self.NMultiState == 1 and len(self.mapIRList) > 0:
-                #             NCurrentMapIR = self.NCurrentMapIR + 1
-                #             if NCurrentMapIR > len(self.mapIRList) - 1:
-                #                 NCurrentMapIR = NCurrentMapIR - len(self.mapIRList)
-
-                #             self.NCurrentMapIR = NCurrentMapIR
-                #             self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                #         elif self.NMultiState == 2:
-                #             NCurrentMapDDU = self.NCurrentMapDDU + 1
-                #             if NCurrentMapDDU > len(self.mapDDUList) - 1:
-                #                 NCurrentMapDDU = NCurrentMapDDU - len(self.mapDDUList)
-
-                #             self.NCurrentMapDDU = NCurrentMapDDU
-
-                #             self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-
-                #     self.tMultiChange = time.time()
-                #     self.db.dcChangeTime = time.time()
-
-                # elif self.MarcsJoystick.ButtonPressedEvent(15):
-                #     if self.NMultiState == 0:
-                #         self.NMultiState = 2
-                #         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-                #     else:
-                #         if self.NMultiState == 1 and len(self.mapIRList) > 0:
-                #             NCurrentMapIR = self.NCurrentMapIR - 1
-                #             if NCurrentMapIR < 0:
-                #                 NCurrentMapIR = len(self.mapIRList) + NCurrentMapIR
-
-                #             self.NCurrentMapIR = NCurrentMapIR
-
-                #             self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-
-                #         elif self.NMultiState == 2:
-                #             NCurrentMapDDU = self.NCurrentMapDDU - 1
-                #             if NCurrentMapDDU < 0:
-                #                 NCurrentMapDDU = len(self.mapDDUList) + NCurrentMapDDU
-
-                #             self.NCurrentMapDDU = NCurrentMapDDU
-
-                #             self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-
-                #     self.tMultiChange = time.time()
-                #     self.db.dcChangeTime = time.time()
-
-                # elif self.MarcsJoystick.ButtonPressedEvent(12):
-                #     if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
-                #         self.mapIR['dcBrakeBias'].increase()
-                #     elif self.NMultiState == 1:
-                #         self.mapIR[self.mapIRList[self.NCurrentMapIR]].increase()
-                #         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                #     elif self.NMultiState == 2:
-                #         self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].increase()
-                #         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-                #     else:
-                #         break
-
-                #     self.tMultiChange = time.time()
-                #     self.db.dcChangeTime = time.time()
-
-                # elif self.MarcsJoystick.ButtonPressedEvent(13):
-                #     if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
-                #         self.mapIR['dcBrakeBias'].decrease()
-                #     elif self.NMultiState == 1:
-                #         self.mapIR[self.mapIRList[self.NCurrentMapIR]].decrease()
-                #         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-                #     elif self.NMultiState == 2:
-                #         self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].decrease()
-                #         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-                #     else:
-                #         break
-
-                #     self.tMultiChange = time.time()
-                #     self.db.dcChangeTime = time.time()
-
             # Rotatries
             BRotaryStates = self.MarcsJoystick.isPressed(range(16, 40))
             BRotaryStatesL = list(BRotaryStates[0:12])
@@ -245,10 +189,15 @@ class MultiSwitch(MultiSwitchThread):
                 self.db.NRotaryL = BRotaryStatesL.index(1)
                 if not self.db.NRotaryL == self.NRotaryOldL:
                     self.NRotaryOldL = self.db.NRotaryL
-                    self.NMultiState = 1
-                    self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                    if self.db.NRotaryL == 0:
+                        self.NMultiState = 3
+                        self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
+                    else:
+                        self.NMultiState = 1
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
                     self.tMultiChange = time.time()
                     self.db.dcChangeTime = time.time()
+                    
 
             if sum(BRotaryStatesR) == 1:
                 self.db.NRotaryR = BRotaryStatesR.index(1)
@@ -260,125 +209,25 @@ class MultiSwitch(MultiSwitchThread):
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
 
-       
-                
-            # if self.pygame.display.get_init() == 1:
-            #
-            #     # observe input controller
-            #     events = self.pygame.event.get()
-            #     for event in events:
-            #         #print('vvvvvvvvvvvvvv')
-            #         #print(event)
-            #         #print('##############')
-            #
-            #         if event.type == self.pygame.JOYBUTTONDOWN:
-            #
-            #             #print(event.button)
-            #             #print(self.pygame.joystick.Joystick(event.joy).get_name())
-            #             if event.button == self.db.config['ButtonAssignments']['DDUPage']['Button'] and self.pygame.joystick.Joystick(event.joy).get_name() == self.db.config['ButtonAssignments']['DDUPage']['Joystick']:
-            #                 if self.db.NDDUPage == 1:
-            #                     self.db.NDDUPage = 2
-            #                 else:
-            #                     self.db.NDDUPage = 1
-            #
-            #
-            #             if event.button == self.db.config['ButtonAssignments']['NextMulti']['Button'] and self.pygame.joystick.Joystick(event.joy).get_name() == self.db.config['ButtonAssignments']['NextMulti']['Joystick']:
-            #                 if self.NMultiState == 0:
-            #                     self.NMultiState = 1
-            #                     if len(self.mapIRList) > 0:
-            #                         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-            #                     else:
-            #                         self.NMultiState = 2
-            #                 else:
-            #                     if self.NMultiState == 1 and len(self.mapIRList) > 0:
-            #                         NCurrentMapIR = self.NCurrentMapIR + 1
-            #                         if NCurrentMapIR > len(self.mapIRList)-1:
-            #                             NCurrentMapIR = NCurrentMapIR - len(self.mapIRList)
-            #
-            #                         self.NCurrentMapIR = NCurrentMapIR
-            #                         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-            #                     elif self.NMultiState == 2:
-            #                         NCurrentMapDDU = self.NCurrentMapDDU + 1
-            #                         if NCurrentMapDDU > len(self.mapDDUList)-1:
-            #                             NCurrentMapDDU = NCurrentMapDDU - len(self.mapDDUList)
-            #
-            #                         self.NCurrentMapDDU = NCurrentMapDDU
-            #
-            #                         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-            #
-            #                 self.tMultiChange = time.time()
-            #                 self.db.dcChangeTime = time.time()
-            #
-            #             elif event.button == self.db.config['ButtonAssignments']['PreviousMulti']['Button'] and self.pygame.joystick.Joystick(event.joy).get_name() == self.db.config['ButtonAssignments']['PreviousMulti']['Joystick']:
-            #                 if self.NMultiState == 0:
-            #                     self.NMultiState = 2
-            #                     self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-            #                 else:
-            #                     if self.NMultiState == 1 and len(self.mapIRList) > 0:
-            #                         NCurrentMapIR = self.NCurrentMapIR - 1
-            #                         if NCurrentMapIR < 0:
-            #                             NCurrentMapIR = len(self.mapIRList) + NCurrentMapIR
-            #
-            #                         self.NCurrentMapIR = NCurrentMapIR
-            #
-            #                         self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-            #
-            #                     elif self.NMultiState == 2:
-            #                         NCurrentMapDDU = self.NCurrentMapDDU - 1
-            #                         if NCurrentMapDDU < 0:
-            #                             NCurrentMapDDU = len(self.mapDDUList) + NCurrentMapDDU
-            #
-            #                         self.NCurrentMapDDU = NCurrentMapDDU
-            #
-            #                         self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-            #
-            #                 self.tMultiChange = time.time()
-            #                 self.db.dcChangeTime = time.time()
-            #
-            #             elif event.button == self.db.config['ButtonAssignments']['MultiIncrease']['Button'] and self.pygame.joystick.Joystick(event.joy).get_name() == self.db.config['ButtonAssignments']['MultiIncrease']['Joystick']:
-            #                 if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
-            #                     self.mapIR['dcBrakeBias'].increase()
-            #                 elif self.NMultiState == 1:
-            #                     self.mapIR[self.mapIRList[self.NCurrentMapIR]].increase()
-            #                     self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-            #                 elif self.NMultiState == 2:
-            #                     self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].increase()
-            #                     self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-            #                 else:
-            #                     break
-            #
-            #                 self.tMultiChange = time.time()
-            #                 self.db.dcChangeTime = time.time()
-            #
-            #             elif event.button == self.db.config['ButtonAssignments']['MultiDecrease']['Button'] and self.pygame.joystick.Joystick(event.joy).get_name() == self.db.config['ButtonAssignments']['MultiDecrease']['Joystick']:
-            #                 if self.NMultiState == 0 and 'dcBrakeBias' in self.db.car.dcList:
-            #                     self.mapIR['dcBrakeBias'].decrease()
-            #                 elif self.NMultiState == 1:
-            #                     self.mapIR[self.mapIRList[self.NCurrentMapIR]].decrease()
-            #                     self.db.dcChangedItems = [self.mapIRList[self.NCurrentMapIR]]
-            #                 elif self.NMultiState == 2:
-            #                     self.mapDDU[self.mapDDUList[self.NCurrentMapDDU]].decrease()
-            #                     self.db.dcChangedItems = [self.mapDDUList[self.NCurrentMapDDU]]
-            #                 else:
-            #                     break
-            #
-            #                 self.tMultiChange = time.time()
-            #                 self.db.dcChangeTime = time.time()
-
-
-                if time.time() > (self.tMultiChange + 2):
-                    if not self.NMultiState == 0:
-                        self.NMultiState = 0
+            if time.time() > (self.tMultiChange + 2):
+                if not self.NMultiState == 0 or not self.NMultiState == 3:
+                    self.NMultiState = 0
 
             self.db.tExecuteMulti = (time.perf_counter() - t) * 1000
             self.toc()
             time.sleep(self.rate)
 
-    def addMapping(self, name='name', minValue=0, maxValue=1, step=1):
-        if name in self.db.car.dcList:
-            self.mapIR[name] = MultiSwitchMapiRControl(name, minValue , maxValue, step)
-        else:
-            self.mapDDU[name] = MultiSwitchMapDDUControl(name, minValue , maxValue, step)
+    def addMapping(self, name='name', minValue=0, maxValue=1, step=1, level=1):
+        if level == 1:
+            if name in self.db.car.dcList:
+                self.mapIR[name] = MultiSwitchMapiRControl(name, minValue , maxValue, step)
+            else:
+                self.mapDDU[name] = MultiSwitchMapDDUControl(name, minValue , maxValue, step)
+        elif level == 2:            
+            if name in self.db.car.dcList:
+                self.mapIR[name] = MultiSwitchMapiRControl(name, minValue , maxValue, step)
+            else:
+                self.mapDDU2[name] = MultiSwitchMapDDU2Control(name, minValue , maxValue, step)
 
     def initCar(self):
 
@@ -405,12 +254,37 @@ class MultiSwitch(MultiSwitchThread):
 
         importExport.saveJson(IDDUItem.dcConfig, self.db.dir + '/data/configs/multi.json')
 
+        self.mapDDU2List = list(self.mapDDU2.keys())
         self.mapDDUList = list(self.mapDDU.keys())
         # self.mapIRList = list(self.mapIR.keys())
         self.mapIRList = self.db.inCarControls
 
 
 class MultiSwitchMapDDUControl(MultiSwitchItem):
+    def __init__(self, name, minValue , maxValue, step):
+        MultiSwitchItem.__init__(self)
+        self.name = name
+        self.type = type(self.db.config[self.name])
+        if self.type is not bool:
+            self.minValue = minValue
+            self.maxValue = maxValue
+            self.step = step
+
+    def increase(self):
+        if self.type is not bool:
+            newVal = np.min([self.db.config[self.name] + self.step, self.maxValue])
+            self.db.config[self.name] = newVal
+        else:
+            self.db.config[self.name] = not self.db.config[self.name]
+
+    def decrease(self):
+        if self.type is not bool:
+            newVal = np.max([self.db.config[self.name] - self.step, self.minValue])
+            self.db.config[self.name] = newVal
+        else:
+            self.db.config[self.name] = not self.db.config[self.name]
+            
+class MultiSwitchMapDDU2Control(MultiSwitchItem):
     def __init__(self, name, minValue , maxValue, step):
         MultiSwitchItem.__init__(self)
         self.name = name

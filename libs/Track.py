@@ -180,3 +180,13 @@ class Track:
         if not self.LapDistPctPitOut:
             self.LapDistPctPitOut = LapDistPctPitOut
             self.save()
+
+    def setPitDepart(self, LapDistPctPitDepart):
+        if not self.LapDistPctPitDepart:
+            self.LapDistPctPitDepart = LapDistPctPitDepart
+            self.save()
+
+    def setPitRemerged(self, LapDistPctPitRemerged):
+        if not self.LapDistPctPitRemerged:
+            self.LapDistPctPitRemerged = LapDistPctPitRemerged
+            self.save()

@@ -414,6 +414,21 @@ class RenderScreen(RenderMain):
                                         else:
                                             valueStr = str(self.db.get(self.db.dcChangedItems[0]))
                                     self.changeLabel(self.db.iDDUControls[self.db.dcChangedItems[0]][0], valueStr, self.blue)
+                        elif self.db.dcChangedItems[0] in self.db.iDDUControls2:
+                            if self.db.iDDUControls2[self.db.dcChangedItems[0]]:
+                                if self.db.iDDUControls2[self.db.dcChangedItems[0]][1]:
+                                    if len(self.db.iDDUControls2[self.db.dcChangedItems[0]]) == 8:
+                                        valueStr = self.db.iDDUControls2[self.db.dcChangedItems[0]][7][int(self.db.config[(self.db.dcChangedItems[0])])]
+                                    else:
+                                        if self.db.iDDUControls2[self.db.dcChangedItems[0]][2] == 0:
+                                            valueStr = convertString.roundedStr0(self.db.config[(self.db.dcChangedItems[0])])
+                                        elif self.db.iDDUControls2[self.db.dcChangedItems[0]][2] == 1:
+                                            valueStr = convertString.roundedStr1(self.db.config[(self.db.dcChangedItems[0])], 3)
+                                        elif self.db.iDDUControls2[self.db.dcChangedItems[0]][2] == 2:
+                                            valueStr = convertString.roundedStr2(self.db.config[(self.db.dcChangedItems[0])])
+                                        else:
+                                            valueStr = str(self.db.get(self.db.dcChangedItems[0]))
+                                    self.changeLabel(self.db.iDDUControls2[self.db.dcChangedItems[0]][0], valueStr, self.blue)
 
                         self.db.backgroundColour = self.blue
 
