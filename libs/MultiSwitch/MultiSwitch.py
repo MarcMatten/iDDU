@@ -59,6 +59,7 @@ class MultiSwitch(MultiSwitchThread):
     NRotaryOldL = 0
     NRotaryOldR = 0
     NPositionMapDDU2 = 0
+    NSectorOld = None
 
     def __init__(self, rate):
         MultiSwitchThread.__init__(self, rate)
@@ -67,7 +68,6 @@ class MultiSwitch(MultiSwitchThread):
     def run(self):
         self.mapDDUList = list(self.mapDDU.keys())
         self.mapDDU2List = list(self.mapDDU2.keys())
-        # self.mapIRList = list(self.mapIR.keys())
         
         while self.running:
             t = time.perf_counter()
@@ -77,6 +77,47 @@ class MultiSwitch(MultiSwitchThread):
                 self.db.BMultiInitRequest = False
 
             self.MarcsJoystick.update()
+            
+            # Sector-based
+            if self.db.NSector and self.NSectorOld is None:
+                self.NSectorOld = self.db.NSector
+            
+            if self.db.config['BClearSectorDCMode']:
+                self.db.SectorBasedOffsets = {}
+                self.db.config['BClearSectorDCMode'] = False  
+                
+            # init
+            if self.db.config['BEnableSectorDCMode'] and self.db.track.LapDistPctSectors:
+                if not self.db.BInitSectorMode:
+                    self.db.track.calcSectorLUT()
+                    
+                    for i in self.db.SectorBasedOffsets:
+                        self.db.SectorBasedOffsets[i]['NOffsetTarget'] = [0] * len(self.db.track.LapDistPctSectors)
+                        self.db.SectorBasedOffsets[i]['NOffsetCurrent'] = 0
+                                            
+                    self.db.BInitSectorMode = True     
+                
+            if self.db.config['BEnableSectorDCMode'] and self.db.NSector is not None:           
+                
+                if not self.db.NSector == self.NSectorOld:
+                    if self.db.SectorBasedOffsets:                        
+                        for i in self.db.SectorBasedOffsets:
+                            deltaOffset = self.db.SectorBasedOffsets[i]['NOffsetTarget'][self.db.NSector] - self.db.SectorBasedOffsets[i]['NOffsetCurrent']
+                            if deltaOffset > 0:
+                                for k in range(0, deltaOffset):
+                                    self.mapIR[i].increase()
+                                    # self.db.SectorBasedOffsets[i]['NOffsetCurrent'] = self.db.SectorBasedOffsets[i]['NOffsetCurrent'] + 1
+                                    self.db.SectorBasedOffsets[i]['NOffsetCurrent'] += 1
+                                    time.sleep(0.1) 
+                            elif deltaOffset < 0:
+                                for k in range(0, -deltaOffset):
+                                    self.mapIR[i].decrease()
+                                    # self.db.SectorBasedOffsets[i]['NOffsetCurrent'] = self.db.SectorBasedOffsets[i]['NOffsetCurrent'] - 1
+                                    self.db.SectorBasedOffsets[i]['NOffsetCurrent'] -= 1
+                                    time.sleep(0.1) 
+                        
+                self.NSectorOld = self.db.NSector
+            
 
             if self.MarcsJoystick.Event():
                 # P2P
@@ -95,10 +136,16 @@ class MultiSwitch(MultiSwitchThread):
                 # forward Driver Marker
                 if self.MarcsJoystick.ButtonPressedEvent(6):
                     self.vjoy.set_button(64, 1)
-                    if self.db.OutLap and self.db.LapDistPct < 0.5:
-                        self.db.track.setPitRemerged(self.db.LapDistPct * 100)
-                    elif self.db.AM.PSLARMED.BActive:
-                        self.db.track.setPitDepart(self.db.LapDistPct * 100)
+                    
+                    if self.db.config['BEnableSectorSetMode']:
+                        self.db.config['BEnableSectorDCMode'] = False
+                        self.db.track.setSector(self.db.LapDistPct)
+                        self.db.BInitSectorMode = False
+                    else:                                           
+                        if self.db.OutLap and self.db.LapDistPct < 0.5:
+                            self.db.track.setPitRemerged(self.db.LapDistPct * 100)
+                        elif self.db.AM.PSLARMED.BActive:
+                            self.db.track.setPitDepart(self.db.LapDistPct * 100)
                         
                 if self.MarcsJoystick.ButtonReleasedEvent(6):
                     self.vjoy.set_button(64, 0)
@@ -137,37 +184,54 @@ class MultiSwitch(MultiSwitchThread):
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
                 elif self.NMultiState == 3:
-                    if self.MarcsJoystick.ButtonPressedEvent(13):  # L-
+                    if self.MarcsJoystick.ButtonPressedEvent(15):  # L-
                         self.NPositionMapDDU2 = np.mod(self.NPositionMapDDU2 - 1, len(self.mapDDU2List))
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
-                    if self.MarcsJoystick.ButtonPressedEvent(12):  # L+
+                    if self.MarcsJoystick.ButtonPressedEvent(14):  # L+
                         self.NPositionMapDDU2 = np.mod(self.NPositionMapDDU2 + 1, len(self.mapDDU2List))
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
-                    if self.MarcsJoystick.ButtonPressedEvent(15):  # R-
+                    if self.MarcsJoystick.ButtonPressedEvent(13):  # R-
                         self.mapDDU2[self.mapDDU2List[self.NPositionMapDDU2]].decrease() 
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
-                    if self.MarcsJoystick.ButtonPressedEvent(14):  # R+
+                    if self.MarcsJoystick.ButtonPressedEvent(12):  # R+
                         self.mapDDU2[self.mapDDU2List[self.NPositionMapDDU2]].increase()  
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
                 elif self.NMultiState == 2:
+                    if self.MarcsJoystick.ButtonPressedEvent(2):
+                        if self.db.BEnableSectorMode:
+                            self.db.BEnableSectorMode = False
+                        elif self.db.config['BEnableSectorDCMode']:
+                            self.db.BEnableSectorMode = True                        
                     if self.MarcsJoystick.ButtonPressedEvent(15) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
                         self.mapIR[self.mapIRList[self.db.NRotaryR]].decrease() 
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
+                        if self.db.BEnableSectorMode:
+                            if self.mapIRList[self.db.NRotaryR] in self.db.SectorBasedOffsets:
+                                self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]]['NOffsetCurrent']  -= 1
+                            else:
+                                self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]] = {'NOffsetTarget': [0]*len(self.db.track.LapDistPctSectors), 'NOffsetCurrent': -1}
+                            self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]]['NOffsetTarget'][self.db.NSector]  -= 1
                     if self.MarcsJoystick.ButtonPressedEvent(14) and self.mapIRList[self.db.NRotaryR] in self.db.car.dcList:
                         self.mapIR[self.mapIRList[self.db.NRotaryR]].increase()  
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
                         self.db.dcChangedItems = [self.mapIRList[self.db.NRotaryR]]
+                        if self.db.BEnableSectorMode:
+                            if self.mapIRList[self.db.NRotaryR] in self.db.SectorBasedOffsets:
+                                self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]]['NOffsetCurrent']  += 1
+                            else:
+                                self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]] = {'NOffsetTarget': [0]*len(self.db.track.LapDistPctSectors), 'NOffsetCurrent': 1}
+                            self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]]['NOffsetTarget'][self.db.NSector]  += 1
                 elif self.NMultiState == 0:
                     if any([self.MarcsJoystick.ButtonPressedEvent(12), self.MarcsJoystick.ButtonPressedEvent(13)]):
                         self.NMultiState = 1
@@ -212,6 +276,7 @@ class MultiSwitch(MultiSwitchThread):
             if time.time() > (self.tMultiChange + 2):
                 if not self.NMultiState == 0 or not self.NMultiState == 3:
                     self.NMultiState = 0
+                    self.db.BEnableSectorMode = False
 
             self.db.tExecuteMulti = (time.perf_counter() - t) * 1000
             self.toc()

@@ -395,7 +395,7 @@ class RenderScreen(RenderMain):
                             commentList = self.db.car.dcList[self.db.dcChangedItems[0]][3]
                             NComment = int(self.db.get(self.db.dcChangedItems[0])) - 1
                             commentText = self.db.car.dcList[self.db.dcChangedItems[0]][3][min(len(commentList)-1, abs(NComment))]                        
-                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr, self.red, commentText)
+                            self.changeLabel(self.db.car.dcList[self.db.dcChangedItems[0]][0], valueStr, self.red, commentText, frame=self.db.BEnableSectorMode)
                     else:
                         if self.db.dcChangedItems[0] == 'Push':
                             self.changeLabel('VFuelTgt', 'Push', self.blue)
@@ -817,8 +817,10 @@ class RenderScreen(RenderMain):
             Label = self.fontLarge.render(text, True, textcolour)
             RenderMain.screen.blit(Label, (400 - LabelSize[0] / 2, 50 - LabelSize[1] / 2))
 
-    def changeLabel(self, text, value, color, comment=None):
+    def changeLabel(self, text, value, color, comment=None, frame=False):
         pygame.draw.rect(RenderMain.screen, color, [0, 0, 800, 480], 0)
+        if frame:
+            pygame.draw.rect(RenderMain.screen, self.green, [5, 1, 795, 475], 13)
         LabelSize = self.fontLarge.size(text)
         Label = self.fontLarge.render(text, True, self.white)
         # if len(text) < 7:

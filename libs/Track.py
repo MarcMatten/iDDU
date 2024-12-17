@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 from libs import IDDU
+from scipy import interpolate
 
 
 class Track:
@@ -24,6 +25,8 @@ class Track:
         self.LapDistPctPitDepart = None
         self.LapDistPctPitRemerged = None
         self.path = None
+        self.LapDistPctSectors = []
+        self.LapDistPctSectorsLUT = None
 
     def createTrack(self, x, y, LapDistPct, aNorth, sTrack):
         self.x = x
@@ -52,6 +55,7 @@ class Track:
         variables = list(self.__dict__.keys())
         variables.remove('map')
         variables.remove('path')
+        variables.remove('LapDistPctSectorsLUT')
 
         # create dict of track object properties
         data = {}
@@ -147,6 +151,7 @@ class Track:
         IDDU.IDDUItem.logger.info('Track loaded, creating map.')
 
         self.createMap()
+        self.calcSectorLUT()
         
         IDDU.IDDUItem.logger.info('Loaded track {}'.format(path))
 
@@ -190,3 +195,13 @@ class Track:
         if not self.LapDistPctPitRemerged:
             self.LapDistPctPitRemerged = LapDistPctPitRemerged
             self.save()
+
+    def setSector(self, LapDistPct):
+        self.LapDistPctSectors.append(LapDistPct)
+        self.LapDistPctSectors.sort()
+        self.save()
+        self.calcSectorLUT()
+    
+    def calcSectorLUT(self):        
+        if len(self.LapDistPctSectors) > 1:
+            self.LapDistPctSectorsLUT = interpolate.interp1d(self.LapDistPctSectors, np.linspace(0, len(self.LapDistPctSectors)-1, len(self.LapDistPctSectors)), kind="next", fill_value=(0, 0), bounds_error=False)

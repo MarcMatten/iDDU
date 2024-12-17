@@ -107,5 +107,8 @@
             "vid": 12471,
             "pid": 4097
         }
-    }
+    },
+    "BEnableSectorSetMode": false,
+    "BEnableSectorDCMode": false,
+    "BClearSectorDCMode": false
 }

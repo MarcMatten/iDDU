@@ -428,7 +428,11 @@ calcData = {'startUp': False,
             'SessionTickOld': 0,
             'SessionTimeOld': 0,
             'CarIdxLapDistPctOld': np.array([0] * 64),
-            'BSpeedProfile': False
+            'BSpeedProfile': False,
+            'NSector': None,
+            'SectorBasedOffsets': {},
+            'BEnableSectorMode': False,
+            'BInitSectorMode': False
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
@@ -447,9 +451,12 @@ iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max v
 }
 
 iDDUControls2 = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
+    'BEnableSectorDCMode': ['Enable Sector Offsets', True, 0, False, None, None, None, ['Off', 'On']],
+    'BEnableSectorSetMode': ['Enable Sector Set Mode', True, 0, False, None, None, None, ['Off', 'On']],    
     'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
     'tReactionLift': ['Lift Reaction Time', True, 2, 0.15, 0, 1, 0.05],
-    'fShiftBeep': ['Shift Beep Frequency', True, 0, 1100, 0, 2000, 50]
+    'fShiftBeep': ['Shift Beep Frequency', True, 0, 1100, 0, 2000, 50],    
+    'BClearSectorDCMode': ['Clear Sector Offsets', True, 0, False, None, None, None, ['Off', 'On']]
 }
 
 inCarControls = [

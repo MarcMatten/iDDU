@@ -727,6 +727,10 @@ class IDDUCalcThread(IDDUThread):
                                     self.db.Alarm[10] = 0
                             else:
                                 self.db.Alarm[10] = 0
+                                
+                        # sector calculation
+                        if self.db.config['BEnableSectorDCMode'] and self.db.track.LapDistPctSectorsLUT:
+                            self.db.NSector = int(self.db.track.LapDistPctSectorsLUT(self.db.LapDistPct))
                         
                     else:
                         if self.db.WasOnTrack:
