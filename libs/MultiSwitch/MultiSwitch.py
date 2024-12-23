@@ -174,15 +174,15 @@ class MultiSwitch(MultiSwitchThread):
                 # Thumbwheels
                 if self.NMultiState == 1:
                     if self.MarcsJoystick.ButtonPressedEvent(13):
-                        self.mapDDU[self.mapDDUList[self.db.NRotaryL]].decrease() 
+                        self.mapDDU[self.mapDDUList[self.db.NRotaryL-1]].decrease() 
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
-                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL-1]]
                     if self.MarcsJoystick.ButtonPressedEvent(12):
-                        self.mapDDU[self.mapDDUList[self.db.NRotaryL]].increase()  
+                        self.mapDDU[self.mapDDUList[self.db.NRotaryL-1]].increase()  
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
-                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL-1]]
                 elif self.NMultiState == 3:
                     if self.MarcsJoystick.ButtonPressedEvent(15):  # L-
                         self.NPositionMapDDU2 = np.mod(self.NPositionMapDDU2 - 1, len(self.mapDDU2List))
@@ -234,10 +234,14 @@ class MultiSwitch(MultiSwitchThread):
                             self.db.SectorBasedOffsets[self.mapIRList[self.db.NRotaryR]]['NOffsetTarget'][self.db.NSector]  += 1
                 elif self.NMultiState == 0:
                     if any([self.MarcsJoystick.ButtonPressedEvent(12), self.MarcsJoystick.ButtonPressedEvent(13)]):
-                        self.NMultiState = 1
+                        if self.db.NRotaryL == 0:
+                            self.NMultiState = 3
+                            self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
+                        else:
+                            self.NMultiState = 1
+                            self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL-1]]
                         self.tMultiChange = time.time()
                         self.db.dcChangeTime = time.time()
-                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
                     elif any([self.MarcsJoystick.ButtonPressedEvent(14), self.MarcsJoystick.ButtonPressedEvent(15)]):
                         self.NMultiState = 2
                         self.tMultiChange = time.time()
@@ -258,7 +262,7 @@ class MultiSwitch(MultiSwitchThread):
                         self.db.dcChangedItems = [self.mapDDU2List[self.NPositionMapDDU2]]
                     else:
                         self.NMultiState = 1
-                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL]]
+                        self.db.dcChangedItems = [self.mapDDUList[self.db.NRotaryL-1]]
                     self.tMultiChange = time.time()
                     self.db.dcChangeTime = time.time()
                     

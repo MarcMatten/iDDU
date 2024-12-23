@@ -485,11 +485,14 @@ class RenderScreen(RenderMain):
                 self.db.DRSStr = str(int(self.db.DRSCounter))
         # P2P
         if self.db.P2P:
-            P2PRemaining = (self.db.config['P2PActivations'] - self.db.P2PCounter)
-            if self.db.config['P2PActivations'] > 100:
-                self.db.P2PStr = str(int(self.db.P2PCounter))
+            if self.db.car.name == 'IR18':
+                self.db.P2PStr = convertString.roundedStr1(self.db.P2P_Count, 1)
             else:
-                self.db.P2PStr = str(int(P2PRemaining))
+                P2PRemaining = (self.db.config['P2PActivations'] - self.db.P2PCounter)
+                if self.db.config['P2PActivations'] > 100:
+                    self.db.P2PStr = str(int(self.db.P2PCounter))
+                else:
+                    self.db.P2PStr = str(int(P2PRemaining))
 
         # LabelStrings
         self.db.BestLapStr = convertString.convertTimeMMSSsss(max(0, self.db.LapBestLapTime))
@@ -587,8 +590,17 @@ class RenderScreen(RenderMain):
             for i in range(0, len(self.frames2)):
                 self.frames2[i].setTextColour(self.db.textColour)
                 self.frames2[i].drawFrame()
-
-        Label = self.fontTiny2.render(self.db.weatherStr, True, self.db.textColour)
+        
+        if self.db.WeatherDeclaredWet:
+            tempWetnessStr = 'Track: Wet ({}/6)     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
+        else:
+            tempWetnessStr = 'Track: Dry ({}/6)     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
+        weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
+                                                                                            convertString.roundedStr0(self.db.TrackTemp), 
+                                                                                            tempWetnessStr, 
+                                                                                            convertString.roundedStr0(self.db.WindVel * 3.6))
+        
+        Label = self.fontTiny2.render(weatherStr, True, self.db.textColour)
         RenderMain.screen.blit(Label, (5, 1))
 
         Label3 = self.fontTiny2.render(self.db.SOFstr, True, self.db.textColour)

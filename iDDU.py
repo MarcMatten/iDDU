@@ -114,6 +114,7 @@ iRData = {'LapBestLapTime': 0,
           'CarLeftRight': 0,
           'DRS_Status': 0,
           'PushToPass': False,
+          'P2P_Count': 0,
           'CarIdxF2Time': [],
           'CarIdxClassPosition': [],
           'CarIdxPosition': [],
@@ -436,8 +437,7 @@ calcData = {'startUp': False,
             }
 
 iDDUControls = {  # DisplayName, show, decimals, initial value, min value, max value, steps, Name Map
-    'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
-    'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
+    'ShiftToneEnabled': ['Enable Shift Beep', True, 0, True, None, None, None, ['Off', 'On']],
     'NSlipLEDMode': ['Slip LED Mode', True, 0, 1, 0, 6, 1, ['Off', 'On', 'Traction + ABS', 'ABS only', 'Slip only', 'Traction only', 'Braking only']],
     'UserRaceLaps': ['Race Laps', True, 0, 23, 1, 999, 1],
     'NLapsStintPlanned': ['Stint Laps', True, 0, 23, 1, 999, 1],
@@ -544,7 +544,7 @@ if __name__ == "__main__":
     shiftToneThread.start()
     raceLapsEstimationThread.start()
     loggerThread.start()
-    # serialComsThread.start()
+    serialComsThread.start()
     steeringWheelComsThread.start()
     #pedalControllerlThread.start()
     ms.start()

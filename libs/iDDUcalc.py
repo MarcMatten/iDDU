@@ -532,12 +532,20 @@ class IDDUCalcThread(IDDUThread):
 
                         # P2P
                         if self.db.P2P:
-                            if self.db.P2PCounter >= self.db.config['P2PActivations'] > 0:
-                                self.db.textColourP2P = self.red
-                            elif (self.db.P2PCounter + 1) == self.db.config['P2PActivations']:
-                                self.db.textColourP2P = self.orange
-                            else:
-                                self.db.textColourP2P = self.db.textColour
+                            if self.db.car.name == 'IR18':
+                                if self.db.P2P_Count <= 0:
+                                    self.db.textColourP2P = self.red
+                                elif self.db.P2P_Count < 10:
+                                    self.db.textColourP2P = self.orange
+                                else:
+                                    self.db.textColourP2P = self.db.textColour
+                            else:    
+                                if self.db.P2PCounter >= self.db.config['P2PActivations'] > 0:
+                                    self.db.textColourP2P = self.red
+                                elif (self.db.P2PCounter + 1) == self.db.config['P2PActivations']:
+                                    self.db.textColourP2P = self.orange
+                                else:
+                                    self.db.textColourP2P = self.db.textColour
 
                             if self.db.CarIdxP2P_Status[self.db.DriverCarIdx]:
                                 self.db.Alarm[4] = 1
@@ -548,9 +556,6 @@ class IDDUCalcThread(IDDUThread):
 
                             if not self.db.CarIdxP2P_Status[self.db.DriverCarIdx] and self.db.old_PushToPass:
                                 self.db.AM.P2POFF.raiseAlert()
-
-                            # if self.db.SessionTime < self.db.P2PTime + 20:
-                            #   self.db.Alarm[4] = 1
 
                             self.db.old_PushToPass = self.db.CarIdxP2P_Status[self.db.DriverCarIdx]  # self.db.PushToPass
 
@@ -720,7 +725,7 @@ class IDDUCalcThread(IDDUThread):
                         
                         # Oval Downshift Logic
                         if True : # self.db.WeekendInfo['Category'] == 'Oval':
-                            if self.db.Gear > 1 and self.db.Gear <= self.db.car.NGearMax:
+                            if self.db.Gear > 1 and self.db.Gear <= self.db.car.NGearMax and not self.db.car.rGearRatios[self.GearID][self.db.Gear] == 00:
                                 if (self.db.RPM / self.db.car.rGearRatios[self.GearID][self.db.Gear] * self.db.car.rGearRatios[self.GearID][self.db.Gear-1]) < self.db.car.UpshiftSettings[self.GearID]['nMotorShiftLEDs'][self.db.Gear-2][0]:
                                     self.db.Alarm[10] = 1
                                 else:
@@ -802,17 +807,14 @@ class IDDUCalcThread(IDDUThread):
                     self.Brake = self.db.Brake
                 else:
                     # iRacing is not running
-                    if self.db.BDDUexecuting and not self.db.BSnapshotMode:  # necssary?
+                    if self.db.BDDUexecuting and not self.db.BSnapshotMode:
                         self.db.BDDUexecuting = False
                         self.db.BWaiting = True
                         self.db.oldSessionNum = -1
                         self.db.SessionNum = 0
                         self.db.StopDDU = True
                         self.loadTrack('default')
-                        self.loadCar('default', 'default')  # TODO: required?
-                        # self.db.car = Car.Car(Driver=self.db.DriverInfo['Drivers'][self.db.DriverCarIdx])
-                        # self.db.car.createCar(self.db)
-                        # self.db.car.save(self.db.dir)
+                        self.loadCar('default', 'default')
                         self.logger.info('Lost connection to iRacing')
 
                 self.db.tExecuteCalc = (time.perf_counter() - t) * 1000
@@ -835,14 +837,6 @@ class IDDUCalcThread(IDDUThread):
         self.carList = importExport.getFiles(self.dir + '/data/car', 'json')
         self.db.init = True
         self.db.BResults = False
-        if self.db.WeatherDeclaredWet:
-            tempWetnessStr = 'Wetness: {}     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
-        else:
-            tempWetnessStr = 'Wetness: Dry'
-        self.db.weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
-                                                                                            convertString.roundedStr0(self.db.TrackTemp), 
-                                                                                            tempWetnessStr, 
-                                                                                            convertString.roundedStr0(self.db.WindVel * 3.6))
         self.db.FuelConsumptionList = []
         self.db.FuelLastCons = 0
         self.db.newLapTime = 0
@@ -1258,16 +1252,6 @@ class IDDUCalcThread(IDDUThread):
                 self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetFinish, 0)
             else:
                 self.db.BFuelTgtSet = self.setFuelTgt(VFuelConsumptionTargetStint, 0)
-
-        if self.db.WeatherDeclaredWet:
-            tempWetnessStr = 'Wetness: {}     Precipitation: {}'.format(self.db.TrackWetness, convertString.roundedStr0(self.db.Precipitation*100))
-        else:
-            tempWetnessStr = 'Wetness: Dry'
-            
-        self.db.weatherStr = 'TAir: {}°C     TTrack: {}°C     {}     vWind: {} km/h'.format(convertString.roundedStr0(self.db.AirTemp),
-                                                                                            convertString.roundedStr0(self.db.TrackTemp), 
-                                                                                            tempWetnessStr, 
-                                                                                            convertString.roundedStr0(self.db.WindVel * 3.6))
 
         # display fuel consumption information
         self.db.RenderLabel[4] = True
@@ -1725,7 +1709,7 @@ class IDDUCalcThread(IDDUThread):
         
     @a_new_decorator
     def blueFlag(self):
-        if self.db.WeekendInfo['NumCarClasses'] > 1:
+        if self.db.WeekendInfo['NumCarClasses'] > 1 and not self.db.OnPitRoad:
             if self.db.LapDistPct < 0.1:
                 CarIdxLapDistPct = np.array(self.db.CarIdxLapDistPct)
                 CarIdxLapDistPct[(CarIdxLapDistPct > 0) & (CarIdxLapDistPct < 0.1)] = CarIdxLapDistPct[(CarIdxLapDistPct > 0) & (CarIdxLapDistPct < 0.1)] + 1

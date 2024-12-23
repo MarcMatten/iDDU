@@ -364,6 +364,10 @@
         99.72375690607736,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": null,
+    "LapDistPctPitOut": 99.54840540885925,
+    "LapDistPctPitRemerged": null,
     "SFLine": [
         [
             303.31518491999736,
@@ -384,6 +388,7 @@
     "name": "virginia 2022 north",
     "sTrack": 3620.0,
     "tLap": {
+        "BMW M2 CS Racing": 212.28333409633447,
         "MX-5 Cup": 1989.1499837235153
     },
     "x": [

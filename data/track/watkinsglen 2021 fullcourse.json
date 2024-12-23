@@ -543,6 +543,11 @@
         99.81515711645102,
         100.0
     ],
+    "LapDistPctPitDepart": 90.18006324768066,
+    "LapDistPctPitIn": 94.59617137908936,
+    "LapDistPctPitOut": 4.066041111946106,
+    "LapDistPctPitRemerged": 14.206187427043915,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             172.90325547647623,
@@ -563,6 +568,7 @@
     "name": "watkinsglen 2021 fullcourse",
     "sTrack": 5410.0,
     "tLap": {
+        "Ford Mustang GT3": 121.28333333322303,
         "Mercedes AMG GT4": 116.38333333322748,
         "Porsche 991 RSR": 0.0
     },
