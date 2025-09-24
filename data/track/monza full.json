@@ -577,6 +577,11 @@
         99.82608695652173,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": 96.47939801216125,
+    "LapDistPctPitOut": 5.760627239942551,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             597.3479975914853,
@@ -598,7 +603,8 @@
     "sTrack": 5750.0,
     "tLap": {
         "Dallara F3": 108.86666666805286,
-        "Formula IR-04": 119.74999999989114
+        "Formula IR-04": 119.74999999989114,
+        "MX-5 Cup": 133.93333333503824
     },
     "x": [
         612.3407930567903,

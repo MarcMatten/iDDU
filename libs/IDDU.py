@@ -236,6 +236,7 @@ class IDDUThread(IDDUItem, threading.Thread):
     tMin = 1000
     tMax = 0
     tAvg = 0
+    tLast10 = [np.uint64(0)]*10
     NCalls = np.uint64(0)
     running = False
 
@@ -249,13 +250,16 @@ class IDDUThread(IDDUItem, threading.Thread):
 
     def tic(self):
         self.tStart = time.perf_counter()
-        self.NCalls = np.uint64(self.NCalls + 1)
+        # self.NCalls = np.uint64(self.NCalls + 1)
+        self.NCalls += 1
 
     def toc(self):
-        tExec = (time.perf_counter() - self.tStart) * 1000
+        tExec = (time.perf_counter() - self.tStart)
         self.tMin = np.min([self.tMin, tExec])
         self.tMax = np.max([self.tMax, tExec])
         self.tAvg = (self.tAvg * (self.NCalls - 1) + tExec) / self.NCalls
+        self.tLast10[:9] = self.tLast10[1:]
+        self.tLast10[9] = tExec
 
     def stop(self):
         self.stopJU()

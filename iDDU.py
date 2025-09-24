@@ -314,7 +314,6 @@ calcData = {'startUp': False,
             'NPosition': 1,
             'BResults': False,
             'aOffsetTrack': 0,
-            'weatherStr': 'TAir: -°C     TTrack: -°C     Wetness: -     vWind: - km/h',
             'SOFstr': 'SOF: 0',
             'BdcHeadlightFlash': False,
             'tdcHeadlightFlash': 0,
@@ -456,7 +455,9 @@ iDDUControls2 = {  # DisplayName, show, decimals, initial value, min value, max 
     'BEnableShiftLEDs': ['Enable Shift LEDs', True, 0, True, None, None, None, ['Off', 'On']],
     'tReactionLift': ['Lift Reaction Time', True, 2, 0.15, 0, 1, 0.05],
     'fShiftBeep': ['Shift Beep Frequency', True, 0, 1100, 0, 2000, 50],    
-    'BClearSectorDCMode': ['Clear Sector Offsets', True, 0, False, None, None, None, ['Off', 'On']]
+    'BClearSectorDCMode': ['Clear Sector Offsets', True, 0, False, None, None, None, ['Off', 'On']],
+    'NYellowFlagMode': ['Yellow Flag Logic', True, 0, 2, 0, 2, 1, ['Off', 'Constant', 'Speed Profile']],    
+    'BEnableBlueFlag': ['Blue Flag Logic', True, 0, True, None, None, None, ['Off', 'On']]
 }
 
 inCarControls = [
@@ -578,7 +579,7 @@ if __name__ == "__main__":
     raceLapsEstimationThread.stop()
     loggerThread.stop()
     serialComsThread.stop()
-    # steeringWheelComsThread.stop()
+    steeringWheelComsThread.stop()
     pedalControllerlThread.stop()
     ms.stop()    
     calcThread.stop()

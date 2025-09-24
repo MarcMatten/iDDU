@@ -387,6 +387,11 @@
         99.74025974025973,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": 89.31097984313965,
+    "LapDistPctPitOut": 12.16362863779068,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             464.21242903955476,
@@ -407,6 +412,7 @@
     "name": "indianapolis 2022 road",
     "sTrack": 3850.0,
     "tLap": {
+        "IR18": 0.0,
         "Porsche 963": 75.25000000095815
     },
     "x": [

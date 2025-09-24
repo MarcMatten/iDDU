@@ -700,6 +700,7 @@
     "LapDistPctPitOut": 6.75,
     "LapDistPctPitOutOrig": 4.074452072381973,
     "LapDistPctPitRemerged": 10.1,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             184.7771186550492,
@@ -721,7 +722,8 @@
     "sTrack": 6930.0,
     "tLap": {
         "Dallara F3": 136.58333333320923,
-        "Mercedes AMG GT4": 173.3072967529297
+        "Mercedes AMG GT4": 173.3072967529297,
+        "Porsche 963": 126.11666666655208
     },
     "x": [
         199.72523147704925,

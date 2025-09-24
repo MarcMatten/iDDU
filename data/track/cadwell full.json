@@ -349,6 +349,11 @@
         99.71181556195965,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": null,
+    "LapDistPctPitOut": 0.0017697997463983484,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             495.70119962794274,

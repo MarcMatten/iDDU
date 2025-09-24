@@ -581,10 +581,11 @@
         99.82728842832469,
         100.0
     ],
+    "LapDistPctPitDepart": 92.9188255613126,
     "LapDistPctPitIn": 96.0233986377716,
     "LapDistPctPitOut": 4.812376946210861,
-	"LapDistPctPitRemerged": 8.635578583765112,
-	"LapDistPctPitDepart": 92.9188255613126,
+    "LapDistPctPitRemerged": 8.635578583765112,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             350.9100083287579,
@@ -606,6 +607,7 @@
     "sTrack": 5790.0,
     "tLap": {
         "Dallara P217 LMP2": 142.12330627441406,
+        "Lamborghini GT3": 137.26280212402344,
         "Mercedes AMG GT4": 132.52859497070312,
         "Porsche 963": 106.60000000135506,
         "Radical SR10": 123.5010986328125,

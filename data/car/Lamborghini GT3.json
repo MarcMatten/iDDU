@@ -1,6 +1,7 @@
 {
     "BDRS": false,
     "BP2P": false,
+    "BWetTiresAvailable": false,
     "Coasting": {
         "BValid": true,
         "CarSetup": {
@@ -333,52 +334,232 @@
         "dcABS": [
             "ABS",
             true,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcBrakeBias": [
             "BrakeBias",
             true,
-            1
+            1,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcDashPage": [
             "DashPage",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcFuelMixture": [
             "FuelMixture",
             true,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcHeadlightFlash": [
             "HeadlightFlash",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcPitSpeedLimiterToggle": [
             "PitSpeedLimiterToggle",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcStarter": [
             "Starter",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcThrottleShape": [
             "ThrottleShape",
             true,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcTractionControl": [
             "TractionControl",
             true,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ],
         "dcTractionControlToggle": [
             "TractionControlToggle",
             false,
-            0
+            0,
+            [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
         ]
     },
     "iRShiftRPM": [
@@ -396,15 +577,17 @@
         -10,
         -15
     ],
-    "rGearRatios": [
-        null,
-        4.25387637719981,
-        3.249839075512173,
-        2.635671428733664,
-        2.2056797283664937,
-        1.8997192888299586,
-        1.5781632465400686
-    ],
+    "rGearRatios": {
+        "base": [
+            null,
+            4.25387637719981,
+            3.249839075512173,
+            2.635671428733664,
+            2.2056797283664937,
+            1.8997192888299586,
+            1.5781632465400686
+        ]
+    },
     "rSlipMapAcc": [
         4.5,
         7,

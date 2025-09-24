@@ -582,6 +582,11 @@
         99.82758620689656,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": 91.19721055030823,
+    "LapDistPctPitOut": 6.540583819150925,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             598.533164916046,
@@ -603,6 +608,7 @@
     "sTrack": 5800.0,
     "tLap": {
         "Ford Mustang GT3": 142.76119995117188,
+        "Formula IR-04": 257.5000000080418,
         "Porsche 911 GT3 Cup (992)": 154.95089721679688
     },
     "x": [

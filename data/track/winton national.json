@@ -297,6 +297,11 @@
         99.66101694915254,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": null,
+    "LapDistPctPitOut": 0.7794687990099192,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             493.58047468892113,
@@ -317,7 +322,8 @@
     "name": "winton national",
     "sTrack": 2950.0,
     "tLap": {
-        "Ford 34C": 94.0625991821289
+        "Ford 34C": 94.0625991821289,
+        "Ray Formula 1600": 87.63333333444916
     },
     "x": [
         508.3693478834166,

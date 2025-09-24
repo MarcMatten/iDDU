@@ -138,7 +138,7 @@ class RenderScreen(RenderMain):
         self.frames[3].addLabel('PosStr', LabeledValue2('Pos', 442, 194, 160, '0.0', self.fontSmall, self.fontLarge, 0, 0), 24)
         self.frames[3].addLabel('EstStr', LabeledValue2('Est', 654, 194, 125, '0.0', self.fontSmall, self.fontLarge, 0, 0), 21)
 
-        self.frames[4].addLabel('dcBrakeBiasStr', LabeledValue2('BBias', 21, 303, 125, '-', self.fontSmall, self.fontLarge, 0, 0), 9)
+        self.frames[4].addLabel('dcBrakeBiasStr', LabeledValue2('BBias', 21, 303, 125, '-', self.fontSmall, self.fontLarge, 0, 0, 'dcBrakeBias'), 9)
         self.frames[4].addLabel('dcABSStr', LabeledValue2('ABS', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 8), 8)
         self.frames[4].addLabel('dcFARBStr', LabeledValue2('FARB', 219, 303, 67, '-', self.fontSmall, self.fontLarge, 0, 0), 30)
         self.frames[4].addLabel('dcTractionControlStr', LabeledValue2('TC1', 21, 387, 67, '-', self.fontSmall, self.fontLarge, 0, 1), 11)
@@ -971,17 +971,19 @@ class LabeledValue(RenderMain):
 
 
 class LabeledValue2(RenderMain):
-    def __init__(self, title, x, y, width, initValue, labFont, valFont, colourTag, alarmTag):
+    def __init__(self, title, x, y, width, initValue, labFont, valFont, colourTag, alarmTag, offset=None):
         RenderMain.__init__(self)
         self.x = x-2
         self.y = y
         self.title = title
+        self.titleOrig = title
         self.width = width+4
         self.value = initValue
         self.valFont = valFont
         self.labFont = labFont
         self.colourTag = colourTag
         self.alarmTag = alarmTag
+        self.offset = offset
         if self.colourTag == 1:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)
@@ -1008,6 +1010,23 @@ class LabeledValue2(RenderMain):
 
     def drawLabel(self, value):
         self.value = value
+        
+        if self.offset:
+            if self.db.config['BEnableSectorDCMode'] and self.db.NSector is not None and self.db.SectorBasedOffsets:
+                if self.offset in self.db.SectorBasedOffsets:
+                    currentOffset = self.db.SectorBasedOffsets[self.offset]['NOffsetTarget'][self.db.NSector]
+                    if currentOffset < 0:
+                        self.title = self.titleOrig + ' {}'.format(convertString.roundedStr0(currentOffset))
+                    elif currentOffset >= 0:
+                        self.title = self.titleOrig + ' +{}'.format(convertString.roundedStr0(currentOffset))
+                    else:
+                        self.title = self.titleOrig
+                else:
+                        self.title = self.titleOrig
+            else:
+                        self.title = self.titleOrig
+                    
+        
         if self.colourTag == 1:
             self.ValLabel = self.valFont.render(self.value, True, self.db.textColourFuelAdd)
             self.LabLabel = self.labFont.render(self.title, True, self.db.textColourFuelAdd)

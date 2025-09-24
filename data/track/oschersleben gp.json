@@ -363,6 +363,11 @@
         99.7229916897507,
         100.0
     ],
+    "LapDistPctPitDepart": null,
+    "LapDistPctPitIn": 94.84474658966064,
+    "LapDistPctPitOut": 7.382025569677353,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             551.5550193986726,
@@ -384,8 +389,10 @@
     "sTrack": 3610.0,
     "tLap": {
         "Acura ARX-06": 81.34999999992613,
+        "BMW M2 CS Racing": 95.649999999913,
         "Ford Mustang GT3": 442.8333339690426,
-        "Formula IR-04": 0.0
+        "Formula IR-04": 0.0,
+        "Porsche 718 Cayman GT4": 126.93333333321789
     },
     "x": [
         566.5461603963267,

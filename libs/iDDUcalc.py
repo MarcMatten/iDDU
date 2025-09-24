@@ -108,8 +108,12 @@ class IDDUCalcThread(IDDUThread):
         self.loadTrack('default')
         
         while self.running:
-            self.tic()
+            self.tic()   
+            
             try:
+                # if np.mod(self.NCalls, 57) == 0:
+                #     self.logger.info('Last 10 calls: {} ms'.format(self.tLast10))
+                
                 t = time.perf_counter()
                 # Check if DDU is initialised
                 if not self.db.BDDUexecuting:
@@ -252,7 +256,8 @@ class IDDUCalcThread(IDDUThread):
                                 self.db.textColour = self.grey
                                 self.db.FlagException = True
                                 self.db.FlagExceptionVal = 4
-                            if self.db.SessionFlags & 0x40:  # debry
+                            if  self.db.SessionFlags & 0x40:  # debry
+                                self.db.FlagException = True
                                 self.db.FlagExceptionVal = 5
                             if self.db.SessionFlags & 0x80000:  # warning
                                 self.db.FlagException = True
@@ -1625,7 +1630,7 @@ class IDDUCalcThread(IDDUThread):
     def yellowFlag(self):
         
         # vCar calculation
-        if not self.db.SessionTick == self.db.SessionTickOld:
+        if not self.db.SessionTick == self.db.SessionTickOld and self.db.config['NYellowFlagMode']:
             # self.SessionTickOld = self.SessionTick
             # self.SessionTick = self.db.SessionTick
             
@@ -1694,13 +1699,13 @@ class IDDUCalcThread(IDDUThread):
             else:
                 rWeatherGain = 1
             
-            if self.db.BSpeedProfile:
+            if self.db.BSpeedProfile and self.db.config['NYellowFlagMode'] == 2:
                 if np.any(np.logical_and(CarIdxInRange, np.logical_or(np.max(self.db.CarIdxSpeed, axis=1) < rWeatherGain * self.vYellowFlag(np.array(self.db.CarIdxLapDistPct, dtype=float)*100), np.max(self.db.CarIdxSpeed, axis=1) < 30))):
                     self.db.BYellow = True
                 else:
                     self.db.BYellow = False
             else:
-                if np.any(np.logical_and(CarIdxInRange, np.max(self.db.CarIdxSpeed, axis=1) < 30)):
+                if np.any(np.logical_and(CarIdxInRange, np.max(self.db.CarIdxSpeed, axis=1) < 45)):
                     self.db.BYellow = True
                 else:
                     self.db.BYellow = False                
@@ -1709,7 +1714,7 @@ class IDDUCalcThread(IDDUThread):
         
     @a_new_decorator
     def blueFlag(self):
-        if self.db.WeekendInfo['NumCarClasses'] > 1 and not self.db.OnPitRoad:
+        if self.db.WeekendInfo['NumCarClasses'] > 1 and not self.db.OnPitRoad and self.db.config['BEnableBlueFlag']:
             if self.db.LapDistPct < 0.1:
                 CarIdxLapDistPct = np.array(self.db.CarIdxLapDistPct)
                 CarIdxLapDistPct[(CarIdxLapDistPct > 0) & (CarIdxLapDistPct < 0.1)] = CarIdxLapDistPct[(CarIdxLapDistPct > 0) & (CarIdxLapDistPct < 0.1)] + 1

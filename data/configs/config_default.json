@@ -110,5 +110,7 @@
     },
     "BEnableSectorSetMode": false,
     "BEnableSectorDCMode": false,
-    "BClearSectorDCMode": false
+    "BClearSectorDCMode": false,
+    "NYellowFlagMode": 2,
+    "BEnableBlueFlag": true
 }

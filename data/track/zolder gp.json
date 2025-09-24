@@ -397,8 +397,11 @@
         99.74683544303798,
         100.0
     ],
+    "LapDistPctPitDepart": null,
     "LapDistPctPitIn": 93.99518370628357,
     "LapDistPctPitOut": 7.027625292539597,
+    "LapDistPctPitRemerged": null,
+    "LapDistPctSectors": [],
     "SFLine": [
         [
             297.85485177646206,
@@ -419,7 +422,8 @@
     "name": "zolder gp",
     "sTrack": 3950.0,
     "tLap": {
-        "Porsche 718 Cayman GT4": 98.86666666659335
+        "Porsche 718 Cayman GT4": 98.86666666659335,
+        "Porsche 911 GT3 Cup (992)": 96.76666666525853
     },
     "x": [
         312.8522989992876,
